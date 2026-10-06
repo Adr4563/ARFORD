@@ -1,0 +1,22 @@
+# Parámetros ROS2 equivalentes a las variables de entorno del proyecto
+# original (deploy-raspberry-standalone/README.md, sección "Subir a un
+# modelo más grande" / "Carrito mecanum" / "Escribirle a Lora..."). Se
+# pueden sobreescribir por línea de comando al lanzar
+# (`ros2 launch lora_bringup lora_bringup.launch.py voz_motor:=edge`) sin
+# editar este archivo -- ver launch/lora_bringup.launch.py.
+
+communication_node:
+  ros__parameters:
+    voz_motor: "telefono"          # telefono | piper | edge
+    voz_edge: "es-AR-ElenaNeural"
+    voz_piper_modelo: ""            # vacío = default de _voice_backends.py (~/piper-voces/es_MX-claude-high.onnx)
+    voz_port: 8081
+
+moving_control_node:
+  ros__parameters:
+    carrito_port: "/dev/ttyACM0"
+
+orchestrator_node:
+  ros__parameters:
+    voz_motor: "telefono"           # tiene que coincidir con communication_node.voz_motor -- ver la nota en orchestrator_node.py
+    esperar_telefono_seg: 60

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lora_brain</name>
+  <version>0.1.0</version>
+  <description>
+    El "cerebro" del robot Lora: orchestrator_node lleva la máquina de
+    estados de la conversación (Trivia / Chat libre) y decide qué hacer en
+    cada turno, apoyándose en agentes sin LLM (router, corrector,
+    comportamiento), el cliente HTTP a Ollama, memoria episódica,
+    personalidad y el catálogo de preguntas -- todo portado de
+    Arquitecture-Agentic-RAG/deploy-raspberry-standalone/ del proyecto
+    monolítico original. No tiene ninguna dependencia de hardware directa:
+    habla con communication_node/visualization_faces_node/moving_control_node
+    (paquete lora_drivers) solo por tópicos y servicios de lora_interfaces.
+  </description>
+  <maintainer email="20200812@aloe.ulima.edu.pe">Lora Robot Team</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>lora_interfaces</depend>
+
+  <exec_depend>python3-sklearn</exec_depend>
+  <exec_depend>python3-requests</exec_depend>
+  <exec_depend>python3-psutil</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

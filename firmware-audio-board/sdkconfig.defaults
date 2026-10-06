@@ -1,0 +1,44 @@
+# Valores por defecto del firmware de la placa de audio de Lora.
+# Se aplican al hacer `idf.py set-target esp32s3` sobre un proyecto limpio.
+# Si ya existe un `sdkconfig`, hay que borrarlo para que estos vuelvan a tomarse.
+
+CONFIG_IDF_TARGET="esp32s3"
+
+# La placa monta 16 MB de flash en modo QIO y 8 MB de PSRAM octal: así lo
+# reportaba el firmware de fábrica al arrancar. Si no se declara la PSRAM
+# octal, el chip arranca pero pierde los 8 MB.
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+
+# ---------------------------------------------------------------- audio ----
+#
+# 16 kHz es EL valor crítico de todo este archivo: tiene que coincidir con el
+# que usa lora_audio_main.c al abrir los códecs (MUESTREO_HZ). El componente
+# viene con 48000 por defecto; dejarlo así haría que el USB corriera a 48 kHz
+# mientras el I2S va a 16 kHz, y el audio saldría a velocidad equivocada.
+#
+# Además, 16 kHz es exactamente lo que consume el STT de la Pi (whisper), así
+# que no hay que remuestrear en ningún punto de la cadena.
+CONFIG_UAC_SAMPLE_RATE=16000
+
+# Mono en ambos sentidos: es lo que necesita el STT y lo que basta para el
+# altavoz, que es uno solo (el ES8311 es un códec mono).
+CONFIG_UAC_SPEAKER_CHANNEL_NUM=1
+CONFIG_UAC_MIC_CHANNEL_NUM=1
+
+# 10 ms de intervalo es el valor por defecto del componente y da un buen
+# compromiso entre latencia y cortes. Subirlo reduce cortes a costa de retardo.
+CONFIG_UAC_SPK_INTERVAL_MS=10
+CONFIG_UAC_MIC_INTERVAL_MS=10
+
+# Cómo se identificará ante la Raspberry Pi. Este es el nombre que aparecerá
+# en `arecord -l` y `aplay -l`, así que conviene que sea reconocible.
+CONFIG_UAC_TUSB_MANUFACTURER="Lora Robot"
+CONFIG_UAC_TUSB_PRODUCT="Lora Audio Board"
+
+# El audio por USB es sensible a la latencia de planificación: 1 kHz de tick
+# reduce los cortes frente a los 100 Hz por defecto.
+CONFIG_FREERTOS_HZ=1000

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lora_bringup</name>
+  <version>0.1.0</version>
+  <description>
+    Launch files y parámetros para levantar el stack completo de Lora: los
+    3 nodos de hardware de lora_drivers (auto-configurados y activados vía
+    eventos de lifecycle) más orchestrator_node de lora_brain.
+  </description>
+  <maintainer email="20200812@aloe.ulima.edu.pe">Lora Robot Team</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>lora_drivers</exec_depend>
+  <exec_depend>lora_brain</exec_depend>
+  <exec_depend>lora_interfaces</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

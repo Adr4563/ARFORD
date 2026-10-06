@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lora_interfaces</name>
+  <version>0.1.0</version>
+  <description>
+    Mensajes y servicios custom del robot Lora: el contrato entre
+    lora_brain (orchestrator_node, el "cerebro") y los 3 nodos de hardware
+    de lora_drivers -- communication_node (comunicación verbal y no
+    verbal: texto/voz de entrada y salida), visualization_faces_node
+    (cámara -> emoción, display de la cara) y moving_control_node (motores del
+    carrito mecanum). Paquete solo de definiciones, sin lógica -- por eso
+    es ament_cmake (rosidl) y no ament_python como los demás.
+  </description>
+  <maintainer email="20200812@aloe.ulima.edu.pe">Lora Robot Team</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

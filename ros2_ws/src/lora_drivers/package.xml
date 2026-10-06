@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lora_drivers</name>
+  <version>0.1.0</version>
+  <description>
+    Los 3 nodos de hardware del robot Lora, cada uno un LifecycleNode:
+    communication_node (comunicación verbal y no verbal -- página
+    web+SSE, stdin, voz de salida, música), visualization_faces_node
+    (cámara -> detección de emoción, display de la cara en pantalla) y
+    moving_control_node (motores del carrito mecanum vía Serial al ESP32-S3).
+    Portados del proyecto monolítico original en
+    Arquitecture-Agentic-RAG/deploy-raspberry-standalone/ -- ver el
+    README de ros2_ws para la tabla de mapeo módulo por módulo.
+  </description>
+  <maintainer email="20200812@aloe.ulima.edu.pe">Lora Robot Team</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>lifecycle_msgs</depend>
+  <depend>lora_interfaces</depend>
+
+  <!-- Dependencias de hardware/servicios - varias no tienen rosdep key
+       estándar (edge-tts, piper-tts, picamera2 solo existe en Raspberry Pi
+       OS) y se instalan con pip, igual que requirements.txt en el proyecto
+       original - ver requirements.txt de este paquete. Se listan igual
+       acá como exec_depend para que quede documentado el contrato, aunque
+       rosdep no las resuelva todas solo. -->
+  <exec_depend>python3-serial</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-flask</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

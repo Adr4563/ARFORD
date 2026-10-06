@@ -1,0 +1,15 @@
+# Configuración EXTRA para la compilación de diagnóstico.
+#
+# Se usa junto a sdkconfig.defaults, no en su lugar:
+#
+#   idf.py -DSDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.diag" build
+#
+# La diferencia clave es la consola. En la compilación normal el USB lo toma
+# TinyUSB para exponer la tarjeta de sonido, y eso hace desaparecer el puerto
+# serie: la placa deja de ser accesible para grabar o para leer logs, y solo
+# se recupera con el botón BOOT.
+#
+# En diagnóstico NO se inicializa el USB de audio, así que el periférico
+# USB-Serial-JTAG conserva el bus y podemos leer por dónde falla el micrófono.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+CONFIG_ESP_CONSOLE_UART_DEFAULT=n

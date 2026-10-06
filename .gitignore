@@ -1,0 +1,18 @@
+# colcon / ROS2
+build/
+install/
+log/
+**/__pycache__/
+*.pyc
+
+# editores / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ESP-IDF (firmware-audio-board) -- todo esto lo genera la compilacion
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock

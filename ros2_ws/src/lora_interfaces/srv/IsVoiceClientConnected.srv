@@ -1,0 +1,11 @@
+# True si al menos un teléfono tiene la página web de communication_node
+# abierta con la voz activada -- equivalente a
+# voz_server.hay_cliente_conectado() en el proyecto original.
+#
+# orchestrator_node lo consulta en un poll corto (cada 1s, hasta un
+# timeout) antes del saludo de apertura de cada sesión, para no perder
+# siempre esa primera frase al motor de voz de respaldo (edge-tts) -- ver
+# _esperar_telefono_si_corresponde() en Orchestrator_Management.py para la
+# lógica original que se porta tal cual.
+---
+bool connected

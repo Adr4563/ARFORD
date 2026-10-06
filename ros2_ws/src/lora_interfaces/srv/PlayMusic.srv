@@ -1,0 +1,13 @@
+# Reproduce un archivo de musica/ vía communication_node (mismo mpv que
+# usaba Clients/Musica_Client.reproducir() en el proyecto original).
+#
+# esperar=true BLOQUEA hasta que termina de sonar -- lo necesitan las
+# preguntas de Reconocimiento Musical, donde la canción ES el enunciado y
+# el usuario no puede responder antes de escucharla completa.
+# esperar=false devuelve apenas se lanza la reproducción de fondo
+# (fire-and-forget, mismo Popen que antes), para las reacciones normales
+# de Trivia -- no bloquea a orchestrator_node.
+string filename
+bool esperar
+---
+bool reproducido

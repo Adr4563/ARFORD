@@ -1,0 +1,7 @@
+# Dependencias pip de lora_brain -- mismo criterio que
+# deploy-raspberry-standalone/requirements.txt del proyecto original.
+requests
+rank_bm25
+scikit-learn==1.9.0
+joblib
+psutil

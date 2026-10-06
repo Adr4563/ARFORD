@@ -1,0 +1,17 @@
+## Dependencias del firmware de la placa de audio de Lora.
+##
+## Se fijan las versiones a propósito: la API de esp_codec_dev ha cambiado
+## entre versiones menores, y este firmware no se ha probado con otras.
+dependencies:
+  idf:
+    version: ">=5.3"
+
+  ## Expone la placa como tarjeta de sonido USB (UAC 2.0) y entrega el audio
+  ## por callbacks, sin atarse a ningún códec concreto. Eso es lo que permite
+  ## usarlo con el ES8311/ES7210 de esta placa en vez del de la placa de
+  ## demostración de Espressif para la que está escrito el ejemplo oficial.
+  espressif/usb_device_uac: "~1.2.0"
+
+  ## Drivers de los códecs. Trae ES8311 (reproducción) y ES7210 (captura),
+  ## que son justo los dos que lleva esta placa.
+  espressif/esp_codec_dev: "~1.3.0"

@@ -1,0 +1,21 @@
+# Dependencias pip de lora_drivers -- mismo criterio que requirements.txt
+# del proyecto original (deploy-raspberry-standalone/requirements.txt),
+# separadas de lo que ya resuelve rosdep/apt (ver package.xml).
+#
+# picamera2 NO está acá: solo existe como paquete de sistema en Raspberry
+# Pi OS (viene preinstalado con el SO, no por pip) -- visualization_faces_node
+# la importa perezosamente y sigue funcionando sin cámara si falta.
+pyserial
+flask
+opencv-python
+onnxruntime
+numpy
+edge-tts
+# piper-tts es opcional (VOZ_MOTOR=piper) -- ver _voice_backends.py.
+# piper-tts
+
+# STT en espanol (_stt_engine.py). sherpa-onnx corre sobre onnxruntime, que ya
+# esta arriba para el detector de emociones -- no suma un runtime nuevo a la Pi.
+# Los modelos NO vienen con el paquete: se bajan una vez (ver _stt_engine.py).
+sherpa-onnx
+sounddevice

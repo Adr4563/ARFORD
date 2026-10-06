@@ -1,0 +1,14 @@
+# Le pide a visualization_faces_node que capture un frame de cámara y
+# clasifique la emoción -- BLOQUEA unos segundos (benchmark real medido en
+# el proyecto original, ver ai-camera/TODO-emociones-imx500.txt: ~8-9s en
+# el peor caso, con reintentos incluidos).
+#
+# detected=false si no hay cámara conectada, faltan dependencias
+# (onnxruntime/opencv/picamera2 no instalados), o no se detectó ninguna
+# cara en los reintentos -- NUNCA una excepción sin atrapar hacia
+# orchestrator_node, mismo criterio de "falla gracioso" que
+# Clients/Camara_Client.py tenía en el proyecto original.
+---
+string emotion       # Feliz | Triste | Enojado | Neutral | "" si no se detectó
+float32 confidence
+bool detected
