@@ -1,14 +1,14 @@
 # ARFORD — Socially Friendly Robot
 
+<p align="center">
+  <img src="docs/arford.webp" alt="ARFORD: robot social de cuerpo blanco con detalles granate, carita animada en pantalla y base con ruedas" width="320">
+</p>
+
 **ARFORD** es un robot social amigable (*socially friendly robot*) y socialmente asistivo (SAR, *Socially Assistive Robot*), orientado a la **interacción humano-robot (HRI)** con **niños y jóvenes con TDAH** (Trastorno por Déficit de Atención e Hiperactividad) **y TEA** (Trastorno del Espectro Autista), entre otras necesidades de apoyo.
 
 Su objetivo es ofrecer una interacción predecible, breve y motivadora: conversa (**Chat libre**) y juega **Trivia** por voz o texto, con una carita animada que expresa emociones, música, movimiento sobre un carrito mecanum y un juego de reconocimiento e imitación de emociones por cámara que ayuda a practicar la identificación de expresiones faciales.
 
 Este repositorio contiene la versión **ROS 2 Jazzy** del robot: 4 paquetes que reemplazan al proceso Python monolítico original ([`Arquitecture-Agentic-RAG/deploy-raspberry-standalone/`](https://github.com/Adr4563/Arquitecture-Agentic-RAG)). La documentación técnica del workspace (nodos, tópicos, configuración, compilación y ejecución) está en **[`ros2_ws/README.md`](ros2_ws/README.md)**.
-
-> **Estado:** el código está escrito, la sintaxis de cada `.py` pasa `python -m py_compile` y cada paquete tiene la estructura que exige `colcon`. **Todavía no se ha corrido `colcon build` ni `ros2 launch` en un ROS 2 Jazzy real, ni se ha probado contra el hardware.** Ver la [verificación](ros2_ws/README.md#verificación) antes de darlo por funcional.
-
-> **Sobre el nombre:** el robot se llama **ARFORD**. Los identificadores internos conservan el prefijo `lora` por compatibilidad y **no deben cambiarse**: los 4 paquetes ROS 2 (`lora_brain`, `lora_drivers`, `lora_interfaces`, `lora_bringup`), los modelos de Ollama (`lora-chat-libre-v4`, `lora-trivia`, `lora-salida-trivia-v2`), el script `lora.sh` y el nombre USB de la placa de audio (`Lora Audio Board`, que determina `plughw:CARD=Lora`). Renombrarlos obliga a reconstruir el workspace, reimportar los modelos y reflashear la placa. Aparte, **LoRA** (en *fine-tunes LoRA*) es la técnica de fine-tuning, sin relación con el nombre del robot.
 
 ---
 
