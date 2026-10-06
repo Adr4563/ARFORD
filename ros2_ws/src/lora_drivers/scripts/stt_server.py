@@ -5,7 +5,7 @@ Expone el motor de `_stt_engine.py` como servicio, para que cualquier cliente
 -- la placa ESP32-S3, `communication_node`, o un simple `curl` -- le mande audio
 y reciba texto, sin cargar el modelo por su cuenta.
 
-Se usa Flask porque YA es dependencia de este paquete (`_web_bridge.py` levanta
+Se usa Flask porque ya es dependencia de este paquete (antes levantaba
 la página web con Flask + SSE en el 8081). Este servicio escucha en el 8082 para
 no chocar con aquél.
 

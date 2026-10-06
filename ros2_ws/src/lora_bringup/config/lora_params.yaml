@@ -7,16 +7,39 @@
 
 communication_node:
   ros__parameters:
-    voz_motor: "telefono"          # telefono | piper | edge
+    voz_motor: "vits"              # vits | piper | edge
     voz_edge: "es-AR-ElenaNeural"
-    voz_piper_modelo: ""            # vacío = default de _voice_backends.py (~/piper-voces/es_MX-claude-high.onnx)
-    voz_port: 8081
+    voz_piper_modelo: ""            # vacío = default de _voice_backends.py (~/piper-voces/es_CO-dii.onnx)
+    # Voz elegida de oído ("versión 40"): GLaDOS en español (Piper, sherpa-onnx),
+    # con los ajustes de fábrica del modelo, un poco más pausada y +1.5 semitonos.
+    voz_vits_dir: "/home/pi/.lora/modelos/vits-piper-es_ES-glados-medium"
+    voz_vits_ruido: 0.667
+    voz_vits_ruido_w: 0.5          # ritmo fijo: con 0.8 cada frase salía distinta
+    voz_vits_duracion: 1.15
+    voz_tono_semitonos: 1.5
+    voz_volumen: 70                # volumen de la voz (0-100); 100 = sin atenuar
+    # Placa Waveshare ESP32-S3-AUDIO-Board (tarjeta de sonido USB "Board"):
+    # micrófono para escuchar y parlante para voz y música. Vacío = sin
+    # micrófono / salida de audio por defecto de la Pi.
+    mic_dispositivo: "plughw:CARD=Board,DEV=0"
+    audio_salida: "alsa/plughw:CARD=Board,DEV=0"
+    # La placa solo acepta 16 kHz: mpv remuestrea con calidad (evita la voz
+    # "robótica" del remuestreo lineal de ALSA). 0 = no forzar.
+    audio_muestreo: 16000
+    # Volumen de la música (0-100). Más bajo que la voz: con la música fuerte
+    # la placa pedía demasiada corriente y se desconectaba.
+    musica_volumen: 55
+    # Modelo de reconocimiento de voz: fastconformer (NVIDIA, solo español,
+    # ~0.5 s por frase, no inventa texto con ruido) | tiny | base (whisper).
+    # (~4.6 s, pero acierta más: entiende "Lora" donde tiny oye "Laura").
+    stt_modelo: "fastconformer"
 
 moving_control_node:
   ros__parameters:
     carrito_port: "/dev/ttyACM0"
+    # Página para mover el carrito a mano: http://<ip-de-la-pi>:8080/
+    control_web_port: 8080
 
 orchestrator_node:
   ros__parameters:
-    voz_motor: "telefono"           # tiene que coincidir con communication_node.voz_motor -- ver la nota en orchestrator_node.py
-    esperar_telefono_seg: 60
+    voz_motor: "vits"               # tiene que coincidir con communication_node.voz_motor -- ver la nota en orchestrator_node.py

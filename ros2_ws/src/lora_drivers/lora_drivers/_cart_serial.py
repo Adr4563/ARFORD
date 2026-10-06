@@ -2,7 +2,7 @@
 Clients/Carrito_Client.py del proyecto original, sin cambios de protocolo:
 el firmware del ESP32-S3 (carrito-mecanum-esp32/2-l298n-mecanum/
 mecanum_car_esp32s3.ino) NO SE TOCA, sigue esperando exactamente las mismas
-líneas de texto (F/B/SL/SR/RL/RR/S) a 115200 baud por USB.
+líneas de texto (F/B/SL/SR/RL/RR/FL/FR/BL/BR/S) a 115200 baud por USB.
 
 Encapsulado en una clase `CartSerial` (mismo motivo que Voz/Display en
 communication_node/visualization_faces_node): moving_control_node crea el objeto en
@@ -21,7 +21,9 @@ TIMEOUT = 2.0  # cable directo: si no responde rápido, no está conectado/andan
 # calcado del protocolo real, ver lora_interfaces/msg/MotionCommand.msg),
 # esta tabla solo existe para el caso especial ROTATE360 (no es un comando
 # atómico del firmware).
-_COMANDOS_DIRECTOS = {"F", "B", "SL", "SR", "RL", "RR", "S"}
+# FL/FR/BL/BR son las diagonales: el firmware de 2 L298N las entiende, y la
+# página de control manual de moving_control_node las usa.
+_COMANDOS_DIRECTOS = {"F", "B", "SL", "SR", "RL", "RR", "FL", "FR", "BL", "BR", "S"}
 
 
 class CartSerial:
@@ -29,10 +31,14 @@ class CartSerial:
         self.puerto = puerto
         self.logger = logger
         self._conexion = None
+        # El orquestador (por ROS) y la página de control manual escriben
+        # desde hilos distintos: sin el lock, dos comandos podrían mezclarse
+        # en la misma línea del Serial.
+        self._lock = threading.Lock()
 
     def _log(self, msg, warn=True):
         if self.logger is not None:
-            (self.logger.warn if warn else self.logger.info)(msg)
+            (self.logger.warning if warn else self.logger.info)(msg)
         else:
             print(msg)
 
@@ -59,6 +65,10 @@ class CartSerial:
             return None
 
     def _mandar(self, comando):
+        with self._lock:
+            return self._mandar_sin_lock(comando)
+
+    def _mandar_sin_lock(self, comando):
         conexion = self._abrir_puerto()
         if conexion is None:
             return False

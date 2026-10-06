@@ -25,8 +25,10 @@ próximo usuario. Ver _finalizar_sesion() más abajo.
 """
 import difflib
 import random
+import re
 import threading
 import time
+import unicodedata
 
 import rclpy
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -52,7 +54,6 @@ TEMAS_CATALOGO = [
     "Arte, música y cultura - Nivel 1", "Arte, música y cultura - Nivel 2",
     "Arte, música y cultura - Nivel 3", "Arte, música y cultura - Nivel 4",
     "Arte, música y cultura - Nivel 5", "Arte, música y cultura - Nivel 6",
-    "Arte, música y cultura - Nivel 7",
     "Ciencia y naturaleza - Nivel 1", "Ciencia y naturaleza - Nivel 2",
     "Ciencia y naturaleza - Nivel 3", "Ciencia y naturaleza - Nivel 4",
     "Ciencia y naturaleza - Nivel 5", "Ciencia y naturaleza - Nivel 6",
@@ -94,19 +95,26 @@ RESPUESTAS_TRIVIA_ERROR = [
 ]
 
 SALUDOS_APERTURA = [
-    "Hola, mi nombre es Lora, ¿cuál es tu nombre?",
-    "¡Hola! Soy Lora. ¿Y vos cómo te llamás?",
-    "Hola, hola. Soy Lora, tu robot. ¿Quién sos vos?",
-    "¡Buenas! Me llamo Lora. Contame tu nombre.",
+    "Hola, mucho gusto. ¿Cómo te llamas?",
+    "¡Hola! ¿Cómo te llamas?",
+    "Hola, ¿cuál es tu nombre?",
 ]
 DESPEDIDAS = [
     "¡Hasta luego, {nombre}! Que te vaya bien.",
     "Nos vemos, {nombre}. ¡Fue un gusto!",
-    "Listo por hoy, {nombre}. ¡Cuidate!",
-    "¡Chau, {nombre}! Volvé cuando quieras.",
+    "Listo por hoy, {nombre}. ¡Cuídate!",
+    "¡Adiós, {nombre}! Vuelve cuando quieras.",
 ]
 
 PREGUNTAS_POR_TANDA = 5
+
+# Frases para arrancar una tanda de Trivia ({tema}, {n} = PREGUNTAS_POR_TANDA).
+ANUNCIOS_TANDA = [
+    "¡Prepárate! Vamos con {tema}: son {n} preguntas. ¡Listo, comenzamos!",
+    "¡Muy bien! Elegiste {tema}. Te haré {n} preguntas. ¿Preparado? ¡Allá vamos!",
+    "¡Qué buena elección! {tema}, {n} preguntas. Concéntrate… ¡empezamos!",
+    "¡Perfecto! Tema: {tema}. Son {n} preguntas. ¡Tres, dos, uno… comenzamos!",
+]
 PAUSA_CAMBIO_CARA = 4       # segundos en 'content'/veredicto antes de la próxima cara
 PAUSA_ANTES_ACCION_FISICA = 1
 
@@ -129,6 +137,7 @@ _SALIR_TRIVIA = [
     "quiero hacer otra cosa", "vamos a otra cosa",
     "suficiente trivia", "ya fue suficiente",
     "terminemos la trivia", "terminemos el trivia",
+    "no quiero jugar", "no quiero seguir", "no deseo jugar", "no quiero preguntas",
 ]
 _TEMA_PERSONAL = [
     "me paso", "me pasó", "el otro dia", "el otro día",
@@ -146,6 +155,88 @@ _PALABRAS_RESPUESTA_CORTA = 4
 
 RUTAS = ["TRIVIA", "CHAT_LIBRE"]
 
+# Para entrar a Trivia el mensaje tiene que hablar de jugar o de preguntas y no
+# estar negado: el clasificador mandaba a Trivia "¿cómo puedes repetirlo?" y
+# "no quiero jugar, quiero hacer otra cosa" (vio "jugar" e ignoró el "no").
+_PIDE_TRIVIA = ("trivia", "tribia", "jugar", "juego", "juguemos", "jugamos", "pregunta",
+                "preguntame", "pregúntame", "reto", "concurso", "adivin")
+_NIEGA = ("no quiero", "no deseo", "no me gusta", "ya no", "nada de", "otra cosa",
+          "no juego", "no jugar", "sin trivia")
+
+
+def pide_trivia(texto):
+    t = texto.lower()
+    return any(k in t for k in _PIDE_TRIVIA) and not any(n in t for n in _NIEGA)
+
+# Frases con las que la gente se presenta; lo que viene DESPUÉS es el nombre.
+# Van de la más larga a la más corta para que "yo soy" gane a "soy".
+# Sin tildes: se comparan contra el texto ya sin tildes, porque el STT a veces
+# las pone donde no van ("me llamó Adrián").
+_PRESENTACIONES = [
+    "mi nombre es", "me puedes decir", "puedes decirme", "me dicen",
+    "me llaman", "me llamo", "llamame", "dime",
+    "yo soy", "soy",
+]
+# Palabras que no pueden ser el nombre (saludos y relleno del habla), sin tildes.
+_NO_NOMBRE = {
+    "hola", "buenas", "buenos", "dias", "tardes", "noches", "bueno", "bien",
+    "pues", "eh", "este", "mmm", "ah", "oye", "lora", "laura", "yo", "mi",
+    "me", "el", "la", "un", "una", "de", "que", "y", "si", "claro", "gracias",
+    "nombre", "es", "llamo", "no",
+    # palabras comunes que el reconocedor de voz devuelve y no son nombres
+    "cosa", "nada", "madre", "padre", "mama", "papa", "como", "cual", "quien",
+    "para", "por", "con", "del", "los", "las", "tu", "su", "te", "se", "lo", "le",
+}
+
+
+def _sin_tildes(texto):
+    return "".join(c for c in unicodedata.normalize("NFD", texto)
+                   if unicodedata.category(c) != "Mn")
+
+
+def extraer_nombre(texto):
+    """Como analizar_nombre(), pero solo el nombre."""
+    return analizar_nombre(texto)[0]
+
+
+def analizar_nombre(texto):
+    """Devuelve (nombre, seguro). `seguro` es True si vino tras una frase de
+    presentación ("me llamo X", "soy X"); False si es una palabra suelta, que
+    puede ser un error del reconocedor de voz ("historia") y conviene confirmar.
+
+    Saca solo el nombre de una presentación hablada.
+
+    "me llamo Adrián" -> "Adrián", "hola, soy María José" -> "María",
+    "Adrián" -> "Adrián". Devuelve la primera palabra tras la frase de
+    presentación; si no hay ninguna, la primera palabra que no sea un
+    saludo. None si no queda nada que parezca un nombre.
+    """
+    limpio = texto.lower()
+    for signo in "¡!¿?.,;:\"'()":
+        limpio = limpio.replace(signo, " ")
+    palabras = limpio.split()
+    comparables = [_sin_tildes(p) for p in palabras]
+
+    inicio = 0
+    for frase in _PRESENTACIONES:
+        partes = frase.split()
+        for i in range(len(comparables) - len(partes) + 1):
+            if comparables[i:i + len(partes)] == partes:
+                inicio = i + len(partes)
+                break
+        else:
+            continue
+        break
+
+    # Se devuelve la palabra original, con sus tildes ("Adrián").
+    for palabra, comparable in zip(palabras[inicio:], comparables[inicio:]):
+        if comparable not in _NO_NOMBRE and palabra.isalpha() and len(palabra) >= 2:
+            return palabra[0].upper() + palabra[1:], inicio > 0
+    return None, False
+
+
+_SI = {"si", "sí", "correcto", "exacto", "eso", "claro", "ajá", "aja", "sip", "yes"}
+
 
 class OrchestratorNode(Node):
 
@@ -158,7 +249,7 @@ class OrchestratorNode(Node):
         # `voz_motor`; los dos tienen que declararse con el mismo valor por
         # separado (mismo trade-off ya documentado en personalidad.py del
         # proyecto original sobre duplicar un default entre dos módulos).
-        self.declare_parameter('voz_motor', 'telefono')
+        self.declare_parameter('voz_motor', 'piper')
         self.declare_parameter('esperar_telefono_seg', 60)
 
         self._bridge = RosBridge(self)
@@ -284,7 +375,7 @@ class OrchestratorNode(Node):
         cercano = difflib.get_close_matches(texto, catalogo_low, n=1, cutoff=0.5)
         if cercano:
             return TEMAS_CATALOGO[catalogo_low.index(cercano[0])]
-        return random.choice(TEMAS_CATALOGO)
+        return None
 
     @staticmethod
     def _enrutar_mensaje(mensaje_usuario):
@@ -413,14 +504,24 @@ class OrchestratorNode(Node):
         else:
             self._preguntar_siguiente()
 
-    def _manejar_trivia(self, mensaje_usuario, persona_str):
+    def _manejar_trivia(self, mensaje_usuario, persona_str, recien_elegida=False):
+        """`recien_elegida`: el usuario acaba de pedir Trivia desde el chat --
+        Lora lo confirma en voz alta antes de ofrecer los temas."""
         estado = self.estado
 
         if estado["esperando_tema"]:
             estado["esperando_tema"] = False
             tema = self.resolver_tema(mensaje_usuario)
+            if tema is None:
+                # No se entendió el tema (ruido, frase suelta): se vuelve a
+                # preguntar en vez de elegir uno al azar.
+                estado["esperando_tema"] = True
+                repregunta = "No entendí el tema. ¿Me lo repites, por favor?"
+                self.get_logger().info(f"Asistente: {repregunta}")
+                self._bridge.hablar(repregunta)
+                return
             estado["tema_actual"] = tema
-            anuncio = f"Vamos con {tema}. Van {PREGUNTAS_POR_TANDA} preguntas seguidas."
+            anuncio = random.choice(ANUNCIOS_TANDA).format(tema=tema, n=PREGUNTAS_POR_TANDA)
             self.get_logger().info(f"Asistente: {anuncio}")
             self._bridge.hablar(anuncio)
             self._iniciar_tanda(tema, persona_str)
@@ -457,6 +558,8 @@ class OrchestratorNode(Node):
         opciones = ", ".join(random.sample(TEMAS_CATALOGO, 5))
         estado["esperando_tema"] = True
         anuncio = f"Puedes elegir entre: {opciones}."
+        if recien_elegida:
+            anuncio = f"¡Vamos a jugar Trivia! {anuncio}"
         self.get_logger().info(f"Asistente: {anuncio}")
         self._bridge.hablar(anuncio)
 
@@ -513,7 +616,7 @@ class OrchestratorNode(Node):
         self._bridge.mostrar_cara("content")
 
         self.estado = {
-            "esperando_nombre": True,
+            "esperando_nombre": True, "nombre_a_confirmar": None, "intentos_nombre": 0,
             "pregunta_pendiente": None, "esperando_tema": False, "en_trivia": False,
             "cola_preguntas": [], "ya_usados": set(), "aciertos": 0, "total": 0,
             "tema_actual": None, "nombre": None, "musica_ya_sonada": False,
@@ -543,20 +646,81 @@ class OrchestratorNode(Node):
         # original, aunque la suscripción esté en un ReentrantCallbackGroup
         # (necesario para que las llamadas a servicio internas no
         # deadlockeen, ver el docstring del módulo).
-        with self._turno_lock:
+        # Lo que llega mientras Lora está ocupada (hablando, pensando o
+        # moviéndose) se DESCARTA en vez de encolarse: si no, una frase dicha
+        # fuera de turno respondía sola la pregunta siguiente.
+        if not self._turno_lock.acquire(blocking=False):
+            self.get_logger().info(f"[entrada] descartada (Lora ocupada): {msg.text!r}")
+            return
+        try:
             self._procesar_turno((msg.text or "").strip())
+        finally:
+            self._turno_lock.release()
+
+    def _preguntar(self, frase):
+        self.get_logger().info(f"Asistente: {frase}")
+        self._bridge.hablar(frase)
+
+    def _resolver_nombre(self, entrada):
+        """Devuelve el nombre ya decidido, o None si hizo falta preguntar
+        (confirmación o repetición). Tras 3 intentos fallidos usa "amigo"."""
+        estado = self.estado
+        candidato = estado["nombre_a_confirmar"]
+        if candidato is not None:
+            estado["nombre_a_confirmar"] = None
+            texto = entrada.lower().strip(" .,¡!¿?")
+            primera = texto.replace(",", " ").split()[0] if texto else ""
+            if primera in _SI or texto.startswith(("así es", "asi es")):
+                return candidato
+            estado["intentos_nombre"] += 1
+            if "?" in entrada or primera in ("que", "qué", "como", "cómo", "perdon", "perdón"):
+                # No entendió la pregunta ("¿qué cosa?"): se repite.
+                if estado["intentos_nombre"] >= 3:
+                    return "amigo"
+                estado["nombre_a_confirmar"] = candidato
+                self._preguntar(f"Te pregunté si te llamas {candidato}. ¿Sí o no?")
+                return None
+            sin_no = re.sub(r"^\s*no\b[\s,.]*", "", texto)
+            nombre, seguro = analizar_nombre(sin_no)
+            if nombre and nombre.lower() == candidato.lower() and not texto.startswith("no"):
+                return candidato  # repitió el mismo nombre: vale como "sí"
+            if nombre and nombre.lower() != candidato.lower():
+                if seguro:
+                    return nombre  # "no, me llamo Adrián"
+                if estado["intentos_nombre"] < 3:
+                    estado["nombre_a_confirmar"] = nombre  # "no, Adrián": se confirma
+                    self._preguntar(f"¿Te llamas {nombre}?")
+                    return None
+            if estado["intentos_nombre"] >= 3:
+                return "amigo"
+            self._preguntar("Perdón. ¿Cómo te llamas, entonces?")
+            return None
+
+        nombre, seguro = analizar_nombre(entrada)
+        if nombre is None:
+            estado["intentos_nombre"] += 1
+            if estado["intentos_nombre"] >= 3:
+                return "amigo"
+            self._preguntar("No te escuché bien. ¿Cómo te llamas?")
+            return None
+        if seguro:
+            return nombre
+        estado["nombre_a_confirmar"] = nombre
+        self._preguntar(f"¿Te llamas {nombre}?")
+        return None
 
     def _procesar_turno(self, entrada):
         if self.estado is None or not entrada:
             return
 
         if self.estado["esperando_nombre"]:
-            nombre = entrada or "amigo"
+            nombre = self._resolver_nombre(entrada)
+            if nombre is None:
+                return  # se preguntó de nuevo o se pidió confirmación
             self.estado["nombre"] = nombre
             self.estado["esperando_nombre"] = False
             self.estado["persona_str"] = construir_personalidad()
-            bienvenida = (f"Mucho gusto, {nombre}. Podemos jugar Trivia o simplemente charlar "
-                          "-- vos decidís, decime qué querés hacer.")
+            bienvenida = f"Mucho gusto, {nombre}. ¿Quieres jugar Trivia o prefieres charlar?"
             self.get_logger().info(f"Asistente: {bienvenida}")
             self._bridge.hablar(bienvenida)
             self._bridge.mostrar_cara("content")
@@ -572,24 +736,25 @@ class OrchestratorNode(Node):
             pendiente = self.estado["pregunta_pendiente"]
             if self._quiere_salir_trivia(entrada, pendiente["pregunta"] if pendiente else None):
                 self.estado["en_trivia"] = False
+                # Se dice en voz alta: sin respuesta audible el usuario creía
+                # que no lo habían escuchado y lo repetía.
+                aviso = "Listo, dejamos la Trivia. ¿Qué quieres hacer?"
+                self.get_logger().info(f"Asistente: {aviso}")
+                self._bridge.hablar(aviso)
                 self._bridge.mostrar_cara("content")
-                # Igual que el original: este aviso queda solo en el log,
-                # no se dice en voz alta -- se porta tal cual, sin "corregir"
-                # esa asimetría acá.
-                self.get_logger().info(
-                    "Asistente: Listo, dejamos la trivia pausada — la "
-                    "retomamos cuando quieras. ¿Qué tienes en mente?")
                 return
             self._manejar_trivia(entrada, persona_str)
             return
 
         ruta = self._enrutar_mensaje(entrada)
+        if ruta == "TRIVIA" and not pide_trivia(entrada):
+            ruta = "CHAT_LIBRE"
         if ruta == "TRIVIA":
             self.estado["en_trivia"] = True
             if self.estado["pregunta_pendiente"] is not None or self.estado["esperando_tema"]:
                 self._reanudar_trivia()
             else:
-                self._manejar_trivia(entrada, persona_str)
+                self._manejar_trivia(entrada, persona_str, recien_elegida=True)
         else:
             self._manejar_chat_libre(entrada, persona_str)
 

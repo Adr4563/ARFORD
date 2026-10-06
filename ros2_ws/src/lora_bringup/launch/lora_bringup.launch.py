@@ -55,10 +55,10 @@ def generate_launch_description():
         get_package_share_directory('lora_bringup'), 'config', 'lora_params.yaml')
 
     args = [
-        DeclareLaunchArgument('voz_motor', default_value='telefono',
-                               description='telefono | piper | edge -- ver communication_node'),
+        DeclareLaunchArgument('voz_motor', default_value='vits',
+                               description='vits | piper | edge -- ver communication_node'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
-        DeclareLaunchArgument('chat_model', default_value='lora-chat-libre-v4'),
+        DeclareLaunchArgument('chat_model', default_value='lora-chat-libre-v6'),
         DeclareLaunchArgument('trivia_model', default_value='lora-trivia'),
         DeclareLaunchArgument('salida_trivia_model', default_value='lora-salida-trivia-v2'),
         DeclareLaunchArgument('chat_server_host', default_value='http://localhost:11434'),

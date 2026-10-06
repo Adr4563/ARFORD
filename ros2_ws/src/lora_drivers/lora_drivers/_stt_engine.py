@@ -87,6 +87,11 @@ IDIOMA = os.environ.get("LORA_STT_IDIOMA", "es")
 
 SAMPLE_RATE = 16000
 
+# Si se define, cada frase que oye el micrófono se guarda como WAV en esta
+# carpeta (nombre: hora + texto transcrito). Sirve para comparar modelos de
+# reconocimiento con la voz real del usuario captada por la placa.
+GUARDAR_FRASES = os.environ.get("LORA_STT_GUARDAR", "")
+
 
 class ReconocedorVoz:
     """Convierte audio en texto. Se carga perezosamente en el primer uso."""
@@ -106,6 +111,16 @@ class ReconocedorVoz:
     # ------------------------------------------------------------------ carga
 
     def _rutas(self):
+        if self.tam == "fastconformer":
+            base = os.path.join(self.modelos_dir, "asr",
+                                "sherpa-onnx-nemo-fast-conformer-transducer-es-1424-int8")
+            return {
+                "encoder": os.path.join(base, "encoder.int8.onnx"),
+                "decoder": os.path.join(base, "decoder.int8.onnx"),
+                "joiner": os.path.join(base, "joiner.int8.onnx"),
+                "tokens": os.path.join(base, "tokens.txt"),
+                "vad": os.path.join(self.modelos_dir, "silero_vad.onnx"),
+            }
         base = os.path.join(self.modelos_dir, f"sherpa-onnx-whisper-{self.tam}")
         return {
             "encoder": os.path.join(base, f"{self.tam}-encoder.int8.onnx"),
@@ -140,7 +155,26 @@ class ReconocedorVoz:
 
         t0 = time.perf_counter()
         try:
-            self._recognizer = sherpa_onnx.OfflineRecognizer.from_whisper(
+            if self.tam == "fastconformer":
+                # NVIDIA NeMo FastConformer Transducer, entrenado solo en
+                # español. Comparado con la voz real captada por la placa:
+                # 4-5x más rápido que whisper-base (0.5 s por frase corta) y NO
+                # inventa texto con ruido (whisper devolvía "(Música)",
+                # "Thank you"...). Se equivoca un poco más en algunas palabras.
+                self._recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+                    encoder=rutas["encoder"], decoder=rutas["decoder"],
+                    joiner=rutas["joiner"], tokens=rutas["tokens"],
+                    model_type="nemo_transducer", num_threads=self.hilos)
+            else:
+                self._recognizer = self._whisper(sherpa_onnx, rutas)
+        except Exception as e:  # noqa: BLE001 - falla gracioso, no tumbar el nodo
+            print(f"[STT] no se pudo cargar el modelo: {e}")
+            self._intento_fallido = True
+            return False
+        return self._terminar_carga(sherpa_onnx, rutas, t0)
+
+    def _whisper(self, sherpa_onnx, rutas):
+        return sherpa_onnx.OfflineRecognizer.from_whisper(
                 encoder=rutas["encoder"],
                 decoder=rutas["decoder"],
                 tokens=rutas["tokens"],
@@ -149,11 +183,8 @@ class ReconocedorVoz:
                 language=self.idioma,
                 task="transcribe",
             )
-        except Exception as e:  # noqa: BLE001 - falla gracioso, no tumbar el nodo
-            print(f"[STT] no se pudo cargar el modelo: {e}")
-            self._intento_fallido = True
-            return False
 
+    def _terminar_carga(self, sherpa_onnx, rutas, t0):
         # El VAD es opcional: solo hace falta para escuchar del micrófono en
         # continuo. Si no está, transcribir() sigue funcionando igual.
         if os.path.exists(rutas["vad"]):
@@ -170,7 +201,7 @@ class ReconocedorVoz:
 
         self.segundos_carga = time.perf_counter() - t0
         print(
-            f"[STT] modelo whisper-{self.tam} listo en {self.segundos_carga:.1f}s "
+            f"[STT] modelo {self.tam} listo en {self.segundos_carga:.1f}s "
             f"({self.hilos} hilos, idioma={self.idioma})"
         )
         return True
@@ -232,6 +263,24 @@ class ReconocedorVoz:
             print(f"[STT] fallo al transcribir: {e}")
             return ""
 
+    def _guardar_frase(self, muestras, texto):
+        try:
+            import re
+            import wave
+
+            import numpy as np
+
+            os.makedirs(GUARDAR_FRASES, exist_ok=True)
+            nombre = time.strftime("%H%M%S") + "_" + re.sub(r"[^\w]+", "_", texto)[:40] + ".wav"
+            pcm = (np.clip(np.asarray(muestras, dtype=np.float32), -1, 1) * 32767).astype(np.int16)
+            with wave.open(os.path.join(GUARDAR_FRASES, nombre), "wb") as w:
+                w.setnchannels(1)
+                w.setsampwidth(2)
+                w.setframerate(SAMPLE_RATE)
+                w.writeframes(pcm.tobytes())
+        except Exception as e:  # noqa: BLE001 - nunca romper la escucha por esto
+            print(f"[STT] no se pudo guardar la frase: {e}")
+
     def transcribir_wav(self, ruta):
         """Transcribe un archivo WAV mono. Útil para pruebas y para el bench."""
         try:
@@ -253,7 +302,7 @@ class ReconocedorVoz:
 
     # -------------------------------------------------------------- micrófono
 
-    def escuchar(self, al_transcribir, detener=None, dispositivo=None):
+    def escuchar(self, al_transcribir, detener=None, dispositivo=None, pausado=None):
         """Escucha el micrófono y llama `al_transcribir(texto)` por cada frase.
 
         Corta las frases con el VAD (silencio de 0.25s), así que no hace falta
@@ -261,6 +310,20 @@ class ReconocedorVoz:
 
         `detener` es un callable opcional que devuelve True para salir del
         bucle -- pensado para que el nodo lo apague en `on_deactivate`.
+
+        `pausado` es un callable opcional: mientras devuelva True el audio se
+        lee y se DESCARTA, y el VAD se vacía. Sirve para que Lora no se
+        escuche a sí misma cuando habla o suena música por el mismo parlante
+        de la placa.
+
+        `dispositivo` es un nombre ALSA (p. ej. "plughw:CARD=Board,DEV=0");
+        None usa el de por defecto.
+
+        El audio se lee con `arecord` y no con sounddevice: en la Pi,
+        PortAudio intenta conectarse a PulseAudio al inicializar y falla
+        cuando el proceso corre sin sesión gráfica (por SSH o desde el
+        launch), y ni siquiera llega a abrir ALSA. `arecord` va directo a
+        ALSA, que es lo mismo que usa `lora.sh micro`.
 
         Esta función BLOQUEA. El llamador la corre en su propio hilo.
         """
@@ -270,43 +333,68 @@ class ReconocedorVoz:
             print("[STT] falta silero_vad.onnx; no se puede escuchar en continuo")
             return
 
-        try:
-            import numpy as np
-            import sounddevice as sd
-        except ImportError:
-            print("[STT] falta sounddevice (pip install sounddevice)")
-            return
+        import subprocess
+
+        import numpy as np
+
+        cmd = ["arecord", "-q", "-t", "raw", "-f", "S16_LE",
+               "-r", str(SAMPLE_RATE), "-c", "1"]
+        if dispositivo:
+            cmd += ["-D", dispositivo]
 
         ventana = 512  # tamaño de ventana que espera silero
+        bytes_bloque = int(0.1 * SAMPLE_RATE) * 2  # 100 ms de S16 mono
         buffer = np.array([], dtype="float32")
+        estaba_pausado = False
 
         try:
-            with sd.InputStream(
-                channels=1,
-                dtype="float32",
-                samplerate=SAMPLE_RATE,
-                device=dispositivo,
-            ) as mic:
-                print("[STT] escuchando...")
-                while True:
-                    if detener is not None and detener():
-                        break
+            mic = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except FileNotFoundError:
+            print("[STT] falta arecord (sudo apt install alsa-utils)")
+            return
 
-                    bloque, _ = mic.read(int(0.1 * SAMPLE_RATE))
-                    buffer = np.concatenate([buffer, bloque.reshape(-1)])
+        try:
+            print(f"[STT] escuchando en {dispositivo or 'el micrófono por defecto'}...")
+            while True:
+                if detener is not None and detener():
+                    break
 
-                    while len(buffer) > ventana:
-                        self._vad.accept_waveform(buffer[:ventana])
-                        buffer = buffer[ventana:]
+                crudo = mic.stdout.read(bytes_bloque)
+                if not crudo:
+                    error = mic.stderr.read().decode(errors="replace").strip()
+                    print(f"[STT] el micrófono se cerró: {error or 'sin detalle'}")
+                    break
 
-                    while not self._vad.empty():
-                        frase = self._vad.front.samples
-                        self._vad.pop()
-                        texto = self.transcribir(frase)
-                        if texto:
-                            al_transcribir(texto)
+                if pausado is not None and pausado():
+                    if not estaba_pausado:
+                        self._vad.reset()
+                        buffer = np.array([], dtype="float32")
+                        estaba_pausado = True
+                    continue
+                estaba_pausado = False
+
+                bloque = np.frombuffer(crudo, dtype=np.int16).astype("float32") / 32768.0
+                buffer = np.concatenate([buffer, bloque])
+
+                while len(buffer) > ventana:
+                    self._vad.accept_waveform(buffer[:ventana])
+                    buffer = buffer[ventana:]
+
+                while not self._vad.empty():
+                    frase = self._vad.front.samples
+                    self._vad.pop()
+                    texto = self.transcribir(frase)
+                    if GUARDAR_FRASES:
+                        self._guardar_frase(frase, texto)
+                    # Si Lora empezó a hablar mientras se transcribía, la
+                    # frase puede ser su propia voz: se descarta.
+                    if texto and not (pausado is not None and pausado()):
+                        al_transcribir(texto)
         except Exception as e:  # noqa: BLE001
             print(f"[STT] el micrófono falló: {e}")
+        finally:
+            mic.kill()
+            mic.wait()
 
 
 # Instancia compartida, igual que el patrón de los Clients del proyecto
