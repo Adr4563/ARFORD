@@ -61,7 +61,28 @@ class CommunicationNode(LifecycleNode):
     def __init__(self):
         super().__init__('communication_node')
 
+        # --- Voz de salida (GLaDOS por VITS/sherpa-onnx, o Piper) ---
+        self.declare_parameter('voz_motor', 'vits')      # vits | piper
         self.declare_parameter('voz_piper_modelo', '')
+        # Ajustes del motor vits, todos elegidos DE OÍDO en la placa (ver
+        # voces/README.md y la nota de romeo_params.yaml): es la "versión
+        # 40" de GLaDOS en español.
+        self.declare_parameter('voz_vits_dir', '')
+        self.declare_parameter('voz_vits_ruido', 0.667)
+        self.declare_parameter('voz_vits_ruido_w', 0.5)
+        self.declare_parameter('voz_vits_duracion', 1.15)
+        self.declare_parameter('voz_tono_semitonos', 1.5)
+        self.declare_parameter('voz_volumen', 70)
+        # Salida de audio: el parlante de la placa ESP32-S3. Vacío = la
+        # salida por defecto de la Pi. La placa solo acepta 16 kHz, así que
+        # se le fuerza el remuestreo a mpv -- si lo hace el `plughw` de
+        # ALSA (lineal, sin filtro) la voz suena metálica, "robótica".
+        self.declare_parameter('audio_salida', '')
+        self.declare_parameter('audio_muestreo', 0)
+        # Volumen de la música, más bajo que la voz a propósito: con la
+        # música fuerte la placa pedía demasiada corriente y se
+        # desconectaba.
+        self.declare_parameter('musica_volumen', 55)
 
         # Entrada de voz por el micrófono de la placa ESP32-S3 (tarjeta de
         # sonido USB). `mic_activo=False` apaga el STT y deja solo el
@@ -112,8 +133,20 @@ class CommunicationNode(LifecycleNode):
     def on_configure(self, state):
         self.get_logger().info('[communication_node] configurando...')
 
-        modelo_piper = self.get_parameter('voz_piper_modelo').value or None
-        self._voz = Voz(modelo_piper=modelo_piper, logger=self.get_logger())
+        self._voz = Voz(
+            motor=self.get_parameter('voz_motor').value,
+            modelo_piper=self.get_parameter('voz_piper_modelo').value or None,
+            logger=self.get_logger(),
+            audio_salida=self.get_parameter('audio_salida').value,
+            audio_muestreo=self.get_parameter('audio_muestreo').value,
+            volumen=self.get_parameter('voz_volumen').value,
+            vits={
+                'dir': self.get_parameter('voz_vits_dir').value,
+                'ruido': self.get_parameter('voz_vits_ruido').value,
+                'ruido_w': self.get_parameter('voz_vits_ruido_w').value,
+                'duracion': self.get_parameter('voz_vits_duracion').value,
+                'tono': self.get_parameter('voz_tono_semitonos').value,
+            })
 
         # El modelo NO se carga acá: ReconocedorVoz es perezoso a propósito
         # (carga en el primer uso), y on_configure no debe tocar hardware ni
@@ -276,13 +309,18 @@ class CommunicationNode(LifecycleNode):
         # saber cuándo bajar el gate, y justo lo que se quiere ahí es no
         # bloquear el turno. Es una limitación conocida -- la música de
         # fondo puede colarse en el micrófono.
+        audio = dict(
+            audio_salida=self.get_parameter('audio_salida').value,
+            audio_muestreo=self.get_parameter('audio_muestreo').value,
+            volumen=self.get_parameter('musica_volumen').value,
+        )
         if request.esperar:
             with self._mientras_suena():
                 response.reproducido = _music_player.reproducir(
-                    request.filename, esperar=True, logger=self.get_logger())
+                    request.filename, esperar=True, logger=self.get_logger(), **audio)
         else:
             response.reproducido = _music_player.reproducir(
-                request.filename, esperar=False, logger=self.get_logger())
+                request.filename, esperar=False, logger=self.get_logger(), **audio)
         return response
 
 

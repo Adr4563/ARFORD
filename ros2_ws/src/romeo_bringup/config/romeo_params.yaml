@@ -7,8 +7,32 @@
 
 communication_node:
   ros__parameters:
-    # --- Voz de salida (Piper local, altavoz de la placa ESP32-S3) ---
-    voz_piper_modelo: ""           # vacío = default de _voice_backends.py (~/piper-voces/es_MX-claude-high.onnx)
+    # --- Voz de salida (altavoz de la placa ESP32-S3) ---
+    voz_motor: "vits"              # vits | piper
+    voz_piper_modelo: ""           # solo con voz_motor: piper. Vacío = ~/piper-voces/es_CO-dii.onnx
+    # LA VOZ DE ROMEO: GLaDOS en español (modelo Piper cargado con
+    # sherpa-onnx). Todos estos valores se eligieron DE OÍDO en la placa
+    # -- es la "versión 40": ajustes de fábrica del modelo, un poco más
+    # pausada y +1.5 semitonos. Ver voces/README.md para la comparativa.
+    voz_vits_dir: "/home/pi/.romeo/modelos/vits-piper-es_ES-glados-medium"
+    voz_vits_ruido: 0.667
+    voz_vits_ruido_w: 0.5          # ritmo fijo: con 0.8 cada frase salía distinta
+    voz_vits_duracion: 1.15
+    voz_tono_semitonos: 1.5
+    voz_volumen: 70                # volumen de la voz (0-100); 100 = sin atenuar
+
+    # --- Salida de audio: el parlante de la placa ESP32-S3 ---
+    # La placa es una tarjeta de sonido USB. OJO con el nombre: es "Board"
+    # (de "Lora Audio Board"), el que reporta la placa YA FLASHEADA -- ver
+    # la nota de mic_dispositivo más abajo. Vacío = salida por defecto.
+    audio_salida: "alsa/plughw:CARD=Board,DEV=0"
+    # La placa solo acepta 16 kHz: se le fuerza el remuestreo a mpv, que lo
+    # hace con filtro de calidad. Si lo hace el `plughw` de ALSA (lineal,
+    # sin filtro) la voz suena metálica. 0 = no forzar.
+    audio_muestreo: 16000
+    # Volumen de la música (0-100), más bajo que la voz a propósito: con la
+    # música fuerte la placa pedía demasiada corriente y se desconectaba.
+    musica_volumen: 55
 
     # --- Voz de entrada (micrófono de la placa ESP32-S3, STT local) ---
     # OJO: hoy el micrófono de la placa entrega ceros por un bug de

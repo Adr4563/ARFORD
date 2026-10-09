@@ -14,6 +14,8 @@ import subprocess
 
 from ament_index_python.packages import get_package_share_directory
 
+from ._audio_salida import opciones_mpv
+
 MUSICA_DIR = os.path.join(get_package_share_directory('romeo_drivers'), 'musica')
 REPRODUCCION_MAX_SEG = 20
 
@@ -24,7 +26,8 @@ REPRODUCCION_MAX_SEG = 20
 _TIMEOUT_ESPERA_SEG = REPRODUCCION_MAX_SEG + 10
 
 
-def reproducir(nombre_archivo, esperar=False, logger=None):
+def reproducir(nombre_archivo, esperar=False, logger=None, audio_salida=None,
+               audio_muestreo=0, volumen=100):
     """Reproduce un archivo de musica/ recortado a REPRODUCCION_MAX_SEG.
 
     `esperar=False` (default): lanza mpv y vuelve enseguida -- la música
@@ -39,7 +42,13 @@ def reproducir(nombre_archivo, esperar=False, logger=None):
     Devuelve True si se llegó a reproducir, False si no había archivo o no
     está mpv. `logger`: el logger del nodo ROS2 (node.get_logger()) -- se
     usa en vez de print() para que quede en el log estándar de ROS2, mismo
-    criterio del resto de los módulos portados."""
+    criterio del resto de los módulos portados.
+
+    `audio_salida` y `audio_muestreo`: ver _audio_salida.opciones_mpv() --
+    sacan la música por el parlante de la placa ESP32-S3 al muestreo que
+    esa placa acepta. `volumen`: 0-100, más bajo que el de la voz a
+    propósito (con la música fuerte la placa pedía demasiada corriente y se
+    desconectaba)."""
     def _log(msg):
         if logger is not None:
             logger.warning(msg)
@@ -50,8 +59,9 @@ def reproducir(nombre_archivo, esperar=False, logger=None):
     if not os.path.isfile(ruta):
         _log(f"[música] no existe {ruta}, no se reproduce")
         return False
-    cmd = ["mpv", "--no-video", f"--length={REPRODUCCION_MAX_SEG}",
-           "--really-quiet", ruta]
+    cmd = (["mpv", "--no-video", f"--length={REPRODUCCION_MAX_SEG}", "--really-quiet"]
+           + opciones_mpv(audio_salida, audio_muestreo)
+           + [f"--volume={volumen}", ruta])
     try:
         if not esperar:
             subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
