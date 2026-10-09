@@ -1,8 +1,8 @@
-# Workspace ROS 2 Jazzy de ARFORD
+# Workspace ROS 2 de ARFORD
 
 Documentación técnica de los 4 paquetes ROS 2 del robot ARFORD. Para saber qué es ARFORD, su hardware, los modelos de IA y los datos que usa, ver el [README principal](../README.md).
 
-> **Estado:** escrito y verificado en una máquina **sin ROS 2 instalado**. La sintaxis de cada `.py` pasa `python -m py_compile` y cada paquete tiene la estructura que exige `colcon` (`package.xml`, `setup.py` o `CMakeLists.txt`, `resource/<paquete>`, `entry_points`). **Todavía no se ha corrido `colcon build` ni `ros2 launch`.** Antes de darlo por funcional hay que seguir la sección [Verificación](#verificación) en la Raspberry Pi (o en WSL2 con ROS 2 Jazzy).
+> **Estado:** escrito y verificado en una máquina **sin ROS 2 instalado**. La sintaxis de cada `.py` pasa `python -m py_compile` y cada paquete tiene la estructura que exige `colcon` (`package.xml`, `setup.py` o `CMakeLists.txt`, `resource/<paquete>`, `entry_points`). **Todavía no se ha corrido `colcon build` ni `ros2 launch`.** Antes de darlo por funcional hay que seguir la sección [Verificación](#verificación) en la Raspberry Pi, que corre **ROS 2 lyrical** sobre Ubuntu.
 
 ---
 
@@ -203,7 +203,7 @@ wget https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_v
 
 ## Instalación y ejecución
 
-Requisitos: Raspberry Pi OS (o Ubuntu 24.04 / WSL2) con **ROS 2 Jazzy**, `mpv` y **Ollama**. Todos los comandos se ejecutan desde la carpeta `ros2_ws`.
+Requisitos: la Pi del robot corre **Ubuntu con ROS 2 lyrical** (`source /opt/ros/lyrical/setup.bash`); en otra máquina sirve cualquier ROS 2 reciente. Además `mpv` y **Ollama**. Todos los comandos se ejecutan desde la carpeta `ros2_ws`.
 
 ```bash
 # 1. Dependencias del sistema y de Python

@@ -32,18 +32,14 @@ MPV_SOCKET = "/tmp/romeo_face.sock"
 
 
 class Display:
-    def __init__(self, logger=None, conector=None):
+    def __init__(self, logger=None):
         self.logger = logger
-        # conector: qué salida de vídeo usa el backend DRM. En una Pi 4,
-        # "HDMI-A-1" es HDMI0 (el puerto pegado al USB-C) y "HDMI-A-2" es
-        # HDMI1. None = que mpv elija el primer conector habilitado, que es
-        # el comportamiento de siempre.
-        #
-        # Esto NO toca el arranque: `video=HDMI-A-1:e` en
-        # /boot/firmware/cmdline.txt sigue decidiendo por dónde sale la
-        # consola del sistema. Acá solo se elige por dónde salen las caras
-        # del robot, sin reiniciar la Pi.
-        self.conector = (conector or '').strip() or None
+        # La salida de vídeo NO se elige acá: la decide el arranque de la
+        # Pi con `video=HDMI-A-2:e video=HDMI-A-1:e` en
+        # /boot/firmware/current/cmdline.txt, que habilita los dos puertos
+        # y deja que el kernel negocie el modo por EDID. mpv pinta en el
+        # conector que haya quedado activo, así que la pantalla funciona en
+        # HDMI0 o en HDMI1 sin tocar este archivo ni relanzar el nodo.
         self.faces_dir = os.path.join(get_package_share_directory('romeo_drivers'), 'faces')
         self.viewer_script = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'face_viewer.py')

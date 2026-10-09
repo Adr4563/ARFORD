@@ -8,7 +8,7 @@
 
 Su objetivo es ofrecer una interacción predecible, breve y motivadora: conversa (**Chat libre**) y juega **Trivia** por voz o texto, con una carita animada que expresa emociones, música, movimiento sobre un carrito mecanum y un juego de reconocimiento e imitación de emociones por cámara que ayuda a practicar la identificación de expresiones faciales.
 
-Este repositorio contiene la versión **ROS 2 Jazzy** del robot: 4 paquetes que reemplazan al proceso Python monolítico original ([`Arquitecture-Agentic-RAG/deploy-raspberry-standalone/`](https://github.com/Adr4563/Arquitecture-Agentic-RAG)). La documentación técnica del workspace (nodos, tópicos, configuración, compilación y ejecución) está en **[`ros2_ws/README.md`](ros2_ws/README.md)**.
+Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reemplazan al proceso Python monolítico original ([`Arquitecture-Agentic-RAG/deploy-raspberry-standalone/`](https://github.com/Adr4563/Arquitecture-Agentic-RAG)). La documentación técnica del workspace (nodos, tópicos, configuración, compilación y ejecución) está en **[`ros2_ws/README.md`](ros2_ws/README.md)**.
 
 ---
 
@@ -144,7 +144,7 @@ La transcripción la hace el **navegador del teléfono** (`SpeechRecognition`). 
 ```
 Socially-Friendly-Robot-Romeo-Astro/
 ├── README.md              este archivo: qué es ARFORD, hardware, IA y datos
-├── ros2_ws/               workspace ROS 2 Jazzy (el software del robot)
+├── ros2_ws/               workspace ROS 2 (el software del robot)
 │   ├── README.md          documentación técnica del workspace
 │   └── src/
 │       ├── romeo_interfaces/   mensajes y servicios
@@ -162,7 +162,7 @@ La **placa de audio** es una Waveshare ESP32-S3-AUDIO-Board que aporta los micr�
 
 ## Inicio rápido
 
-Requisitos: Raspberry Pi OS (o Ubuntu 24.04 / WSL2) con **ROS 2 Jazzy**, `mpv` y **Ollama** con los 3 modelos importados.
+Requisitos: la Raspberry Pi del robot corre **Ubuntu con ROS 2 lyrical**; también vale cualquier distro de ROS 2 reciente (Jazzy o posterior) en otra máquina o WSL2. Además `mpv` y **Ollama** con los 3 modelos importados.
 
 ```bash
 cd ros2_ws

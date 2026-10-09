@@ -45,15 +45,24 @@ class MovingControlNode(LifecycleNode):
     def on_deactivate(self, state):
         self.get_logger().info('[moving_control_node] desactivando...')
         self._activo = False
+        # Parar el carrito ANTES de quedarse inactivo: el firmware mantiene
+        # el último comando indefinidamente, así que un nodo que se
+        # desactiva justo después de un "F" dejaría el robot andando.
+        if self._cart is not None:
+            self._cart.detener()
         return super().on_deactivate(state)
 
     def on_cleanup(self, state):
         self._activo = False
+        if self._cart is not None:
+            self._cart.detener()
         self._cart = None
         return TransitionCallbackReturn.SUCCESS
 
     def on_shutdown(self, state):
         self._activo = False
+        if self._cart is not None:
+            self._cart.detener()
         return TransitionCallbackReturn.SUCCESS
 
     def _cb_motion_command(self, msg):
