@@ -31,8 +31,8 @@ Así no hace falta pulsar ningún botón.
 
 USO
 ---
-    ~/.lora/venv/bin/python atrapar_rom.py restaurar   # vuelve a Xiaozhi
-    ~/.lora/venv/bin/python atrapar_rom.py grabar      # firmware corregido
+    ~/.romeo/venv/bin/python atrapar_rom.py restaurar   # vuelve a Xiaozhi
+    ~/.romeo/venv/bin/python atrapar_rom.py grabar      # firmware corregido
 """
 
 import os
@@ -92,7 +92,7 @@ def argumentos(modo):
     return comun + [
         "0x0", os.path.join(CONSTRUCCION, "bootloader", "bootloader.bin"),
         "0x8000", os.path.join(CONSTRUCCION, "partition_table", "partition-table.bin"),
-        "0x10000", os.path.join(CONSTRUCCION, "lora_audio_board.bin"),
+        "0x10000", os.path.join(CONSTRUCCION, "romeo_audio_board.bin"),
     ]
 
 

@@ -4,15 +4,13 @@ Firmware que convierte la **Waveshare ESP32-S3-AUDIO-Board** en una **tarjeta de
 
 Con esto, la placa aporta el hardware que a ARFORD le faltaba —micrófonos y altavoz— y la Pi la ve como un dispositivo de audio más, sin protocolos propios ni nada por red.
 
-> **Estado: compilado, grabado y funcionando a medias.**
+> **Estado: funcionando.** Verificado en la Pi el 4 de octubre de 2026.
 >
-> - ✅ La Raspberry Pi la reconoce como tarjeta de sonido: `card 3: Lora Audio Board`, visible en `arecord -l` y en `aplay -l`. El USB cambió de identidad, de `303a:1001` (puerto serie) a `303a:8000` (audio).
-
-> **El nombre USB sigue siendo `Lora Audio Board`**, no ARFORD: lo fija `CONFIG_UAC_TUSB_PRODUCT` en `sdkconfig.defaults` y es lo que la placa ya flasheada reporta. Los comandos de este README usan `plughw:CARD=Lora` por eso. Cambiarlo requiere editar ese valor y **reflashear**, así que se deja como está hasta que haya otro motivo para volver a grabar la placa.
+> - ✅ La Raspberry Pi la reconoce como tarjeta de sonido: `card 1: Lora Audio Board`, visible en `arecord -l` y en `aplay -l`. El USB cambió de identidad, de `303a:1001` (puerto serie) a `303a:8000` (audio).
+> - ✅ **Micrófono:** entrega señal real — RMS 148.6, pico 738 sobre 48.000 muestras. El STT de la Pi transcribe en 1.57 s con ella. La señal es **floja** (hay que amplificarla ~20× antes de pasarla a whisper), así que conviene hablarle de cerca.
 > - ⚠️ **Altavoz:** `aplay` reproduce sin errores, pero no está confirmado de oído.
-> - ❌ **Micrófono:** entrega **silencio digital exacto** (RMS 0.0, pico 0 sobre 80.000 muestras). No es ruido bajo: son ceros.
->
-> Ver [Estado y riesgos](#estado-y-riesgos) para el diagnóstico en curso.
+
+> **El nombre USB sigue siendo `Lora Audio Board`**, aunque el robot ahora se llame Romeo: lo fija `CONFIG_UAC_TUSB_PRODUCT` en `sdkconfig.defaults`, y la placa **ya flasheada** sigue reportando el valor viejo. El `sdkconfig.defaults` de este repo ya dice `Romeo Audio Board`, pero eso solo tendrá efecto al reflashear (modo BOOT, ver más abajo). Hasta entonces, los comandos de este README y el parámetro `mic_dispositivo` tienen que usar `Lora`.
 
 ---
 
@@ -28,7 +26,7 @@ Se evaluaron tres caminos:
 | Protocolo propio por puerto serie | ❌ Hay que inventar y mantener el protocolo a los dos lados |
 | **Tarjeta de sonido USB (UAC)** | ✅ **Elegido.** La Pi la trata como audio estándar: `arecord` y `aplay` funcionan sin escribir nada |
 
-La ventaja decisiva del UAC es que el STT que ya funciona en la Pi (`lora_drivers/_stt_engine.py`, whisper-tiny a 2.45 s por frase) recibe el audio **sin ningún cambio**: para él es un micrófono normal del sistema.
+La ventaja decisiva del UAC es que el STT que ya funciona en la Pi (`romeo_drivers/_stt_engine.py`, whisper-tiny a 2.45 s por frase) recibe el audio **sin ningún cambio**: para él es un micrófono normal del sistema.
 
 ---
 
@@ -119,7 +117,7 @@ aplay -l        # y como reproducción
 
 # Grabar 5 segundos y transcribir con el STT que ya está montado
 arecord -D plughw:CARD=Lora -f S16_LE -r 16000 -c 1 -d 5 /tmp/prueba.wav
-~/.lora/venv/bin/python ~/lora-stt/scripts/bench_stt.py --wav /tmp/prueba.wav
+~/.romeo/venv/bin/python ~/romeo-stt/scripts/bench_stt.py --wav /tmp/prueba.wav
 ```
 
 Si `arecord -l` no muestra nada, el firmware no está enumerando como UAC: mirar la salida de `idf.py monitor`.
@@ -138,7 +136,7 @@ md5: a217bc9cecac925846bd26ca81574b86
 Para restaurarlo:
 
 ```bash
-~/.lora/venv/bin/esptool --port /dev/ttyACM0 --baud 921600 \
+~/.romeo/venv/bin/esptool --port /dev/ttyACM0 --baud 921600 \
     write-flash 0x0 ~/xiaozhi-firmware-backup.bin
 ```
 
@@ -158,14 +156,16 @@ Los cuatro se descubrieron compilando y grabando, no leyendo documentación. Que
    El TCA9555 es la excepción: se maneja con la API cruda de IDF, que usa 7 bits sin desplazar.
 4. **`set_mute_cb` y `set_volume_cb` devuelven `void`**, no `esp_err_t`.
 
-### Lo que sigue abierto: el micrófono da silencio
+### Resuelto: el micrófono ya entrega señal
 
-El altavoz, el I2C, el expansor y los relojes I2S funcionan. El micrófono devuelve ceros exactos, sin ningún error en el log. Dos hipótesis:
+Durante un tiempo el micrófono devolvía **ceros exactos** (RMS 0.0), sin un solo error en el log. Las dos hipótesis que se barajaban eran:
 
-- **DIN y DOUT intercambiados.** El diagrama de Waveshare dice `GPIO15 = DOUT` y `GPIO16 = DIN`; una fuente de la comunidad lo dice al revés.
+- **DIN y DOUT intercambiados.** El diagrama de Waveshare dice `GPIO15 = DOUT` y `GPIO16 = DIN`; una fuente de la comunidad lo dice al revés (y es la que usa este firmware: `DIN=15` / `DOUT=16`).
 - **TDM contra I2S estándar.** El firmware de fábrica configuraba el ES7210 en **TDM de 4 canales** (`MIC1`–`MIC4`); aquí está en Philips estéreo con 2 micrófonos.
 
-Para decidirlo con datos en vez de a base de grabar a ciegas existe la **compilación de diagnóstico** (`sdkconfig.diag` + `LORA_MODO_DIAG`), que no activa el USB de audio —así conserva el puerto serie y sus logs— y mide el nivel de señal en las cuatro combinaciones posibles.
+Medido en la Pi el 4 de octubre de 2026, el micrófono **entrega señal real** (RMS 148.6, pico 738) y el STT transcribe con ella, así que el mapeo `DIN=15`/`DOUT=16` con Philips estéreo es el correcto. Queda sin aclarar por qué antes daba ceros: puede haber sido un cable o una placa sin reflashear.
+
+Si vuelve a dar silencio, sigue disponible la **compilación de diagnóstico** (`sdkconfig.diag` + `ROMEO_MODO_DIAG`), que no activa el USB de audio —así conserva el puerto serie y sus logs— y mide el nivel de señal en las cuatro combinaciones posibles.
 
 ### Al grabar se pierde el acceso por USB
 
@@ -179,7 +179,7 @@ Cuando TinyUSB toma el bus, la placa deja de exponer puerto serie: las tres inte
 
 | Archivo | Qué es |
 |---|---|
-| `main/lora_audio_main.c` | El firmware |
+| `main/romeo_audio_main.c` | El firmware |
 | `main/idf_component.yml` | Dependencias (`usb_device_uac`, `esp_codec_dev`) |
 | `main/CMakeLists.txt` | Componente principal |
 | `CMakeLists.txt` | Proyecto |

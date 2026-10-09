@@ -1,4 +1,4 @@
-# Valores por defecto del firmware de la placa de audio de Lora.
+# Valores por defecto del firmware de la placa de audio de Romeo.
 # Se aplican al hacer `idf.py set-target esp32s3` sobre un proyecto limpio.
 # Si ya existe un `sdkconfig`, hay que borrarlo para que estos vuelvan a tomarse.
 
@@ -16,7 +16,7 @@ CONFIG_SPIRAM_SPEED_80M=y
 # ---------------------------------------------------------------- audio ----
 #
 # 16 kHz es EL valor crítico de todo este archivo: tiene que coincidir con el
-# que usa lora_audio_main.c al abrir los códecs (MUESTREO_HZ). El componente
+# que usa romeo_audio_main.c al abrir los códecs (MUESTREO_HZ). El componente
 # viene con 48000 por defecto; dejarlo así haría que el USB corriera a 48 kHz
 # mientras el I2S va a 16 kHz, y el audio saldría a velocidad equivocada.
 #
@@ -36,8 +36,8 @@ CONFIG_UAC_MIC_INTERVAL_MS=10
 
 # Cómo se identificará ante la Raspberry Pi. Este es el nombre que aparecerá
 # en `arecord -l` y `aplay -l`, así que conviene que sea reconocible.
-CONFIG_UAC_TUSB_MANUFACTURER="Lora Robot"
-CONFIG_UAC_TUSB_PRODUCT="Lora Audio Board"
+CONFIG_UAC_TUSB_MANUFACTURER="Romeo Robot"
+CONFIG_UAC_TUSB_PRODUCT="Romeo Audio Board"
 
 # El audio por USB es sensible a la latencia de planificación: 1 kHz de tick
 # reduce los cortes frente a los 100 Hz por defecto.

@@ -1,0 +1,33 @@
+# Parámetros ROS2 equivalentes a las variables de entorno del proyecto
+# original (deploy-raspberry-standalone/README.md, sección "Subir a un
+# modelo más grande" / "Carrito mecanum" / "Escribirle a Romeo..."). Se
+# pueden sobreescribir por línea de comando al lanzar
+# (`ros2 launch romeo_bringup romeo_bringup.launch.py mic_activo:=false`) sin
+# editar este archivo -- ver launch/romeo_bringup.launch.py.
+
+communication_node:
+  ros__parameters:
+    # --- Voz de salida (Piper local, altavoz de la placa ESP32-S3) ---
+    voz_piper_modelo: ""           # vacío = default de _voice_backends.py (~/piper-voces/es_MX-claude-high.onnx)
+
+    # --- Voz de entrada (micrófono de la placa ESP32-S3, STT local) ---
+    # OJO: hoy el micrófono de la placa entrega ceros por un bug de
+    # firmware abierto (ver firmware-audio-board/README.md). Hasta que se
+    # arregle, esto no va a transcribir nada; poner mic_activo: false para
+    # trabajar solo con el teclado y no llenar el log.
+    mic_activo: true
+    # OJO: "Lora", no "Romeo". Es el nombre USB que reporta la placa ESP32
+    # YA FLASHEADA (CONFIG_UAC_TUSB_PRODUCT="Lora Audio Board"); en la Pi
+    # aparece como `card 1: Lora Audio Board`. El sdkconfig.defaults del
+    # repo ya dice "Romeo Audio Board", pero eso solo aplica al reflashear
+    # (modo BOOT) -- hasta entonces este valor tiene que decir "Lora".
+    mic_dispositivo: "Lora"        # subcadena del nombre; vacío = default del sistema
+    stt_tam: "tiny"                # tiny | base | small -- tiny es el medido en la Pi
+    stt_hilos: 2                   # 2 es el óptimo medido (más hilos = más lento)
+
+moving_control_node:
+  ros__parameters:
+    carrito_port: "/dev/ttyACM0"
+
+# orchestrator_node no declara parámetros propios -- los modelos de Ollama
+# siguen siendo variables de entorno (ver launch/romeo_bringup.launch.py).

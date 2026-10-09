@@ -14,7 +14,7 @@ Este repositorio contiene la versión **ROS 2 Jazzy** del robot: 4 paquetes que 
 
 ## Contenido
 
-- [Qué hace ARFORD](#qué-hace-lora)
+- [Qué hace ARFORD](#qué-hace-romeo)
 - [Hardware](#hardware)
 - [Modelos de lenguaje (Ollama)](#modelos-de-lenguaje-ollama)
 - [Voz](#voz)
@@ -87,9 +87,9 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 
 | Variable de entorno | Valor por defecto | Rol |
 |---|---|---|
-| `CHAT_MODEL` | `lora-chat-libre-v4` | Genera las respuestas del Chat libre |
-| `TRIVIA_MODEL` | `lora-trivia` | Reacciones del juego de emociones |
-| `SALIDA_TRIVIA_MODEL` | `lora-salida-trivia-v2` | Decide si el mensaje es una RESPUESTA o una petición de SALIR a mitad de una pregunta de Trivia |
+| `CHAT_MODEL` | `romeo-chat-libre-v4` | Genera las respuestas del Chat libre |
+| `TRIVIA_MODEL` | `romeo-trivia` | Reacciones del juego de emociones |
+| `SALIDA_TRIVIA_MODEL` | `romeo-salida-trivia-v2` | Decide si el mensaje es una RESPUESTA o una petición de SALIR a mitad de una pregunta de Trivia |
 
 - Se eligió `qwen2.5:0.5b` en lugar de `llama3.2:3b` tras comparar 7 modelos: 484 MB de RAM y 1-3 s por respuesta, frente a 2.5 GB y 7-12 s, con la misma calidad medida.
 - Conviene usar `OLLAMA_KEEP_ALIVE=-1` para que los modelos no se descarguen de memoria: recargarlos desde disco costaba entre 15 y 28 s en el peor caso.
@@ -124,7 +124,7 @@ La transcripción la hace el **navegador del teléfono** (`SpeechRecognition`). 
 
 ## Datos
 
-- **Preguntas de Trivia:** `lora_brain/data/preguntas.jsonl`, con 248 preguntas en 51 temas, cargadas en memoria al iniciar. Cada fila tiene esta forma:
+- **Preguntas de Trivia:** `romeo_brain/data/preguntas.jsonl`, con 248 preguntas en 51 temas, cargadas en memoria al iniciar. Cada fila tiene esta forma:
   ```json
   {"id": 1, "pregunta": "...", "cara": "Neutral",
    "respuesta_esperada": "...", "tema": "Arte, música y cultura - Nivel 1",
@@ -134,23 +134,23 @@ La transcripción la hace el **navegador del teléfono** (`SpeechRecognition`). 
   `desplazamiento` admite `Adelante`, `Atrás`, `Izquierda`, `Derecha` y `Girar 360°`. Hay 13 preguntas duplicadas por texto (con `id` distinto) que siguen sin resolverse.
 - **Memoria episódica:** `memoria_episodica.py` busca con BM25 puro (`rank_bm25`, sin embeddings) sobre los últimos 300 turnos del Chat libre. Solo usa un recuerdo si comparte **al menos 2 palabras de contenido** con el mensaje actual. La memoria es compartida entre todos los usuarios.
 - **Registro del Chat libre:** `registro_chat.py` guarda cada turno en JSONL para revisarlo después. Nunca se entrena directamente con este archivo, para que el modelo no refuerce sus propios errores.
-- **Personalidad:** `personalidad.py` arma un system prompt con un perfil Big Five (OCEAN) fijo. Se omite si el modelo ya tiene la personalidad incorporada por fine-tuning.
-- **Música:** `lora_drivers/data/musica/` contiene `angry-birds`, `danza-kuduro`, `minecraft`, `more-than-words-heaven`, `plantas-vs-zombies`, `super-mario-bros` y `zelda` (mp3).
+- **Personalidad:** ARFORD tiene un perfil Big Five (OCEAN) fijo, en escala 1-5: **Extraversión 2, Amabilidad 2, Responsabilidad 5, Neuroticismo 2, Apertura 3**. No se aplica por system prompt, sino que está **incorporado en los modelos por fine-tuning** (`romeo-trivia`, `romeo-chat-libre-v4`). Hubo un `personalidad.py` que lo convertía en un system prompt para modelos base; se eliminó porque con los fine-tunes del robot siempre quedaba vacío. Si se usa un modelo sin fine-tuning, hay que volver a construirlo a partir de estos valores.
+- **Música:** `romeo_drivers/data/musica/` contiene `angry-birds`, `danza-kuduro`, `minecraft`, `more-than-words-heaven`, `plantas-vs-zombies`, `super-mario-bros` y `zelda` (mp3).
 
 ---
 
 ## Estructura del repositorio
 
 ```
-Socially-Friendly-Robot-Lora-Astro/
+Socially-Friendly-Robot-Romeo-Astro/
 ├── README.md              este archivo: qué es ARFORD, hardware, IA y datos
 ├── ros2_ws/               workspace ROS 2 Jazzy (el software del robot)
 │   ├── README.md          documentación técnica del workspace
 │   └── src/
-│       ├── lora_interfaces/   mensajes y servicios
-│       ├── lora_drivers/      nodos de hardware: voz, cámara y pantalla, motores
-│       ├── lora_brain/        el cerebro: máquina de estados de la conversación
-│       └── lora_bringup/      launch y parámetros
+│       ├── romeo_interfaces/   mensajes y servicios
+│       ├── romeo_drivers/      nodos de hardware: voz, cámara y pantalla, motores
+│       ├── romeo_brain/        el cerebro: máquina de estados de la conversación
+│       └── romeo_bringup/      launch y parámetros
 └── firmware-audio-board/  firmware de la placa de audio ESP32-S3
     ├── README.md          documentación del firmware
     └── main/              el código (C, ESP-IDF)
@@ -166,10 +166,10 @@ Requisitos: Raspberry Pi OS (o Ubuntu 24.04 / WSL2) con **ROS 2 Jazzy**, `mpv` y
 
 ```bash
 cd ros2_ws
-pip install -r src/lora_drivers/requirements.txt -r src/lora_brain/requirements.txt
+pip install -r src/romeo_drivers/requirements.txt -r src/romeo_brain/requirements.txt
 colcon build --symlink-install
 source install/setup.bash
-ros2 launch lora_bringup lora_bringup.launch.py
+ros2 launch romeo_bringup romeo_bringup.launch.py
 ```
 
 Después, escribe en la terminal o abre `http://<ip-de-la-pi>:8081/` en el teléfono. Los pasos completos, las opciones de configuración y cómo comprobar que todo funciona están en [`ros2_ws/README.md`](ros2_ws/README.md#instalación-y-ejecución).

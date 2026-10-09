@@ -1,4 +1,4 @@
-## Dependencias del firmware de la placa de audio de Lora.
+## Dependencias del firmware de la placa de audio de Romeo.
 ##
 ## Se fijan las versiones a propósito: la API de esp_codec_dev ha cambiado
 ## entre versiones menores, y este firmware no se ha probado con otras.
