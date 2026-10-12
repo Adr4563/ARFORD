@@ -86,13 +86,14 @@ class CommunicationNode(LifecycleNode):
 
         # Entrada de voz por el micrófono de la placa ESP32-S3 (tarjeta de
         # sonido USB). `mic_activo=False` apaga el STT y deja solo el
-        # teclado -- útil mientras el micrófono de la placa siga dando
-        # ceros (ver la nota del módulo), o para probar en una PC sin placa.
+        # teclado -- para probar en una PC sin placa, o si el micrófono da
+        # problemas y no se quiere llenar el log.
         self.declare_parameter('mic_activo', True)
-        # Nombre o índice del dispositivo de captura, tal como lo ve
-        # sounddevice. Vacío = el default del sistema. En la Pi la placa es
-        # "Romeo Audio Board" (así la nombra CONFIG_UAC_TUSB_PRODUCT del
-        # firmware, ver firmware-audio-board/README.md).
+        # Subcadena del nombre del dispositivo de captura, tal como lo
+        # lista sounddevice, o su índice. Vacío = el default del sistema.
+        # Tiene que coincidir con UN SOLO dispositivo: ver la nota de
+        # mic_dispositivo en romeo_params.yaml, que explica por qué el valor
+        # bueno es "Board: USB Audio" y no "Lora".
         self.declare_parameter('mic_dispositivo', '')
         self.declare_parameter('stt_tam', 'tiny')      # tiny | base | small
         self.declare_parameter('stt_hilos', 2)         # 2 es el óptimo medido
@@ -106,8 +107,8 @@ class CommunicationNode(LifecycleNode):
 
         # ANTI-REALIMENTACIÓN. El micrófono y el altavoz son el MISMO
         # dispositivo (la placa ESP32-S3), así que el micrófono capta la
-        # propia voz de ARFORD y el STT la transcribe como si fuera el
-        # usuario: ARFORD se contestaría a sí mismo en bucle. Mientras
+        # propia voz de Romeo y el STT la transcribe como si fuera el
+        # usuario: Romeo se contestaría a sí mismo en bucle. Mientras
         # suena algo por el altavoz (Speak o PlayMusic) se descarta lo que
         # llegue del micrófono.
         #
@@ -242,11 +243,11 @@ class CommunicationNode(LifecycleNode):
         self.get_logger().info('[mic] se dejó de escuchar')
 
     def _on_texto_voz(self, texto):
-        # Si ARFORD está hablando o sonando música, esto es su propio audio
+        # Si Romeo está hablando o sonando música, esto es su propio audio
         # entrando por el micrófono de la misma placa -- se descarta (ver
         # la nota de anti-realimentación en __init__).
         if self._sonando():
-            self.get_logger().debug(f"[mic] descartado (ARFORD suena): {texto!r}")
+            self.get_logger().debug(f"[mic] descartado (Romeo suena): {texto!r}")
             return
         self.get_logger().info(f"[mic] transcrito: {texto!r}")
         self._publicar_entrada(texto.strip(), 'voice_board')

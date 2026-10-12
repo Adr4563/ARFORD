@@ -286,6 +286,32 @@ class ReconocedorVoz:
             print("[STT] falta sounddevice (pip install sounddevice)")
             return
 
+        # sounddevice resuelve `dispositivo` como SUBCADENA del nombre y
+        # exige que coincida con uno solo: si coincide con varios lanza
+        # "Multiple input devices found" y no se escucha nada. Pasa en
+        # cuanto corre pipewire, porque la misma placa USB aparece como
+        # dispositivo ALSA y además como uno o dos nodos de PulseAudio con
+        # un nombre parecido. Se avisa con la lista de candidatos, que es
+        # lo que hace falta para corregir el parámetro.
+        if isinstance(dispositivo, str) and dispositivo:
+            try:
+                candidatos = [
+                    (i, d["name"]) for i, d in enumerate(sd.query_devices())
+                    if dispositivo in d["name"] and d["max_input_channels"] > 0
+                ]
+            except Exception:  # noqa: BLE001 - si falla el listado, seguir igual
+                candidatos = []
+            if len(candidatos) > 1:
+                print(f"[STT] {dispositivo!r} coincide con {len(candidatos)} "
+                      f"dispositivos de entrada, hace falta uno más preciso:")
+                for i, nombre in candidatos:
+                    print(f"[STT]   [{i}] {nombre}")
+                return
+            if not candidatos:
+                print(f"[STT] ningún dispositivo de entrada coincide con "
+                      f"{dispositivo!r} -- no se escucha")
+                return
+
         ventana = 512  # tamaño de ventana que espera silero
         buffer = np.array([], dtype="float32")
 

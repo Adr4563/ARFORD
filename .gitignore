@@ -16,3 +16,6 @@ sdkconfig
 sdkconfig.old
 managed_components/
 dependencies.lock
+
+# Permisos locales de la herramienta de IA (contienen IPs de la red local)
+.claude/
