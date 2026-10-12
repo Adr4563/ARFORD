@@ -29,7 +29,6 @@ terminal para probar). Acá eso solo termina la SESIÓN -- el robot dice la
 despedida y arranca una sesión nueva (_iniciar_sesion()), listo para el
 próximo usuario. Ver _finalizar_sesion() más abajo.
 """
-import difflib
 import random
 import threading
 import time
@@ -55,25 +54,53 @@ from ._ros_bridge import RosBridge
 # el system prompt hay que volver a construirlo (está en el historial de
 # git, y los valores OCEAN en el README principal).
 
-# ══════════════════════════════════════════════════════════════════════
-# Catálogo de Trivia -- se DERIVA de preguntas.jsonl (columna "Actividad /
-# Tema" del Excel original) en vez de repetir las ~50 cadenas a mano como
-# hacía Orchestrator_Management.py. Esa lista duplicada ya había divergido
-# del dataset: ofrecía 3 temas sin ninguna pregunta, así que elegirlos
-# llevaba derecho al "No quedan preguntas de ...". Derivándolo, el
-# catálogo y el filtro no pueden volver a desincronizarse.
-#
-# Sigue NO habiendo un tema "catch-all" genérico, igual que el original
-# (ver la nota de ese archivo sobre por qué).
-# ══════════════════════════════════════════════════════════════════════
-TEMAS_CATALOGO = preguntas.temas_disponibles()
 
-# Únicos temas con veredicto real vía cámara en vez de texto.
-TEMAS_JUEGO_EMOCIONES = {
-    "Juego de emociones - Nivel 1",
-    "Juego de imitación - Nivel 1",
-    "Juego de imitación - Nivel 2",
+# ══════════════════════════════════════════════════════════════════════
+# Juego de emociones -- el usuario pone caras y la CÁMARA las juzga, no el
+# texto. Antes salía de las preguntas del dataset ("Juego de emociones" y
+# "Juego de imitación", 10 en total), así que qué caras tocaban y cuántas
+# dependía de lo que el azar sacara del JSONL. Ahora es una secuencia fija:
+# siempre estas cuatro, siempre en este orden.
+#
+# Son justo las cuatro que el detector sabe devolver -- ver
+# ETIQUETAS_RELEVANTES en romeo_drivers/_emotion_detector.py, que mapea las
+# 8 clases del modelo FER+ a estas 4. Pedir una quinta (sorpresa, miedo)
+# sería pedir algo que la cámara nunca va a reconocer.
+# ══════════════════════════════════════════════════════════════════════
+SECUENCIA_EMOCIONES = ["Feliz", "Triste", "Enojado", "Neutral"]
+
+# Frases con las que pide cada cara, una por emoción para que no suene
+# repetitivo decir cuatro veces "hazme una cara de X".
+PEDIDOS_EMOCION = {
+    "Feliz": ["¡Hazme una cara de felicidad!",
+               "A ver esa sonrisa, ¡ponte feliz!"],
+    "Triste": ["Ahora una cara triste.",
+                "Pon cara de tristeza."],
+    "Enojado": ["Ahora una cara de enojado.",
+                 "Ponte bravo, cara de enojado."],
+    "Neutral": ["Y por último, una cara neutra.",
+                 "Ahora relaja la cara, cara neutra."],
 }
+
+# Lo que dice cuando la cámara no encuentra ninguna cara. Es frecuente (se
+# midió: ~1 de cada 6 intentos) si el usuario se mueve o queda fuera del
+# encuadre, así que tiene que sonar natural y no a error.
+SIN_CARA = [
+    "No te vi bien, ¿te acercas un poco?",
+    "No alcancé a verte. Ponte frente a mí.",
+    "Se me escapó esa. Mírame de frente.",
+]
+
+# Palabras con las que el usuario pide este juego. El router las manda a
+# TRIVIA (son "juego"), así que se detectan antes de elegir categoría.
+#
+# Van SIN TILDE porque se comparan contra el mensaje ya normalizado (ver
+# _quiere_jugar_emociones): el STT y el teclado escriben "emoción" e
+# "imitación" con tilde, y comparar tal cual no las encontraba.
+_PIDE_EMOCIONES = (
+    "emocion", "emociones", "cara", "caras", "gesto", "gestos",
+    "imitacion", "imitar", "mueca", "muecas", "expresion", "expresiones",
+)
 
 RESPUESTAS_TRIVIA_ACIERTO = [
     "¡Exacto, {esperada}!", "Sí, correcto.", "Así es, nada mal.", "Correcto, bien ahí.",
@@ -83,11 +110,33 @@ RESPUESTAS_TRIVIA_ERROR = [
     "Incorrecto, la respuesta era {esperada}.", "No es así, correcta: {esperada}.",
 ]
 
+# Saludo de apertura de cada sesión -- se elige uno al azar, así que dos
+# niños seguidos no oyen lo mismo. Todas tutean (no vosean): el fine-tune
+# de Chat libre que usa el robot está entrenado en tuteo, y mezclar las dos
+# formas en la misma conversación suena raro.
 SALUDOS_APERTURA = [
     "Hola, mi nombre es Romeo, ¿cuál es tu nombre?",
-    "¡Hola! Soy Romeo. ¿Y vos cómo te llamás?",
-    "Hola, hola. Soy Romeo, tu robot. ¿Quién sos vos?",
-    "¡Buenas! Me llamo Romeo. Contame tu nombre.",
+    "¡Hola! Soy Romeo. ¿Y tú cómo te llamas?",
+    "Hola, hola. Soy Romeo, tu robot. ¿Quién eres tú?",
+    "¡Buenas! Me llamo Romeo. Cuéntame tu nombre.",
+    "¡Hola! Yo soy Romeo. ¿Me dices tu nombre?",
+    "¡Qué bueno verte! Soy Romeo. ¿Cómo te llamas?",
+    "Hola, soy Romeo, un robot. ¿Y tú, cómo te llamas?",
+    "¡Hey! Me llamo Romeo. Dime tu nombre y jugamos.",
+]
+
+# Lo que dice después de que el niño da su nombre: presenta las dos cosas
+# que sabe hacer (trivia y charlar) y le deja elegir. Antes era UNA sola
+# frase fija; ahora son 5 variantes al azar.
+BIENVENIDAS = [
+    "Mucho gusto, {nombre}. Podemos jugar trivia o simplemente charlar, "
+    "¿qué prefieres?",
+    "¡Qué gusto, {nombre}! ¿Jugamos una trivia o prefieres que conversemos?",
+    "Encantado, {nombre}. Tengo trivias de varios temas, o si quieres "
+    "charlamos un rato. ¿Qué te gusta más?",
+    "¡Hola {nombre}! Dime qué quieres hacer: una trivia, o conversar.",
+    "Un placer, {nombre}. Podemos competir en una trivia o hablar de lo "
+    "que quieras. Tú eliges.",
 ]
 DESPEDIDAS = [
     "¡Hasta luego, {nombre}! Que te vaya bien.",
@@ -99,6 +148,10 @@ DESPEDIDAS = [
 PREGUNTAS_POR_TANDA = 5
 PAUSA_CAMBIO_CARA = 4       # segundos en 'content'/veredicto antes de la próxima cara
 PAUSA_ANTES_ACCION_FISICA = 1
+# Segundos entre pedirle la cara y capturarla. El detector ya tarda 2.5-4.6s
+# en resolver (medido en la Pi), así que esto es solo el margen para que
+# termine de oír la frase y ponga la cara.
+PAUSA_POSAR = 2
 
 # Frases que, a mitad de una tanda de trivia, señalan que el usuario se
 # quiere ir a otra cosa -- fallback de _quiere_salir_trivia() cuando no se
@@ -220,18 +273,6 @@ class OrchestratorNode(Node):
         return plantilla.format(esperada=esperada)
 
     @staticmethod
-    def resolver_tema(eleccion_usuario):
-        texto = eleccion_usuario.strip().lower()
-        catalogo_low = [t.lower() for t in TEMAS_CATALOGO]
-        for tema, tema_low in zip(TEMAS_CATALOGO, catalogo_low):
-            if texto == tema_low or tema_low in texto or texto in tema_low:
-                return tema
-        cercano = difflib.get_close_matches(texto, catalogo_low, n=1, cutoff=0.5)
-        if cercano:
-            return TEMAS_CATALOGO[catalogo_low.index(cercano[0])]
-        return random.choice(TEMAS_CATALOGO)
-
-    @staticmethod
     def _enrutar_mensaje(mensaje_usuario):
         ruta = enrutar(mensaje_usuario)
         return ruta if ruta in RUTAS else "CHAT_LIBRE"
@@ -302,73 +343,123 @@ class OrchestratorNode(Node):
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("content")
 
-    def _jugar_emociones(self, pregunta):
-        objetivo = (pregunta.get("respuesta_esperada") or "").strip()
-        if not objetivo:
-            opciones = [o.strip() for o in pregunta["cara"].split("/") if o.strip()]
-            objetivo = random.choice(opciones) if opciones else "Feliz"
+    def _pedir_una_emocion(self, objetivo):
+        """Pide UNA cara, la captura y la juzga.
 
+        Devuelve True/False según acierte, o None si la cámara no vio
+        ninguna cara (eso no cuenta para el marcador: no es culpa del
+        usuario)."""
+        # Romeo pone primero la cara que pide, para que el niño la imite.
         self._bridge.mostrar_cara(agent_behavior.cara_para_emocion(objetivo) or "content")
-        pedido = f"¡Hazme una cara de {objetivo.lower()}!"
+        pedido = random.choice(PEDIDOS_EMOCION[objetivo])
         self.get_logger().info(f"Asistente: {pedido}")
         self._bridge.hablar(pedido)
-        time.sleep(1)  # un segundo para que el usuario pose antes de capturar
+        time.sleep(PAUSA_POSAR)   # que le dé tiempo a poner la cara
+
         detectada, confianza, ok = self._bridge.detectar_emocion()
+        self._bridge.mostrar_cara("speaking")
 
         if not ok or detectada is None:
-            self._bridge.mostrar_cara("speaking")
-            time.sleep(PAUSA_ANTES_ACCION_FISICA)
-            agent_behavior.expresar_musica(pregunta, self._bridge, logger=self.get_logger())
-            agent_behavior.expresar_desplazamiento(pregunta, self._bridge, logger=self.get_logger())
+            aviso = random.choice(SIN_CARA)
+            self.get_logger().info(f"[cámara] sin cara -- {aviso}")
+            self._bridge.hablar(aviso)
             return None
 
         acerto = detectada == objetivo
         self.get_logger().info(
             f"[cámara] pedido={objetivo} detectado={detectada} "
             f"(confianza {confianza:.0%}) -> {'OK' if acerto else 'MAL'}")
-        self._bridge.hablar("¡Correcto!" if acerto else "¡Incorrecto!")
-        cara = agent_behavior.elegir_cara_pregunta(pregunta, acerto) or ("happy" if acerto else "sad")
-        self._reaccionar_veredicto(cara, pregunta)
-        self._bridge.mostrar_cara("speaking")
+        if acerto:
+            self._bridge.hablar(random.choice(
+                ["¡Esa es!", "¡Perfecto!", "¡Muy bien!", "¡Clavado!"]))
+            self._bridge.mostrar_cara("happy")
+        else:
+            # Se le dice QUÉ cara vio: es más útil que un "incorrecto" seco,
+            # y le explica por qué no acertó.
+            self._bridge.hablar(f"Casi. Te vi cara de {detectada.lower()}.")
+            self._bridge.mostrar_cara("sad")
+        time.sleep(PAUSA_CAMBIO_CARA)
         return acerto
 
-    def _correr_tanda_emociones(self):
-        estado = self.estado
-        while self._preguntar_siguiente():
-            pendiente = estado["pregunta_pendiente"]
-            estado["pregunta_pendiente"] = None
-            acerto = self._jugar_emociones(pendiente)
-            if acerto is not None:
-                estado["total"] += 1
-                estado["aciertos"] += acerto
-        self._cerrar_tanda()
+    @staticmethod
+    def _quiere_jugar_emociones(mensaje):
+        """True si el usuario pide el juego de caras.
 
-    def _iniciar_tanda(self, tema):
+        Normaliza quitando tildes: el STT transcribe "emoción" e
+        "imitación" acentuadas, y _PIDE_EMOCIONES las lleva sin tilde."""
+        return any(p in preguntas._sin_tildes(mensaje) for p in _PIDE_EMOCIONES)
+
+    def _jugar_emociones(self):
+        """La ronda completa: las 4 emociones de SECUENCIA_EMOCIONES, una
+        tras otra, y al final el marcador. No usa el dataset de preguntas --
+        ver la nota de SECUENCIA_EMOCIONES."""
         estado = self.estado
-        preguntas_tanda = preguntas.preguntas_por_tema(
-            tema, estado["ya_usados"], cantidad=PREGUNTAS_POR_TANDA)
+        estado["en_trivia"] = False   # no es una tanda de trivia
+
+        intro = (f"¡Vamos a jugar con las caras! Te voy a pedir "
+                  f"{len(SECUENCIA_EMOCIONES)} y la cámara te mira. ¿Listo?")
+        self.get_logger().info(f"Asistente: {intro}")
+        self._bridge.mostrar_cara("speaking")
+        self._bridge.hablar(intro)
+
+        aciertos = juzgadas = 0
+        for objetivo in SECUENCIA_EMOCIONES:
+            acerto = self._pedir_una_emocion(objetivo)
+            if acerto is not None:
+                juzgadas += 1
+                aciertos += acerto
+
+        self._bridge.mostrar_cara("speaking")
+        if juzgadas == 0:
+            cierre = "No pude verte bien en ninguna. ¿Probamos otra vez?"
+        elif aciertos == juzgadas:
+            cierre = f"¡Las {juzgadas} perfectas! Eres muy bueno con las caras."
+        else:
+            cierre = (f"Terminamos: acertaste {aciertos} de {juzgadas}. "
+                       f"¿Jugamos otra vez o prefieres una trivia?")
+        self.get_logger().info(f"Asistente: {cierre}")
+        self._bridge.hablar(cierre)
+        time.sleep(PAUSA_CAMBIO_CARA)
+        self._bridge.mostrar_cara("content")
+
+    def _iniciar_tanda(self, categoria):
+        estado = self.estado
+        preguntas_tanda = preguntas.preguntas_por_categoria(
+            categoria, estado["ya_usados"], cantidad=PREGUNTAS_POR_TANDA)
         if not preguntas_tanda:
-            self.get_logger().info(f"Asistente: No quedan preguntas de {tema}.")
-            self._bridge.hablar(f"No quedan preguntas de {tema}.")
+            aviso = f"Ya jugamos todas las de {categoria}. ¿Elegimos otra?"
+            self.get_logger().info(f"Asistente: {aviso}")
+            self._bridge.hablar(aviso)
+            estado["esperando_tema"] = True   # sigue en trivia, pidiendo categoría
             return
         estado["ya_usados"].update(p["id"] for p in preguntas_tanda)
         estado["cola_preguntas"] = preguntas_tanda
-        if tema in TEMAS_JUEGO_EMOCIONES:
-            self._correr_tanda_emociones()
-        else:
-            self._preguntar_siguiente()
+        self._preguntar_siguiente()
 
     def _manejar_trivia(self, mensaje_usuario):
         estado = self.estado
 
         if estado["esperando_tema"]:
+            categoria = preguntas.resolver_categoria(mensaje_usuario)
+            if categoria is None:
+                # No se entendió la categoría: se repregunta en vez de
+                # elegir una al azar, que es lo que hacía resolver_tema() --
+                # con 5 opciones claras, acertar la que quiso el usuario
+                # importa más que no insistir.
+                cats = preguntas.categorias_disponibles()
+                repregunta = (f"No te entendí. Elige una: "
+                               f"{', '.join(cats[:-1])} o {cats[-1]}. "
+                               f"O dime 'caras' para el juego de emociones.")
+                self.get_logger().info(f"Asistente: {repregunta}")
+                self._bridge.hablar(repregunta)
+                return
             estado["esperando_tema"] = False
-            tema = self.resolver_tema(mensaje_usuario)
-            estado["tema_actual"] = tema
-            anuncio = f"Vamos con {tema}. Van {PREGUNTAS_POR_TANDA} preguntas seguidas."
+            estado["tema_actual"] = categoria
+            anuncio = (f"¡Vamos con {categoria}! Van "
+                        f"{PREGUNTAS_POR_TANDA} preguntas seguidas.")
             self.get_logger().info(f"Asistente: {anuncio}")
             self._bridge.hablar(anuncio)
-            self._iniciar_tanda(tema)
+            self._iniciar_tanda(categoria)
             return
 
         pendiente = estado["pregunta_pendiente"]
@@ -399,9 +490,20 @@ class OrchestratorNode(Node):
                 self._cerrar_tanda()
             return
 
-        opciones = ", ".join(random.sample(TEMAS_CATALOGO, 5))
+        # Se le ofrecen las 5 CATEGORÍAS, siempre las mismas y en el mismo
+        # orden. Antes se recitaban 5 de los 49 "<familia> - Nivel N" al
+        # azar, que en voz alta era imposible de seguir ("Geografía Nivel 7,
+        # Razonamiento matemático Nivel 5, ...") y además cambiaba en cada
+        # turno. Los niveles siguen usándose para elegir las preguntas, solo
+        # que ya no se mencionan -- ver preguntas.CATEGORIAS.
+        cats = preguntas.categorias_disponibles()
         estado["esperando_tema"] = True
-        anuncio = f"Puedes elegir entre: {opciones}."
+        # Se menciona también el juego de caras: si no, el usuario no tiene
+        # cómo enterarse de que existe. Decirlo acá basta, porque
+        # _quiere_jugar_emociones() lo detecta en cualquier turno.
+        anuncio = (f"¿Qué quieres jugar? Tengo trivias de "
+                    f"{', '.join(cats[:-1])} o {cats[-1]}, "
+                    f"y también el juego de las caras.")
         self.get_logger().info(f"Asistente: {anuncio}")
         self._bridge.hablar(anuncio)
 
@@ -482,8 +584,7 @@ class OrchestratorNode(Node):
             nombre = entrada or "amigo"
             self.estado["nombre"] = nombre
             self.estado["esperando_nombre"] = False
-            bienvenida = (f"Mucho gusto, {nombre}. Podemos jugar Trivia o simplemente charlar "
-                          "-- vos decidís, decime qué querés hacer.")
+            bienvenida = random.choice(BIENVENIDAS).format(nombre=nombre)
             self.get_logger().info(f"Asistente: {bienvenida}")
             self._bridge.hablar(bienvenida)
             self._bridge.mostrar_cara("content")
@@ -506,6 +607,14 @@ class OrchestratorNode(Node):
                     "retomamos cuando quieras. ¿Qué tienes en mente?")
                 return
             self._manejar_trivia(entrada)
+            return
+
+        # El juego de caras se pide con sus propias palabras ("emociones",
+        # "caras", "gestos"). El router las clasifica como TRIVIA porque son
+        # un juego, así que hay que mirarlo ANTES de entrar en la trivia de
+        # preguntas -- si no, pediría categoría y nunca llegaría a la cámara.
+        if self._quiere_jugar_emociones(entrada):
+            self._jugar_emociones()
             return
 
         ruta = self._enrutar_mensaje(entrada)
