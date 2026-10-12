@@ -11,6 +11,9 @@ llega un MotionCommand).
 
 Expone:
   - Suscripción /romeo/motion_command (romeo_interfaces/MotionCommand)
+  - Página de control manual en http://<ip-de-la-pi>:<control_web_port>/
+    (ver _control_web.py) -- los botones mandan al MISMO CartSerial que
+    usa el orquestador, así que no hace falta tocar el firmware del ESP32.
 """
 import rclpy
 from rclpy.executors import SingleThreadedExecutor
@@ -19,6 +22,7 @@ from rclpy.lifecycle import LifecycleNode, TransitionCallbackReturn
 from romeo_interfaces.msg import MotionCommand
 
 from ._cart_serial import CartSerial
+from ._control_web import ControlWeb
 
 
 class MovingControlNode(LifecycleNode):
@@ -26,13 +30,20 @@ class MovingControlNode(LifecycleNode):
     def __init__(self):
         super().__init__('moving_control_node')
         self.declare_parameter('carrito_port', '/dev/ttyACM0')
+        # Puerto de la página de control manual; 0 = sin página.
+        self.declare_parameter('control_web_port', 8080)
         self._activo = False
         self._cart = None
+        self._web = None
 
     def on_configure(self, state):
         self.get_logger().info('[moving_control_node] configurando...')
         puerto = self.get_parameter('carrito_port').value
         self._cart = CartSerial(puerto=puerto, logger=self.get_logger())
+        puerto_web = self.get_parameter('control_web_port').value
+        if puerto_web and self._web is None:
+            self._web = ControlWeb(self._comando_manual, puerto=puerto_web,
+                                   logger=self.get_logger())
         self.create_subscription(
             MotionCommand, '/romeo/motion_command', self._cb_motion_command, 10)
         return TransitionCallbackReturn.SUCCESS
@@ -40,6 +51,8 @@ class MovingControlNode(LifecycleNode):
     def on_activate(self, state):
         self.get_logger().info('[moving_control_node] activando...')
         self._activo = True
+        if self._web is not None:
+            self._web.iniciar()
         return super().on_activate(state)
 
     def on_deactivate(self, state):
@@ -69,6 +82,13 @@ class MovingControlNode(LifecycleNode):
         if not self._activo:
             return
         self._cart.ejecutar(msg.command)
+
+    def _comando_manual(self, comando):
+        """Comando que llega de la página de control (otro hilo, el de
+        Flask). Si el nodo no está activo no se mueve nada."""
+        if not self._activo or self._cart is None:
+            return False
+        return self._cart.ejecutar(comando)
 
 
 def main(args=None):

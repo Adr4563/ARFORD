@@ -145,6 +145,12 @@ class Voz:
         muestras = np.asarray(audio.samples, dtype=np.float32)
         if muestras.size == 0:
             return
+        # Normaliza el pico a 0.85, dejando margen para que el cambio de
+        # tono y el remuestreo de mpv no recorten. Se probó a subirlo a 0.97
+        # para ganar volumen y no conviene: el parlante de la placa es
+        # pequeño y distorsiona antes de llegar ahí, así que el volumen se
+        # regula con `voz_volumen` (mpv) y con el mezclador ALSA, no
+        # saturando la señal.
         muestras *= 0.85 / max(1e-6, float(np.abs(muestras).max()))
         sr = audio.sample_rate
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:

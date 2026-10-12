@@ -9,4 +9,11 @@ install(DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}
 )
 
+# scripts/ va aparte para que conserve el permiso de ejecución:
+# install(DIRECTORY) no lo preserva, y volumen_placa.sh se ejecuta
+# directamente (también como ExecStart de un servicio systemd).
+install(PROGRAMS scripts/volumen_placa.sh
+  DESTINATION share/${PROJECT_NAME}/scripts
+)
+
 ament_package()
