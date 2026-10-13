@@ -34,14 +34,20 @@ WATCHDOG_SEG = 3.0
 
 # Comandos que DEJAN EL CARRITO EN MOVIMIENTO y por lo tanto arman el
 # watchdog. "S" (stop) no está: es justo lo que el watchdog manda.
-_COMANDOS_MOVIMIENTO = {"F", "B", "SL", "SR", "RL", "RR"}
+_COMANDOS_MOVIMIENTO = {"F", "B", "SL", "SR", "RL", "RR",
+                        "FL", "FR", "BL", "BR"}
 
 # Traduce el comando de MotionCommand.msg al que entiende el firmware --
 # son casi el mismo alfabeto a propósito (MotionCommand ya se definió
 # calcado del protocolo real, ver romeo_interfaces/msg/MotionCommand.msg),
 # esta tabla solo existe para el caso especial ROTATE360 (no es un comando
 # atómico del firmware).
-_COMANDOS_DIRECTOS = {"F", "B", "SL", "SR", "RL", "RR", "S"}
+#
+# Las 4 diagonales (FL/FR/BL/BR) faltaban acá aunque el firmware las
+# soporta y la página de control manual las ofrece como botones: cada
+# diagonal se rechazaba con "comando desconocido" y devolvía HTTP 500.
+_COMANDOS_DIRECTOS = {"F", "B", "SL", "SR", "RL", "RR",
+                      "FL", "FR", "BL", "BR", "S"}
 
 
 class CartSerial:
@@ -58,7 +64,10 @@ class CartSerial:
 
     def _log(self, msg, warn=True):
         if self.logger is not None:
-            (self.logger.warn if warn else self.logger.info)(msg)
+            # .warning, no .warn: RcutilsLogger de ROS 2 no tiene el alias
+            # corto, y un AttributeError acá rompía la petición entera en vez
+            # de solo no loguear.
+            (self.logger.warning if warn else self.logger.info)(msg)
         else:
             print(msg)
 

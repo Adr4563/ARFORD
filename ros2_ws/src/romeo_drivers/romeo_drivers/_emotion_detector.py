@@ -54,7 +54,8 @@ class DetectorEmocion:
 
     def _log(self, msg, warn=False):
         if self.logger is not None:
-            (self.logger.warn if warn else self.logger.info)(msg)
+            # .warning, no .warn: RcutilsLogger de ROS 2 no tiene el alias.
+            (self.logger.warning if warn else self.logger.info)(msg)
         else:
             print(msg)
 
