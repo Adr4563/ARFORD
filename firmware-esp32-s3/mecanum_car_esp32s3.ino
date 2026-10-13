@@ -22,7 +22,10 @@
 //
 // 1) Chasis montado 180 grados respecto a lo que asumia el codigo: lo que se
 //    llamaba "frente" es fisicamente la parte trasera, asi que cada rueda pasa
-//    a su opuesta en diagonal (GPIO 4-7 <-> 15-18).
+//    a su opuesta en diagonal (GPIO 4-7 <-> 15-18). Lo delataron adelante/atras
+//    y las diagonales invertidas, PERO la rotacion correcta: una inversion de
+//    polaridad de los 4 motores habria dado vuelta tambien el giro; una
+//    rotacion de 180 grados lo preserva.
 //
 // 2) Lado izquierdo con la polaridad invertida: FL y BL giraban hacia atras
 //    mientras FR y BR giraban hacia adelante, asi que el carrito rotaba en vez
@@ -31,9 +34,10 @@
 //    (cada rueda se queda en sus mismos GPIO; cambia cual de los dos es el
 //    "adelante").
 //
-//    CONSECUENCIA: invertir un solo lado da vuelta el sentido de giro, asi que
-//    los cuerpos de rotateLeft() y rotateRight() estan intercambiados respecto
-//    al original para que cada comando siga significando lo que dice.
+//    OJO: se probo ademas intercambiar los cuerpos de rotateLeft()/rotateRight(),
+//    suponiendo que invertir un solo lado daria vuelta el sentido de giro.
+//    Resulto al reves en el carrito real -- "RL" giraba a la derecha -- asi que
+//    se deshizo: el mapeo de pines ya compensa el giro por si solo.
 int IN1 = 17, IN2 = 18;  // Front Left  (el motor que el codigo tenia como Back Right)
 int IN3 = 16, IN4 = 15;  // Front Right (el que tenia como Back Left)
 int IN5 = 6,  IN6 = 7;   // Back Left   (el que tenia como Front Right)
@@ -144,17 +148,17 @@ void strafeLeft(){
 }
 
 void rotateRight(){
-  digitalWrite(IN1,LOW);  digitalWrite(IN2,HIGH);
-  digitalWrite(IN3,HIGH); digitalWrite(IN4,LOW);
-  digitalWrite(IN5,LOW);  digitalWrite(IN6,HIGH);
-  digitalWrite(IN7,HIGH); digitalWrite(IN8,LOW);
-}
-
-void rotateLeft(){
   digitalWrite(IN1,HIGH); digitalWrite(IN2,LOW);
   digitalWrite(IN3,LOW);  digitalWrite(IN4,HIGH);
   digitalWrite(IN5,HIGH); digitalWrite(IN6,LOW);
   digitalWrite(IN7,LOW);  digitalWrite(IN8,HIGH);
+}
+
+void rotateLeft(){
+  digitalWrite(IN1,LOW);  digitalWrite(IN2,HIGH);
+  digitalWrite(IN3,HIGH); digitalWrite(IN4,LOW);
+  digitalWrite(IN5,LOW);  digitalWrite(IN6,HIGH);
+  digitalWrite(IN7,HIGH); digitalWrite(IN8,LOW);
 }
 
 // --- Diagonales corregidas (antes estaban cruzadas izq/der) ---

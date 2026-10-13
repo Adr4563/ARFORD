@@ -6,7 +6,7 @@ Firmware que convierte un **ESP32-S3-DevKitC-1** en el controlador de motores de
 >
 > - ✅ Las 4 ruedas giran hacia adelante con `F`, comprobado rueda por rueda con `T1`..`T4`.
 > - ✅ Las 4 diagonales (`FL`/`FR`/`BL`/`BR`) responden desde la página de control.
-> - ⚠️ **Rotaciones sin verificar de oído:** `rotateLeft`/`rotateRight` se intercambiaron al corregir el lado izquierdo (ver [Historia](#historia-de-las-correcciones)). Conviene mandar `RL` y confirmar que gira a la izquierda.
+> - ✅ `RL` y `RR` giran hacia su lado, tras deshacer un intercambio que sobraba (ver [Historia](#historia-de-las-correcciones)).
 
 ---
 
@@ -176,17 +176,20 @@ Tres fallos de mapeo, encontrados en este orden. Vale la pena conservarlos porqu
 |---|---|---|---|
 | 1 | Las diagonales llevaban al lado contrario | `forwardLeft`/`forwardRight`/`backLeft`/`backRight` estaban cruzadas izq/der | Corregir los cuerpos de las 4 funciones |
 | 2 | Adelante/atrás y diagonales invertidas, **pero la rotación correcta** | Chasis montado 180° respecto a lo que asumía el código | Rotar el mapeo: cada rueda a su opuesta en diagonal |
-| 3 | El carrito **rotaba en vez de avanzar**: FL y BL hacia atrás, FR y BR hacia adelante | Polaridad invertida solo del lado izquierdo | Intercambiar el par de pines de FL y BL, **e** intercambiar los cuerpos de `rotateLeft`/`rotateRight` |
+| 3 | El carrito **rotaba en vez de avanzar**: FL y BL hacia atrás, FR y BR hacia adelante | Polaridad invertida solo del lado izquierdo | Intercambiar el par de pines de FL y BL |
 
 El detalle que distingue el #2 del #3 es la rotación:
 
 - **Una inversión de los 4 motores** da vuelta también el giro.
 - **Una rotación de 180° del chasis** lo preserva.
-- **Invertir un solo lado** da vuelta el giro pero no el avance.
-
-Por eso el #3 obligó a intercambiar `rotateLeft`/`rotateRight`: sin eso, `RL` habría girado a la derecha.
 
 El #3 se diagnosticó con los comandos `T1`..`T4`, que se agregaron para eso. Mover el carrito entero no permitía distinguirlo de un problema de alimentación.
+
+### Un intercambio de rotaciones que sobraba
+
+Al arreglar el #3 se intercambiaron además los cuerpos de `rotateLeft`/`rotateRight`, razonando que invertir un solo lado daría vuelta el sentido de giro. **En el carrito real resultó al revés:** con ese intercambio, `RL` giraba a la derecha. Se deshizo y las dos funciones quedaron como estaban.
+
+Merece quedar escrito porque el razonamiento parece correcto sobre el papel y no lo es: el mapeo de pines ya compensa el sentido de giro por su cuenta. Ante la duda, probar en el carrito antes que deducir.
 
 ---
 

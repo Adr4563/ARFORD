@@ -50,7 +50,7 @@ El usuario puede comunicarse **por voz o por texto**, desde el teclado de la Pi 
 
 ### Protocolo de motores
 
-El firmware del ESP32-S3 vive en [`firmware-carrito-mecanum/`](firmware-carrito-mecanum/README.md). Recibe un comando de texto por línea:
+El firmware del ESP32-S3 vive en [`firmware-esp32-s3/`](firmware-esp32-s3/README.md). Recibe un comando de texto por línea:
 
 | Comando | Movimiento |
 |---|---|
@@ -156,14 +156,14 @@ Socially-Friendly-Robot-Romeo-Astro/
 ├── firmware-audio-board/  firmware de la placa de audio ESP32-S3
 │   ├── README.md          documentación del firmware
 │   └── main/              el código (C, ESP-IDF)
-└── firmware-carrito-mecanum/  firmware del carrito ESP32-S3-DevKitC-1
+└── firmware-esp32-s3/     firmware del carrito ESP32-S3-DevKitC-1
     ├── README.md          documentación del firmware
     └── mecanum_car_esp32s3.ino  el código (Arduino)
 ```
 
 La **placa de audio** es una Waveshare ESP32-S3-AUDIO-Board que aporta los micrófonos y el altavoz que a la Raspberry Pi le faltan. Su firmware la expone como **tarjeta de sonido USB**, de modo que la Pi la usa como un dispositivo de audio normal. Ver [`firmware-audio-board/README.md`](firmware-audio-board/README.md).
 
-El **carrito mecanum** lo controla un ESP32-S3-DevKitC-1 que traduce comandos de texto a señales para dos drivers L298N. No decide nada: toda la lógica de movimiento está en `moving_control_node`. Ver [`firmware-carrito-mecanum/README.md`](firmware-carrito-mecanum/README.md).
+El **carrito mecanum** lo controla un ESP32-S3-DevKitC-1 que traduce comandos de texto a señales para dos drivers L298N. No decide nada: toda la lógica de movimiento está en `moving_control_node`. Ver [`firmware-esp32-s3/README.md`](firmware-esp32-s3/README.md).
 
 ---
 
