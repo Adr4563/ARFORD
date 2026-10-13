@@ -98,7 +98,8 @@ class Display:
             [
                 "mpv", "--fs", "--vo=drm", "--idle=yes", "--loop-file=inf",
                 "--no-osc", "--no-input-default-bindings", "--really-quiet",
-                "--hwdec=auto",
+                # La pantalla va montada boca abajo en el chasis.
+                "--hwdec=auto", "--video-rotate=180",
                 f"--input-ipc-server={MPV_SOCKET}", ruta_inicial,
             ],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
