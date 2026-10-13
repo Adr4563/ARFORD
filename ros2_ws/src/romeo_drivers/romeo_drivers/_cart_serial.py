@@ -62,6 +62,38 @@ class CartSerial:
         else:
             print(msg)
 
+    def _resolver_puerto(self):
+        """El puerto a abrir, buscándolo si el configurado no existe.
+
+        El ESP32 del carrito es USB y su número cambia entre arranques: se
+        lo ha visto en /dev/ttyACM0 y en /dev/ttyACM1 según qué se enchufe
+        primero. Con el número fijo, el nodo arrancaba sin error y el
+        carrito simplemente no se movía.
+
+        Si el puerto configurado no está, se busca por /dev/serial/by-id/,
+        que sí es estable: el ESP32 lleva un CH34x y su enlace contiene
+        "1a86". Como último recurso, cualquier ttyACM/ttyUSB que haya."""
+        import glob
+        import os
+
+        if os.path.exists(self.puerto):
+            return self.puerto
+
+        # by-id: el nombre lo da el chip, no el orden de enumeración.
+        for enlace in sorted(glob.glob("/dev/serial/by-id/*")):
+            if "1a86" in enlace.lower():
+                real = os.path.realpath(enlace)
+                self._log(f"[carrito] {self.puerto} no existe -- se usa {real} "
+                           f"(encontrado por by-id)", warn=False)
+                return real
+
+        candidatos = sorted(glob.glob("/dev/ttyACM*") + glob.glob("/dev/ttyUSB*"))
+        if candidatos:
+            self._log(f"[carrito] {self.puerto} no existe -- se prueba "
+                       f"{candidatos[0]}", warn=False)
+            return candidatos[0]
+        return self.puerto   # no hay nada: que falle abriendo, con su mensaje
+
     def _abrir_puerto(self):
         """Reconecta si hace falta (primera vez, o si la anterior murió por
         desconexión). None si no se pudo abrir -- nunca lanza."""
@@ -72,7 +104,8 @@ class CartSerial:
         if self._conexion is not None and self._conexion.is_open:
             return self._conexion
         try:
-            self._conexion = serial.Serial(self.puerto, BAUDRATE, timeout=TIMEOUT)
+            self._conexion = serial.Serial(
+                self._resolver_puerto(), BAUDRATE, timeout=TIMEOUT)
             # Abrir el puerto reinicia el ESP32 (toggle de DTR); setup()
             # tarda un instante en volver a dejarlo listo -- sin esta
             # espera, el primer comando de la sesión se puede perder en el
