@@ -1,0 +1,29 @@
+# ARFORD: dialogo empatico en espanol
+# Ejecutar:  soup train -c soup.yaml
+
+base: unsloth/Llama-3.2-1B-Instruct
+task: sft
+
+data:
+  train: ./data/terapia.jsonl
+  format: chatml
+  val_split: 0.05
+  max_length: 1024
+
+training:
+  epochs: 3
+  lr: 2e-4
+  batch_size: auto
+  scheduler: cosine
+  warmup_ratio: 0.03
+  gradient_checkpointing: true
+  logging_steps: 25
+  eval_steps: 100
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: auto
+  quantization: 4bit
+
+output: ./adapters/arford-empatico-es

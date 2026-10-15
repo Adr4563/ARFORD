@@ -15,7 +15,7 @@ communication_node:
     # -- es la "versión 40": ajustes de fábrica del modelo, un poco más
     # pausada y +1.5 semitonos. Ver voces/README.md para la comparativa.
     voz_vits_dir: "/home/pi/.romeo/modelos/vits-piper-es_ES-glados-medium"
-    voz_vits_ruido: 0.667
+    voz_vits_ruido: 0.33
     voz_vits_ruido_w: 0.5          # ritmo fijo: con 0.8 cada frase salía distinta
     voz_vits_duracion: 1.15
     voz_tono_semitonos: 1.5
@@ -24,7 +24,7 @@ communication_node:
     # demasiada corriente con el volumen alto. Por debajo va además el
     # mezclador ALSA del códec ES8311, que NO se controla desde acá -- ver
     # scripts/volumen_placa.sh.
-    voz_volumen: 40
+    voz_volumen: 60
 
     # --- Salida de audio: el parlante de la placa ESP32-S3 ---
     # La placa es una tarjeta de sonido USB. OJO con el nombre: es "Board"
@@ -40,10 +40,10 @@ communication_node:
     musica_volumen: 25
 
     # --- Voz de entrada (micrófono de la placa ESP32-S3, STT local) ---
-    # OJO: hoy el micrófono de la placa entrega ceros por un bug de
-    # firmware abierto (ver firmware-audio-board/README.md). Hasta que se
-    # arregle, esto no va a transcribir nada; poner mic_activo: false para
-    # trabajar solo con el teclado y no llenar el log.
+    # El bug de los ceros ya está resuelto (mapeo DIN=15/DOUT=16, ver
+    # firmware-audio-board/README.md): el micrófono entrega señal real, pero
+    # baja (RMS ~45 en silencio de sala), que es lo que el STT normaliza.
+    # Poner mic_activo: false para trabajar solo con el teclado.
     mic_activo: true
     # Subcadena del nombre del dispositivo de captura, tal como lo lista
     # sounddevice. Tiene que coincidir con UNO SOLO o sounddevice lanza
@@ -51,8 +51,14 @@ communication_node:
     #
     # Por eso NO vale "Lora" ni "Lora Audio Board": con pipewire corriendo,
     # la misma placa aparece 3 veces (el dispositivo ALSA + dos nodos de
-    # PulseAudio cuyo nombre también lleva "Lora_Audio_Board"). "Board: USB
-    # Audio" solo coincide con el ALSA, que es el que se quiere.
+    # PulseAudio cuyo nombre también lleva "Lora_Audio_Board").
+    #
+    # Tampoco vale "Board: USB Audio": ese es el nombre del dispositivo ALSA
+    # crudo, y cuando pipewire toma la tarjeta deja de listarlo -- entonces
+    # no coincide con NADA y el micrófono se cierra sin transcribir (el aviso
+    # de _stt_engine.py sale por stdout, no al log de ROS, así que no se ve).
+    # "alsa_input.usb-Lora" coincide solo con la entrada de pipewire; el otro
+    # nodo con "Lora" en el nombre es el .monitor, que graba el altavoz.
     #
     # Tampoco se usa "hw:3,0": el número de tarjeta cambia entre arranques
     # (se ha visto como card 1 y como card 3).

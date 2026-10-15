@@ -4,9 +4,9 @@ Firmware que convierte un **ESP32-S3-DevKitC-1** en el controlador de motores de
 
 > **Estado: funcionando.** Verificado en el robot el 13 de octubre de 2026.
 >
-> - ✅ Las 4 ruedas giran hacia adelante con `F`, comprobado rueda por rueda con `T1`..`T4`.
-> - ✅ Las 4 diagonales (`FL`/`FR`/`BL`/`BR`) responden desde la página de control.
-> - ✅ `RL` y `RR` giran hacia su lado, tras deshacer un intercambio que sobraba (ver [Historia](#historia-de-las-correcciones)).
+> - Las 4 ruedas giran hacia adelante con `F`, comprobado rueda por rueda con `T1`..`T4`.
+> - Las 4 diagonales (`FL`/`FR`/`BL`/`BR`) responden desde la página de control.
+> - `RL` y `RR` giran hacia su lado, tras deshacer un intercambio que sobraba (ver [Historia](#historia-de-las-correcciones)).
 
 ---
 

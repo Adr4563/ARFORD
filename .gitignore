@@ -19,3 +19,9 @@ dependencies.lock
 
 # Permisos locales de la herramienta de IA (contienen IPs de la red local)
 .claude/
+
+# finetuning: pesos y datasets se regeneran con los scripts, no van al repo
+finetuning/adapters/
+finetuning/data/*.jsonl
+finetuning/*.log
+finetuning/data/*.log

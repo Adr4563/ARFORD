@@ -114,15 +114,22 @@ RESPUESTAS_TRIVIA_ERROR = [
 # niños seguidos no oyen lo mismo. Todas tutean (no vosean): el fine-tune
 # de Chat libre que usa el robot está entrenado en tuteo, y mezclar las dos
 # formas en la misma conversación suena raro.
+# La presentacion va SEPARADA del saludo: primero Romeo dice quien es y que
+# sabe hacer, despues pregunta el nombre. Se dice en dos frases y no en una
+# sola larga porque la voz tarda y una frase de 30 palabras se hace eterna.
+PRESENTACION = (
+    "Hola, soy Romeo, un robot. Puedo jugar trivia contigo, hacer caras y "
+    "emociones, o simplemente conversar de lo que quieras."
+)
+
 SALUDOS_APERTURA = [
-    "Hola, mi nombre es Romeo, ¿cuál es tu nombre?",
-    "¡Hola! Soy Romeo. ¿Y tú cómo te llamas?",
-    "Hola, hola. Soy Romeo, tu robot. ¿Quién eres tú?",
-    "¡Buenas! Me llamo Romeo. Cuéntame tu nombre.",
-    "¡Hola! Yo soy Romeo. ¿Me dices tu nombre?",
-    "¡Qué bueno verte! Soy Romeo. ¿Cómo te llamas?",
-    "Hola, soy Romeo, un robot. ¿Y tú, cómo te llamas?",
-    "¡Hey! Me llamo Romeo. Dime tu nombre y jugamos.",
+    # Ya no se presentan ("soy Romeo"): eso lo dice PRESENTACION justo antes,
+    # y repetirlo sonaba raro. Aca solo se pide el nombre.
+    "¿Y tú, cómo te llamas?",
+    "Cuéntame, ¿cuál es tu nombre?",
+    "¿Me dices tu nombre?",
+    "Antes de empezar, ¿cómo te llamas?",
+    "¿Quién eres tú?",
 ]
 
 # Lo que dice después de que el niño da su nombre: presenta las dos cosas
@@ -190,6 +197,8 @@ _PALABRAS_RESPUESTA_CORTA = 4
 RUTAS = ["TRIVIA", "CHAT_LIBRE"]
 
 
+
+
 class OrchestratorNode(Node):
 
     def __init__(self):
@@ -219,6 +228,7 @@ class OrchestratorNode(Node):
     def _arrancar(self):
         self._timer_arranque.cancel()
         self._iniciar_sesion()
+
 
     # ══════════════════════════════════════════════════════════════════
     # Warmup de Ollama -- portado de _precargar_modelos()/_precargar_uno()/
@@ -537,6 +547,9 @@ class OrchestratorNode(Node):
         self._bridge.mostrar_cara("content")
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("speaking")
+        # Primero quien soy y que se hacer, despues el nombre.
+        self.get_logger().info(f"Asistente: {PRESENTACION}")
+        self._bridge.hablar(PRESENTACION)
         saludo = random.choice(SALUDOS_APERTURA)
         self.get_logger().info(f"Asistente: {saludo}")
         self._bridge.hablar(saludo)
@@ -549,6 +562,7 @@ class OrchestratorNode(Node):
             "cola_preguntas": [], "ya_usados": set(), "aciertos": 0, "total": 0,
             "tema_actual": None, "nombre": None, "musica_ya_sonada": False,
         }
+
 
     def _finalizar_sesion(self):
         estado = self.estado

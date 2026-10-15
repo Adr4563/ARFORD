@@ -146,7 +146,7 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 |---|---|---|
 | `mic_activo` | `true` | `false` desactiva el STT y deja solo el teclado |
 | `carrito_port` | `/dev/ttyACM0` | Puerto Serial del ESP32-S3 |
-| `chat_model` | `romeo-chat-libre-v4` | Se pasa al orquestador como `CHAT_MODEL` |
+| `chat_model` |  `arford-empatico` | Se pasa al orquestador como `CHAT_MODEL` |
 | `trivia_model` | `romeo-trivia` | Se pasa como `TRIVIA_MODEL` |
 | `salida_trivia_model` | `romeo-salida-trivia-v2` | Se pasa como `SALIDA_TRIVIA_MODEL` |
 | `chat_server_host` | `http://localhost:11434` | Se pasa como `CHAT_SERVER_HOST` |
