@@ -11,14 +11,14 @@ communication_node:
     voz_motor: "vits"              # vits | piper
     voz_piper_modelo: ""           # solo con voz_motor: piper. Vacío = ~/piper-voces/es_CO-dii.onnx
     # LA VOZ DE ROMEO: GLaDOS en español (modelo Piper cargado con
-    # sherpa-onnx). Todos estos valores se eligieron DE OÍDO en la placa
-    # -- es la "versión 40": ajustes de fábrica del modelo, un poco más
-    # pausada y +1.5 semitonos. Ver voces/README.md para la comparativa.
+    # sherpa-onnx). Todos estos valores se eligieron DE OÍDO en la placa:
+    # menos "aire"/susurros (ruido 0.33), ritmo fijo, un poco más pausada
+    # y sin subir el tono (0 semitonos). Ver voces/README.md.
     voz_vits_dir: "/home/pi/.romeo/modelos/vits-piper-es_ES-glados-medium"
     voz_vits_ruido: 0.33
     voz_vits_ruido_w: 0.5          # ritmo fijo: con 0.8 cada frase salía distinta
     voz_vits_duracion: 1.15
-    voz_tono_semitonos: 1.5
+    voz_tono_semitonos: 0.0        # sin semitonos (tono natural)
     # Volumen con el que mpv reproduce la voz (0-100, 100 = sin atenuar).
     # Bajo a propósito: el parlante de la placa distorsiona y pide
     # demasiada corriente con el volumen alto. Por debajo va además el
