@@ -74,6 +74,29 @@ MODELOS_DIR = os.environ.get(
 # agent_corrector compara con difflib y lo absorbe), pero si algún día el nombre
 # importa -- una palabra de activación, por ejemplo -- hay que volver a `base` y
 # pagar los 2 segundos extra.
+# Motor de reconocimiento: "nemo" o "whisper".
+#
+# nemo es NVIDIA FastConformer transducer entrenado SOLO en espanol. Medido en
+# la Pi con voz real por el microfono de la placa (10 s de audio):
+#
+#   nemo-transducer-es   2.2 s   "llamo, Adrian, es una buena oportunidad de
+#                                 estar aqui contigo y espero que nos llevamos
+#                                 a llevar bien, y es lo mas importante que
+#                                 estoy consciente."
+#   whisper-base         8.6 s   "Ya madre es una buena oportunidad [...] que
+#                                 estoy con si"
+#   whisper-small       30.1 s   acierta el nombre, pero 30 s no sirve para
+#                                conversar
+#
+# nemo es 4x mas rapido que whisper-base y transcribe mejor: whisper se come
+# el nombre y el final de la frase. whisper queda como alternativa porque es
+# multilingue (nemo solo entiende espanol).
+MOTOR = os.environ.get("ROMEO_STT_MOTOR", "nemo")
+NEMO_DIR = os.environ.get(
+    "ROMEO_STT_NEMO_DIR",
+    "sherpa-onnx-nemo-fast-conformer-transducer-es-1424-int8")
+
+# Solo se usa con MOTOR="whisper".
 TAM = os.environ.get("ROMEO_STT_TAM", "tiny")
 HILOS = int(os.environ.get("ROMEO_STT_HILOS", "2"))
 
@@ -100,11 +123,13 @@ SAMPLE_RATE = 16000
 class ReconocedorVoz:
     """Convierte audio en texto. Se carga perezosamente en el primer uso."""
 
-    def __init__(self, modelos_dir=None, tam=None, hilos=None, idioma=None):
+    def __init__(self, modelos_dir=None, tam=None, hilos=None, idioma=None,
+                 motor=None):
         self.modelos_dir = modelos_dir or MODELOS_DIR
         self.tam = tam or TAM
         self.hilos = hilos if hilos is not None else HILOS
         self.idioma = idioma or IDIOMA
+        self.motor = (motor or MOTOR).lower()
 
         self._recognizer = None
         self._vad = None
@@ -115,13 +140,26 @@ class ReconocedorVoz:
     # ------------------------------------------------------------------ carga
 
     def _rutas(self):
+        vad = os.path.join(self.modelos_dir, "silero_vad.onnx")
+        if self.motor == "nemo":
+            base = os.path.join(self.modelos_dir, "asr", NEMO_DIR)
+            return {
+                "encoder": os.path.join(base, "encoder.int8.onnx"),
+                "decoder": os.path.join(base, "decoder.int8.onnx"),
+                "joiner": os.path.join(base, "joiner.int8.onnx"),
+                "tokens": os.path.join(base, "tokens.txt"),
+                "vad": vad,
+            }
         base = os.path.join(self.modelos_dir, f"sherpa-onnx-whisper-{self.tam}")
         return {
             "encoder": os.path.join(base, f"{self.tam}-encoder.int8.onnx"),
             "decoder": os.path.join(base, f"{self.tam}-decoder.int8.onnx"),
             "tokens": os.path.join(base, f"{self.tam}-tokens.txt"),
-            "vad": os.path.join(self.modelos_dir, "silero_vad.onnx"),
+            "vad": vad,
         }
+
+    def _nombre_modelo(self):
+        return "nemo-transducer-es" if self.motor == "nemo" else f"whisper-{self.tam}"
 
     def cargar(self):
         """Carga el modelo. Devuelve True si quedó listo. Idempotente."""
@@ -149,15 +187,26 @@ class ReconocedorVoz:
 
         t0 = time.perf_counter()
         try:
-            self._recognizer = sherpa_onnx.OfflineRecognizer.from_whisper(
-                encoder=rutas["encoder"],
-                decoder=rutas["decoder"],
-                tokens=rutas["tokens"],
-                num_threads=self.hilos,
-                decoding_method="greedy_search",
-                language=self.idioma,
-                task="transcribe",
-            )
+            if self.motor == "nemo":
+                self._recognizer = sherpa_onnx.OfflineRecognizer.from_transducer(
+                    encoder=rutas["encoder"],
+                    decoder=rutas["decoder"],
+                    joiner=rutas["joiner"],
+                    tokens=rutas["tokens"],
+                    num_threads=self.hilos,
+                    decoding_method="greedy_search",
+                    model_type="nemo_transducer",
+                )
+            else:
+                self._recognizer = sherpa_onnx.OfflineRecognizer.from_whisper(
+                    encoder=rutas["encoder"],
+                    decoder=rutas["decoder"],
+                    tokens=rutas["tokens"],
+                    num_threads=self.hilos,
+                    decoding_method="greedy_search",
+                    language=self.idioma,
+                    task="transcribe",
+                )
         except Exception as e:  # noqa: BLE001 - falla gracioso, no tumbar el nodo
             print(f"[STT] no se pudo cargar el modelo: {e}")
             self._intento_fallido = True
@@ -179,8 +228,9 @@ class ReconocedorVoz:
 
         self.segundos_carga = time.perf_counter() - t0
         print(
-            f"[STT] modelo whisper-{self.tam} listo en {self.segundos_carga:.1f}s "
-            f"({self.hilos} hilos, idioma={self.idioma})"
+            f"[STT] modelo {self._nombre_modelo()} listo en "
+            f"{self.segundos_carga:.1f}s ({self.hilos} hilos, "
+            f"idioma={self.idioma})"
         )
         return True
 

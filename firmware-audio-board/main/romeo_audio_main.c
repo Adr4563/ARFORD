@@ -200,7 +200,14 @@ static esp_err_t iniciar_audio(void)
 
     es7210_codec_cfg_t cfg_7210 = {
         .ctrl_if = ctrl_7210,
-        .mic_selected = ES7120_SEL_MIC1 | ES7120_SEL_MIC2,
+        /* Los CUATRO canales, no solo MIC1|MIC2. El diagrama de Waveshare no
+         * dice a que entradas del ES7210 van los dos microfonos de la placa, y
+         * leyendo solo MIC1|MIC2 la voz llegaba al 3-4% de la escala cuando
+         * whisper necesita 26-31%: compatible con estar midiendo fuga entre
+         * canales en vez de los microfonos. Habilitar los cuatro cubre las dos
+         * posibilidades sin tener que adivinar el cableado. */
+        .mic_selected = ES7120_SEL_MIC1 | ES7120_SEL_MIC2
+                      | ES7120_SEL_MIC3 | ES7120_SEL_MIC4,
     };
     const audio_codec_if_t *if_7210 = es7210_codec_new(&cfg_7210);
     ESP_RETURN_ON_FALSE(if_7210, ESP_FAIL, TAG, "ES7210 no responde");
@@ -228,7 +235,14 @@ static esp_err_t iniciar_audio(void)
     ESP_RETURN_ON_ERROR(esp_codec_dev_open(s_microfono, &fs), TAG, "abrir mic");
 
     esp_codec_dev_set_out_vol(s_altavoz, 70);
-    esp_codec_dev_set_in_gain(s_microfono, 30.0);
+    /* 37.5 dB es el TOPE del ES7210 (registro 14 de su tabla de ganancia).
+     * Antes estaba en 30.0 y la voz llegaba a la Pi con un pico del 2-8% de
+     * la escala -- medido hablando a 20-30 cm. whisper necesita 26-31% o
+     * alucina en vez de transcribir (devolvia "[Musica]" o repetia la misma
+     * palabra), asi que se sube al maximo: son 7.5 dB mas, unas 2.4x de
+     * senal. Si aun asi queda corto, lo que falta no es ganancia de codec
+     * sino distancia o un microfono mejor. */
+    esp_codec_dev_set_in_gain(s_microfono, 37.5);
 
     ESP_LOGI(TAG, "codecs listos: %d Hz, %d bits, mono", MUESTREO_HZ, BITS_MUESTRA);
     return ESP_OK;
@@ -349,7 +363,7 @@ static double medir_rms(int din, int dout, uint8_t mics, bool tdm)
     };
     double rms = -4.0;
     if (esp_codec_dev_open(dev, &fs) == ESP_CODEC_DEV_OK) {
-        esp_codec_dev_set_in_gain(dev, 30.0);
+        esp_codec_dev_set_in_gain(dev, 37.5);   /* igual que en produccion */
         vTaskDelay(pdMS_TO_TICKS(300));   /* que asiente el codec */
 
         static int16_t buf[4096];

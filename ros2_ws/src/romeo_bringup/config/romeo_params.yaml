@@ -24,7 +24,7 @@ communication_node:
     # demasiada corriente con el volumen alto. Por debajo va además el
     # mezclador ALSA del códec ES8311, que NO se controla desde acá -- ver
     # scripts/volumen_placa.sh.
-    voz_volumen: 60
+    voz_volumen: 70
 
     # --- Salida de audio: el parlante de la placa ESP32-S3 ---
     # La placa es una tarjeta de sonido USB. OJO con el nombre: es "Board"
@@ -63,7 +63,18 @@ communication_node:
     # Tampoco se usa "hw:3,0": el número de tarjeta cambia entre arranques
     # (se ha visto como card 1 y como card 3).
     mic_dispositivo: "Board: USB Audio"
-    stt_tam: "tiny"                # tiny | base | small -- tiny es el medido en la Pi
+    # Motor de STT. Medido en la Pi con voz real por el microfono de la placa
+    # (10 s de audio, la voz llega al 6-7% de la escala):
+    #
+    #   nemo    2.2 s  -- FastConformer transducer, SOLO espanol. El mejor:
+    #                     acierta el nombre, "espero" y "consciente".
+    #   whisper 8.6 s  -- con tam=base. Se come el nombre ("Ya madre") y el
+    #                     final. Con tam=tiny se queda en bucle.
+    #                     Con tam=small acierta mas, pero tarda 30 s.
+    #
+    # whisper queda como alternativa por ser multilingue; nemo solo espanol.
+    stt_motor: "nemo"              # nemo | whisper
+    stt_tam: "base"                # solo con stt_motor: whisper
     stt_hilos: 2                   # 2 es el óptimo medido (más hilos = más lento)
 
 moving_control_node:

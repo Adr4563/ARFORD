@@ -95,6 +95,9 @@ class CommunicationNode(LifecycleNode):
         # mic_dispositivo en romeo_params.yaml, que explica por qué el valor
         # bueno es "Board: USB Audio" y no "Lora".
         self.declare_parameter('mic_dispositivo', '')
+        # nemo (FastConformer espanol, 2.2 s) o whisper (multilingue, 8.6 s).
+        # Ver la nota de MOTOR en _stt_engine.py con las medidas.
+        self.declare_parameter('stt_motor', 'nemo')   # nemo | whisper
         self.declare_parameter('stt_tam', 'tiny')      # tiny | base | small
         self.declare_parameter('stt_hilos', 2)         # 2 es el óptimo medido
 
@@ -154,6 +157,7 @@ class CommunicationNode(LifecycleNode):
         # gastar los ~2s de carga del modelo. Se carga al escuchar.
         if self.get_parameter('mic_activo').value:
             self._stt = ReconocedorVoz(
+                motor=self.get_parameter('stt_motor').value,
                 tam=self.get_parameter('stt_tam').value,
                 hilos=self.get_parameter('stt_hilos').value)
 

@@ -59,7 +59,7 @@ def generate_launch_description():
         DeclareLaunchArgument('mic_activo', default_value='true',
                                description='false desactiva el STT y deja solo el teclado'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
-        DeclareLaunchArgument('chat_model', default_value='arford-empatico'),
+        DeclareLaunchArgument('chat_model', default_value='arford-empatico-full'),
         DeclareLaunchArgument('trivia_model', default_value='romeo-trivia'),
         DeclareLaunchArgument('salida_trivia_model', default_value='romeo-salida-trivia-v2'),
         DeclareLaunchArgument('chat_server_host', default_value='http://localhost:11434'),

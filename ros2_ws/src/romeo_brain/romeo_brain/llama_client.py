@@ -20,7 +20,7 @@ from . import perf_monitor
 
 CHAT_SERVER_HOST = os.environ.get("CHAT_SERVER_HOST", "http://localhost:11434")
 
-CHAT_MODEL = os.environ.get("CHAT_MODEL", "arford-empatico")
+CHAT_MODEL = os.environ.get("CHAT_MODEL", "arford-empatico-full")
 TRIVIA_MODEL = os.environ.get("TRIVIA_MODEL", "romeo-trivia")
 SALIDA_TRIVIA_MODEL = os.environ.get("SALIDA_TRIVIA_MODEL", "romeo-salida-trivia-v2")
 

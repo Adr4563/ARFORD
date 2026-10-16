@@ -5,7 +5,7 @@ base: unsloth/Llama-3.2-1B-Instruct
 task: sft
 
 data:
-  train: ./data/terapia.jsonl
+  train: ./data/terapia_trozos.jsonl
   format: chatml
   val_split: 0.05
   max_length: 1024
@@ -26,4 +26,4 @@ training:
     target_modules: auto
   quantization: 4bit
 
-output: ./adapters/arford-empatico-es
+output: ./adapters/arford-empatico-full

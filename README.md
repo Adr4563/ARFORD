@@ -95,7 +95,7 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 
 | Variable de entorno | Valor por defecto | Rol |
 |---|---|---|
-| `CHAT_MODEL` |  `arford-empatico` | Genera las respuestas del Chat libre |
+| `CHAT_MODEL` |  `arford-empatico-full` | Genera las respuestas del Chat libre |
 | `TRIVIA_MODEL` | `romeo-trivia` | Reacciones del juego de emociones |
 | `SALIDA_TRIVIA_MODEL` | `romeo-salida-trivia-v2` | Decide si el mensaje es una RESPUESTA o una petición de SALIR a mitad de una pregunta de Trivia |
 

@@ -98,7 +98,13 @@ class Display:
             [
                 "mpv", "--fs", "--vo=drm", "--idle=yes", "--loop-file=inf",
                 "--no-osc", "--no-input-default-bindings", "--really-quiet",
+                # --no-audio: los videos de las caras no llevan sonido, pero
+                # sin esto mpv abre igual el altavoz de la placa y, como corre
+                # con --idle --loop-file=inf toda la sesion, NO LO SUELTA: la
+                # voz de Romeo no se oia y speaker-test daba
+                # "Device or resource busy" sobre /dev/snd/pcmC1D0p.
                 # La pantalla va montada boca abajo en el chasis.
+                "--no-audio",
                 "--hwdec=auto", "--video-rotate=180",
                 f"--input-ipc-server={MPV_SOCKET}", ruta_inicial,
             ],

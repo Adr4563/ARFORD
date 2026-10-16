@@ -25,3 +25,7 @@ finetuning/adapters/
 finetuning/data/*.jsonl
 finetuning/*.log
 finetuning/data/*.log
+
+# grabaciones de prueba del microfono
+finetuning/*.wav
+*.bak

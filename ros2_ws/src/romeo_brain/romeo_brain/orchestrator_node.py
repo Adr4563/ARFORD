@@ -153,7 +153,7 @@ DESPEDIDAS = [
 ]
 
 PREGUNTAS_POR_TANDA = 5
-PAUSA_CAMBIO_CARA = 4       # segundos en 'content'/veredicto antes de la próxima cara
+PAUSA_CAMBIO_CARA = 2       # segundos en 'content'/veredicto antes de la próxima cara
 PAUSA_ANTES_ACCION_FISICA = 1
 # Segundos entre pedirle la cara y capturarla. El detector ya tarda 2.5-4.6s
 # en resolver (medido en la Pi), así que esto es solo el margen para que
