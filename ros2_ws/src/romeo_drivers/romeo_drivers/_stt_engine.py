@@ -150,7 +150,15 @@ class ReconocedorVoz:
                 "tokens": os.path.join(base, "tokens.txt"),
                 "vad": vad,
             }
+        # tiny y base estan en modelos/, small bajo modelos/asr/ (lo dejo ahi
+        # el script de descarga): se mira en los dos sitios para no tener que
+        # mover carpetas de 1.2 GB.
         base = os.path.join(self.modelos_dir, f"sherpa-onnx-whisper-{self.tam}")
+        if not os.path.isdir(base):
+            alterno = os.path.join(self.modelos_dir, "asr",
+                                   f"sherpa-onnx-whisper-{self.tam}")
+            if os.path.isdir(alterno):
+                base = alterno
         return {
             "encoder": os.path.join(base, f"{self.tam}-encoder.int8.onnx"),
             "decoder": os.path.join(base, f"{self.tam}-decoder.int8.onnx"),

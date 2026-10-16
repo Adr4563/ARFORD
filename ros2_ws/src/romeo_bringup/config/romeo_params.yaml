@@ -73,8 +73,8 @@ communication_node:
     #                     Con tam=small acierta mas, pero tarda 30 s.
     #
     # whisper queda como alternativa por ser multilingue; nemo solo espanol.
-    stt_motor: "nemo"              # nemo | whisper
-    stt_tam: "base"                # solo con stt_motor: whisper
+    stt_motor: "whisper"           # nemo | whisper
+    stt_tam: "small"               # solo con stt_motor: whisper
     stt_hilos: 2                   # 2 es el óptimo medido (más hilos = más lento)
 
 moving_control_node:
