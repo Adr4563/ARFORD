@@ -96,7 +96,6 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 | Variable de entorno | Valor por defecto | Rol |
 |---|---|---|
 | `CHAT_MODEL` |  `arford-empatico-full` | Genera las respuestas del Chat libre |
-| `TRIVIA_MODEL` | `romeo-trivia` | Reacciones del juego de emociones |
 | `SALIDA_TRIVIA_MODEL` | `romeo-salida-trivia-v2` | Decide si el mensaje es una RESPUESTA o una petición de SALIR a mitad de una pregunta de Trivia |
 
 - Se eligió `qwen2.5:0.5b` en lugar de `llama3.2:3b` tras comparar 7 modelos: 484 MB de RAM y 1-3 s por respuesta, frente a 2.5 GB y 7-12 s, con la misma calidad medida.
@@ -142,7 +141,7 @@ La transcripción la hace el **navegador del teléfono** (`SpeechRecognition`). 
   `desplazamiento` admite `Adelante`, `Atrás`, `Izquierda`, `Derecha` y `Girar 360°`. Hay 13 preguntas duplicadas por texto (con `id` distinto) que siguen sin resolverse.
 - **Memoria episódica:** `memoria_episodica.py` busca con BM25 puro (`rank_bm25`, sin embeddings) sobre los últimos 300 turnos del Chat libre. Solo usa un recuerdo si comparte **al menos 2 palabras de contenido** con el mensaje actual. La memoria es compartida entre todos los usuarios.
 - **Registro del Chat libre:** `registro_chat.py` guarda cada turno en JSONL para revisarlo después. Nunca se entrena directamente con este archivo, para que el modelo no refuerce sus propios errores.
-- **Personalidad:** ARFORD tiene un perfil Big Five (OCEAN) fijo, en escala 1-5: **Extraversión 2, Amabilidad 2, Responsabilidad 5, Neuroticismo 2, Apertura 3**. No se aplica por system prompt, sino que está **incorporado en los modelos por fine-tuning** (`romeo-trivia`, `romeo-chat-libre-v4`). Hubo un `personalidad.py` que lo convertía en un system prompt para modelos base; se eliminó porque con los fine-tunes del robot siempre quedaba vacío. Si se usa un modelo sin fine-tuning, hay que volver a construirlo a partir de estos valores.
+- **Personalidad:** ARFORD tiene un perfil Big Five (OCEAN) fijo, en escala 1-5: **Extraversión 2, Amabilidad 2, Responsabilidad 5, Neuroticismo 2, Apertura 3**. No se aplica por system prompt, sino que está **incorporado en los modelos por fine-tuning** (`romeo-chat-libre-v4`). Hubo un `personalidad.py` que lo convertía en un system prompt para modelos base; se eliminó porque con los fine-tunes del robot siempre quedaba vacío. Si se usa un modelo sin fine-tuning, hay que volver a construirlo a partir de estos valores.
 - **Música:** `romeo_drivers/data/musica/` contiene `angry-birds`, `danza-kuduro`, `minecraft`, `more-than-words-heaven`, `plantas-vs-zombies`, `super-mario-bros` y `zelda` (mp3).
 
 ---

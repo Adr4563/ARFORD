@@ -24,7 +24,7 @@ communication_node:
     # demasiada corriente con el volumen alto. Por debajo va además el
     # mezclador ALSA del códec ES8311, que NO se controla desde acá -- ver
     # scripts/volumen_placa.sh.
-    voz_volumen: 70
+    voz_volumen: 40
 
     # --- Salida de audio: el parlante de la placa ESP32-S3 ---
     # La placa es una tarjeta de sonido USB. OJO con el nombre: es "Board"

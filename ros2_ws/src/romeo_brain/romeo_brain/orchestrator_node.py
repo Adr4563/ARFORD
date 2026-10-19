@@ -162,7 +162,7 @@ PAUSA_POSAR = 2
 
 # Frases que, a mitad de una tanda de trivia, señalan que el usuario se
 # quiere ir a otra cosa -- fallback de _quiere_salir_trivia() cuando no se
-# puede consultar SALIDA_TRIVIA_MODEL (ver ese método).
+# puede mirar las listas de frases de arriba (ver ese método).
 _SALIR_TRIVIA = [
     "otra cosa", "cambiar de tema", "cambiemos de tema",
     "ya no quiero seguir", "ya no quiero jugar", "no quiero seguir jugando",
@@ -179,6 +179,17 @@ _SALIR_TRIVIA = [
     "quiero hacer otra cosa", "vamos a otra cosa",
     "suficiente trivia", "ya fue suficiente",
     "terminemos la trivia", "terminemos el trivia",
+    "cancelar", "cancela", "cancelemos",
+    "deseo salir", "quiero salir", "me quiero salir",
+    "salir", "salirme", "sal de la trivia",
+    "ya no quiero jugar trivia", "ya no quiero jugar triviar",
+    "no quiero jugar trivia",
+    # El STT escribe "trivia" como suena: estas son las variantes que ha
+    # devuelto whisper en las pruebas ("quiero cogar trivia Romeo" salio como
+    # "tribia"). Van aparte para que se vea que son faltas, no sinonimos.
+    "salir de la tribia", "salir de tribia", "no quiero tribia",
+    "dejemos la tribia", "terminemos la tribia", "no mas tribia",
+    "ya no quiero jugar tribia",
 ]
 _TEMA_PERSONAL = [
     "me paso", "me pasó", "el otro dia", "el otro día",
@@ -232,7 +243,7 @@ class OrchestratorNode(Node):
 
     # ══════════════════════════════════════════════════════════════════
     # Warmup de Ollama -- portado de _precargar_modelos()/_precargar_uno()/
-    # _precargar_salida_trivia() originales. No son llamadas a servicio
+    # originales. No son llamadas a servicio
     # ROS2 (Ollama es HTTP directo, ver llama_client.py), así que no tienen
     # el problema de deadlock de arriba -- se pueden lanzar ya en __init__.
     # ══════════════════════════════════════════════════════════════════
@@ -244,17 +255,16 @@ class OrchestratorNode(Node):
         except Exception as e:
             self.get_logger().warning(f"[warmup] no se pudo precargar {modelo}: {e}")
 
-    def _precargar_salida_trivia(self):
-        try:
-            llama_client.clasificar_salida_trivia("pregunta de prueba", "respuesta de prueba")
-        except Exception as e:
-            self.get_logger().warning(
-                f"[warmup] no se pudo precargar {llama_client.SALIDA_TRIVIA_MODEL}: {e}")
-
     def _precargar_modelos(self):
+        # Solo CHAT_MODEL. Antes se precargaban tres:
+        #
+        #   TRIVIA_MODEL        -- se cargaba sin que nadie lo llamara nunca:
+        #                          las preguntas salen del banco
+        #                          (preguntas.py -> preguntas.jsonl).
+        #   SALIDA_TRIVIA_MODEL -- lo sustituyen las listas de frases de
+        #                          _quiere_salir_trivia(), que deciden en
+        #                          microsegundos en vez de segundos.
         threading.Thread(target=self._precargar_uno, args=(llama_client.CHAT_MODEL,), daemon=True).start()
-        threading.Thread(target=self._precargar_uno, args=(llama_client.TRIVIA_MODEL,), daemon=True).start()
-        threading.Thread(target=self._precargar_salida_trivia, daemon=True).start()
 
     # ══════════════════════════════════════════════════════════════════
     # Helpers de Chat libre / prompts -- portados tal cual de
@@ -287,16 +297,24 @@ class OrchestratorNode(Node):
         ruta = enrutar(mensaje_usuario)
         return ruta if ruta in RUTAS else "CHAT_LIBRE"
 
-    def _quiere_salir_trivia(self, mensaje_usuario, pregunta_pendiente=None):
+    @staticmethod
+    def _quiere_salir_trivia(mensaje_usuario, pregunta_pendiente=None):
+        """True si el mensaje contiene una frase de _SALIR_TRIVIA (quiere
+        dejar el juego) o de _TEMA_PERSONAL (quiere hablar de lo suyo).
+
+        Solo busca la frase, a propósito. Antes decidía esto
+        romeo-salida-trivia-v2, un LLM por Ollama: costaba segundos en cada
+        turno de trivia y encima su veredicto pisaba las palabras clave. Las
+        frases con las que se pide salir son un puñado y están todas en las
+        dos listas; si falta alguna, se añade ahí y no hace falta ni LLM ni
+        clasificador.
+
+        `pregunta_pendiente` se mantiene en la firma porque el caller lo pasa,
+        pero ya no se usa.
+        """
         texto = mensaje_usuario.strip().lower()
-        tiene_keyword = (any(frase in texto for frase in _SALIR_TRIVIA)
-                          or any(frase in texto for frase in _TEMA_PERSONAL))
-        es_corto_y_sin_keyword = len(texto.split()) <= _PALABRAS_RESPUESTA_CORTA and not tiene_keyword
-        if pregunta_pendiente and not es_corto_y_sin_keyword:
-            veredicto = llama_client.clasificar_salida_trivia(pregunta_pendiente, mensaje_usuario)
-            if veredicto is not None:
-                return veredicto
-        return tiene_keyword
+        return (any(frase in texto for frase in _SALIR_TRIVIA)
+                or any(frase in texto for frase in _TEMA_PERSONAL))
 
     # ══════════════════════════════════════════════════════════════════
     # Reacciones (voz -> cara -> música+motores) y flujo de una tanda.

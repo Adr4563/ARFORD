@@ -53,10 +53,8 @@ class RosBridge:
         future como terminado.
 
         Devuelve None si el servicio no está disponible o no contesta a
-        tiempo -- el caller decide el fallback (ver
-        orchestrator_node._quiere_salir_trivia(), mismo criterio de
-        "degradar, nunca romper el turno" que clasificar_salida_trivia()
-        ya usaba en el proyecto original para Ollama caído)."""
+        tiempo -- el caller decide el fallback, con el mismo criterio de
+        "degradar, nunca romper el turno" que el resto del orquestador."""
         if not client.service_is_ready():
             if not client.wait_for_service(timeout_sec=2.0):
                 self.node.get_logger().warning(

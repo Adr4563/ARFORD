@@ -147,7 +147,6 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 | `mic_activo` | `true` | `false` desactiva el STT y deja solo el teclado |
 | `carrito_port` | `/dev/ttyACM0` | Puerto Serial del ESP32-S3 |
 | `chat_model` |  `arford-empatico-full` | Se pasa al orquestador como `CHAT_MODEL` |
-| `trivia_model` | `romeo-trivia` | Se pasa como `TRIVIA_MODEL` |
 | `salida_trivia_model` | `romeo-salida-trivia-v2` | Se pasa como `SALIDA_TRIVIA_MODEL` |
 | `chat_server_host` | `http://localhost:11434` | Se pasa como `CHAT_SERVER_HOST` |
 
@@ -168,7 +167,7 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 
 | Variable | Por defecto | Uso |
 |---|---|---|
-| `CHAT_SERVER_HOST`, `CHAT_MODEL`, `TRIVIA_MODEL`, `SALIDA_TRIVIA_MODEL` | ver [Modelos](../README.md#modelos-de-lenguaje-ollama) | Conexión con Ollama. El launch las fija a partir de sus argumentos |
+| `CHAT_SERVER_HOST`, `CHAT_MODEL`, `SALIDA_TRIVIA_MODEL` | ver [Modelos](../README.md#modelos-de-lenguaje-ollama) | Conexión con Ollama. El launch las fija a partir de sus argumentos |
 | `ROMEO_LOGS_DIR` | `~/.romeo/logs` | Carpeta de métricas de `perf_monitor.py` (`tiempos.csv`, `recursos.csv`) |
 | `PERF_MUESTREO_SEG` | `5` | Intervalo de muestreo de CPU y RAM |
 | `CHAT_LIBRE_REGISTRO` | `~/.romeo/chat_libre_training/conversaciones.jsonl` | Archivo del registro del Chat libre |
@@ -218,7 +217,7 @@ colcon build --symlink-install
 source install/setup.bash
 
 # 3. Tener Ollama en marcha con los 3 modelos importados
-#    (romeo-chat-libre-v4, romeo-trivia y romeo-salida-trivia-v2, con `ollama create`)
+#    (el CHAT_MODEL y romeo-salida-trivia-v2, con `ollama create`)
 
 # 4. Lanzar todo
 ros2 launch romeo_bringup romeo_bringup.launch.py

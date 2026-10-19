@@ -10,7 +10,7 @@ este caso (siempre se quiere el mismo orden arrancar->configurar->activar,
 sin coordinación entre nodos) -- ver el README de ros2_ws para cómo
 inspeccionar el estado a mano con `ros2 lifecycle`.
 
-Los 3 modelos de Ollama (CHAT_MODEL/TRIVIA_MODEL/SALIDA_TRIVIA_MODEL) siguen
+El modelo de Ollama (CHAT_MODEL) sigue
 siendo variables de ENTORNO, no parámetros ROS2 -- llama_client.py (en
 romeo_brain) las lee con os.environ.get() al importarse, igual que
 Clients/Llama_Client.py en el proyecto original. Acá se las pasa al proceso
@@ -60,8 +60,6 @@ def generate_launch_description():
                                description='false desactiva el STT y deja solo el teclado'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
         DeclareLaunchArgument('chat_model', default_value='arford-empatico-full'),
-        DeclareLaunchArgument('trivia_model', default_value='romeo-trivia'),
-        DeclareLaunchArgument('salida_trivia_model', default_value='romeo-salida-trivia-v2'),
         DeclareLaunchArgument('chat_server_host', default_value='http://localhost:11434'),
     ]
 
@@ -96,8 +94,6 @@ def generate_launch_description():
         parameters=[params_file],
         additional_env={
             'CHAT_MODEL': LaunchConfiguration('chat_model'),
-            'TRIVIA_MODEL': LaunchConfiguration('trivia_model'),
-            'SALIDA_TRIVIA_MODEL': LaunchConfiguration('salida_trivia_model'),
             'CHAT_SERVER_HOST': LaunchConfiguration('chat_server_host'),
         },
     )
