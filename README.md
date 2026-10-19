@@ -1,10 +1,10 @@
-# ARFORD — Socially Friendly Robot
+# ROMEO — Socially Friendly Robot
 
 <p align="center">
   <img src="docs/arford.webp" alt="ARFORD: robot social de cuerpo blanco con detalles granate, carita animada en pantalla y base con ruedas" width="320">
 </p>
 
-**ARFORD** es un robot social amigable (*socially friendly robot*) y socialmente asistivo (SAR, *Socially Assistive Robot*), orientado a la **interacción humano-robot (HRI)** con **niños y jóvenes con TDAH** (Trastorno por Déficit de Atención e Hiperactividad) **y TEA** (Trastorno del Espectro Autista), entre otras necesidades de apoyo.
+**ROMEO** es un robot social amigable (*socially friendly robot*) y socialmente asistivo (SAR, *Socially Assistive Robot*), orientado a la **interacción humano-robot (HRI)** con **niños y jóvenes con TDAH** (Trastorno por Déficit de Atención e Hiperactividad) **y TEA** (Trastorno del Espectro Autista), entre otras necesidades de apoyo.
 
 Su objetivo es ofrecer una interacción predecible, breve y motivadora: conversa (**Chat libre**) y juega **Trivia** por voz o texto, con una carita animada que expresa emociones, música, movimiento sobre un carrito mecanum y un juego de reconocimiento e imitación de emociones por cámara que ayuda a practicar la identificación de expresiones faciales.
 
@@ -14,7 +14,7 @@ Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reempl
 
 ## Contenido
 
-- [Qué hace ARFORD](#qué-hace-romeo)
+- [Qué hace ROMEO](#qué-hace-romeo)
 - [Hardware](#hardware)
 - [Modelos de lenguaje (Ollama)](#modelos-de-lenguaje-ollama)
 - [Voz](#voz)
@@ -30,7 +30,7 @@ Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reempl
 
 ---
 
-## Qué hace ARFORD
+## Qué hace ROMEO
 
 | Modo | Qué ocurre |
 |---|---|
@@ -110,7 +110,7 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 
 ## Voz
 
-### Salida (lo que dice ARFORD)
+### Salida (lo que dice ROMEO)
 
 Hay tres motores de voz, que se eligen con el parámetro `voz_motor`:
 
