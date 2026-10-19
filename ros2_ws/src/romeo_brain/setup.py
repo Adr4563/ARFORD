@@ -17,7 +17,12 @@ setup(
         # -- se ubican en runtime con ament_index_python, mismo criterio que
         # los assets de romeo_drivers.
         (os.path.join('share', package_name, 'data'),
-            glob(os.path.join('romeo_brain', 'data', '*'))),
+            glob(os.path.join('romeo_brain', 'data', '*.*'))),
+        # Las frases que dice Romeo, en su propia carpeta para poder editarlas
+        # sin tocar codigo (ver frases.py). El glob de arriba lleva *.* para
+        # no arrastrar este directorio como si fuera un archivo.
+        (os.path.join('share', package_name, 'data', 'frases'),
+            glob(os.path.join('romeo_brain', 'data', 'frases', '*'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

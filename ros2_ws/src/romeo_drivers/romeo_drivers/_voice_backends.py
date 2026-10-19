@@ -40,6 +40,7 @@ import wave
 
 from ._audio_salida import opciones_mpv
 
+
 # Piper/sherpa-onnx (onnxruntime) agarran los núcleos de la Pi por default.
 # Medido en el proyecto original: la síntesis tarda igual con 1, 2 o 4
 # hilos, así que limitarlo a 1 es gratis en velocidad y deja núcleos libres
@@ -161,17 +162,21 @@ class Voz:
                 w.setsampwidth(2)
                 w.setframerate(sr)
                 w.writeframes((muestras * 32767).astype(np.int16).tobytes())
-            cmd = self._cmd_mpv(ruta)
-            tono = float(self.vits.get("tono", 0))
-            if tono:
-                f = 2 ** (tono / 12)
-                cmd.insert(1, f"--af=lavfi=[asetrate={sr * f:.0f},aresample={sr},atempo={1 / f:.5f}]")
-            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self._reproducir(ruta, sr)
         finally:
             try:
                 os.unlink(ruta)
             except OSError:
                 pass
+
+    def _reproducir(self, ruta, sr):
+        """Manda el WAV a mpv, aplicando el cambio de tono si hace falta."""
+        cmd = self._cmd_mpv(ruta)
+        tono = float(self.vits.get("tono", 0))
+        if tono:
+            f = 2 ** (tono / 12)
+            cmd.insert(1, f"--af=lavfi=[asetrate={sr * f:.0f},aresample={sr},atempo={1 / f:.5f}]")
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def _hablar_piper(self, texto):
         """Ver la nota histórica en Voice_Output_Client.py sobre por qué NO

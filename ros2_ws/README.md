@@ -42,10 +42,9 @@ ros2_ws/src/
 │   └── romeo_brain/
 │       ├── orchestrator_node.py         máquina de estados de la conversación
 │       ├── _ros_bridge.py               publishers y clientes de servicio
-│       ├── agent_router.py, agent_corrector.py, agent_behavior.py
+│       ├── agente_trivia.py, agente_chat.py
 │       ├── llama_client.py              HTTP directo a Ollama
-│       ├── memoria_episodica.py, preguntas.py
-│       ├── registro_chat.py, perf_monitor.py
+│       ├── preguntas.py
 │       └── data/  preguntas.jsonl, router_modelo.joblib
 └── romeo_bringup/               launch + parámetros (ament_cmake)
     ├── launch/romeo_bringup.launch.py
@@ -83,8 +82,8 @@ La regla: el nodo habla con ROS 2 (tópicos, servicios, parámetros, lifecycle) 
 | | `_emotion_detector.py` | ONNX (YuNet + FER+) |
 | `moving_control_node` | `_cart_serial.py` | `pyserial` y el protocolo del ESP32-S3 |
 | `orchestrator_node` | `_ros_bridge.py` | publishers y clientes de servicio del cerebro |
-| | `agent_router.py`, `agent_corrector.py`, `agent_behavior.py` | los 3 agentes sin LLM |
-| | `llama_client.py`, `memoria_episodica.py`, `registro_chat.py`, `preguntas.py`, `perf_monitor.py` | Ollama, memoria, registro, dataset, métricas |
+| | `agente_trivia.py`, `agente_chat.py` | los 2 agentes (solo chat usa LLM) |
+| | `agente_chat.py`, `agente_trivia.py`, `llama_client.py`, `preguntas.py` | los dos agentes, Ollama, dataset |
 
 **Por qué no están fusionadas dentro de cada nodo**, aunque la carpeta quede plana:
 
@@ -93,7 +92,7 @@ La regla: el nodo habla con ROS 2 (tópicos, servicios, parámetros, lifecycle) 
 - **Cambian por razones distintas.** Si el firmware del ESP32-S3 cambia el protocolo, se toca `_cart_serial.py`; si se pasa de tópico a action, se toca `moving_control_node.py`. Juntarlos obliga a leer lo uno para cambiar lo otro.
 - **Tamaño.** Fusionar dejaría `communication_node.py` en ~830 líneas mezclando lifecycle con Piper, `mpv` y sherpa-onnx, contra las ~310 de hoy.
 
-El mismo criterio decide qué se vuelve nodo: hardware o red → nodo; cálculo local → librería. Por eso `agent_router.py` (microsegundos, sin hardware) es una librería y no un servicio ROS 2.
+El mismo criterio decide qué se vuelve nodo: hardware o red → nodo; cálculo local → librería. Por eso `enrutar()` (microsegundos, sin hardware) es una librería y no un servicio ROS 2.
 
 ---
 
@@ -168,7 +167,6 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 | Variable | Por defecto | Uso |
 |---|---|---|
 | `CHAT_SERVER_HOST`, `CHAT_MODEL`, `SALIDA_TRIVIA_MODEL` | ver [Modelos](../README.md#modelos-de-lenguaje-ollama) | Conexión con Ollama. El launch las fija a partir de sus argumentos |
-| `ROMEO_LOGS_DIR` | `~/.romeo/logs` | Carpeta de métricas de `perf_monitor.py` (`tiempos.csv`, `recursos.csv`) |
 | `PERF_MUESTREO_SEG` | `5` | Intervalo de muestreo de CPU y RAM |
 | `CHAT_LIBRE_REGISTRO` | `~/.romeo/chat_libre_training/conversaciones.jsonl` | Archivo del registro del Chat libre |
 | `CHAT_LIBRE_REGISTRAR` | `1` | `0` o `false` desactiva el registro |
@@ -294,10 +292,8 @@ ros2 service call /romeo/speak romeo_interfaces/srv/Speak "{text: 'probando la v
 ### Chat libre
 
 1. Llega el texto por `/romeo/user_input`.
-2. `agent_router` lo clasifica como Chat libre (sin LLM).
-3. `memoria_episodica` busca un recuerdo relevante.
+2. `enrutar()` lo clasifica como Chat libre (sin LLM).
 4. `llama_client` genera la respuesta con `CHAT_MODEL`, sin system prompt: el comportamiento viene del fine-tuning.
-5. `registro_chat` guarda el turno.
 6. `FaceCommand` `speaking` → `Speak` (bloquea) → `FaceCommand` `content`.
 
 ### Trivia
@@ -305,7 +301,7 @@ ros2 service call /romeo/speak romeo_interfaces/srv/Speak "{text: 'probando la v
 1. Al entrar en Trivia se ofrecen 5 temas al azar y el usuario elige uno (coincidencia exacta o aproximada, sin LLM).
 2. `preguntas.py` carga una tanda de 5 preguntas del tema.
 3. Se hace la pregunta con la cara `speaking` y `Speak`. Si es musical, primero suena la canción completa (`PlayMusic` con `esperar=true`).
-4. Con la respuesta del usuario, `agent_corrector` decide si es correcta, `agent_behavior` elige la cara y ARFORD dice una frase fija elegida al azar.
+4. Con la respuesta del usuario, `agente_trivia` decide si es correcta y elige la cara y ARFORD dice una frase fija elegida al azar.
 5. La reacción sigue un **orden estricto**: primero `Speak` (bloquea) y después `FaceCommand`, `PlayMusic` (`esperar=false`) y `MotionCommand`, en paralelo.
 6. Se pasa a la siguiente pregunta o se cierra con el resumen de aciertos.
 
@@ -331,7 +327,7 @@ Si el mensaje es corto (4 palabras o menos) y no contiene ninguna palabra clave 
 - **Degradación elegante.** Sin cámara, carrito o `mpv`, el nodo correspondiente sigue vivo y responde `detected=false` o `success=false`, sin lanzar nunca una excepción no controlada. El robot sigue conversando.
 - **"Salir" termina la sesión, no el proceso.** En el original, "salir" cerraba el script. Aquí ARFORD se despide y queda lista para el siguiente usuario, como corresponde a un robot desplegado (`orchestrator_node.py::_finalizar_sesion()`).
 - **Mandan las mediciones de latencia.** El router y el corrector dejaron de usar el LLM por mediciones hechas en la Pi. Ninguna capa nueva (tópicos, servicios, DDS) debería añadir una latencia perceptible a la conversación.
-- **STT: `whisper-tiny` con 2 hilos, por medición.** `_stt_engine.py` usa sherpa-onnx porque corre sobre `onnxruntime`, que ya está instalado para el detector de emociones, y porque no arrastra el fallo de hilos de `faster-whisper`. Medido en la Pi con un audio de 3.8 s (`scripts/bench_stt.py`): `tiny`/2 hilos da 2.22 s sin carga y **2.45 s con Ollama generando**, contra 4.41 s de `base`/2 hilos. Dos resultados contraintuitivos: **más hilos es más lento** (4 hilos sube a 3.45 s y dispara la varianza) y el mínimo no está en 1 hilo (3.29 s bajo carga). El precio de `tiny` es que transcribe "Hola Laura" donde `base` acierta "Hola Romeo"; para Trivia lo absorbe el `agent_corrector`, pero si el nombre llega a importar hay que volver a `base`.
+- **STT: `whisper-small` con 3 hilos, por medición.** `_stt_engine.py` usa sherpa-onnx porque corre sobre `onnxruntime`, que ya está instalado para el detector de emociones, y porque no arrastra el fallo de hilos de `faster-whisper`. Medido en la Pi con un audio de 3.8 s (`scripts/bench_stt.py`): `tiny`/2 hilos da 2.22 s sin carga y **2.45 s con Ollama generando**, contra 4.41 s de `base`/2 hilos. Dos resultados contraintuitivos: **más hilos es más lento** (4 hilos sube a 3.45 s y dispara la varianza) y el mínimo no está en 1 hilo (3.29 s bajo carga). El precio de `tiny` es que transcribe "Hola Laura" donde `base` acierta "Hola Romeo"; para Trivia lo absorbe el `agent_corrector`, pero si el nombre llega a importar hay que volver a `base`.
 - **Recursos muy limitados.** La Pi 4 no tiene GPU y reparte la CPU entre Ollama (~3 de sus 4 núcleos mientras genera, con ~545 MB de RAM residente), la síntesis de voz, la decodificación de video y la cámara. Cada nodo nuevo añade su propio proceso y la sobrecarga de DDS.
 
 ---
@@ -341,11 +337,11 @@ Si el mensaje es corto (4 palabras o menos) y no contiene ninguna palabra clave 
 | Original (`deploy-raspberry-standalone/`) | Nuevo | Paquete |
 |---|---|---|
 | `Orchestrator_Management.py` | `orchestrator_node.py` | `romeo_brain` |
-| `Agents/Agent_Router.py` | `agent_router.py` | `romeo_brain` |
-| `Agents/Agent_Corrector.py` | `agent_corrector.py` | `romeo_brain` |
-| `Agents/Agent_Behavior.py` | `agent_behavior.py` | `romeo_brain` (ya no toca hardware; recibe un `bridge`) |
+| `Agents/Agent_Router.py` | `orchestrator_node.enrutar()` | `romeo_brain` |
+| `Agents/Agent_Corrector.py` | `agente_trivia.py` | `romeo_brain` |
+| `Agents/Agent_Behavior.py` | `agente_trivia.py` | `romeo_brain` (ya no toca hardware; recibe un `bridge`) |
 | `Clients/Llama_Client.py` | `llama_client.py` | `romeo_brain` |
-| `memoria_episodica.py`, `registro_chat.py`, `preguntas.py`, `perf_monitor.py` | mismo nombre | `romeo_brain` |
+| `preguntas.py` | mismo nombre | `romeo_brain` |
 | `personalidad.py` | **eliminado** — la personalidad viene horneada en los fine-tunes, así que el system prompt siempre salía vacío (los valores OCEAN están en el [README principal](../README.md)) | — |
 | — | `_ros_bridge.py` (nuevo) | `romeo_brain` |
 | `voz_server.py` | **eliminado** — la página web y la voz por teléfono se reemplazaron por el micrófono de la placa + `_stt_engine.py` | — |

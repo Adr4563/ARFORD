@@ -75,7 +75,11 @@ communication_node:
     # whisper queda como alternativa por ser multilingue; nemo solo espanol.
     stt_motor: "whisper"           # nemo | whisper
     stt_tam: "small"               # solo con stt_motor: whisper
-    stt_hilos: 2                   # 2 es el óptimo medido (más hilos = más lento)
+    # 3 es el optimo medido con whisper-small en la Pi (4 nucleos), sobre 5 s
+    # de audio: 2 hilos 9.9 s, 3 hilos 8.0 s, 4 hilos 12.5 s -- con 4 compite
+    # con los otros nodos y empeora. El "2" de antes se midio con whisper-tiny,
+    # que es 10x mas pequeño.
+    stt_hilos: 3
 
 moving_control_node:
   ros__parameters:

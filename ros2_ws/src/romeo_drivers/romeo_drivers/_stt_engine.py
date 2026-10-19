@@ -71,7 +71,7 @@ MODELOS_DIR = os.environ.get(
 #
 # El precio de `tiny` es precisión: transcribe "Hola Laura" donde `base` acierta
 # "Hola Romeo". El nombre del robot se pierde. Para Trivia da igual (el
-# agent_corrector compara con difflib y lo absorbe), pero si algún día el nombre
+# agente_trivia compara con difflib y lo absorbe), pero si algún día el nombre
 # importa -- una palabra de activación, por ejemplo -- hay que volver a `base` y
 # pagar los 2 segundos extra.
 # Motor de reconocimiento: "nemo" o "whisper".
@@ -320,7 +320,8 @@ class ReconocedorVoz:
 
     # -------------------------------------------------------------- micrófono
 
-    def escuchar(self, al_transcribir, detener=None, dispositivo=None):
+    def escuchar(self, al_transcribir, detener=None, dispositivo=None,
+                 pausar=None):
         """Escucha el micrófono y llama `al_transcribir(texto)` por cada frase.
 
         Corta las frases con el VAD (silencio de 0.25s), así que no hace falta
@@ -328,6 +329,10 @@ class ReconocedorVoz:
 
         `detener` es un callable opcional que devuelve True para salir del
         bucle -- pensado para que el nodo lo apague en `on_deactivate`.
+
+        `pausar` es otro callable opcional: mientras devuelva True se tira el
+        audio que entra en vez de transcribirlo. El nodo le pasa su
+        `_sonando()`, para no transcribir la propia voz de Romeo.
 
         Esta función BLOQUEA. El llamador la corre en su propio hilo.
         """
@@ -386,6 +391,20 @@ class ReconocedorVoz:
                         break
 
                     bloque, _ = mic.read(int(0.1 * SAMPLE_RATE))
+
+                    # Mientras Romeo suena se SIGUE leyendo del micrófono
+                    # (si no, el buffer de ALSA se desborda), pero el audio
+                    # se tira y el VAD se deja vacío: el micro y el altavoz
+                    # están en la misma placa, así que todo lo que capta
+                    # mientras habla es su propia voz. Sin esto, whisper la
+                    # transcribía y el orquestador la procesaba como si la
+                    # hubiera dicho el usuario -- Romeo acababa conversando
+                    # consigo mismo en bucle.
+                    if pausar is not None and pausar():
+                        buffer = np.array([], dtype="float32")
+                        self._vad.reset()
+                        continue
+
                     buffer = np.concatenate([buffer, bloque.reshape(-1)])
 
                     while len(buffer) > ventana:

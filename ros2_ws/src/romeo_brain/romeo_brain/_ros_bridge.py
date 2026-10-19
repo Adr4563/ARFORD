@@ -5,9 +5,9 @@ orchestrator_node necesita en cada turno (ver la nota larga en
 _llamar_servicio_sync más abajo, es la pieza más delicada de toda la
 migración).
 
-Se lo pasa a Agents/agent_behavior.py como `bridge` para que ese módulo
+Se lo pasa a agente_trivia.py como `bridge` para que ese módulo
 pueda disparar música/motores sin importar rclpy ni saber nada de tópicos
--- mismo espíritu de agent_behavior.py: lógica de negocio separada de la
+-- lógica de negocio separada de la
 integración con hardware/framework.
 """
 import time
@@ -75,7 +75,7 @@ class RosBridge:
             self.node.get_logger().warning(f"[ros_bridge] {client.srv_name} falló: {e}")
             return None
 
-    # ─── API de alto nivel que usan orchestrator_node/agent_behavior ────
+    # ─── API de alto nivel que usan orchestrator_node/agente_trivia ────
 
     def hablar(self, texto):
         """BLOQUEA hasta que communication_node termina de reproducir la

@@ -29,21 +29,37 @@ terminal para probar). Acá eso solo termina la SESIÓN -- el robot dice la
 despedida y arranca una sesión nueva (_iniciar_sesion()), listo para el
 próximo usuario. Ver _finalizar_sesion() más abajo.
 """
+import os
 import random
 import threading
 import time
 
+import joblib
 import rclpy
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
+from ament_index_python.packages import get_package_share_directory
+
 from romeo_interfaces.msg import UserInput
 
-from . import agent_behavior, llama_client, memoria_episodica, perf_monitor, preguntas, registro_chat
-from .agent_corrector import evaluar_respuesta
-from .agent_router import enrutar
+from . import agente_chat, agente_trivia, frases, llama_client, preguntas
 from ._ros_bridge import RosBridge
+
+# El enrutado (TRIVIA / CHAT_LIBRE) vive aca y no en un agente aparte: son
+# cuatro lineas de scikit-learn sobre un joblib ya entrenado, sin estado ni
+# hardware. Tenerlo en su propio modulo solo añadia un archivo que leer.
+_RUTA_MODELO = os.path.join(
+    get_package_share_directory('romeo_brain'), 'data', 'router_modelo.joblib')
+_router = joblib.load(_RUTA_MODELO)
+
+
+def enrutar(mensaje_usuario):
+    """Clasifica el mensaje en TRIVIA o CHAT_LIBRE (TF-IDF de n-gramas de
+    caracteres + regresion logistica, ~95-96% medido)."""
+    vector = _router["vectorizador"].transform([mensaje_usuario])
+    return _router["clasificador"].predict(vector)[0]
 
 # No hay system prompt en ningún turno: la personalidad viene HORNEADA en
 # los modelos fine-tuneados. El original tenía un personalidad.py que armaba
@@ -71,25 +87,10 @@ SECUENCIA_EMOCIONES = ["Feliz", "Triste", "Enojado", "Neutral"]
 
 # Frases con las que pide cada cara, una por emoción para que no suene
 # repetitivo decir cuatro veces "hazme una cara de X".
-PEDIDOS_EMOCION = {
-    "Feliz": ["¡Hazme una cara de felicidad!",
-               "A ver esa sonrisa, ¡ponte feliz!"],
-    "Triste": ["Ahora una cara triste.",
-                "Pon cara de tristeza."],
-    "Enojado": ["Ahora una cara de enojado.",
-                 "Ponte bravo, cara de enojado."],
-    "Neutral": ["Y por último, una cara neutra.",
-                 "Ahora relaja la cara, cara neutra."],
-}
 
 # Lo que dice cuando la cámara no encuentra ninguna cara. Es frecuente (se
 # midió: ~1 de cada 6 intentos) si el usuario se mueve o queda fuera del
 # encuadre, así que tiene que sonar natural y no a error.
-SIN_CARA = [
-    "No te vi bien, ¿te acercas un poco?",
-    "No alcancé a verte. Ponte frente a mí.",
-    "Se me escapó esa. Mírame de frente.",
-]
 
 # Palabras con las que el usuario pide este juego. El router las manda a
 # TRIVIA (son "juego"), así que se detectan antes de elegir categoría.
@@ -102,13 +103,6 @@ _PIDE_EMOCIONES = (
     "imitacion", "imitar", "mueca", "muecas", "expresion", "expresiones",
 )
 
-RESPUESTAS_TRIVIA_ACIERTO = [
-    "¡Exacto, {esperada}!", "Sí, correcto.", "Así es, nada mal.", "Correcto, bien ahí.",
-]
-RESPUESTAS_TRIVIA_ERROR = [
-    "No, era {esperada}.", "Nop, la correcta es {esperada}.",
-    "Incorrecto, la respuesta era {esperada}.", "No es así, correcta: {esperada}.",
-]
 
 # Saludo de apertura de cada sesión -- se elige uno al azar, así que dos
 # niños seguidos no oyen lo mismo. Todas tutean (no vosean): el fine-tune
@@ -117,95 +111,37 @@ RESPUESTAS_TRIVIA_ERROR = [
 # La presentacion va SEPARADA del saludo: primero Romeo dice quien es y que
 # sabe hacer, despues pregunta el nombre. Se dice en dos frases y no en una
 # sola larga porque la voz tarda y una frase de 30 palabras se hace eterna.
-PRESENTACION = (
-    "Hola, soy Romeo, un robot. Puedo jugar trivia contigo, hacer caras y "
-    "emociones, o simplemente conversar de lo que quieras."
-)
+#
+# Son cinco variantes al azar, igual que los saludos: dos sesiones seguidas
+# no suenan identicas. Todas dicen el nombre y las tres cosas que sabe hacer
+# (trivia, caras, conversar), que es lo unico que el usuario necesita saber
+# para elegir.
 
-SALUDOS_APERTURA = [
-    # Ya no se presentan ("soy Romeo"): eso lo dice PRESENTACION justo antes,
-    # y repetirlo sonaba raro. Aca solo se pide el nombre.
-    "¿Y tú, cómo te llamas?",
-    "Cuéntame, ¿cuál es tu nombre?",
-    "¿Me dices tu nombre?",
-    "Antes de empezar, ¿cómo te llamas?",
-    "¿Quién eres tú?",
-]
 
 # Lo que dice después de que el niño da su nombre: presenta las dos cosas
 # que sabe hacer (trivia y charlar) y le deja elegir. Antes era UNA sola
 # frase fija; ahora son 5 variantes al azar.
-BIENVENIDAS = [
-    "Mucho gusto, {nombre}. Podemos jugar trivia o simplemente charlar, "
-    "¿qué prefieres?",
-    "¡Qué gusto, {nombre}! ¿Jugamos una trivia o prefieres que conversemos?",
-    "Encantado, {nombre}. Tengo trivias de varios temas, o si quieres "
-    "charlamos un rato. ¿Qué te gusta más?",
-    "¡Hola {nombre}! Dime qué quieres hacer: una trivia, o conversar.",
-    "Un placer, {nombre}. Podemos competir en una trivia o hablar de lo "
-    "que quieras. Tú eliges.",
-]
-DESPEDIDAS = [
-    "¡Hasta luego, {nombre}! Que te vaya bien.",
-    "Nos vemos, {nombre}. ¡Fue un gusto!",
-    "Listo por hoy, {nombre}. ¡Cuidate!",
-    "¡Chau, {nombre}! Volvé cuando quieras.",
-]
 
 PREGUNTAS_POR_TANDA = 5
-PAUSA_CAMBIO_CARA = 2       # segundos en 'content'/veredicto antes de la próxima cara
+PAUSA_CAMBIO_CARA = 1       # segundos en 'content'/veredicto antes de la próxima cara
 PAUSA_ANTES_ACCION_FISICA = 1
 # Segundos entre pedirle la cara y capturarla. El detector ya tarda 2.5-4.6s
 # en resolver (medido en la Pi), así que esto es solo el margen para que
 # termine de oír la frase y ponga la cara.
-PAUSA_POSAR = 2
+PAUSA_POSAR = 1
 
 # Frases que, a mitad de una tanda de trivia, señalan que el usuario se
 # quiere ir a otra cosa -- fallback de _quiere_salir_trivia() cuando no se
 # puede mirar las listas de frases de arriba (ver ese método).
-_SALIR_TRIVIA = [
-    "otra cosa", "cambiar de tema", "cambiemos de tema",
-    "ya no quiero seguir", "ya no quiero jugar", "no quiero seguir jugando",
-    "quiero parar", "para de preguntar", "deja de preguntar", "detente",
-    "salir de la trivia", "salir del juego", "salir de trivia",
-    "pausa la trivia", "pausar la trivia", "pausemos",
-    "dejemos la trivia", "dejar la trivia",
-    "hablemos de otra cosa", "quiero charlar", "prefiero charlar", "quiero conversar",
-    "basta", "ya basta", "no quiero jugar más", "no quiero jugar mas",
-    "no quiero más preguntas", "no quiero mas preguntas",
-    "olvida la trivia", "olvida el trivia", "no quiero trivia",
-    "no más trivia", "no mas trivia",
-    "cansado de las preguntas", "cansada de las preguntas",
-    "quiero hacer otra cosa", "vamos a otra cosa",
-    "suficiente trivia", "ya fue suficiente",
-    "terminemos la trivia", "terminemos el trivia",
-    "cancelar", "cancela", "cancelemos",
-    "deseo salir", "quiero salir", "me quiero salir",
-    "salir", "salirme", "sal de la trivia",
-    "ya no quiero jugar trivia", "ya no quiero jugar triviar",
-    "no quiero jugar trivia",
-    # El STT escribe "trivia" como suena: estas son las variantes que ha
-    # devuelto whisper en las pruebas ("quiero cogar trivia Romeo" salio como
-    # "tribia"). Van aparte para que se vea que son faltas, no sinonimos.
-    "salir de la tribia", "salir de tribia", "no quiero tribia",
-    "dejemos la tribia", "terminemos la tribia", "no mas tribia",
-    "ya no quiero jugar tribia",
-]
-_TEMA_PERSONAL = [
-    "me paso", "me pasó", "el otro dia", "el otro día",
-    "cuando era", "recuerdo cuando", "me acuerdo cuando",
-    "extraño a", "extraño mi", "mi profesor", "mi profesora",
-    "mi maestro", "mi maestra", "mi mama", "mi mamá", "mi papa", "mi papá",
-    "mi abuela", "mi abuelo", "mi amigo", "mi amiga",
-    "problema con", "tuve un problema", "tengo un problema",
-    "me regaño", "me regañó", "se pelearon", "se estan peleando",
-    "se están peleando", "estoy triste", "estoy preocupado",
-    "estoy preocupada", "me siento mal", "quiero contarte",
-    "te quiero contar", "queria contarte", "quería contarte",
-]
 _PALABRAS_RESPUESTA_CORTA = 4
 
 RUTAS = ["TRIVIA", "CHAT_LIBRE"]
+
+# Cada cuanto se reintenta el arranque mientras communication_node no pueda
+# hablar, y cuanto se espera como maximo (ver _arrancar). En la Pi tarda ~11 s
+# en activarse: carga la voz VITS y el modelo de STT.
+ESPERA_SPEAK = 1.0
+MAX_ESPERA_SPEAK = 45.0
 
 
 
@@ -217,6 +153,7 @@ class OrchestratorNode(Node):
 
         self._bridge = RosBridge(self)
         self.estado = None
+        self._intentos_arranque = 0
         self._turno_lock = threading.Lock()
         self._grupo_turno = ReentrantCallbackGroup()
 
@@ -224,7 +161,6 @@ class OrchestratorNode(Node):
             UserInput, '/romeo/user_input', self._on_user_input, 10,
             callback_group=self._grupo_turno)
 
-        perf_monitor.iniciar_muestreo_recursos(logger=self.get_logger())
         self._precargar_modelos()
 
         # Arranca la primera sesión un instante después de construirse el
@@ -234,9 +170,32 @@ class OrchestratorNode(Node):
         # RosBridge._llamar_servicio_sync). El timer se cancela apenas
         # dispara una vez.
         self._timer_arranque = self.create_timer(
-            0.5, self._arrancar, callback_group=self._grupo_turno)
+            ESPERA_SPEAK, self._arrancar, callback_group=self._grupo_turno)
 
     def _arrancar(self):
+        """Arranca la primera sesión, pero solo cuando communication_node ya
+        puede hablar.
+
+        Sin esta espera, el orquestador decía la presentación a los 0.5 s de
+        existir y communication_node todavía estaba en on_activate() cargando
+        la voz y whisper-small (~11 s en la Pi): Speak respondía
+        `success=False` con el warning "Speak llamado sin estar activo" y la
+        frase se perdía. El usuario veía el texto en el log pero no oía nada.
+
+        El timer se re-dispara cada ESPERA_SPEAK hasta que el servicio
+        responde, con un tope para no quedarse colgado si el nodo de voz no
+        llega a arrancar (en ese caso se sigue igual: el chat por teclado
+        funciona y el log deja constancia).
+        """
+        if not self._bridge.speak_client.service_is_ready():
+            self._intentos_arranque += 1
+            if self._intentos_arranque * ESPERA_SPEAK < MAX_ESPERA_SPEAK:
+                self.get_logger().info(
+                    '[arranque] esperando a que communication_node pueda hablar...')
+                return
+            self.get_logger().warning(
+                f'[arranque] Speak sigue sin responder tras '
+                f'{MAX_ESPERA_SPEAK:.0f}s -- se arranca igual, sin voz')
         self._timer_arranque.cancel()
         self._iniciar_sesion()
 
@@ -271,16 +230,10 @@ class OrchestratorNode(Node):
     # Orchestrator_Management.py.
     # ══════════════════════════════════════════════════════════════════
 
-    def responder(self, mensaje_usuario):
-        """Chat libre: memoria episódica BM25 + CHAT_MODEL, sin RAG (ver la
-        nota larga del original sobre por qué se sacó el RAG viejo) y sin
-        system prompt (el comportamiento sale del fine-tuning)."""
-        recuerdo = memoria_episodica.buscar_relevante(mensaje_usuario)
-        contenido = f"{recuerdo}\n{mensaje_usuario}" if recuerdo else mensaje_usuario
-        mensajes = [{"role": "user", "content": contenido}]
-        texto_final = llama_client.generar_respuesta(mensajes).strip()
-        registro_chat.registrar(mensaje_usuario, texto_final, llama_client.CHAT_MODEL)
-        return texto_final
+    @staticmethod
+    def responder(mensaje_usuario):
+        """Chat libre -- delega en agente_chat."""
+        return agente_chat.responder(mensaje_usuario)
 
     # ══════════════════════════════════════════════════════════════════
     # Trivia: reacciones fijas, resolución de tema, salida a mitad de
@@ -289,7 +242,8 @@ class OrchestratorNode(Node):
 
     @staticmethod
     def comentar_resultado(esperada, acerto):
-        plantilla = random.choice(RESPUESTAS_TRIVIA_ACIERTO if acerto else RESPUESTAS_TRIVIA_ERROR)
+        plantilla = random.choice(frases.RESPUESTAS_TRIVIA_ACIERTO if acerto
+                               else frases.RESPUESTAS_TRIVIA_ERROR)
         return plantilla.format(esperada=esperada)
 
     @staticmethod
@@ -313,8 +267,8 @@ class OrchestratorNode(Node):
         pero ya no se usa.
         """
         texto = mensaje_usuario.strip().lower()
-        return (any(frase in texto for frase in _SALIR_TRIVIA)
-                or any(frase in texto for frase in _TEMA_PERSONAL))
+        return (any(f in texto for f in frases.SALIR_TRIVIA)
+                or any(f in texto for f in frases.TEMA_PERSONAL))
 
     # ══════════════════════════════════════════════════════════════════
     # Reacciones (voz -> cara -> música+motores) y flujo de una tanda.
@@ -329,8 +283,8 @@ class OrchestratorNode(Node):
         próximo cambio, no para "esperar" a música/motores)."""
         self._bridge.mostrar_cara(cara)
         if not musica_ya_sonada:
-            agent_behavior.expresar_musica(pregunta, self._bridge, logger=self.get_logger())
-        agent_behavior.expresar_desplazamiento(pregunta, self._bridge, logger=self.get_logger())
+            agente_trivia.expresar_musica(pregunta, self._bridge, logger=self.get_logger())
+        agente_trivia.expresar_desplazamiento(pregunta, self._bridge, logger=self.get_logger())
         time.sleep(PAUSA_CAMBIO_CARA)
 
     def _preguntar_siguiente(self):
@@ -349,7 +303,7 @@ class OrchestratorNode(Node):
         es_musical = bool(actual.get("musical"))
         if es_musical:
             self._bridge.mostrar_cara("countdown")
-        estado["musica_ya_sonada"] = bool(agent_behavior.expresar_musica(
+        estado["musica_ya_sonada"] = bool(agente_trivia.expresar_musica(
             actual, self._bridge, esperar=True, logger=self.get_logger()))
         if es_musical:
             self._bridge.mostrar_cara("speaking")
@@ -378,8 +332,8 @@ class OrchestratorNode(Node):
         ninguna cara (eso no cuenta para el marcador: no es culpa del
         usuario)."""
         # Romeo pone primero la cara que pide, para que el niño la imite.
-        self._bridge.mostrar_cara(agent_behavior.cara_para_emocion(objetivo) or "content")
-        pedido = random.choice(PEDIDOS_EMOCION[objetivo])
+        self._bridge.mostrar_cara(agente_trivia.cara_para_emocion(objetivo) or "content")
+        pedido = frases.una(frases.PEDIDOS_EMOCION[objetivo])
         self.get_logger().info(f"Asistente: {pedido}")
         self._bridge.hablar(pedido)
         time.sleep(PAUSA_POSAR)   # que le dé tiempo a poner la cara
@@ -388,7 +342,7 @@ class OrchestratorNode(Node):
         self._bridge.mostrar_cara("speaking")
 
         if not ok or detectada is None:
-            aviso = random.choice(SIN_CARA)
+            aviso = frases.una(frases.SIN_CARA)
             self.get_logger().info(f"[cámara] sin cara -- {aviso}")
             self._bridge.hablar(aviso)
             return None
@@ -496,9 +450,9 @@ class OrchestratorNode(Node):
             self._bridge.mostrar_cara("speaking")
             if pendiente["respuesta_esperada"]:
                 estado["total"] += 1
-                acerto = evaluar_respuesta(pendiente["respuesta_esperada"], mensaje_usuario)
+                acerto = agente_trivia.evaluar_respuesta(pendiente["respuesta_esperada"], mensaje_usuario)
                 estado["aciertos"] += acerto
-                cara = agent_behavior.elegir_cara_pregunta(pendiente, acerto) or (
+                cara = agente_trivia.elegir_cara_pregunta(pendiente, acerto) or (
                     "happy" if acerto else "sad")
                 comentario = self.comentar_resultado(pendiente["respuesta_esperada"], acerto)
                 self.get_logger().info(f"Asistente: {comentario}")
@@ -511,8 +465,8 @@ class OrchestratorNode(Node):
                 # hablada -- se pasa directo a música/desplazamiento.
                 time.sleep(PAUSA_ANTES_ACCION_FISICA)
                 if not estado.get("musica_ya_sonada", False):
-                    agent_behavior.expresar_musica(pendiente, self._bridge, logger=self.get_logger())
-                agent_behavior.expresar_desplazamiento(pendiente, self._bridge, logger=self.get_logger())
+                    agente_trivia.expresar_musica(pendiente, self._bridge, logger=self.get_logger())
+                agente_trivia.expresar_desplazamiento(pendiente, self._bridge, logger=self.get_logger())
 
             if not self._preguntar_siguiente():
                 self._cerrar_tanda()
@@ -566,9 +520,10 @@ class OrchestratorNode(Node):
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("speaking")
         # Primero quien soy y que se hacer, despues el nombre.
-        self.get_logger().info(f"Asistente: {PRESENTACION}")
-        self._bridge.hablar(PRESENTACION)
-        saludo = random.choice(SALUDOS_APERTURA)
+        presentacion = frases.una(frases.PRESENTACIONES)
+        self.get_logger().info(f"Asistente: {presentacion}")
+        self._bridge.hablar(presentacion)
+        saludo = frases.una(frases.SALUDOS_APERTURA)
         self.get_logger().info(f"Asistente: {saludo}")
         self._bridge.hablar(saludo)
         time.sleep(PAUSA_CAMBIO_CARA)
@@ -591,7 +546,7 @@ class OrchestratorNode(Node):
             self._bridge.hablar(resumen)
             time.sleep(PAUSA_CAMBIO_CARA)
             self._bridge.mostrar_cara("speaking")
-        despedida = random.choice(DESPEDIDAS).format(nombre=estado["nombre"])
+        despedida = frases.una(frases.DESPEDIDAS, nombre=estado["nombre"])
         self.get_logger().info(f"Asistente: {despedida}")
         self._bridge.hablar(despedida)
         self._bridge.mostrar_cara("happy")
@@ -616,7 +571,7 @@ class OrchestratorNode(Node):
             nombre = entrada or "amigo"
             self.estado["nombre"] = nombre
             self.estado["esperando_nombre"] = False
-            bienvenida = random.choice(BIENVENIDAS).format(nombre=nombre)
+            bienvenida = frases.una(frases.BIENVENIDAS, nombre=nombre)
             self.get_logger().info(f"Asistente: {bienvenida}")
             self._bridge.hablar(bienvenida)
             self._bridge.mostrar_cara("content")

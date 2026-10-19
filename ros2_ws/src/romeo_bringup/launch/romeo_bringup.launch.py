@@ -1,24 +1,3 @@
-"""Lanza el stack completo de Romeo: los 3 LifecycleNode de hardware
-(communication_node, visualization_faces_node, moving_control_node -- paquete
-romeo_drivers) y orchestrator_node (paquete romeo_brain).
-
-Cada LifecycleNode se auto-configura y auto-activa al arrancar -- patrón
-estándar de launch_ros: se emite un evento ChangeState(CONFIGURE) para cada
-uno, y un RegisterEventHandler(OnStateTransition) dispara ACTIVATE apenas
-termina de configurarse. No hace falta un "lifecycle manager" externo para
-este caso (siempre se quiere el mismo orden arrancar->configurar->activar,
-sin coordinación entre nodos) -- ver el README de ros2_ws para cómo
-inspeccionar el estado a mano con `ros2 lifecycle`.
-
-El modelo de Ollama (CHAT_MODEL) sigue
-siendo variables de ENTORNO, no parámetros ROS2 -- llama_client.py (en
-romeo_brain) las lee con os.environ.get() al importarse, igual que
-Clients/Llama_Client.py en el proyecto original. Acá se las pasa al proceso
-de orchestrator_node vía `additional_env`, configurables como argumentos de
-este launch file sin tocar código (mismo espíritu que el README original:
-"CHAT_MODEL se puede sobreescribir por variable de entorno sin tocar
-código").
-"""
 import os
 
 from ament_index_python.packages import get_package_share_directory

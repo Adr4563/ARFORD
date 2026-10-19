@@ -99,7 +99,7 @@ def temas_disponibles():
 CATEGORIAS = {
     "ciencia": ["Ciencia y naturaleza"],
     "historia": ["Historia", "Cultura general"],
-    "música": ["Arte, música y cultura", "Reconocimiento musical"],
+    "música": ["Arte, música y cultura", "música", "musica", "Reconocimiento musical"],
     "matemática": ["Matemática: multiplicación", "Razonamiento matemático"],
     "geografía": ["Geografía"],
 }

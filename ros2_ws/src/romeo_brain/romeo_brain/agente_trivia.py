@@ -1,20 +1,80 @@
-"""Agente de comportamiento: decide qué cara mostrar y qué acciones de
-música/motores disparar -- sin LLM, 100% determinista. Portado de
-Agents/Agent_Behavior.py del proyecto original, con UN cambio de diseño
-real (el resto es igual): antes llamaba directo a Clients.Carrito_Client/
-Clients.Musica_Client (mismo proceso, imports); ahora recibe un `bridge`
--- un objeto que orchestrator_node arma con su publisher de
-/romeo/motion_command y su cliente de servicio /romeo/play_music -- y le pide
-a ÉL que dispare las acciones, en vez de llamar hardware directo. Este
-archivo ya no sabe si el motor/música respondieron o no: esa parte
-"gracioso ante falla" ahora vive en moving_control_node/communication_node (ver
-esos archivos en romeo_drivers).
+# -*- coding: utf-8 -*-
+"""agente_trivia -- todo lo del juego de preguntas y del juego de caras.
 
-`elegir_cara_pregunta()`/`cara_para_emocion()` NO necesitan `bridge`: son
-lookups puros contra las columnas del dataset, sin tocar hardware -- igual
-que en el original.
+Reune lo que antes estaba repartido en agent_corrector.py (evaluar la
+respuesta del usuario) y agent_behavior.py (elegir cara, musica y
+desplazamiento segun la pregunta). Son dos caras del mismo trabajo y nunca
+se usan por separado: el orquestador llamaba a los dos en el mismo turno.
+
+No hay ningun LLM aca: la correccion es determinista (comparacion
+normalizada de texto y numeros) y la expresion sale de los campos de la
+propia pregunta en preguntas.jsonl.
 """
 
+# ─── Correccion de respuestas (venia de agent_corrector.py) ─────────
+import difflib
+import re
+import unicodedata
+
+_ARTICULOS = {"el", "la", "los", "las", "un", "una", "unos", "unas", "de", "del", "al"}
+_UMBRAL_SOLAPAMIENTO = 0.6
+_UMBRAL_FUZZY = 0.8
+
+
+def _normalizar(s):
+    s = unicodedata.normalize("NFKD", s)
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    s = s.lower()
+    s = re.sub(r"[¿?¡!.,;:]", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
+def _palabras_significativas(s):
+    return [w for w in _normalizar(s).split() if w not in _ARTICULOS and len(w) > 1]
+
+
+def _es_numerico(s):
+    return bool(re.fullmatch(r"-?\d+([.,]\d+)?", s.strip()))
+
+
+def _extraer_numeros(s):
+    return [float(n.replace(",", ".")) for n in re.findall(r"-?\d+(?:[.,]\d+)?", s)]
+
+
+def evaluar_respuesta(esperada, respuesta_usuario):
+    """Compara la respuesta del usuario con la esperada. Devuelve True/False."""
+    esperada = (esperada or "").strip()
+    respuesta_usuario = (respuesta_usuario or "").strip()
+    if not esperada or not respuesta_usuario:
+        return False
+
+    if _es_numerico(esperada):
+        numero_esperado = float(esperada.replace(",", "."))
+        return numero_esperado in _extraer_numeros(respuesta_usuario)
+
+    esp_norm = _normalizar(esperada)
+    resp_norm = _normalizar(respuesta_usuario)
+
+    if esp_norm in resp_norm:
+        return True
+
+    palabras_esp = _palabras_significativas(esperada)
+    palabras_resp = set(_palabras_significativas(respuesta_usuario))
+    if palabras_esp:
+        coincididas = sum(
+            1 for p in palabras_esp
+            if p in palabras_resp or any(
+                difflib.SequenceMatcher(None, p, w).ratio() >= 0.84 for w in palabras_resp
+            )
+        )
+        if coincididas / len(palabras_esp) >= _UMBRAL_SOLAPAMIENTO:
+            return True
+
+    return difflib.SequenceMatcher(None, esp_norm, resp_norm).ratio() >= _UMBRAL_FUZZY
+
+
+# ─── Expresion: cara, musica, motores (venia de agent_behavior.py) ──
 # El dataset usa nombres en español (columna 'cara'); FaceCommand.face_name
 # espera las claves en inglés de faces/*.mp4|*.gif. "Neutral" mapea a
 # "content" porque es la misma cara de reposo -- no hay un asset de

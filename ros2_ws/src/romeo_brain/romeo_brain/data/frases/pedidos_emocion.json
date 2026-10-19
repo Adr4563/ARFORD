@@ -1,0 +1,18 @@
+{
+  "Feliz": [
+    "¡Hazme una cara de felicidad!",
+    "A ver esa sonrisa, ¡ponte feliz!"
+  ],
+  "Triste": [
+    "Ahora una cara triste.",
+    "Pon cara de tristeza."
+  ],
+  "Enojado": [
+    "Ahora una cara de enojado.",
+    "Ponte bravo, cara de enojado."
+  ],
+  "Neutral": [
+    "Y por último, una cara neutra.",
+    "Ahora relaja la cara, cara neutra."
+  ]
+}

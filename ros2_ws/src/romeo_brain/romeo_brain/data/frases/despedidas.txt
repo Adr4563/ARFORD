@@ -1,0 +1,4 @@
+¡Hasta luego, {nombre}! Que te vaya bien.
+Nos vemos, {nombre}. ¡Fue un gusto!
+Listo por hoy, {nombre}. ¡Cuidate!
+¡Chau, {nombre}! Volvé cuando quieras.

@@ -12,7 +12,7 @@ dijiste "me sentía solo" y hoy decís "estaba triste", no lo encuentra.
 
 Un router con LLM decidiendo en cada turno cuesta ~7 s en la Pi
 (`arford-empatico` mide 2,7 tok/s, 20 tokens de decisión). El router actual
-(`agent_router.py`, TF-IDF + regresión logística) decide en microsegundos con
+(`orchestrator_node.enrutar()`, TF-IDF + regresión logística) decide en microsegundos con
 95-96% de acierto medido. Cambiarlo sería más lento y menos preciso.
 
 **Decisión: el enrutado sigue siendo determinista. RAG solo para la memoria.**
@@ -21,11 +21,11 @@ Un router con LLM decidiendo en cada turno cuesta ~7 s en la Pi
 
 | Pieza | Archivo | Qué hace |
 |---|---|---|
-| Router TRIVIA/CHAT_LIBRE | `romeo_brain/agent_router.py` | ML, microsegundos, 95-96% |
+| Router TRIVIA/CHAT_LIBRE | `orchestrator_node.enrutar()` | ML, microsegundos, 95-96% |
 | Juego de caras | `orchestrator_node._jugar_emociones()` | pide emociones, muestra caras |
 | Trivia por categorías | `orchestrator_node._manejar_trivia()` | 5 categorías |
-| Registro de conversaciones | `romeo_brain/registro_chat.py` | `~/.romeo/chat_libre_training/conversaciones.jsonl` (373 turnos hoy) |
-| Memoria BM25 | `romeo_brain/memoria_episodica.py` | búsqueda por palabras |
+| ~~Registro de conversaciones~~ | eliminado | nadie lo leia; los 469 turnos quedan en `~/.romeo/chat_libre_training/conversaciones.jsonl` |
+| ~~Memoria BM25~~ | eliminada | buscaba por palabras y la memoria era compartida entre usuarios |
 | Embeddings en la Pi | `nomic-embed-text` en Ollama | 274 MB, ya instalado, soporta español |
 
 ## Cambio 1: presentación con funcionalidades
@@ -72,8 +72,7 @@ Flujo por turno de Chat libre:
    contexto ("en una conversación anterior dijiste: ...").
 
 Archivo nuevo: `romeo_brain/memoria_rag.py`. Misma interfaz pública que
-`memoria_episodica.py`, para que el cambio en `_manejar_chat_libre()` sea de
-una línea y se pueda volver atrás con un parámetro.
+`memoria_episodica.py`, que era la implementación BM25 y se eliminó.
 
 ### Coste en la Pi
 

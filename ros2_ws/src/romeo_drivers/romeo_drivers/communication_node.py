@@ -41,6 +41,7 @@ Expone:
   - Servicio   /romeo/play_music   (romeo_interfaces/PlayMusic)
 """
 import threading
+import time
 from contextlib import contextmanager
 
 import rclpy
@@ -54,6 +55,22 @@ from romeo_interfaces.srv import PlayMusic, Speak
 from . import _music_player
 from ._stt_engine import ReconocedorVoz
 from ._voice_backends import Voz
+
+# Cuánto se sigue descartando el micrófono después de que el altavoz calle.
+# Tiene que cubrir la latencia del STT: lo que el micro captó mientras Romeo
+# hablaba llega a _on_texto_voz bastante después, y sin esta ventana se cuela
+# como si lo hubiera dicho el usuario (ver _sonando).
+#
+# Ya no tiene que cubrir la latencia entera del STT: el bucle del micrófono
+# TIRA el audio mientras _sonando() sea True (ver el parámetro `pausar` de
+# _stt_engine.escuchar()), así que la voz de Romeo no llega a transcribirse.
+# Estos segundos son solo para el trozo que ya estaba en vuelo cuando calló.
+GRACIA_ECO = 2.0
+
+# Cuanto espera el servicio Speak a que el nodo acabe de activarse antes de
+# rechazar la llamada (ver _cb_speak). on_activate carga la voz y el STT, que
+# en la Pi son ~11 s.
+ESPERA_ACTIVO = 20.0
 
 
 class CommunicationNode(LifecycleNode):
@@ -121,6 +138,8 @@ class CommunicationNode(LifecycleNode):
         # música y voz solapadas -- con un bool, la primera en terminar
         # reabriría el micrófono mientras la otra sigue sonando.
         self._reproduciendo = 0
+        # Momento en que el altavoz calló por última vez (ver _sonando).
+        self._fin_reproduccion = 0.0
         self._reproduciendo_lock = threading.Lock()
 
         # Speak y PlayMusic BLOQUEAN varios segundos (subprocess.run de mpv
@@ -187,6 +206,13 @@ class CommunicationNode(LifecycleNode):
     def on_activate(self, state):
         self.get_logger().info('[communication_node] activando...')
         self._voz.cargar()
+        # El STT también se precarga acá, no en la primera frase: cargar
+        # whisper-small cuesta 7.5 s en la Pi, y si se deja para el primer
+        # uso esos segundos se los come el usuario esperando su respuesta.
+        # cargar() es idempotente, así que las frases siguientes reusan el
+        # modelo ya en memoria.
+        if self._stt is not None:
+            self._stt.cargar()
         self._activo = True
         self._arrancar_microfono()
         self.get_logger().info(
@@ -243,6 +269,10 @@ class CommunicationNode(LifecycleNode):
             al_transcribir=self._on_texto_voz,
             detener=lambda: not self._activo,
             dispositivo=dispositivo,
+            # Mientras Romeo suena, el STT tira lo que entra: no llega a
+            # whisper y por tanto no puede volver como entrada del usuario
+            # (ver la nota de _sonando).
+            pausar=self._sonando,
         )
         self.get_logger().info('[mic] se dejó de escuchar')
 
@@ -259,8 +289,28 @@ class CommunicationNode(LifecycleNode):
     # ─── Anti-realimentación micrófono/altavoz ─────────────────────────
 
     def _sonando(self):
+        """True mientras el altavoz suena, Y durante GRACIA_ECO segundos
+        después de que calle.
+
+        La ventana de gracia es imprescindible: el micrófono y el altavoz
+        están en la misma placa, así que el micro capta todo lo que Romeo
+        dice. El filtro de _on_texto_voz descartaba solo lo que llegaba
+        MIENTRAS sonaba, pero el STT tarda en transcribir (whisper-small,
+        ~30 s en la Pi), así que ese audio llega cuando Romeo ya calló, el
+        filtro lo ve en silencio y lo publica como si fuera el usuario.
+
+        Pasaba esto, con la frase de Romeo volviendo como entrada:
+
+            Asistente: "Elige una: ciencia, historia, música..."
+            [mic] transcrito: "Delició una ciencia, historia, música..."
+            Asistente: "¡Vamos con ciencia!"   <- nadie pidió ciencia
+
+        GRACIA_ECO cubre la latencia del STT, así que su valor tiene que ir
+        con el modelo que esté activo (ver la constante)."""
         with self._reproduciendo_lock:
-            return self._reproduciendo > 0
+            if self._reproduciendo > 0:
+                return True
+            return (time.monotonic() - self._fin_reproduccion) < GRACIA_ECO
 
     @contextmanager
     def _mientras_suena(self):
@@ -273,6 +323,8 @@ class CommunicationNode(LifecycleNode):
         finally:
             with self._reproduciendo_lock:
                 self._reproduciendo -= 1
+                if self._reproduciendo == 0:
+                    self._fin_reproduccion = time.monotonic()
 
     # ─── Entrada de texto (stdin) -> /romeo/user_input ──────────────────
 
@@ -295,8 +347,24 @@ class CommunicationNode(LifecycleNode):
     # ─── Servicios ──────────────────────────────────────────────────
 
     def _cb_speak(self, request, response):
+        # El servicio existe desde on_configure, pero _activo no se pone hasta
+        # el final de on_activate, que en la Pi tarda ~11 s (carga la voz VITS
+        # y el modelo de STT). El orquestador arranca antes y decía la
+        # presentación en ese hueco: Speak devolvía success=False con un
+        # warning y la frase se perdía -- se veía el texto en el log pero no
+        # se oía nada. Acá se espera a que termine de activarse en vez de
+        # rechazar la llamada.
         if not self._activo:
-            self.get_logger().warning('[communication_node] Speak llamado sin estar activo')
+            self.get_logger().info(
+                '[communication_node] Speak llegó durante la activación, esperando...')
+            for _ in range(int(ESPERA_ACTIVO / 0.2)):
+                time.sleep(0.2)
+                if self._activo:
+                    break
+        if not self._activo:
+            self.get_logger().warning(
+                f'[communication_node] Speak: el nodo sigue inactivo tras '
+                f'{ESPERA_ACTIVO:.0f}s, no se habla')
             response.success = False
             return response
         with self._mientras_suena():

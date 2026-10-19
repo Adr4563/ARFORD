@@ -1,0 +1,4 @@
+No, era {esperada}.
+Nop, la correcta es {esperada}.
+Incorrecto, la respuesta era {esperada}.
+No es así, correcta: {esperada}.

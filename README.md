@@ -101,8 +101,8 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 - Se eligió `qwen2.5:0.5b` en lugar de `llama3.2:3b` tras comparar 7 modelos: 484 MB de RAM y 1-3 s por respuesta, frente a 2.5 GB y 7-12 s, con la misma calidad medida.
 - Conviene usar `OLLAMA_KEEP_ALIVE=-1` para que los modelos no se descarguen de memoria: recargarlos desde disco costaba entre 15 y 28 s en el peor caso.
 - **El router y el corrector no usan LLM**, por velocidad y precisión:
-  - `agent_router.py`: TF-IDF de n-gramas de caracteres + regresión logística (`scikit-learn`, `router_modelo.joblib`). Acierta ~95-96 % en validación y responde en microsegundos.
-  - `agent_corrector.py`: comparación numérica si la respuesta esperada es un número; si es texto, normalización, coincidencia de palabras clave y comparación aproximada (`difflib`). Acierta el 98.4 % sobre 187 preguntas reales y nunca da por buena una respuesta incorrecta.
+  - `orchestrator_node.enrutar()`: TF-IDF de n-gramas de caracteres + regresión logística (`scikit-learn`, `router_modelo.joblib`). Acierta ~95-96 % en validación y responde en microsegundos.
+  - `agente_trivia.evaluar_respuesta()`: comparación numérica si la respuesta esperada es un número; si es texto, normalización, coincidencia de palabras clave y comparación aproximada (`difflib`). Acierta el 98.4 % sobre 187 preguntas reales y nunca da por buena una respuesta incorrecta.
 - Si Ollama no responde, `clasificar_salida_trivia()` devuelve `None` y el orquestador recurre a listas de palabras clave.
 
 ---
@@ -139,8 +139,6 @@ La transcripción la hace el **navegador del teléfono** (`SpeechRecognition`). 
    "musical": "", "desplazamiento": "Adelante"}
   ```
   `desplazamiento` admite `Adelante`, `Atrás`, `Izquierda`, `Derecha` y `Girar 360°`. Hay 13 preguntas duplicadas por texto (con `id` distinto) que siguen sin resolverse.
-- **Memoria episódica:** `memoria_episodica.py` busca con BM25 puro (`rank_bm25`, sin embeddings) sobre los últimos 300 turnos del Chat libre. Solo usa un recuerdo si comparte **al menos 2 palabras de contenido** con el mensaje actual. La memoria es compartida entre todos los usuarios.
-- **Registro del Chat libre:** `registro_chat.py` guarda cada turno en JSONL para revisarlo después. Nunca se entrena directamente con este archivo, para que el modelo no refuerce sus propios errores.
 - **Personalidad:** ARFORD tiene un perfil Big Five (OCEAN) fijo, en escala 1-5: **Extraversión 2, Amabilidad 2, Responsabilidad 5, Neuroticismo 2, Apertura 3**. No se aplica por system prompt, sino que está **incorporado en los modelos por fine-tuning** (`romeo-chat-libre-v4`). Hubo un `personalidad.py` que lo convertía en un system prompt para modelos base; se eliminó porque con los fine-tunes del robot siempre quedaba vacío. Si se usa un modelo sin fine-tuning, hay que volver a construirlo a partir de estos valores.
 - **Música:** `romeo_drivers/data/musica/` contiene `angry-birds`, `danza-kuduro`, `minecraft`, `more-than-words-heaven`, `plantas-vs-zombies`, `super-mario-bros` y `zelda` (mp3).
 

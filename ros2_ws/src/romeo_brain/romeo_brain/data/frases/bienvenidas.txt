@@ -1,0 +1,10 @@
+Mucho gusto, {nombre}. Podemos jugar trivia o simplemente charlar, ¿qué prefieres?
+¡Qué gusto, {nombre}! ¿Jugamos una trivia o prefieres que conversemos?
+Encantado, {nombre}. Tengo trivias de varios temas, o si quieres charlamos un rato. ¿Qué te gusta más?
+¡Hola {nombre}! Dime qué quieres hacer: una trivia, o conversar.
+Un placer, {nombre}. Podemos competir en una trivia o hablar de lo que quieras. Tú eliges.
+¡Qué bueno conocerte, {nombre}! ¿Te animas a una trivia, o prefieres que hablemos?
+Hola {nombre}, bienvenido. ¿Empezamos con una trivia o charlamos?
+Bienvenido, {nombre}. Tengo trivias, el juego de las caras, y también puedo escucharte. ¿Qué eliges?
+{nombre}, qué alegría. ¿Jugamos algo o me cuentas cómo te va?
+Hola, {nombre}. ¿Qué te apetece: una trivia, las caras, o conversar?
