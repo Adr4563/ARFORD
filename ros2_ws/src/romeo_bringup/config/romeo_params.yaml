@@ -10,11 +10,20 @@ communication_node:
     # --- Voz de salida (altavoz de la placa ESP32-S3) ---
     voz_motor: "vits"              # vits | piper
     voz_piper_modelo: ""           # solo con voz_motor: piper. Vacío = ~/piper-voces/es_CO-dii.onnx
-    # LA VOZ DE ROMEO: GLaDOS en español (modelo Piper cargado con
-    # sherpa-onnx). Todos estos valores se eligieron DE OÍDO en la placa:
-    # menos "aire"/susurros (ruido 0.33), ritmo fijo, un poco más pausada
-    # y sin subir el tono (0 semitonos). Ver voces/README.md.
-    voz_vits_dir: "/home/pi/.romeo/modelos/vits-piper-es_ES-glados-medium"
+    # LA VOZ DE ROMEO: es_MX-claude-high, español de México (modelo Piper
+    # cargado con sherpa-onnx). Los valores de abajo se eligieron DE OÍDO
+    # en la placa con la voz anterior (GLaDOS): menos "aire"/susurros
+    # (ruido 0.33), ritmo fijo, un poco más pausada y sin subir el tono.
+    # Ver voces/README.md.
+    #
+    # La voz GLaDOS sigue instalada en
+    # /home/pi/.romeo/modelos/vits-piper-es_ES-glados-medium
+    # por si se quiere volver a ella: basta cambiar esta línea.
+    #
+    # OJO si se añade otra voz descargada de HuggingFace: hay que
+    # inyectarle sample_rate en los metadatos del .onnx y pasar el
+    # tokens.txt a saltos de línea Unix, o sherpa-onnx no la carga.
+    voz_vits_dir: "/home/pi/.romeo/modelos/vits-piper-es_MX-claude-high"
     voz_vits_ruido: 0.33
     voz_vits_ruido_w: 0.5          # ritmo fijo: con 0.8 cada frase salía distinta
     voz_vits_duracion: 1.15
