@@ -95,7 +95,7 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 
 | Variable de entorno | Valor por defecto | Rol |
 |---|---|---|
-| `CHAT_MODEL` |  `arford-empatico-full` | Genera las respuestas del Chat libre |
+| `CHAT_MODEL` |  `romeo` | Genera las respuestas del Chat libre |
 | `SALIDA_TRIVIA_MODEL` | `romeo-salida-trivia-v2` | Decide si el mensaje es una RESPUESTA o una petición de SALIR a mitad de una pregunta de Trivia |
 
 - Se eligió `qwen2.5:0.5b` en lugar de `llama3.2:3b` tras comparar 7 modelos: 484 MB de RAM y 1-3 s por respuesta, frente a 2.5 GB y 7-12 s, con la misma calidad medida.

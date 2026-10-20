@@ -454,11 +454,17 @@ class OrchestratorNode(Node):
                 estado["aciertos"] += acerto
                 cara = agente_trivia.elegir_cara_pregunta(pendiente, acerto) or (
                     "happy" if acerto else "sad")
-                comentario = self.comentar_resultado(pendiente["respuesta_esperada"], acerto)
+                # Primero se le pide al LLM un comentario sobre lo que dijo
+                # el usuario; si no puede, se usan las frases fijas.
+                comentario = agente_trivia.comentar(
+                    pendiente["pregunta"], pendiente["respuesta_esperada"],
+                    mensaje_usuario, acerto)
+                if not comentario:
+                    comentario = self.comentar_resultado(
+                        pendiente["respuesta_esperada"], acerto)
                 self.get_logger().info(f"Asistente: {comentario}")
                 self._bridge.hablar(comentario)
                 self._reaccionar_veredicto(cara, pendiente, estado.get("musica_ya_sonada", False))
-                self._bridge.mostrar_cara("speaking")
             else:
                 # Temas "sin veredicto" (Dilema del coche autónomo, etc.):
                 # a pedido del usuario original, tampoco hay reacción
@@ -516,6 +522,9 @@ class OrchestratorNode(Node):
     # ══════════════════════════════════════════════════════════════════
 
     def _iniciar_sesion(self):
+        # Sesion nueva, hilo nuevo: el usuario siguiente no hereda la
+        # conversacion del anterior.
+        agente_chat.reiniciar()
         self._bridge.mostrar_cara("content")
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("speaking")
@@ -586,12 +595,23 @@ class OrchestratorNode(Node):
             if self._quiere_salir_trivia(entrada, pendiente["pregunta"] if pendiente else None):
                 self.estado["en_trivia"] = False
                 self._bridge.mostrar_cara("content")
-                # Igual que el original: este aviso queda solo en el log,
-                # no se dice en voz alta -- se porta tal cual, sin "corregir"
-                # esa asimetría acá.
-                self.get_logger().info(
-                    "Asistente: Listo, dejamos la trivia pausada — la "
-                    "retomamos cuando quieras. ¿Qué tienes en mente?")
+                # El mensaje con el que pide salir se atiende EN ESTE MISMO
+                # turno: antes solo se cambiaba de modo y se logueaba un aviso
+                # que nadie decia en voz alta, asi que el usuario escuchaba
+                # silencio y tenia que repetir lo que acababa de decir.
+                #
+                # Si ademas de pedir salir dijo algo de fondo ("ya no quiero
+                # jugar, me siento triste"), eso va al chat libre. Si solo
+                # pidio salir ("basta"), basta con confirmarlo.
+                if len(entrada.split()) > _PALABRAS_RESPUESTA_CORTA:
+                    self._manejar_chat_libre(entrada)
+                else:
+                    cierre = ("Listo, dejamos la trivia. "
+                              "¿De qué quieres que hablemos?")
+                    self.get_logger().info(f"Asistente: {cierre}")
+                    self._bridge.mostrar_cara("speaking")
+                    self._bridge.hablar(cierre)
+                    self._bridge.mostrar_cara("content")
                 return
             self._manejar_trivia(entrada)
             return

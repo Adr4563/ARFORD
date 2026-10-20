@@ -20,6 +20,8 @@ class RosBridge:
     def __init__(self, node):
         self.node = node
 
+        # Ultima cara publicada, para no repetirla (ver mostrar_cara).
+        self._cara_actual = None
         self.face_pub = node.create_publisher(FaceCommand, '/romeo/face_command', 10)
         self.motion_pub = node.create_publisher(MotionCommand, '/romeo/motion_command', 10)
 
@@ -91,7 +93,17 @@ class RosBridge:
     def mostrar_cara(self, nombre):
         """Fire-and-forget -- un publish no bloquea, igual que
         display.mostrar_cara() en el proyecto original (un request IPC
-        corto a mpv)."""
+        corto a mpv).
+
+        No republica si la cara ya es esa. El flujo del turno pide la misma
+        cara varias veces seguidas (p.ej. el veredicto de trivia pone
+        'speaking', y _preguntar_siguiente() lo vuelve a poner un instante
+        despues), y cada publish hace que mpv recargue el video: la cara
+        parpadea sin necesidad.
+        """
+        if nombre == self._cara_actual:
+            return
+        self._cara_actual = nombre
         msg = FaceCommand()
         msg.face_name = nombre
         self.face_pub.publish(msg)

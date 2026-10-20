@@ -44,8 +44,11 @@ stt_tam/stt_hilos), así que para ese nodo ROMEO_STT_TAM/ROMEO_STT_HILOS quedan
 sin efecto -- las demás variables sí se leen de acá.
 """
 
+import json
 import os
 import time
+
+import numpy as np
 
 MODELOS_DIR = os.environ.get(
     "ROMEO_STT_MODELOS_DIR", os.path.expanduser("~/.romeo/modelos")
@@ -91,6 +94,13 @@ MODELOS_DIR = os.environ.get(
 # nemo es 4x mas rapido que whisper-base y transcribe mejor: whisper se come
 # el nombre y el final de la frase. whisper queda como alternativa porque es
 # multilingue (nemo solo entiende espanol).
+# Servidor de STT remoto (un stt_server.py corriendo en otra maquina). Vacio
+# = transcribir en local. El microfono sigue en la Pi: lo que viaja es el WAV
+# ya recortado por el VAD. Util porque whisper-small tarda ~30 s en la Pi y
+# 0.5 s en una PC con GPU.
+SERVIDOR = os.environ.get("ROMEO_STT_SERVIDOR", "")
+TIMEOUT_REMOTO = float(os.environ.get("ROMEO_STT_TIMEOUT", "30"))
+
 MOTOR = os.environ.get("ROMEO_STT_MOTOR", "nemo")
 NEMO_DIR = os.environ.get(
     "ROMEO_STT_NEMO_DIR",
@@ -124,12 +134,13 @@ class ReconocedorVoz:
     """Convierte audio en texto. Se carga perezosamente en el primer uso."""
 
     def __init__(self, modelos_dir=None, tam=None, hilos=None, idioma=None,
-                 motor=None):
+                 motor=None, servidor=None):
         self.modelos_dir = modelos_dir or MODELOS_DIR
         self.tam = tam or TAM
         self.hilos = hilos if hilos is not None else HILOS
         self.idioma = idioma or IDIOMA
         self.motor = (motor or MOTOR).lower()
+        self.servidor = (servidor if servidor is not None else SERVIDOR).rstrip("/")
 
         self._recognizer = None
         self._vad = None
@@ -169,8 +180,44 @@ class ReconocedorVoz:
     def _nombre_modelo(self):
         return "nemo-transducer-es" if self.motor == "nemo" else f"whisper-{self.tam}"
 
+    def cargar_vad(self):
+        """Carga SOLO el VAD (6 MB), que es lo unico que hace falta para
+        escuchar el microfono en continuo. El modelo de reconocimiento no se
+        toca: con un servidor remoto configurado no se usa nunca.
+
+        Devuelve True si el VAD quedo listo."""
+        if self._vad is not None:
+            return True
+        try:
+            import sherpa_onnx
+        except ImportError:
+            print("[STT] sherpa-onnx no instalado; el STT queda desactivado")
+            return False
+        vad = self._rutas()["vad"]
+        if not os.path.exists(vad):
+            print(f"[STT] falta {vad}; no se puede escuchar en continuo")
+            return False
+        try:
+            cfg = sherpa_onnx.VadModelConfig()
+            cfg.silero_vad.model = vad
+            cfg.silero_vad.min_silence_duration = 0.25
+            cfg.sample_rate = SAMPLE_RATE
+            self._vad = sherpa_onnx.VoiceActivityDetector(
+                cfg, buffer_size_in_seconds=30)
+            return True
+        except Exception as e:  # noqa: BLE001
+            print(f"[STT] VAD no disponible: {e}")
+            return False
+
     def cargar(self):
-        """Carga el modelo. Devuelve True si quedó listo. Idempotente."""
+        """Carga el modelo de reconocimiento. Devuelve True si quedo listo.
+        Idempotente.
+
+        Con `servidor` configurado NO se carga: whisper-small son 800 MB de
+        RAM en una Pi que solo tiene 4 nucleos, y si se transcribe en otra
+        maquina ese modelo no se usa nunca. Solo se carga el VAD."""
+        if self.servidor:
+            return self.cargar_vad()
         if self._recognizer is not None:
             return True
         if self._intento_fallido:
@@ -222,17 +269,7 @@ class ReconocedorVoz:
 
         # El VAD es opcional: solo hace falta para escuchar del micrófono en
         # continuo. Si no está, transcribir() sigue funcionando igual.
-        if os.path.exists(rutas["vad"]):
-            try:
-                cfg = sherpa_onnx.VadModelConfig()
-                cfg.silero_vad.model = rutas["vad"]
-                cfg.silero_vad.min_silence_duration = 0.25
-                cfg.sample_rate = SAMPLE_RATE
-                self._vad = sherpa_onnx.VoiceActivityDetector(
-                    cfg, buffer_size_in_seconds=30
-                )
-            except Exception as e:  # noqa: BLE001
-                print(f"[STT] VAD no disponible: {e}")
+        self.cargar_vad()
 
         self.segundos_carga = time.perf_counter() - t0
         print(
@@ -275,6 +312,37 @@ class ReconocedorVoz:
             print(f"[STT] no se pudo normalizar: {e}")
             return samples
 
+    def _transcribir_remoto(self, samples, sample_rate):
+        """Manda el audio a un stt_server.py de otra maquina y devuelve su
+        texto, o None si no contesta (entonces se cae al modelo local).
+
+        El microfono sigue estando en la Pi -- lo que viaja es el WAV ya
+        recortado por el VAD, unos 100 KB por frase. Whisper-small tarda
+        ~30 s en la Pi y 0.5 s en una PC con GPU, asi que compensa de sobra
+        el viaje por red.
+        """
+        import io as _io
+        import urllib.request
+        import wave as _wave
+
+        try:
+            buf = _io.BytesIO()
+            with _wave.open(buf, "wb") as w:
+                w.setnchannels(1)
+                w.setsampwidth(2)
+                w.setframerate(sample_rate)
+                arr = np.asarray(samples, dtype=np.float32)
+                w.writeframes((np.clip(arr, -1, 1) * 32767).astype(np.int16).tobytes())
+            req = urllib.request.Request(
+                f"{self.servidor}/transcribir", data=buf.getvalue(),
+                headers={"Content-Type": "audio/wav"})
+            with urllib.request.urlopen(req, timeout=TIMEOUT_REMOTO) as r:
+                return json.loads(r.read()).get("texto", "")
+        except Exception as e:  # noqa: BLE001 - se cae al modelo local
+            print(f"[STT] el servidor {self.servidor} falló ({e}), "
+                  f"se transcribe en local")
+            return None
+
     def transcribir(self, samples, sample_rate=SAMPLE_RATE):
         """Transcribe un bloque de audio ya capturado.
 
@@ -283,6 +351,17 @@ class ReconocedorVoz:
 
         Devuelve el texto, o "" si no se pudo. Nunca lanza.
         """
+        if samples is None or len(samples) == 0:
+            return ""
+
+        # Con un servidor configurado se transcribe alla; si no contesta se
+        # sigue con el modelo local, que para eso se carga igual.
+        if self.servidor:
+            samples = self._normalizar(samples)
+            texto = self._transcribir_remoto(samples, sample_rate)
+            if texto is not None:
+                return texto.strip()
+
         if not self.cargar():
             return ""
         if samples is None or len(samples) == 0:
@@ -377,6 +456,7 @@ class ReconocedorVoz:
 
         ventana = 512  # tamaño de ventana que espera silero
         buffer = np.array([], dtype="float32")
+        silencios = 0  # bloques seguidos por debajo de PICO_MINIMO
 
         try:
             with sd.InputStream(
@@ -405,7 +485,32 @@ class ReconocedorVoz:
                         self._vad.reset()
                         continue
 
-                    buffer = np.concatenate([buffer, bloque.reshape(-1)])
+                    muestras = bloque.reshape(-1)
+
+                    # Compuerta por energia ANTES del VAD: silero es una red
+                    # neuronal y se le pasaban ~31 ventanas por segundo sin
+                    # parar, tambien en silencio. Eso solo costaba CPU (76%
+                    # medido en la Pi) para que dijera "aqui no hay voz".
+                    #
+                    # Un bloque por debajo de PICO_MINIMO no puede contener
+                    # voz -- es el mismo umbral con el que _normalizar()
+                    # decide que algo es silencio -- asi que se descarta sin
+                    # molestar al VAD. Hace falta un contador: si llega voz y
+                    # el VAD no vio el silencio previo, no sabe donde empieza
+                    # la frase, asi que al volver a oir algo se le da un
+                    # bloque de silencio para que cierre lo anterior.
+                    if float(np.abs(muestras).max()) < PICO_MINIMO:
+                        silencios += 1
+                        if silencios == 1 and len(buffer):
+                            buffer = np.concatenate([buffer, muestras])
+                        else:
+                            continue
+                    else:
+                        if silencios:
+                            self._vad.accept_waveform(
+                                np.zeros(ventana, dtype="float32"))
+                        silencios = 0
+                        buffer = np.concatenate([buffer, muestras])
 
                     while len(buffer) > ventana:
                         self._vad.accept_waveform(buffer[:ventana])

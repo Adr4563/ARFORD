@@ -20,9 +20,11 @@
   <depend>rclpy</depend>
   <depend>romeo_interfaces</depend>
 
+  <!-- sklearn + joblib: los pide el router TRIVIA/CHAT_LIBRE de
+       orchestrator_node (carga router_modelo.joblib al importar). -->
   <exec_depend>python3-sklearn</exec_depend>
+  <exec_depend>python3-joblib</exec_depend>
   <exec_depend>python3-requests</exec_depend>
-  <exec_depend>python3-psutil</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

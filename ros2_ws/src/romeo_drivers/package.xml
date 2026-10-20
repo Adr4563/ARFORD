@@ -28,6 +28,9 @@
        rosdep no las resuelva todas solo. -->
   <exec_depend>python3-serial</exec_depend>
   <exec_depend>python3-opencv</exec_depend>
+  <!-- flask: SOLO lo usa scripts/stt_server.py, que corre en la PC y no
+       se instala como nodo. Queda declarado opcional para poder levantar
+       el servidor en la propia Pi si la PC no esta disponible. -->
   <exec_depend>python3-flask</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <!-- STT local (_stt_engine.py, la entrada de voz de communication_node):

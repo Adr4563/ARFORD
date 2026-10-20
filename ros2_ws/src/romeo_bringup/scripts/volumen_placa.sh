@@ -27,10 +27,10 @@
 #   EOF
 #   sudo systemctl enable --now romeo-volumen.service
 #
-# Uso a mano:  ./volumen_placa.sh [porcentaje]   (por defecto 20)
+# Uso a mano:  ./volumen_placa.sh [porcentaje]   (por defecto 50)
 set -e
 
-VOL="${1:-20}"
+VOL="${1:-50}"
 
 # -c Board, NO -c <número>: el índice de la placa cambia entre arranques
 # (se la ha visto como card 1 y como card 3, porque es USB y el orden

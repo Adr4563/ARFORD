@@ -24,7 +24,7 @@ communication_node:
     # demasiada corriente con el volumen alto. Por debajo va además el
     # mezclador ALSA del códec ES8311, que NO se controla desde acá -- ver
     # scripts/volumen_placa.sh.
-    voz_volumen: 40
+    voz_volumen: 80
 
     # --- Salida de audio: el parlante de la placa ESP32-S3 ---
     # La placa es una tarjeta de sonido USB. OJO con el nombre: es "Board"
@@ -35,9 +35,14 @@ communication_node:
     # hace con filtro de calidad. Si lo hace el `plughw` de ALSA (lineal,
     # sin filtro) la voz suena metálica. 0 = no forzar.
     audio_muestreo: 16000
-    # Volumen de la música (0-100), más bajo que la voz a propósito: con la
-    # música fuerte la placa pedía demasiada corriente y se desconectaba.
-    musica_volumen: 25
+    # Volumen de la música (0-100). Igualado a voz_volumen: con 25 la música
+    # sonaba a menos de la mitad que la voz y no se oía, porque además se
+    # multiplica por el mezclador del códec (ver volumen_placa.sh).
+    #
+    # El 25 venía de que con la música fuerte la placa pedía demasiada
+    # corriente y se desconectaba. Si vuelve a pasar -- se ve como
+    # "USB disconnect" en dmesg -- hay que bajarlo de nuevo.
+    musica_volumen: 80
 
     # --- Voz de entrada (micrófono de la placa ESP32-S3, STT local) ---
     # El bug de los ceros ya está resuelto (mapeo DIN=15/DOUT=16, ver

@@ -21,10 +21,19 @@ import requests
 
 CHAT_SERVER_HOST = os.environ.get("CHAT_SERVER_HOST", "http://localhost:11434")
 
-CHAT_MODEL = os.environ.get("CHAT_MODEL", "arford-empatico-full")
+CHAT_MODEL = os.environ.get("CHAT_MODEL", "llama3.2:1b")
+
+# Tope de tokens por respuesta. Con 50 las frases se cortaban a la mitad
+# ("...y es lo mas importante que estoy con"), porque 50 tokens son unas 35
+# palabras y el modelo no sabe que tiene que terminar antes.
+#
+# 120 deja decir dos o tres frases completas sin que la respuesta se vuelva
+# un discurso: la voz tarda ~1 s cada 4 palabras, asi que una respuesta larga
+# se hace eterna de escuchar.
+MAX_TOKENS = int(os.environ.get("ROMEO_MAX_TOKENS", "120"))
 
 
-def generar_respuesta(mensajes, temperature=0.3, max_tokens=50, modelo=None):
+def generar_respuesta(mensajes, temperature=0.3, max_tokens=MAX_TOKENS, modelo=None):
     """Pide una respuesta al modelo y la devuelve completa."""
     resp = requests.post(
         f"{CHAT_SERVER_HOST}/v1/chat/completions",

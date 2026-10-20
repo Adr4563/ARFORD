@@ -13,8 +13,88 @@ propia pregunta en preguntas.jsonl.
 
 # ─── Correccion de respuestas (venia de agent_corrector.py) ─────────
 import difflib
+import os
 import re
 import unicodedata
+
+from . import llama_client
+
+# Modelo que revisa las respuestas de trivia que la comparacion de texto da
+# por incorrectas (ver _evaluar_con_llm). Vacio = sin segunda opinion.
+CORRECTOR_LLM = os.environ.get("TRIVIA_CORRECTOR_MODEL", "romeo")
+
+# Los ejemplos no son adorno: sin ellos un modelo de 1B DESCRIBE la
+# instruccion en vez de cumplirla ("Felicita a tu interlocutor...") o se
+# disculpa como si el error fuera suyo. Con dos ejemplos contesta en el tono
+# correcto.
+_PROMPT_COMENTARIO = (
+    "Eres Romeo, un robot que juega trivia. Reacciona en UNA frase corta a lo "
+    "que acaba de contestar la persona, hablandole de tu. Si acerto, "
+    "felicitala; si fallo, dile cual era la correcta sin regañarla. No "
+    "expliques nada mas.\n"
+    "\n"
+    "Ejemplo 1:\n"
+    "Pregunta: Cual es la capital de Francia?\n"
+    "Respuesta correcta: Paris\n"
+    "La persona dijo: Paris, obvio\n"
+    "(acerto)\n"
+    "Romeo: ¡Esa estaba facil para ti! Paris, correcto.\n"
+    "\n"
+    "Ejemplo 2:\n"
+    "Pregunta: Cuantas patas tiene una araña?\n"
+    "Respuesta correcta: 8\n"
+    "La persona dijo: seis creo\n"
+    "(fallo)\n"
+    "Romeo: Casi, pero son 8. Confundiste con los insectos."
+)
+
+
+def comentar(pregunta, esperada, respuesta_usuario, acerto):
+    """Comentario del veredicto hecho a medida de lo que dijo el usuario.
+
+    Devuelve None si no hay LLM o falla: entonces el caller usa las frases
+    fijas de siempre. Antes SIEMPRE se usaban esas, asi que daba igual lo que
+    hubiera contestado la persona -- si decia "3 por 8 es 28" oia "No, era
+    24" y nada sobre su cuenta.
+    """
+    if not CORRECTOR_LLM:
+        return None
+    try:
+        texto = llama_client.generar_respuesta(
+            [{"role": "system", "content": _PROMPT_COMENTARIO},
+             {"role": "user",
+              "content": f"Pregunta: {pregunta}\n"
+                         f"Respuesta correcta: {esperada}\n"
+                         f"La persona dijo: {respuesta_usuario}\n"
+                         f"({'acerto' if acerto else 'fallo'})"}],
+            temperature=0.2, max_tokens=60, modelo=CORRECTOR_LLM).strip()
+    except Exception as e:  # noqa: BLE001 - se cae a las frases fijas
+        print(f"[trivia] no se pudo comentar ({e})")
+        return None
+    # El modelo copia el formato de los ejemplos y a veces antepone
+    # "Romeo:" a su propia respuesta.
+    if texto.lower().startswith("romeo:"):
+        texto = texto.split(":", 1)[1].strip()
+    texto = texto.strip('"').strip()
+
+    # Una respuesta vacia o kilometrica no sirve: mejor la frase fija.
+    if not texto or len(texto) > 200:
+        return None
+    # Si fallo, el comentario TIENE que decir cual era la correcta; es lo
+    # unico que el usuario necesita saber. Si el modelo se la olvido, se
+    # añade en vez de descartar todo el comentario.
+    if not acerto and str(esperada).lower() not in texto.lower():
+        texto = f"{texto} La respuesta era {esperada}."
+    return texto
+
+
+_PROMPT_CORRECTOR = (
+    "Eres un corrector de trivia. Te doy la respuesta correcta y lo que dijo "
+    "el usuario. Responde UNA sola palabra: SI si lo que dijo significa lo "
+    "mismo que la respuesta correcta (aunque lo diga con otras palabras, le "
+    "falten tildes o esté mal transcrito), o NO si no coincide. No expliques "
+    "nada."
+)
 
 _ARTICULOS = {"el", "la", "los", "las", "un", "una", "unos", "unas", "de", "del", "al"}
 _UMBRAL_SOLAPAMIENTO = 0.6
@@ -38,8 +118,43 @@ def _es_numerico(s):
     return bool(re.fullmatch(r"-?\d+([.,]\d+)?", s.strip()))
 
 
+# Numeros escritos con letras. El STT transcribe lo que oye, asi que a la
+# pregunta "cuantas patas tiene una arania" el usuario contesta "ocho" y
+# llegaba como texto, no como 8. Hasta el 30 y las decenas cubre de sobra las
+# respuestas del banco de preguntas.
+_NUMEROS_TEXTO = {
+    "cero": 0, "uno": 1, "una": 1, "un": 1, "dos": 2, "tres": 3, "cuatro": 4,
+    "cinco": 5, "seis": 6, "siete": 7, "ocho": 8, "nueve": 9, "diez": 10,
+    "once": 11, "doce": 12, "trece": 13, "catorce": 14, "quince": 15,
+    "dieciseis": 16, "diecisiete": 17, "dieciocho": 18, "diecinueve": 19,
+    "veinte": 20, "veintiuno": 21, "veintidos": 22, "veintitres": 23,
+    "veinticuatro": 24, "veinticinco": 25, "veintiseis": 26,
+    "veintisiete": 27, "veintiocho": 28, "veintinueve": 29, "treinta": 30,
+    "cuarenta": 40, "cincuenta": 50, "sesenta": 60, "setenta": 70,
+    "ochenta": 80, "noventa": 90, "cien": 100, "ciento": 100, "mil": 1000,
+}
+
+
 def _extraer_numeros(s):
-    return [float(n.replace(",", ".")) for n in re.findall(r"-?\d+(?:[.,]\d+)?", s)]
+    """Numeros de `s`, tanto en cifras como escritos con letras."""
+    numeros = [float(n.replace(",", ".")) for n in re.findall(r"-?\d+(?:[.,]\d+)?", s)]
+
+    palabras = _normalizar(s).split()
+    for i, p in enumerate(palabras):
+        if p not in _NUMEROS_TEXTO:
+            continue
+        valor = _NUMEROS_TEXTO[p]
+        # "cuarenta y dos" = 40 + 2. Solo para decenas, que es como se dice
+        # en español; "ciento cuarenta y dos" tambien sale bien porque el 100
+        # se suma aparte.
+        if valor >= 20 and valor % 10 == 0 and i + 2 < len(palabras) \
+                and palabras[i + 1] == "y" and palabras[i + 2] in _NUMEROS_TEXTO:
+            unidad = _NUMEROS_TEXTO[palabras[i + 2]]
+            if unidad < 10:
+                numeros.append(float(valor + unidad))
+                continue
+        numeros.append(float(valor))
+    return numeros
 
 
 def evaluar_respuesta(esperada, respuesta_usuario):
@@ -51,7 +166,12 @@ def evaluar_respuesta(esperada, respuesta_usuario):
 
     if _es_numerico(esperada):
         numero_esperado = float(esperada.replace(",", "."))
-        return numero_esperado in _extraer_numeros(respuesta_usuario)
+        if numero_esperado in _extraer_numeros(respuesta_usuario):
+            return True
+        # Sin return directo: si el numero no aparece tal cual todavia puede
+        # estar dicho con letras ("cuarenta y dos") o mal transcrito por el
+        # STT, y de eso se encarga el corrector de abajo.
+        return _evaluar_con_llm(esperada, respuesta_usuario)
 
     esp_norm = _normalizar(esperada)
     resp_norm = _normalizar(respuesta_usuario)
@@ -71,7 +191,44 @@ def evaluar_respuesta(esperada, respuesta_usuario):
         if coincididas / len(palabras_esp) >= _UMBRAL_SOLAPAMIENTO:
             return True
 
-    return difflib.SequenceMatcher(None, esp_norm, resp_norm).ratio() >= _UMBRAL_FUZZY
+    if difflib.SequenceMatcher(None, esp_norm, resp_norm).ratio() >= _UMBRAL_FUZZY:
+        return True
+
+    # Ultimo recurso: preguntarle al LLM. La comparacion de arriba acierta
+    # cuando el usuario dice la respuesta tal cual o parecida, pero no cuando
+    # la dice de otra forma ("el pintor de la Gioconda" por "Leonardo da
+    # Vinci") ni cuando el STT la transcribe mal. Solo se llega aca si la
+    # comparacion ya dijo que NO, asi que el LLM nunca puede convertir un
+    # acierto en fallo, solo rescatar un acierto que se habria perdido.
+    #
+    # Si no hay LLM configurado o no contesta, se queda en False: el juego
+    # nunca se cuelga esperando a Ollama.
+    return _evaluar_con_llm(esperada, respuesta_usuario)
+
+
+def _evaluar_con_llm(esperada, respuesta_usuario):
+    """True si el LLM considera que la respuesta es correcta. False ante
+    cualquier duda o fallo."""
+    if not CORRECTOR_LLM:
+        return False
+    try:
+        veredicto = llama_client.generar_respuesta(
+            [{"role": "system", "content": _PROMPT_CORRECTOR},
+             {"role": "user",
+              "content": f"Respuesta correcta: {esperada}\n"
+                         f"Lo que dijo el usuario: {respuesta_usuario}\n"
+                         f"¿SI o NO?"}],
+            temperature=0.0, max_tokens=4, modelo=CORRECTOR_LLM).strip().upper()
+    except Exception as e:  # noqa: BLE001 - el juego sigue sin el LLM
+        print(f"[trivia] el corrector LLM falló ({e}), se queda en incorrecto")
+        return False
+    acierto = veredicto.startswith("SI") or veredicto.startswith("SÍ")
+    # Se loguea siempre: sin esto no habia forma de saber si el corrector
+    # llego a intervenir ni que decidio.
+    print(f"[trivia] {CORRECTOR_LLM}: esperada={esperada!r} "
+          f"usuario={respuesta_usuario!r} -> {veredicto!r} "
+          f"({'rescatado' if acierto else 'sigue incorrecto'})")
+    return acierto
 
 
 # ─── Expresion: cara, musica, motores (venia de agent_behavior.py) ──

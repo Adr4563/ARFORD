@@ -114,6 +114,14 @@ class CommunicationNode(LifecycleNode):
         self.declare_parameter('mic_dispositivo', '')
         # nemo (FastConformer espanol, 2.2 s) o whisper (multilingue, 8.6 s).
         # Ver la nota de MOTOR en _stt_engine.py con las medidas.
+        # URL de un stt_server.py en otra maquina ("http://ip:8082"). Vacio
+        # = transcribir en la Pi. El microfono no se mueve: viaja el WAV ya
+        # recortado por el VAD. whisper-small tarda ~30 s en la Pi y 0.5 s en
+        # una PC con GPU.
+        # URL de un tts_server.py en otra maquina ("http://ip:8083"). Vacio
+        # = sintetizar en la Pi, que cuesta ~5 s por frase.
+        self.declare_parameter('tts_servidor', '')
+        self.declare_parameter('stt_servidor', '')
         self.declare_parameter('stt_motor', 'nemo')   # nemo | whisper
         self.declare_parameter('stt_tam', 'tiny')      # tiny | base | small
         self.declare_parameter('stt_hilos', 2)         # 2 es el óptimo medido
@@ -169,13 +177,15 @@ class CommunicationNode(LifecycleNode):
                 'ruido_w': self.get_parameter('voz_vits_ruido_w').value,
                 'duracion': self.get_parameter('voz_vits_duracion').value,
                 'tono': self.get_parameter('voz_tono_semitonos').value,
-            })
+            },
+            servidor=self.get_parameter('tts_servidor').value)
 
         # El modelo NO se carga acá: ReconocedorVoz es perezoso a propósito
         # (carga en el primer uso), y on_configure no debe tocar hardware ni
         # gastar los ~2s de carga del modelo. Se carga al escuchar.
         if self.get_parameter('mic_activo').value:
             self._stt = ReconocedorVoz(
+                servidor=self.get_parameter('stt_servidor').value,
                 motor=self.get_parameter('stt_motor').value,
                 tam=self.get_parameter('stt_tam').value,
                 hilos=self.get_parameter('stt_hilos').value)
@@ -206,13 +216,6 @@ class CommunicationNode(LifecycleNode):
     def on_activate(self, state):
         self.get_logger().info('[communication_node] activando...')
         self._voz.cargar()
-        # El STT también se precarga acá, no en la primera frase: cargar
-        # whisper-small cuesta 7.5 s en la Pi, y si se deja para el primer
-        # uso esos segundos se los come el usuario esperando su respuesta.
-        # cargar() es idempotente, así que las frases siguientes reusan el
-        # modelo ya en memoria.
-        if self._stt is not None:
-            self._stt.cargar()
         self._activo = True
         self._arrancar_microfono()
         self.get_logger().info(

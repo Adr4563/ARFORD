@@ -38,8 +38,16 @@ def generate_launch_description():
         DeclareLaunchArgument('mic_activo', default_value='true',
                                description='false desactiva el STT y deja solo el teclado'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
-        DeclareLaunchArgument('chat_model', default_value='arford-empatico-full'),
+        DeclareLaunchArgument('chat_model', default_value='llama3.2:1b'),
+        # Modelo que da la segunda opinion sobre las respuestas de trivia que
+        # la comparacion de texto da por incorrectas (ver agente_trivia).
+        DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),
         DeclareLaunchArgument('chat_server_host', default_value='http://localhost:11434'),
+        # URL de un stt_server.py en otra maquina. Vacio = transcribir en la
+        # Pi. El microfono no se mueve: viaja el WAV ya recortado por el VAD.
+        DeclareLaunchArgument('stt_servidor', default_value=''),
+        # URL de un tts_server.py en otra maquina. Vacio = sintetizar en la Pi.
+        DeclareLaunchArgument('tts_servidor', default_value=''),
     ]
 
     communication_node = LifecycleNode(
@@ -52,7 +60,9 @@ def generate_launch_description():
                      # esto llega 'true' (texto) y rclpy rechaza el
                      # parámetro al arrancar.
                      {'mic_activo': ParameterValue(
-                         LaunchConfiguration('mic_activo'), value_type=bool)}],
+                         LaunchConfiguration('mic_activo'), value_type=bool),
+                      'stt_servidor': LaunchConfiguration('stt_servidor'),
+                      'tts_servidor': LaunchConfiguration('tts_servidor')}],
     )
 
     visualization_faces_node = LifecycleNode(
@@ -73,6 +83,7 @@ def generate_launch_description():
         parameters=[params_file],
         additional_env={
             'CHAT_MODEL': LaunchConfiguration('chat_model'),
+            'TRIVIA_CORRECTOR_MODEL': LaunchConfiguration('trivia_corrector_model'),
             'CHAT_SERVER_HOST': LaunchConfiguration('chat_server_host'),
         },
     )

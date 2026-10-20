@@ -40,6 +40,9 @@ import wave
 
 from ._audio_salida import opciones_mpv
 
+# Cuanto se espera a un tts_server.py remoto antes de sintetizar en local.
+TIMEOUT_REMOTO = float(os.environ.get("ROMEO_TTS_TIMEOUT", "20"))
+
 
 # Piper/sherpa-onnx (onnxruntime) agarran los núcleos de la Pi por default.
 # Medido en el proyecto original: la síntesis tarda igual con 1, 2 o 4
@@ -57,8 +60,10 @@ class Voz:
     variables de entorno directo."""
 
     def __init__(self, motor="vits", modelo_piper=None, logger=None,
-                 audio_salida=None, audio_muestreo=0, volumen=100, vits=None):
+                 audio_salida=None, audio_muestreo=0, volumen=100, vits=None,
+                 servidor=None):
         self.motor = (motor or "vits").strip().lower()
+        self.servidor = (servidor or "").rstrip("/")
         self.modelo_piper = modelo_piper or os.path.expanduser(
             "~/piper-voces/es_CO-dii.onnx")
         self.logger = logger
@@ -136,12 +141,54 @@ class Voz:
 
     # ─── Síntesis ──────────────────────────────────────────────────────
 
+    def _hablar_remoto(self, texto):
+        """Pide el WAV a un tts_server.py de otra maquina y lo reproduce.
+
+        Devuelve True si sono, False si el servidor no contesta (entonces el
+        caller sintetiza en local). Sintetizar en la Pi cuesta ~5 s por
+        frase y en una PC con GPU 0.2 s; lo que vuelve son ~100 KB de WAV.
+        """
+        import urllib.parse
+        import urllib.request
+
+        ruta = None
+        try:
+            url = (f"{self.servidor}/hablar?"
+                   f"texto={urllib.parse.quote(texto)}")
+            with urllib.request.urlopen(url, timeout=TIMEOUT_REMOTO) as r:
+                datos = r.read()
+            if not datos:
+                return False
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                ruta = tmp.name
+                tmp.write(datos)
+            with wave.open(ruta) as w:
+                sr = w.getframerate()
+            self._reproducir(ruta, sr)
+            return True
+        except Exception as e:  # noqa: BLE001 - se cae a sintetizar en local
+            self._log(f"[voz] el servidor {self.servidor} falló ({e}), "
+                       f"se sintetiza en local")
+            return False
+        finally:
+            if ruta:
+                try:
+                    os.unlink(ruta)
+                except OSError:
+                    pass
+
     def _hablar_vits(self, texto):
         """Sintetiza con sherpa-onnx y reproduce con mpv. El cambio de tono
         lo hace mpv al reproducir (asetrate + atempo: sube el tono sin
         cambiar la duración), igual que en las pruebas de oído con
         ffmpeg."""
         import numpy as np
+
+        # Con un servidor configurado se sintetiza alla; si no contesta se
+        # sigue con el modelo local.
+        if self.servidor and self._hablar_remoto(texto):
+            return
+
         audio = self._tts_vits.generate(texto, sid=0)
         muestras = np.asarray(audio.samples, dtype=np.float32)
         if muestras.size == 0:
