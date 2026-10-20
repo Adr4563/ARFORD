@@ -78,6 +78,17 @@ _CARAS = {
 # la alegria no llegue nunca.
 _RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.25"))
 
+# Cuanto pesa el TER (texto) frente al FER (cara). Ver percibir_del_texto:
+# el texto es la modalidad menos fiable de las dos -- ironia, errores del
+# STT, frases sobre terceros -- asi que mueve el animo mas despacio.
+#
+# 0.30 esta medido, no elegido a ojo: por encima (0.4-0.5) un solo "estoy
+# triste" ya cambiaba la cara, y por debajo (0.2-0.25) el comportamiento es
+# el mismo que con 0.30 pero con menos margen. Con 0.30 hace falta un
+# segundo mensaje concordante, que es lo que distingue un estado de animo
+# de un comentario suelto.
+_PESO_TEXTO = float(os.environ.get("ROMEO_PESO_TEXTO", "0.30"))
+
 
 # ── Perfil afectivo de Romeo (los parametros de ROSE) ─────────────────
 #
@@ -185,6 +196,34 @@ _DESDE_SERVICIO = {
     "Enojado": "enojo",
     "Neutral": "neutral",
 }
+
+
+def percibir_del_texto(emocion, confianza_ter):
+    """PULSE a partir de lo que devuelve ter.analizar().
+
+    Mismo criterio que percibir_del_servicio: se escala el anclaje por la
+    confianza, asi que un "estoy fatal" mueve el animo mas que un "bien"
+    suelto. La diferencia es que aca las emociones son las OCHO de
+    ANCLAJES y no las cuatro del detector facial, porque el texto si
+    distingue miedo o sorpresa aunque Romeo no sepa ponerles cara.
+
+    EL TEXTO PESA MENOS QUE LA CARA. La confianza que devuelve el TER ya
+    esta topada, pero aun asi un solo "estoy triste" bastaba para cambiar
+    la cara de Romeo, y eso es demasiado: la frase puede ser ironica, estar
+    mal transcrita por el STT, o referirse a otra persona ("mi hermano esta
+    triste"). Un emparejador de palabras no da para reaccionar al primer
+    mensaje. Con _PESO_TEXTO el animo se mueve despacio y hacen falta dos o
+    tres mensajes concordantes, que es lo que de verdad indica un estado.
+
+    Devuelve (vector_vad, confianza), o (None, 0.0) si no hubo evidencia."""
+    if emocion is None or emocion not in ANCLAJES:
+        return None, 0.0
+    c = max(0.0, min(1.0, float(confianza_ter or 0.0)))
+    if c <= 0.0:
+        return None, 0.0
+    c *= _PESO_TEXTO
+    av, aa, ad = ANCLAJES[emocion]
+    return (av * c, aa * c, ad * c), c
 
 
 def percibir_del_servicio(emocion, confianza_srv):

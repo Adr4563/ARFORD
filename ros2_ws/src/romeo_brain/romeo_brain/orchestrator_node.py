@@ -45,7 +45,7 @@ from ament_index_python.packages import get_package_share_directory
 from romeo_interfaces.msg import UserInput
 
 from . import (agente_chat, agente_trivia, estado_afectivo, frases,
-               llama_client, preguntas)
+               llama_client, preguntas, ter)
 from ._ros_bridge import RosBridge
 
 # El enrutado (TRIVIA / CHAT_LIBRE) vive aca y no en un agente aparte: son
@@ -158,6 +158,9 @@ class OrchestratorNode(Node):
         # entero en cada sesion, y lo que se quiere del afecto es
         # justamente que dure. Se reinicia a mano en _iniciar_sesion().
         self._afecto = estado_afectivo.EstadoAfectivo()
+        # Lecturas afectivas del turno en curso, pendientes de
+        # fusionar. Ver _aplicar_afecto().
+        self._lecturas_turno = []
         self.estado = None
         self._intentos_arranque = 0
         self._turno_lock = threading.Lock()
@@ -245,6 +248,30 @@ class OrchestratorNode(Node):
     # Trivia: reacciones fijas, resolución de tema, salida a mitad de
     # pregunta -- portados tal cual.
     # ══════════════════════════════════════════════════════════════════
+
+    def _aplicar_afecto(self):
+        """Fusiona las lecturas de este turno (PULSE) y actualiza el animo
+        una sola vez (ROSE).
+
+        Se llama cada vez que se añade una lectura, y es idempotente: lo
+        que ya se aplico se descarta de la lista. Asi, si en un turno
+        hablan el texto y la camara, el animo se mueve una vez con la
+        media ponderada de las dos y no dos veces seguidas.
+
+        fusionar() se usa tal cual: ya filtra las lecturas nulas o sin
+        confianza y, con una sola, devuelve esa misma."""
+        if not getattr(self, "_lecturas_turno", None):
+            return
+        vector = estado_afectivo.fusionar(self._lecturas_turno)
+        self._lecturas_turno = []
+        if vector is None:
+            return
+        antes = self._afecto.vector
+        self._afecto.empatizar(vector)
+        v, a, d = self._afecto.vector
+        self.get_logger().info(
+            f"[afecto] v {antes[0]:+.2f}->{v:+.2f}  "
+            f"a {antes[1]:+.2f}->{a:+.2f}  d {antes[2]:+.2f}->{d:+.2f}")
 
     def _cara_reposo(self):
         """La cara con la que Romeo se queda ESCUCHANDO, segun como se
@@ -372,14 +399,16 @@ class OrchestratorNode(Node):
         # Se hace aca y no en el bridge porque el bridge no debe saber de
         # logica afectiva, solo de topicos y servicios.
         if ok:
-            vector, _c = estado_afectivo.percibir_del_servicio(detectada, confianza)
-            antes = self._afecto.vector
-            self._afecto.empatizar(vector)
-            v, a, d = self._afecto.vector
-            self.get_logger().info(
-                f"[afecto] la camara vio {detectada} ({confianza:.0%}): "
-                f"v {antes[0]:+.2f}->{v:+.2f}  a {antes[1]:+.2f}->{a:+.2f}  "
-                f"d {antes[2]:+.2f}->{d:+.2f}")
+            # Se acumula igual que el TER y se aplica con _aplicar_afecto,
+            # para que un turno que percibe por las dos vias mueva el animo
+            # UNA vez con la media de ambas, no dos veces seguidas.
+            vector, c = estado_afectivo.percibir_del_servicio(detectada, confianza)
+            if vector is not None:
+                self._lecturas_turno = getattr(self, "_lecturas_turno", [])
+                self._lecturas_turno.append((vector, c))
+                self.get_logger().info(
+                    f"[afecto] la camara vio {detectada} ({confianza:.0%})")
+                self._aplicar_afecto()
         self._bridge.mostrar_cara("speaking")
 
         if not ok or detectada is None:
@@ -623,10 +652,36 @@ class OrchestratorNode(Node):
 
         # Empieza un turno: ha pasado tiempo desde el anterior, asi que el
         # animo se acerca un paso a su base (ROSE). Sin esta llamada el
-        # estado se quedaria clavado en lo ultimo que detecto la camara.
+        # estado se quedaria clavado en lo ultimo que se percibio.
         # decaer() no hace nada hasta que pasa la latencia, asi que dos
         # turnos seguidos y rapidos no borran lo que se acaba de percibir.
         self._afecto.decaer()
+
+        # TER: que emocion expresa lo que acaba de decir el usuario.
+        #
+        # Va ACA y en ningun otro sitio. Este es el unico punto por el que
+        # pasa todo mensaje (_on_user_input es el unico productor, y llama
+        # solo a esta funcion), y esta ANTES de que el turno se bifurque a
+        # trivia o chat libre: asi cubre las dos rutas sin tocar el router
+        # ni el banco de preguntas. Como _procesar_turno se ejecuta una
+        # sola vez por mensaje -- las transiciones trivia<->chat son ramas
+        # de dentro, no reentradas -- ROSE no se puede actualizar dos veces
+        # por turno.
+        #
+        # La lectura se GUARDA en vez de aplicarse: si mas adelante en este
+        # mismo turno la camara tambien percibe algo (el juego de
+        # emociones), las dos se fusionan y ROSE se actualiza una sola vez.
+        # Ver _aplicar_afecto().
+        emocion_txt, confianza_txt = ter.analizar(entrada)
+        self._lecturas_turno = []
+        vector_txt, c_txt = estado_afectivo.percibir_del_texto(
+            emocion_txt, confianza_txt)
+        if vector_txt is not None:
+            self._lecturas_turno.append((vector_txt, c_txt))
+            self.get_logger().info(
+                f"[afecto] el texto expresa {emocion_txt} "
+                f"(confianza {confianza_txt:.2f})")
+        self._aplicar_afecto()
 
         if self.estado["esperando_nombre"]:
             nombre = entrada or "amigo"
