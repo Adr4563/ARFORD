@@ -260,7 +260,14 @@ class OrchestratorNode(Node):
         Con el animo cerca de su base devuelve 'content', que es lo que se
         mostraba siempre: el comportamiento solo cambia cuando de verdad
         hay algo que mostrar."""
-        return self._afecto.cara()
+        cara = self._afecto.cara()
+        # Se registra el vector, no solo la cara: la cara es una de cuatro
+        # y se queda igual durante varios turnos, asi que sin el vector no
+        # se ve si el animo se esta moviendo o esta clavado.
+        v, a, d = self._afecto.vector
+        self.get_logger().info(
+            f"[afecto] v={v:+.2f} a={a:+.2f} d={d:+.2f} -> cara {cara}")
+        return cara
 
     @staticmethod
     def comentar_resultado(esperada, acerto):
@@ -366,7 +373,13 @@ class OrchestratorNode(Node):
         # logica afectiva, solo de topicos y servicios.
         if ok:
             vector, _c = estado_afectivo.percibir_del_servicio(detectada, confianza)
+            antes = self._afecto.vector
             self._afecto.empatizar(vector)
+            v, a, d = self._afecto.vector
+            self.get_logger().info(
+                f"[afecto] la camara vio {detectada} ({confianza:.0%}): "
+                f"v {antes[0]:+.2f}->{v:+.2f}  a {antes[1]:+.2f}->{a:+.2f}  "
+                f"d {antes[2]:+.2f}->{d:+.2f}")
         self._bridge.mostrar_cara("speaking")
 
         if not ok or detectada is None:
