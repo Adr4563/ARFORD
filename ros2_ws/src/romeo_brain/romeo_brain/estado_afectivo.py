@@ -58,6 +58,21 @@ ANCLAJES = {
     "desprecio":  (-0.55, 0.20, 0.30),   # no es de De Bruyne, ver arriba
 }
 
+# Las CUATRO caras que Romeo sabe poner (las de _CARA_A_DISPLAY en
+# agente_trivia), con la coordenada VAD de cada una. 'content' hace de
+# neutral. No hay cara para miedo, asco ni sorpresa, asi que esas
+# emociones se leen del usuario pero el robot no las expresa.
+_CARAS = {
+    "happy": ANCLAJES["felicidad"],
+    "sad": ANCLAJES["tristeza"],
+    "angry": ANCLAJES["enojo"],
+    "content": ANCLAJES["neutral"],
+}
+
+# Radio dentro del cual el animo se considera neutro. Ver cara().
+_RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.35"))
+
+
 # ── Perfil afectivo de Romeo (los parametros de ROSE) ─────────────────
 #
 # EMPATIA (e): cuanto se deja influir por el usuario.
@@ -155,6 +170,43 @@ def percibir(probabilidades, etiquetas):
     return a_vad(probabilidades, etiquetas), confianza(probabilidades)
 
 
+# Lo que devuelve DetectEmotion.srv, traducido a las claves de ANCLAJES.
+# El detector ya colapsa sus ocho categorias a estas cuatro antes de
+# publicarlas (ETIQUETAS_RELEVANTES en _emotion_detector.py).
+_DESDE_SERVICIO = {
+    "Feliz": "felicidad",
+    "Triste": "tristeza",
+    "Enojado": "enojo",
+    "Neutral": "neutral",
+}
+
+
+def percibir_del_servicio(emocion, confianza_srv):
+    """PULSE a partir de lo que entrega DetectEmotion.srv, que son solo
+    (emocion, confianza) y no la distribucion entera.
+
+    POR QUE NO SE USA percibir() DIRECTAMENTE. La distribucion completa
+    existe, pero vive en el proceso de romeo_drivers: el .srv transporta
+    unicamente la etiqueta ganadora y su probabilidad. Pasarla entera
+    obligaria a cambiar romeo_interfaces y recompilarlo, y el beneficio no
+    lo justifica -- la confianza, que es la mitad del trabajo de PULSE, ya
+    viene en la respuesta, asi que no hace falta recalcular la entropia.
+
+    Lo que se hace es escalar el anclaje por la confianza: una deteccion al
+    40% mueve el estado menos que una al 95%, que es exactamente el efecto
+    que la entropia buscaba. El resto de la probabilidad se reparte hacia
+    el origen (neutral), igual que haria la suma ponderada de a_vad() si se
+    tuviera la distribucion entera.
+
+    Devuelve (vector_vad, confianza) o (None, 0.0) si no hubo deteccion."""
+    clave = _DESDE_SERVICIO.get((emocion or "").strip())
+    if clave is None:
+        return None, 0.0
+    c = max(0.0, min(1.0, float(confianza_srv or 0.0)))
+    av, aa, ad = ANCLAJES[clave]
+    return (av * c, aa * c, ad * c), c
+
+
 # ══════════════════════════════════════════════════════════════════════
 # ROSE -- el animo propio de Romeo
 # ══════════════════════════════════════════════════════════════════════
@@ -223,6 +275,34 @@ class EstadoAfectivo:
         return all(abs(self.vector[i] - self.animo_base[i]) < tol
                    for i in range(3))
 
+    def cara(self):
+        """La cara de reposo que corresponde al animo actual.
+
+        Devuelve una de las cuatro claves que entiende FaceCommand, por
+        distancia euclidiana a los anclajes de esas mismas cuatro.
+
+        OJO CON DONDE SE USA. Las caras de Romeo estan casi todas ocupadas
+        por estados de la conversacion -- 'speaking' mientras habla,
+        'countdown' mientras espera, 'content' mientras escucha -- y esas
+        no se pueden sustituir sin que el robot deje de comunicar lo que
+        esta haciendo. Esto es para UN solo sitio: el 'content' de reposo,
+        cuando Romeo escucha y la cara no esta diciendo nada mas. Ahi, en
+        vez de la cara neutra de siempre, puede mostrar como se siente.
+
+        La zona neutra es ancha a proposito: los cuatro anclajes estan
+        lejos del origen, asi que con el animo cerca del centro el ganador
+        saldria casi por azar y la cara parpadearia entre dos sin motivo."""
+        v, a, d = self.vector
+        if math.sqrt(v * v + a * a + d * d) < _RADIO_NEUTRAL:
+            return "content"
+        return min(
+            _CARAS,
+            key=lambda k: ((v - _CARAS[k][0]) ** 2 +
+                           (a - _CARAS[k][1]) ** 2 +
+                           (d - _CARAS[k][2]) ** 2),
+        )
+
     def __repr__(self):
         v, a, d = self.vector
-        return f"<EstadoAfectivo v={v:+.2f} a={a:+.2f} d={d:+.2f}>"
+        return (f"<EstadoAfectivo v={v:+.2f} a={a:+.2f} d={d:+.2f} "
+                f"cara={self.cara()}>")

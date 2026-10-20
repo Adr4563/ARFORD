@@ -44,7 +44,8 @@ from ament_index_python.packages import get_package_share_directory
 
 from romeo_interfaces.msg import UserInput
 
-from . import agente_chat, agente_trivia, frases, llama_client, preguntas
+from . import (agente_chat, agente_trivia, estado_afectivo, frases,
+               llama_client, preguntas)
 from ._ros_bridge import RosBridge
 
 # El enrutado (TRIVIA / CHAT_LIBRE) vive aca y no en un agente aparte: son
@@ -152,6 +153,11 @@ class OrchestratorNode(Node):
         super().__init__('orchestrator_node')
 
         self._bridge = RosBridge(self)
+        # El animo de Romeo, que persiste entre turnos y decae solo. Vive
+        # en el nodo y no en self.estado porque self.estado se reconstruye
+        # entero en cada sesion, y lo que se quiere del afecto es
+        # justamente que dure. Se reinicia a mano en _iniciar_sesion().
+        self._afecto = estado_afectivo.EstadoAfectivo()
         self.estado = None
         self._intentos_arranque = 0
         self._turno_lock = threading.Lock()
@@ -240,6 +246,22 @@ class OrchestratorNode(Node):
     # pregunta -- portados tal cual.
     # ══════════════════════════════════════════════════════════════════
 
+    def _cara_reposo(self):
+        """La cara con la que Romeo se queda ESCUCHANDO, segun como se
+        siente (ver estado_afectivo).
+
+        Es el unico sitio donde el estado afectivo decide la cara. Las
+        demas -- 'speaking', 'countdown', y los veredictos del juego de
+        imitacion -- comunican lo que el robot esta HACIENDO, y
+        sustituirlas por el animo haria que dejara de verse si esta
+        hablando o esperando. En reposo, en cambio, la cara no esta
+        diciendo nada mas, asi que puede decir como esta.
+
+        Con el animo cerca de su base devuelve 'content', que es lo que se
+        mostraba siempre: el comportamiento solo cambia cuando de verdad
+        hay algo que mostrar."""
+        return self._afecto.cara()
+
     @staticmethod
     def comentar_resultado(esperada, acerto):
         plantilla = random.choice(frases.RESPUESTAS_TRIVIA_ACIERTO if acerto
@@ -309,7 +331,7 @@ class OrchestratorNode(Node):
             self._bridge.mostrar_cara("speaking")
 
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara("content")
+        self._bridge.mostrar_cara(self._cara_reposo())
         return True
 
     def _cerrar_tanda(self):
@@ -323,7 +345,7 @@ class OrchestratorNode(Node):
         self.get_logger().info(f"Asistente: {cierre}")
         self._bridge.hablar(cierre)
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara("content")
+        self._bridge.mostrar_cara(self._cara_reposo())
 
     def _pedir_una_emocion(self, objetivo):
         """Pide UNA cara, la captura y la juzga.
@@ -339,6 +361,12 @@ class OrchestratorNode(Node):
         time.sleep(PAUSA_POSAR)   # que le dé tiempo a poner la cara
 
         detectada, confianza, ok = self._bridge.detectar_emocion()
+        # Lo que ve la camara alimenta el animo de Romeo (PULSE -> ROSE).
+        # Se hace aca y no en el bridge porque el bridge no debe saber de
+        # logica afectiva, solo de topicos y servicios.
+        if ok:
+            vector, _c = estado_afectivo.percibir_del_servicio(detectada, confianza)
+            self._afecto.empatizar(vector)
         self._bridge.mostrar_cara("speaking")
 
         if not ok or detectada is None:
@@ -402,7 +430,7 @@ class OrchestratorNode(Node):
         self.get_logger().info(f"Asistente: {cierre}")
         self._bridge.hablar(cierre)
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara("content")
+        self._bridge.mostrar_cara(self._cara_reposo())
 
     def _iniciar_tanda(self, categoria):
         estado = self.estado
@@ -507,7 +535,7 @@ class OrchestratorNode(Node):
             self.get_logger().info(f"Asistente [{pendiente['cara']}]: {pendiente['pregunta']}")
             self._bridge.hablar(f"Retomamos donde quedamos. {pendiente['pregunta']}")
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara("content")
+        self._bridge.mostrar_cara(self._cara_reposo())
 
     def _manejar_chat_libre(self, mensaje_usuario):
         self._bridge.mostrar_cara("speaking")
@@ -515,7 +543,7 @@ class OrchestratorNode(Node):
         self.get_logger().info(f"Asistente: {texto_final}")
         self._bridge.hablar(texto_final)
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara("content")
+        self._bridge.mostrar_cara(self._cara_reposo())
 
     # ══════════════════════════════════════════════════════════════════
     # Arranque/cierre de sesión y el callback de entrada.
@@ -525,6 +553,7 @@ class OrchestratorNode(Node):
         # Sesion nueva, hilo nuevo: el usuario siguiente no hereda la
         # conversacion del anterior.
         agente_chat.reiniciar()
+        self._afecto.reiniciar()
         self._bridge.mostrar_cara("content")
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("speaking")
@@ -539,7 +568,7 @@ class OrchestratorNode(Node):
         self.get_logger().info(f"Asistente: {apertura}")
         self._bridge.hablar(apertura)
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara("content")
+        self._bridge.mostrar_cara(self._cara_reposo())
 
         self.estado = {
             "esperando_nombre": True,
@@ -579,6 +608,13 @@ class OrchestratorNode(Node):
         if self.estado is None or not entrada:
             return
 
+        # Empieza un turno: ha pasado tiempo desde el anterior, asi que el
+        # animo se acerca un paso a su base (ROSE). Sin esta llamada el
+        # estado se quedaria clavado en lo ultimo que detecto la camara.
+        # decaer() no hace nada hasta que pasa la latencia, asi que dos
+        # turnos seguidos y rapidos no borran lo que se acaba de percibir.
+        self._afecto.decaer()
+
         if self.estado["esperando_nombre"]:
             nombre = entrada or "amigo"
             self.estado["nombre"] = nombre
@@ -586,7 +622,7 @@ class OrchestratorNode(Node):
             bienvenida = frases.una(frases.BIENVENIDAS, nombre=nombre)
             self.get_logger().info(f"Asistente: {bienvenida}")
             self._bridge.hablar(bienvenida)
-            self._bridge.mostrar_cara("content")
+            self._bridge.mostrar_cara(self._cara_reposo())
             return
 
         if entrada.lower() in ("salir", "exit", "quit"):
@@ -597,7 +633,7 @@ class OrchestratorNode(Node):
             pendiente = self.estado["pregunta_pendiente"]
             if self._quiere_salir_trivia(entrada, pendiente["pregunta"] if pendiente else None):
                 self.estado["en_trivia"] = False
-                self._bridge.mostrar_cara("content")
+                self._bridge.mostrar_cara(self._cara_reposo())
                 # El mensaje con el que pide salir se atiende EN ESTE MISMO
                 # turno: antes solo se cambiaba de modo y se logueaba un aviso
                 # que nadie decia en voz alta, asi que el usuario escuchaba
@@ -614,7 +650,7 @@ class OrchestratorNode(Node):
                     self.get_logger().info(f"Asistente: {cierre}")
                     self._bridge.mostrar_cara("speaking")
                     self._bridge.hablar(cierre)
-                    self._bridge.mostrar_cara("content")
+                    self._bridge.mostrar_cara(self._cara_reposo())
                 return
             self._manejar_trivia(entrada)
             return
