@@ -56,6 +56,10 @@ def generar_respuesta(mensajes, temperature=0.3, max_tokens=MAX_TOKENS, modelo=N
 # precisamente el caso lento: cargar de disco a RAM.
 TIMEOUT_PRECARGA = float(os.environ.get("ROMEO_TIMEOUT_PRECARGA", "180"))
 
+# Cuantos tokens se le piden al precargar. Ver la nota en precargar(): con
+# 1 no basta, hay que hacerle generar de verdad.
+TOKENS_PRECARGA = int(os.environ.get("ROMEO_TOKENS_PRECARGA", "30"))
+
 
 def precargar(modelos, logger=None):
     """Hace que Ollama cargue estos modelos en RAM antes del primer turno.
@@ -69,9 +73,14 @@ def precargar(modelos, logger=None):
     Alternar entre modelos ya cargados NO cuesta (medido: 38-71 ms), asi
     que basta con tocarlos una vez cada uno al arrancar.
 
-    Manda un prompt minimo con max_tokens=1: lo que importa no es la
-    respuesta sino forzar la carga. Los fallos no interrumpen el arranque:
-    si el servidor no esta, el robot ya sabe degradar en cada turno.
+    Pide TOKENS_PRECARGA tokens y no uno solo. Medido: con max_tokens=1
+    la precarga tarda 64 ms pero el primer uso real todavia cuesta 517 ms,
+    porque cargar los pesos y arrancar la generacion son cosas distintas.
+    Generando ~30 tokens la precarga sube a 2 s -- que se pagan al
+    arrancar, sin nadie esperando -- y el primer turno baja a 51 ms.
+
+    Los fallos no interrumpen el arranque: si el servidor no esta, el robot
+    ya sabe degradar en cada turno.
     """
     for modelo in dict.fromkeys(m for m in modelos if m):
         try:
@@ -81,7 +90,7 @@ def precargar(modelos, logger=None):
                 json={
                     "model": modelo,
                     "messages": [{"role": "user", "content": "hola"}],
-                    "max_tokens": 1,
+                    "max_tokens": TOKENS_PRECARGA,
                     "stream": False,
                 },
                 timeout=TIMEOUT_PRECARGA,
