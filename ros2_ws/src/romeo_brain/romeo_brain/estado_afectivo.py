@@ -70,7 +70,13 @@ _CARAS = {
 }
 
 # Radio dentro del cual el animo se considera neutro. Ver cara().
-_RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.35"))
+# Medido con detecciones al 90%: con 0.35 la felicidad tardaba CINCO
+# turnos en salir -- su desviacion maxima posible es 0.43, porque la base
+# ya es positiva y queda poco margen hacia arriba -- mientras tristeza y
+# enojo salian en uno. Con 0.25 las tres aparecen en dos o tres turnos: ni
+# tan sensible que la cara cambie por una lectura suelta, ni tan sordo que
+# la alegria no llegue nunca.
+_RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.25"))
 
 
 # ── Perfil afectivo de Romeo (los parametros de ROSE) ─────────────────
@@ -289,18 +295,46 @@ class EstadoAfectivo:
         cuando Romeo escucha y la cara no esta diciendo nada mas. Ahi, en
         vez de la cara neutra de siempre, puede mostrar como se siente.
 
+        SE MIDE RESPECTO AL ANIMO BASE, NO AL ORIGEN. El animo base es
+        positivo ([0.40, 0.30, 0.20]), asi que en coordenadas absolutas
+        esta a 0.54 del origen y su cara mas cercana es 'happy': Romeo se
+        quedaba sonriendo en reposo permanente, todo el rato, que es
+        precisamente lo que no se quiere. La base es su estado NORMAL, y
+        lo normal se ve con la cara neutra; lo que merece una cara es
+        APARTARSE de ella. Por eso la distancia se mide desde la base: si
+        el animo esta donde suele estar -> 'content', y solo cuando algo
+        lo mueve de verdad aparece happy/sad/angry.
+
         La zona neutra es ancha a proposito: los cuatro anclajes estan
-        lejos del origen, asi que con el animo cerca del centro el ganador
+        lejos entre si, asi que con el animo cerca de la base el ganador
         saldria casi por azar y la cara parpadearia entre dos sin motivo."""
-        v, a, d = self.vector
-        if math.sqrt(v * v + a * a + d * d) < _RADIO_NEUTRAL:
+        # Desviacion respecto al animo base.
+        dv = tuple(self.vector[i] - self.animo_base[i] for i in range(3))
+        magnitud = math.sqrt(sum(x * x for x in dv))
+        if magnitud < _RADIO_NEUTRAL:
             return "content"
-        return min(
-            _CARAS,
-            key=lambda k: ((v - _CARAS[k][0]) ** 2 +
-                           (a - _CARAS[k][1]) ** 2 +
-                           (d - _CARAS[k][2]) ** 2),
-        )
+
+        # La cara se elige por la DIRECCION del movimiento, no por donde
+        # acabo el vector. Comparar la desviacion con los anclajes tal cual
+        # no funciona: desplazarse [+0.36,+0.18,+0.15] es inequivocamente
+        # alegre, pero queda lejos del anclaje de felicidad ([0.76,0.48,
+        # 0.35]) y ganaba 'content' igual. Como ademas la base ya es
+        # positiva, el margen hacia arriba es mucho menor que hacia abajo
+        # (0.43 contra 1.29), asi que con distancias absolutas 'happy' no
+        # salia nunca, con ningun umbral.
+        #
+        # Normalizando ambos vectores se compara solo hacia donde apuntan,
+        # y las tres caras quedan igual de alcanzables.
+        dv_u = tuple(x / magnitud for x in dv)
+        mejor, mejor_cos = "content", -2.0
+        for nombre, ancla in _CARAS.items():
+            if nombre == "content":
+                continue
+            na = math.sqrt(sum(x * x for x in ancla))
+            cos = sum(dv_u[i] * ancla[i] / na for i in range(3))
+            if cos > mejor_cos:
+                mejor, mejor_cos = nombre, cos
+        return mejor
 
     def __repr__(self):
         v, a, d = self.vector
