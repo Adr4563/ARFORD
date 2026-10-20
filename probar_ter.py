@@ -101,15 +101,37 @@ print()
 print("=" * 70)
 print("8. Hace falta insistir para que cambie la cara")
 print("=" * 70)
+# La confianza SE PASA a empatizar: es la que decide cuanto mueve el
+# animo. Sin ella se usaria 1.0 y el texto movería tanto como una
+# deteccion facial perfecta, que es justo lo que no debe pasar.
 e = af.EstadoAfectivo()
 v, c = af.percibir_del_texto(*ter.analizar("estoy triste"))
-e.empatizar(v)
+e.empatizar(v, c)
 comprobar("un mensaje triste NO cambia la cara", e.cara() == "content",
           f"-> {e.cara()}")
 for _ in range(4):
     v, c = af.percibir_del_texto(*ter.analizar("estoy muy triste y solo"))
-    e.empatizar(v)
+    e.empatizar(v, c)
 comprobar("insistir SI la cambia", e.cara() == "sad", f"-> {e.cara()}")
+
+# La confianza importa: la misma frase con mas evidencia mueve mas.
+e1, e2 = af.EstadoAfectivo(), af.EstadoAfectivo()
+v1, c1 = af.percibir_del_texto(*ter.analizar("estoy mal"))
+v2, c2 = af.percibir_del_texto(*ter.analizar("estoy destrozado y sufriendo"))
+e1.empatizar(v1, c1)
+e2.empatizar(v2, c2)
+comprobar("mas evidencia -> el animo se mueve mas",
+          e2.vector[0] < e1.vector[0], f"{e2.vector[0]:+.3f} < {e1.vector[0]:+.3f}")
+
+# Un texto alegre SUBE el animo (regresion: antes lo bajaba, porque el
+# anclaje se escalaba por la confianza y quedaba cerca del origen, que es
+# neutral).
+e = af.EstadoAfectivo()
+antes = e.vector[0]
+v, c = af.percibir_del_texto(*ter.analizar("estoy feliz, que alegria"))
+e.empatizar(v, c)
+comprobar("un texto alegre SUBE la valencia", e.vector[0] > antes,
+          f"{antes:+.3f} -> {e.vector[0]:+.3f}")
 
 print()
 print("=" * 70)

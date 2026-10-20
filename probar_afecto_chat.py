@@ -49,8 +49,8 @@ def linea_animo():
 print()
 print("  === Romeo con animo (PULSE + ROSE + TER) ===")
 print(f"  modelo    {llama_client.CHAT_MODEL} en {PC}")
-print(f"  empatia   {afecto.empatia}   peso del texto "
-      f"{estado_afectivo._PESO_TEXTO}")
+print(f"  empatia   {afecto.empatia}   tope de confianza del texto "
+      f"{ter.CONFIANZA_MAXIMA}")
 print(f"  animo     {linea_animo()}")
 print("  comandos  /animo  /nuevo  /historial  /salir")
 print()
@@ -109,7 +109,7 @@ while True:
     emo, conf = ter.analizar(entrada)
     vector, c = estado_afectivo.percibir_del_texto(emo, conf)
     if vector is not None:
-        afecto.empatizar(estado_afectivo.fusionar([(vector, c)]))
+        afecto.empatizar(estado_afectivo.fusionar([(vector, c)]), c)
         print(f"  [afecto] el texto expresa {emo} ({conf:.2f})   {linea_animo()}")
     else:
         print(f"  [afecto] nada emocional en el texto   {linea_animo()}")

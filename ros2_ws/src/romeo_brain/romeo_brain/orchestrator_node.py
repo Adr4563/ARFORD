@@ -263,11 +263,15 @@ class OrchestratorNode(Node):
         if not getattr(self, "_lecturas_turno", None):
             return
         vector = estado_afectivo.fusionar(self._lecturas_turno)
+        # La confianza con la que se cree la lectura fusionada es la mayor
+        # de las que entraron: si la camara estaba segura, que el texto no
+        # lo estuviera no debe frenar la reaccion.
+        conf = max((c for _s, c in self._lecturas_turno), default=0.0)
         self._lecturas_turno = []
         if vector is None:
             return
         antes = self._afecto.vector
-        self._afecto.empatizar(vector)
+        self._afecto.empatizar(vector, conf)
         v, a, d = self._afecto.vector
         self.get_logger().info(
             f"[afecto] v {antes[0]:+.2f}->{v:+.2f}  "

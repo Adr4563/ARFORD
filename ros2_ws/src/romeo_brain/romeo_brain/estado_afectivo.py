@@ -78,16 +78,6 @@ _CARAS = {
 # la alegria no llegue nunca.
 _RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.25"))
 
-# Cuanto pesa el TER (texto) frente al FER (cara). Ver percibir_del_texto:
-# el texto es la modalidad menos fiable de las dos -- ironia, errores del
-# STT, frases sobre terceros -- asi que mueve el animo mas despacio.
-#
-# 0.30 esta medido, no elegido a ojo: por encima (0.4-0.5) un solo "estoy
-# triste" ya cambiaba la cara, y por debajo (0.2-0.25) el comportamiento es
-# el mismo que con 0.30 pero con menos margen. Con 0.30 hace falta un
-# segundo mensaje concordante, que es lo que distingue un estado de animo
-# de un comentario suelto.
-_PESO_TEXTO = float(os.environ.get("ROMEO_PESO_TEXTO", "0.30"))
 
 
 # ── Perfil afectivo de Romeo (los parametros de ROSE) ─────────────────
@@ -117,7 +107,6 @@ DECAIMIENTO = float(os.environ.get("ROMEO_DECAIMIENTO", "0.5"))
 # LATENCIA (l): segundos que sostiene la emocion antes de empezar a decaer.
 # Sin esto el estado se evaporaria antes de que llegue a notarse en la voz.
 LATENCIA = float(os.environ.get("ROMEO_LATENCIA", "3.0"))
-
 
 
 
@@ -207,13 +196,11 @@ def percibir_del_texto(emocion, confianza_ter):
     ANCLAJES y no las cuatro del detector facial, porque el texto si
     distingue miedo o sorpresa aunque Romeo no sepa ponerles cara.
 
-    EL TEXTO PESA MENOS QUE LA CARA. La confianza que devuelve el TER ya
-    esta topada, pero aun asi un solo "estoy triste" bastaba para cambiar
-    la cara de Romeo, y eso es demasiado: la frase puede ser ironica, estar
-    mal transcrita por el STT, o referirse a otra persona ("mi hermano esta
-    triste"). Un emparejador de palabras no da para reaccionar al primer
-    mensaje. Con _PESO_TEXTO el animo se mueve despacio y hacen falta dos o
-    tres mensajes concordantes, que es lo que de verdad indica un estado.
+    EL TEXTO PESA MENOS QUE LA CARA, y eso sale solo: ter.analizar() tope
+    su confianza en CONFIANZA_MAXIMA (0.6) mientras el detector facial
+    llega a 0.9+, y empatizar() usa la confianza para decidir cuanto mueve
+    el animo. No hace falta un factor aparte -- habia uno (_PESO_TEXTO) y
+    atenuaba dos veces, dejando la felicidad inalcanzable.
 
     Devuelve (vector_vad, confianza), o (None, 0.0) si no hubo evidencia."""
     if emocion is None or emocion not in ANCLAJES:
@@ -221,9 +208,11 @@ def percibir_del_texto(emocion, confianza_ter):
     c = max(0.0, min(1.0, float(confianza_ter or 0.0)))
     if c <= 0.0:
         return None, 0.0
-    c *= _PESO_TEXTO
-    av, aa, ad = ANCLAJES[emocion]
-    return (av * c, aa * c, ad * c), c
+    # El vector es el anclaje INTACTO: dice que emocion es. La confianza
+    # (atenuada por _PESO_TEXTO, porque el texto es menos fiable que la
+    # cara) viaja aparte y la usan fusionar() y empatizar() para decidir
+    # cuanto creersela. Ver la nota en empatizar().
+    return ANCLAJES[emocion], c
 
 
 def percibir_del_servicio(emocion, confianza_srv):
@@ -237,19 +226,19 @@ def percibir_del_servicio(emocion, confianza_srv):
     lo justifica -- la confianza, que es la mitad del trabajo de PULSE, ya
     viene en la respuesta, asi que no hace falta recalcular la entropia.
 
-    Lo que se hace es escalar el anclaje por la confianza: una deteccion al
-    40% mueve el estado menos que una al 95%, que es exactamente el efecto
-    que la entropia buscaba. El resto de la probabilidad se reparte hacia
-    el origen (neutral), igual que haria la suma ponderada de a_vad() si se
-    tuviera la distribucion entera.
+    Se devuelve el anclaje de la emocion detectada junto con la confianza
+    que da el servicio, que es la que modula cuanto mueve el animo (ver
+    empatizar): una deteccion al 40% lo mueve menos que una al 95%, que es
+    el efecto que la entropia buscaba.
 
     Devuelve (vector_vad, confianza) o (None, 0.0) si no hubo deteccion."""
     clave = _DESDE_SERVICIO.get((emocion or "").strip())
     if clave is None:
         return None, 0.0
     c = max(0.0, min(1.0, float(confianza_srv or 0.0)))
-    av, aa, ad = ANCLAJES[clave]
-    return (av * c, aa * c, ad * c), c
+    if c <= 0.0:
+        return None, 0.0
+    return ANCLAJES[clave], c
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -277,16 +266,31 @@ class EstadoAfectivo:
         self.vector = self.animo_base
         self._ultimo_estimulo = None
 
-    def empatizar(self, vector_usuario):
+    def empatizar(self, vector_usuario, confianza=1.0):
         """Mueve el estado de Romeo hacia el del usuario, segun la empatia:
 
             s_r' = e * s_u + (1 - e) * s_r
 
         Con e=0.4 toma el 40% de lo que siente el usuario y conserva el
-        60% de lo suyo, asi que acompaña sin hundirse."""
+        60% de lo suyo, asi que acompaña sin hundirse.
+
+        LA CONFIANZA ENTRA AQUI, NO EN EL VECTOR. Antes las funciones
+        percibir_* escalaban el anclaje por la confianza, y eso estaba mal:
+        mezclaba CUANTO creer la lectura con QUE emocion es. Una deteccion
+        floja de felicidad -- anclaje (0.76, 0.48, 0.35) por 0.09 --
+        quedaba en (0.07, 0.04, 0.03), que es practicamente el origen, o
+        sea NEUTRAL. Resultado: decir "estaba feliz" BAJABA el animo de
+        Romeo en vez de subirlo, porque interpolaba hacia neutral desde una
+        base mas positiva.
+
+        Ahora el vector conserva el anclaje entero (la direccion) y la
+        confianza solo modula cuanto se avanza hacia el (la magnitud),
+        atenuando la empatia efectiva."""
         if vector_usuario is None:
             return self.vector
-        e = self.empatia
+        e = self.empatia * max(0.0, min(1.0, float(confianza)))
+        if e <= 0.0:
+            return self.vector
         self.vector = tuple(
             e * vector_usuario[i] + (1.0 - e) * self.vector[i]
             for i in range(3)

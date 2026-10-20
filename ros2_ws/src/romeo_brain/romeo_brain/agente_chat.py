@@ -31,6 +31,41 @@ from . import llama_client
 # con respuestas cortas caben de sobra en la ventana de un modelo 1B.
 TURNOS_HISTORIAL = int(os.environ.get("ROMEO_TURNOS_HISTORIAL", "6"))
 
+# Instruccion de estilo, SOLO para modelos sin fine-tuning.
+#
+# El modulo no mandaba system prompt a proposito, porque con romeo (el
+# qwen entrenado con TerapIA) el comportamiento viene horneado. Pero el
+# modelo por defecto es llama3.2:1b, que es un asistente generico y
+# responde como tal: parrafos de cinco lineas con listas de viñetas y un
+# "¿en que puedo ayudarte hoy?" al final. Eso no es una conversacion, y
+# ademas se oye eterno cuando lo lee el TTS en voz alta.
+#
+# Se manda solo si el modelo NO es uno de los entrenados, para no pisar su
+# fine-tuning. ROMEO_PROMPT_CHAT="" lo desactiva del todo.
+_PROMPT_POR_DEFECTO = (
+    "Eres Romeo, un robot que conversa con una persona en voz alta. "
+    "Responde en una o dos frases cortas, como en una charla hablada. "
+    "Nunca uses listas ni viñetas. No ofrezcas ayuda ni preguntes en qué "
+    "puedes ayudar: solo conversa, y si viene a cuento haz UNA pregunta "
+    "corta sobre lo que te acaban de contar."
+)
+
+_MODELOS_ENTRENADOS = ("romeo", "arford")
+
+
+def _prompt_para(modelo):
+    """Vacio si el modelo ya trae el comportamiento horneado."""
+    personalizado = os.environ.get("ROMEO_PROMPT_CHAT")
+    if personalizado is not None:
+        return personalizado
+    nombre = (modelo or "").lower()
+    if any(nombre.startswith(m) for m in _MODELOS_ENTRENADOS):
+        return ""
+    return _PROMPT_POR_DEFECTO
+
+
+_PROMPT = _prompt_para(llama_client.CHAT_MODEL)
+
 _historial = []
 
 
@@ -43,7 +78,9 @@ def reiniciar():
 def responder(mensaje_usuario):
     """Devuelve la respuesta de Romeo, teniendo en cuenta los turnos
     anteriores de esta sesion."""
-    mensajes = _historial + [{"role": "user", "content": mensaje_usuario}]
+    mensajes = list(_historial) + [{"role": "user", "content": mensaje_usuario}]
+    if _PROMPT:
+        mensajes.insert(0, {"role": "system", "content": _PROMPT})
     texto = llama_client.generar_respuesta(mensajes).strip()
 
     _historial.append({"role": "user", "content": mensaje_usuario})

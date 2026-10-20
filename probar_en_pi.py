@@ -175,8 +175,8 @@ while True:
         print(f"  vector  [{v:+.2f}, {a:+.2f}, {d:+.2f}]")
         print(f"  base    [{b[0]:+.2f}, {b[1]:+.2f}, {b[2]:+.2f}]")
         print(f"  cara    {_afecto.cara()}")
-        print(f"  empatia {_afecto.empatia}   peso del texto "
-              f"{estado_afectivo._PESO_TEXTO}")
+        print(f"  empatia {_afecto.empatia}   tope de confianza del "
+              f"texto {ter.CONFIANZA_MAXIMA}")
         print()
         continue
 
@@ -229,7 +229,7 @@ while True:
     vector, c = estado_afectivo.percibir_del_texto(emo_txt, conf_txt)
     if vector is not None:
         antes = _afecto.vector
-        _afecto.empatizar(estado_afectivo.fusionar([(vector, c)]))
+        _afecto.empatizar(estado_afectivo.fusionar([(vector, c)]), c)
         v, a, d = _afecto.vector
         print(f"  [afecto] el texto expresa {emo_txt} ({conf_txt:.2f})"
               f"  v{antes[0]:+.2f}->{v:+.2f} a{antes[1]:+.2f}->{a:+.2f}"
