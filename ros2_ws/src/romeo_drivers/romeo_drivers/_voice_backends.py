@@ -1,7 +1,7 @@
 """Voz de salida: Romeo dice en voz alta cada respuesta. DOS motores, los
 dos 100% locales en la Pi y sin internet:
 
-    voz_motor=vits   (default) la voz de ROMEO: GLaDOS en español, cargada
+    voz_motor=vits   (default) la voz de ROMEO: es_MX-claude-high, cargada
                        con sherpa-onnx. Es la elegida de oído ("versión
                        40"): los ajustes de fábrica del modelo, un poco más
                        pausada y +1.5 semitonos de tono. Da control fino

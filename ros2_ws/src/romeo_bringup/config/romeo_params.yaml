@@ -12,13 +12,9 @@ communication_node:
     voz_piper_modelo: ""           # solo con voz_motor: piper. Vacío = ~/piper-voces/es_CO-dii.onnx
     # LA VOZ DE ROMEO: es_MX-claude-high, español de México (modelo Piper
     # cargado con sherpa-onnx). Los valores de abajo se eligieron DE OÍDO
-    # en la placa con la voz anterior (GLaDOS): menos "aire"/susurros
+    # en la placa con la voz anterior: menos "aire"/susurros
     # (ruido 0.33), ritmo fijo, un poco más pausada y sin subir el tono.
     # Ver voces/README.md.
-    #
-    # La voz GLaDOS sigue instalada en
-    # /home/pi/.romeo/modelos/vits-piper-es_ES-glados-medium
-    # por si se quiere volver a ella: basta cambiar esta línea.
     #
     # OJO si se añade otra voz descargada de HuggingFace: hay que
     # inyectarle sample_rate en los metadatos del .onnx y pasar el

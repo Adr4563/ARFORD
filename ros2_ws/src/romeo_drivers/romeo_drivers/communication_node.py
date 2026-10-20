@@ -86,12 +86,11 @@ class CommunicationNode(LifecycleNode):
     def __init__(self):
         super().__init__('communication_node')
 
-        # --- Voz de salida (GLaDOS por VITS/sherpa-onnx, o Piper) ---
+        # --- Voz de salida (VITS/sherpa-onnx, o Piper) ---
         self.declare_parameter('voz_motor', 'vits')      # vits | piper
         self.declare_parameter('voz_piper_modelo', '')
         # Ajustes del motor vits, todos elegidos DE OÍDO en la placa (ver
-        # voces/README.md y la nota de romeo_params.yaml): es la "versión
-        # 40" de GLaDOS en español.
+        # voces/README.md y la nota de romeo_params.yaml).
         self.declare_parameter('voz_vits_dir', '')
         self.declare_parameter('voz_vits_ruido', 0.667)
         self.declare_parameter('voz_vits_ruido_w', 0.5)
