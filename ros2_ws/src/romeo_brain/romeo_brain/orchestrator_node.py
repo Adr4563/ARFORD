@@ -166,6 +166,23 @@ class OrchestratorNode(Node):
         self._turno_lock = threading.Lock()
         self._grupo_turno = ReentrantCallbackGroup()
 
+        # Que Ollama cargue los dos modelos ANTES del primer turno.
+        #
+        # Medido: la primera llamada a un modelo cuesta ~5 s (Ollama lo lee
+        # de disco) y las siguientes 55-400 ms. Sin esto, esos 5 s los paga
+        # el usuario en mitad de la conversacion, y dos veces -- una por el
+        # chat y otra por el corrector de trivia, que es otro modelo.
+        #
+        # En un hilo aparte porque el nodo tiene que quedar listo ya: si la
+        # PC esta apagada, precargar() tarda hasta su timeout, y mientras
+        # tanto el robot debe poder arrancar igual (ya sabe degradar).
+        threading.Thread(
+            target=llama_client.precargar,
+            args=([llama_client.CHAT_MODEL, agente_trivia.CORRECTOR_LLM],
+                  self.get_logger()),
+            daemon=True,
+        ).start()
+
         self.create_subscription(
             UserInput, '/romeo/user_input', self._on_user_input, 10,
             callback_group=self._grupo_turno)

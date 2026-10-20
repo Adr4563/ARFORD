@@ -16,6 +16,7 @@ ir diciendo la frase mientras llega. Parsear SSE a mano solo añadía código
 y un camino más donde fallar."""
 
 import os
+import time
 
 import requests
 
@@ -49,3 +50,46 @@ def generar_respuesta(mensajes, temperature=0.3, max_tokens=MAX_TOKENS, modelo=N
     resp.raise_for_status()
     resp.encoding = "utf-8"
     return resp.json()["choices"][0]["message"]["content"]
+
+
+# Cuanto se espera a que un modelo termine de cargar. Es generoso porque es
+# precisamente el caso lento: cargar de disco a RAM.
+TIMEOUT_PRECARGA = float(os.environ.get("ROMEO_TIMEOUT_PRECARGA", "180"))
+
+
+def precargar(modelos, logger=None):
+    """Hace que Ollama cargue estos modelos en RAM antes del primer turno.
+
+    POR QUE. Medido: la PRIMERA llamada a un modelo tarda ~5 s porque
+    Ollama lo lee de disco; las siguientes, 55-400 ms. Sin esto el usuario
+    paga esa carga en mitad de la conversacion -- y como el corrector de
+    trivia es otro modelo distinto del chat, se paga DOS veces, cada una
+    en el peor momento: cuando acaba de hablarle al robot.
+
+    Alternar entre modelos ya cargados NO cuesta (medido: 38-71 ms), asi
+    que basta con tocarlos una vez cada uno al arrancar.
+
+    Manda un prompt minimo con max_tokens=1: lo que importa no es la
+    respuesta sino forzar la carga. Los fallos no interrumpen el arranque:
+    si el servidor no esta, el robot ya sabe degradar en cada turno.
+    """
+    for modelo in dict.fromkeys(m for m in modelos if m):
+        try:
+            inicio = time.monotonic()
+            requests.post(
+                f"{CHAT_SERVER_HOST}/v1/chat/completions",
+                json={
+                    "model": modelo,
+                    "messages": [{"role": "user", "content": "hola"}],
+                    "max_tokens": 1,
+                    "stream": False,
+                },
+                timeout=TIMEOUT_PRECARGA,
+            ).raise_for_status()
+            msg = f"[llm] {modelo} precargado en {time.monotonic() - inicio:.1f} s"
+        except Exception as e:  # noqa: BLE001 - arrancar igual, ya se degrada
+            msg = f"[llm] no se pudo precargar {modelo}: {str(e)[:70]}"
+        if logger is not None:
+            logger.info(msg)
+        else:
+            print(msg)
