@@ -125,6 +125,23 @@ NORMALIZAR = os.environ.get("ROMEO_STT_NORMALIZAR", "1") not in ("0", "false", "
 PICO_OBJETIVO = 0.9
 GANANCIA_MAX = 20.0
 PICO_MINIMO = 0.002  # por debajo de esto se asume silencio y no se toca
+
+# Cuanto silencio tiene que haber para dar la frase por terminada.
+#
+# Estaba en 0.25 s y troceaba al hablar: una pausa normal entre palabras,
+# o al pensar, ya pasaba de ese cuarto de segundo, asi que el VAD cerraba
+# la frase a medias y la siguiente parte llegaba como otro mensaje. En el
+# log se veia asi:
+#
+#     [mic] transcrito: 'conversar, decidiria conversar.'   <- "deseria conversar"
+#     [mic] transcrito: 'y'
+#     [mic] transcrito: '¿Pueso?'                           <- "¿puedo?"
+#
+# Y cada trozo suelto se mandaba al LLM, que contestaba cualquier cosa.
+#
+# 0.6 s deja respirar sin que la espera se note: es el tiempo que tarda
+# alguien en darse cuenta de que ya termino de hablar.
+MIN_SILENCIO = float(os.environ.get("ROMEO_MIN_SILENCIO", "0.6"))
 IDIOMA = os.environ.get("ROMEO_STT_IDIOMA", "es")
 
 SAMPLE_RATE = 16000
@@ -200,7 +217,7 @@ class ReconocedorVoz:
         try:
             cfg = sherpa_onnx.VadModelConfig()
             cfg.silero_vad.model = vad
-            cfg.silero_vad.min_silence_duration = 0.25
+            cfg.silero_vad.min_silence_duration = MIN_SILENCIO
             cfg.sample_rate = SAMPLE_RATE
             self._vad = sherpa_onnx.VoiceActivityDetector(
                 cfg, buffer_size_in_seconds=30)
