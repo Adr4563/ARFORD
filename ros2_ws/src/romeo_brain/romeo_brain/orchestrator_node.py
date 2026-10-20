@@ -515,17 +515,28 @@ class OrchestratorNode(Node):
         if estado["esperando_tema"]:
             categoria = preguntas.resolver_categoria(mensaje_usuario)
             if categoria is None:
-                # No se entendió la categoría: se repregunta en vez de
-                # elegir una al azar, que es lo que hacía resolver_tema() --
-                # con 5 opciones claras, acertar la que quiso el usuario
-                # importa más que no insistir.
+                # No se entendió la categoría. Antes se repetía la lista
+                # ENTERA cada vez y sin límite: con el STT fallando dos o
+                # tres veces seguidas, el usuario oía el mismo párrafo de
+                # 7 segundos una y otra vez. Insoportable.
+                #
+                # Ahora la primera vez se repite corto (solo las opciones,
+                # sin el "no te entendí" ni la coletilla de las caras), y a
+                # la SEGUNDA se elige una categoría y se empieza a jugar:
+                # cualquier tema es mejor que seguir atascado en el menú.
+                estado["intentos_tema"] = estado.get("intentos_tema", 0) + 1
                 cats = preguntas.categorias_disponibles()
-                repregunta = (f"No te entendí. Elige una: "
-                               f"{', '.join(cats[:-1])} o {cats[-1]}. "
-                               f"O dime 'caras' para el juego de emociones.")
-                self.get_logger().info(f"Asistente: {repregunta}")
-                self._bridge.hablar(repregunta)
-                return
+                if estado["intentos_tema"] < 2:
+                    repregunta = f"¿{', '.join(cats[:-1])} o {cats[-1]}?"
+                    self.get_logger().info(f"Asistente: {repregunta}")
+                    self._bridge.hablar(repregunta)
+                    return
+                categoria = random.choice(cats)
+                self.get_logger().info(
+                    f"[trivia] no se entendió el tema en "
+                    f"{estado['intentos_tema']} intentos, se elige "
+                    f"{categoria}")
+            estado["intentos_tema"] = 0
             estado["esperando_tema"] = False
             estado["tema_actual"] = categoria
             anuncio = (f"¡Vamos con {categoria}! Van "
@@ -636,6 +647,9 @@ class OrchestratorNode(Node):
         self.estado = {
             "esperando_nombre": True,
             "pregunta_pendiente": None, "esperando_tema": False, "en_trivia": False,
+            # Veces seguidas que no se entendio la categoria; a la
+            # segunda se elige una en vez de seguir preguntando.
+            "intentos_tema": 0,
             "cola_preguntas": [], "ya_usados": set(), "aciertos": 0, "total": 0,
             "tema_actual": None, "nombre": None, "musica_ya_sonada": False,
         }
