@@ -528,13 +528,16 @@ class OrchestratorNode(Node):
         self._bridge.mostrar_cara("content")
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("speaking")
-        # Primero quien soy y que se hacer, despues el nombre.
-        presentacion = frases.una(frases.PRESENTACIONES)
-        self.get_logger().info(f"Asistente: {presentacion}")
-        self._bridge.hablar(presentacion)
-        saludo = frases.una(frases.SALUDOS_APERTURA)
-        self.get_logger().info(f"Asistente: {saludo}")
-        self._bridge.hablar(saludo)
+        # Quien soy, que se hacer y el nombre, EN UNA SOLA FRASE. Antes eran
+        # dos hablar() seguidos, y como cada uno bloquea hasta que termina de
+        # sonar (sintetizar + mandar + reproducir), entre la presentacion y
+        # la pregunta del nombre se oia un silencio de ~3.6 s: parecia que
+        # Romeo se habia colgado. Al mandar las dos frases juntas, el TTS las
+        # sintetiza de corrido y suenan como una sola intervencion.
+        apertura = (f"{frases.una(frases.PRESENTACIONES)} "
+                    f"{frases.una(frases.SALUDOS_APERTURA)}")
+        self.get_logger().info(f"Asistente: {apertura}")
+        self._bridge.hablar(apertura)
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("content")
 
@@ -549,13 +552,13 @@ class OrchestratorNode(Node):
     def _finalizar_sesion(self):
         estado = self.estado
         self._bridge.mostrar_cara("speaking")
-        if estado["total"]:
-            resumen = f"Terminamos. Acertaste {estado['aciertos']} de {estado['total']}."
-            self.get_logger().info(f"Asistente: {resumen}")
-            self._bridge.hablar(resumen)
-            time.sleep(PAUSA_CAMBIO_CARA)
-            self._bridge.mostrar_cara("speaking")
+        # Resumen y despedida van juntos, por lo mismo que la apertura: en
+        # dos hablar() quedaba un silencio en medio de lo que es una sola
+        # cosa que decir ("Terminamos... Hasta luego, Adrian").
         despedida = frases.una(frases.DESPEDIDAS, nombre=estado["nombre"])
+        if estado["total"]:
+            despedida = (f"Terminamos. Acertaste {estado['aciertos']} de "
+                         f"{estado['total']}. {despedida}")
         self.get_logger().info(f"Asistente: {despedida}")
         self._bridge.hablar(despedida)
         self._bridge.mostrar_cara("happy")

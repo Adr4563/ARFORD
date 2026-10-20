@@ -101,7 +101,15 @@ def resolver_trivia(respuesta):
               f"{esperada}   ({ms_eval:.0f} ms)"]
     com, ms_com = medir("trivia.comentar", agente_trivia.comentar,
                         p["pregunta"], esperada, respuesta, ok)
-    salida.append(f"ROMEO> {com}   ({ms_com:.0f} ms)")
+    # Igual que orchestrator_node: si el LLM no comenta, frase fija.
+    if com:
+        salida.append(f"ROMEO> {com}   ({ms_com:.0f} ms, del LLM)")
+    else:
+        plantilla = random.choice(frases.RESPUESTAS_TRIVIA_ACIERTO if ok
+                                  else frases.RESPUESTAS_TRIVIA_ERROR)
+        fija = plantilla.format(esperada=esperada)
+        salida.append(f"ROMEO> {fija}   ({ms_com:.0f} ms, frase fija: "
+                      f"el LLM no comento)")
     return "\n".join(salida)
 
 
@@ -115,8 +123,14 @@ print(f"  historial     {agente_chat.TURNOS_HISTORIAL} turnos")
 print("  comandos      /nuevo  /trivia [cat]  /categorias  /historial"
       "  /tiempos  /salir")
 print()
-print(f"ROMEO> {frases.una(frases.PRESENTACIONES)}")
+# La apertura del robot, igual que _iniciar_sesion(): primero quien soy y
+# que se hacer, y SEGUIDO el nombre. Son dos frases y no una para que no
+# suene a parrafo recitado.
+print(f"ROMEO> {frases.una(frases.PRESENTACIONES)} "
+      f"{frases.una(frases.SALUDOS_APERTURA)}")
 print()
+esperando_nombre = True
+nombre_usuario = None
 
 while True:
     try:
@@ -134,7 +148,11 @@ while True:
         agente_chat.reiniciar()
         pregunta_abierta = None
         _ya_preguntadas.clear()
+        esperando_nombre = True
+        nombre_usuario = None
         print("  (sesion nueva)")
+        print(f"ROMEO> {frases.una(frases.PRESENTACIONES)} "
+              f"{frases.una(frases.SALUDOS_APERTURA)}")
         print()
         continue
 
@@ -168,6 +186,14 @@ while True:
                 print()
                 continue
         print(f"ROMEO> {plantear_trivia(cat)}")
+        print()
+        continue
+
+    # El primer turno es el nombre, no un mensaje para el router.
+    if esperando_nombre:
+        nombre_usuario = entrada or "amigo"
+        esperando_nombre = False
+        print(f"ROMEO> {frases.una(frases.BIENVENIDAS, nombre=nombre_usuario)}")
         print()
         continue
 
