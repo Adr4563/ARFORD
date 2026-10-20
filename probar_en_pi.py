@@ -40,11 +40,15 @@ os.environ["CHAT_SERVER_HOST"] = f"http://{PC}:11434"
 os.environ.setdefault("CHAT_MODEL", "llama3.2:1b")
 os.environ.setdefault("TRIVIA_CORRECTOR_MODEL", "romeo")
 
-from romeo_brain import agente_chat, agente_trivia, frases, llama_client  # noqa: E402
+from romeo_brain import (agente_chat, agente_trivia, estado_afectivo,  # noqa: E402
+                         frases, llama_client, ter)
 from romeo_brain import preguntas as banco  # noqa: E402
 from romeo_brain.orchestrator_node import enrutar  # noqa: E402
 
 tiempos = []
+
+# El animo de Romeo, igual que en orchestrator_node.
+_afecto = estado_afectivo.EstadoAfectivo()
 
 
 def medir(etiqueta, fn, *a, **k):
@@ -120,8 +124,8 @@ print(f"  PC            {PC}")
 print(f"  chat libre    {llama_client.CHAT_MODEL}")
 print(f"  corrector     {agente_trivia.CORRECTOR_LLM}")
 print(f"  historial     {agente_chat.TURNOS_HISTORIAL} turnos")
-print("  comandos      /nuevo  /trivia [cat]  /categorias  /historial"
-      "  /tiempos  /salir")
+print("  comandos      /nuevo  /trivia [cat]  /categorias  /animo"
+      "  /historial  /tiempos  /salir")
 print()
 # La apertura del robot, igual que _iniciar_sesion(): primero quien soy y
 # que se hacer, y SEGUIDO el nombre. Son dos frases y no una para que no
@@ -148,6 +152,7 @@ while True:
         agente_chat.reiniciar()
         pregunta_abierta = None
         _ya_preguntadas.clear()
+        _afecto.reiniciar()
         esperando_nombre = True
         nombre_usuario = None
         print("  (sesion nueva)")
@@ -161,6 +166,17 @@ while True:
         print(f"  {len(h)} mensajes en memoria:")
         for m in h:
             print(f"    {m['role']:9s} {m['content'][:70]}")
+        print()
+        continue
+
+    if entrada == "/animo":
+        v, a, d = _afecto.vector
+        b = _afecto.animo_base
+        print(f"  vector  [{v:+.2f}, {a:+.2f}, {d:+.2f}]")
+        print(f"  base    [{b[0]:+.2f}, {b[1]:+.2f}, {b[2]:+.2f}]")
+        print(f"  cara    {_afecto.cara()}")
+        print(f"  empatia {_afecto.empatia}   peso del texto "
+              f"{estado_afectivo._PESO_TEXTO}")
         print()
         continue
 
@@ -205,6 +221,23 @@ while True:
             print(f"  ERROR en trivia: {type(e).__name__}: {str(e)[:120]}")
         print()
         continue
+
+    # TER + ROSE, en el mismo punto que orchestrator_node: antes de que
+    # el turno se bifurque, asi que vale para trivia y para chat.
+    _afecto.decaer()
+    emo_txt, conf_txt = ter.analizar(entrada)
+    vector, c = estado_afectivo.percibir_del_texto(emo_txt, conf_txt)
+    if vector is not None:
+        antes = _afecto.vector
+        _afecto.empatizar(estado_afectivo.fusionar([(vector, c)]))
+        v, a, d = _afecto.vector
+        print(f"  [afecto] el texto expresa {emo_txt} ({conf_txt:.2f})"
+              f"  v{antes[0]:+.2f}->{v:+.2f} a{antes[1]:+.2f}->{a:+.2f}"
+              f" d{antes[2]:+.2f}->{d:+.2f}  cara={_afecto.cara()}")
+    else:
+        v, a, d = _afecto.vector
+        print(f"  [afecto] el texto no dice nada del animo"
+              f"  (v{v:+.2f} a{a:+.2f} d{d:+.2f}  cara={_afecto.cara()})")
 
     # Si no, decide el router.
     ruta, ms_ruta = medir("router", enrutar, entrada)
