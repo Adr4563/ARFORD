@@ -256,10 +256,26 @@ class OrchestratorNode(Node):
     # Orchestrator_Management.py.
     # ══════════════════════════════════════════════════════════════════
 
-    @staticmethod
-    def responder(mensaje_usuario):
-        """Chat libre -- delega en agente_chat."""
-        return agente_chat.responder(mensaje_usuario)
+    def responder(self, mensaje_usuario):
+        """Chat libre -- delega en agente_chat.
+
+        ATRAPA LOS FALLOS DE RED. El LLM vive en otra maquina, asi que
+        apagarla, un cable suelto o un cambio de IP dan ConnectionError. Sin
+        este try el nodo ENTERO se moria: la excepcion subia por el callback
+        de /romeo/user_input hasta executor.spin() y tumbaba el proceso, con
+        lo que el robot se quedaba mudo hasta relanzarlo a mano.
+
+        El resto del turno ya degrada en vez de romperse (ver
+        _llamar_servicio_sync en _ros_bridge), asi que esto es lo mismo para
+        el chat: se dice que no se puede ahora y se sigue vivo."""
+        try:
+            return agente_chat.responder(mensaje_usuario)
+        except Exception as e:  # noqa: BLE001 - seguir vivo es lo que importa
+            self.get_logger().warning(
+                f"[chat] el LLM en {llama_client.CHAT_SERVER_HOST} no "
+                f"responde ({type(e).__name__}); se sigue sin el")
+            return ("Ahora mismo no puedo pensar bien. ¿Jugamos una trivia "
+                    "mientras tanto?")
 
     # ══════════════════════════════════════════════════════════════════
     # Trivia: reacciones fijas, resolución de tema, salida a mitad de

@@ -30,6 +30,11 @@ def _auto_configure_and_activate(lifecycle_node):
     return configurar, activar_al_configurar
 
 
+# IP de la maquina donde corren los modelos. Se puede cambiar sin tocar
+# este archivo con la variable de entorno ROMEO_PC.
+PC = os.environ.get('ROMEO_PC', '10.143.161.32')
+
+
 def generate_launch_description():
     params_file = os.path.join(
         get_package_share_directory('romeo_bringup'), 'config', 'romeo_params.yaml')
@@ -42,12 +47,24 @@ def generate_launch_description():
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
         DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),
-        DeclareLaunchArgument('chat_server_host', default_value='http://localhost:11434'),
+        # DONDE VIVEN LAS IA. Por defecto, en la PC: el LLM, el STT y el TTS
+        # corren alli y la Pi los consume por HTTP. Esa es la configuracion
+        # real del robot -- con todo dentro, la Pi iba a 3.3 GB de RAM y 76%
+        # de CPU, y un turno tardaba ~40 s.
+        #
+        # ROMEO_PC centraliza la IP para no repetirla en tres sitios y para
+        # poder cambiarla sin tocar el launch cuando la Pi salta de red:
+        #     ROMEO_PC=192.168.1.50 ros2 launch romeo_bringup ...
+        #
+        # Para correr TODO en la Pi (sin PC a mano), pasar los tres vacios o
+        # apuntando a localhost.
+        DeclareLaunchArgument('chat_server_host',
+                              default_value=f'http://{PC}:11434'),
         # URL de un stt_server.py en otra maquina. Vacio = transcribir en la
         # Pi. El microfono no se mueve: viaja el WAV ya recortado por el VAD.
-        DeclareLaunchArgument('stt_servidor', default_value=''),
+        DeclareLaunchArgument('stt_servidor', default_value=f'http://{PC}:8082'),
         # URL de un tts_server.py en otra maquina. Vacio = sintetizar en la Pi.
-        DeclareLaunchArgument('tts_servidor', default_value=''),
+        DeclareLaunchArgument('tts_servidor', default_value=f'http://{PC}:8083'),
     ]
 
     communication_node = LifecycleNode(
