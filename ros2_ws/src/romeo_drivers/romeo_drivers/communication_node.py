@@ -40,6 +40,7 @@ Expone:
   - Servicio   /romeo/speak        (romeo_interfaces/Speak)
   - Servicio   /romeo/play_music   (romeo_interfaces/PlayMusic)
 """
+import os
 import threading
 import time
 from contextlib import contextmanager
@@ -65,7 +66,14 @@ from ._voice_backends import Voz
 # TIRA el audio mientras _sonando() sea True (ver el parámetro `pausar` de
 # _stt_engine.escuchar()), así que la voz de Romeo no llega a transcribirse.
 # Estos segundos son solo para el trozo que ya estaba en vuelo cuando calló.
-GRACIA_ECO = 2.0
+#
+# 0.5 y no 2.0: el valor viejo se eligió cuando whisper-small corría EN LA
+# PI y tardaba ~30 s, así que el eco llegaba tardísimo. Con el STT en la PC
+# son 0.95 s medidos, y lo único que hay que cubrir es el bloque de audio
+# que ya estaba en vuelo -- unas décimas. Dos segundos enteros de micrófono
+# sordo después de CADA frase es la mitad de la sensación de que Romeo
+# "tarda en responder": el cómputo son ~1.3 s, el resto es esperar.
+GRACIA_ECO = float(os.environ.get("ROMEO_GRACIA_ECO", "0.5"))
 
 # Cuanto espera el servicio Speak a que el nodo acabe de activarse antes de
 # rechazar la llamada (ver _cb_speak). on_activate carga la voz y el STT, que
