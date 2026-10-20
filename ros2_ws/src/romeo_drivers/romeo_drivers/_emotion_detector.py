@@ -51,6 +51,10 @@ class DetectorEmocion:
         self._detector_cara = None
         self._input_name = None
         self._deps_ok = None  # None = no probado todavía; True/False una vez que se intenta
+        # Distribucion completa de la ultima inferencia, en el orden de
+        # ETIQUETAS. La lee la capa afectiva; None mientras no haya habido
+        # ninguna deteccion.
+        self.ultimas_probabilidades = None
 
     def _log(self, msg, warn=False):
         if self.logger is not None:
@@ -106,6 +110,13 @@ class DetectorEmocion:
         salida = self._sess_emocion.run(None, {self._input_name: entrada})[0][0]
         probs = self._softmax(salida)
         idx = int(np.argmax(probs))
+        # La distribucion COMPLETA se guarda aparte porque la capa afectiva
+        # (estado_afectivo.PULSE) la necesita entera: convierte a VAD con
+        # una media de los anclajes pesada por cada probabilidad, y saca la
+        # confianza de la entropia. Con solo la etiqueta ganadora no se
+        # puede hacer ninguna de las dos cosas. Lo que se DEVUELVE no
+        # cambia, para no tocar a los que ya llaman a esto.
+        self.ultimas_probabilidades = [float(p) for p in probs]
         return ETIQUETAS[idx], float(probs[idx])
 
     def detectar_emocion(self):
