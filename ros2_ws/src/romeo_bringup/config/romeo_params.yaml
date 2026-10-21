@@ -102,5 +102,18 @@ moving_control_node:
     # http://<ip-de-la-pi>:8080/  -- 0 la desactiva.
     control_web_port: 8080
 
-# orchestrator_node no declara parámetros propios -- los modelos de Ollama
-# siguen siendo variables de entorno (ver launch/romeo_bringup.launch.py).
+orchestrator_node:
+  ros__parameters:
+    # Robot Affective Profile (tesis de Rocha et al., sec. 3.4.2): cuánto
+    # se contagia Romeo del usuario y a qué ánimo vuelve. Ver
+    # romeo_brain/estado_afectivo.py, PERFILES.
+    #
+    #   OPTIMISTIC   el de siempre: acompaña sin hundirse (empatía 0.4)
+    #   EMPATHETIC   espejo del usuario (empatía 1.0)
+    #
+    # Las variables ROMEO_EMPATIA, ROMEO_ANIMO_V/A/D, ROMEO_DECAIMIENTO y
+    # ROMEO_LATENCIA, si están definidas, pisan el valor del perfil.
+    perfil_afectivo: "OPTIMISTIC"
+
+# Los modelos de Ollama de orchestrator_node siguen siendo variables de
+# entorno (ver launch/romeo_bringup.launch.py).

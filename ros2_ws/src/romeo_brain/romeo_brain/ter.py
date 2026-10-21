@@ -51,7 +51,9 @@ _VENTANA_NEGACION = 3
 _TERMINOS = {
     "tristeza": {
         "triste": 1.0, "tristeza": 1.0, "deprimido": 1.0, "deprimida": 1.0,
-        "solo": 0.7, "sola": 0.7, "soledad": 0.9, "llorar": 1.0,
+        # "solo" NO va aca: casi siempre es el adverbio ("solo quiero
+        # jugar"), no la soledad. Se trata aparte, ver _SOLO_CONTEXTO.
+        "sola": 0.7, "soledad": 0.9, "llorar": 1.0,
         "llorando": 1.0, "lloro": 0.9, "mal": 0.6, "fatal": 0.9,
         "horrible": 0.8, "terrible": 0.8, "destrozado": 1.0,
         "destrozada": 1.0, "vacio": 0.8, "vacia": 0.8, "perdido": 0.6,
@@ -76,8 +78,11 @@ _TERMINOS = {
         "molesto": 0.9, "molesta": 0.9, "furioso": 1.0, "furiosa": 1.0,
         "rabia": 1.0, "ira": 1.0, "odio": 1.0, "harto": 0.9, "harta": 0.9,
         "cansado": 0.5, "cansada": 0.5, "injusto": 0.8, "injusta": 0.8,
-        "fastidio": 0.8, "molesta": 0.8, "indigna": 0.9,
-        "estupido": 0.8, "idiota": 0.8, "basta": 0.7,
+        # Sin "basta": es la palabra con la que se pide salir de la trivia
+        # (frases/salir_trivia.txt), no una señal de enojo. Y "molesta"
+        # estaba dos veces (0.9 y 0.8): queda solo la de arriba.
+        "fastidio": 0.8, "indigna": 0.9,
+        "estupido": 0.8, "idiota": 0.8,
     },
     "miedo": {
         "miedo": 1.0, "asustado": 1.0, "asustada": 1.0, "susto": 0.9,
@@ -95,14 +100,34 @@ _TERMINOS = {
 
 _PALABRA = re.compile(r"[a-zñ]+", re.IGNORECASE)
 
+# "solo" cuenta como soledad unicamente detras de un verbo de estado o de
+# "muy" ("me siento solo", "estoy muy solo"). En cualquier otro sitio es el
+# adverbio ("solo quiero jugar", "tan solo una") y no dice nada del animo.
+_SOLO_CONTEXTO = {"siento", "sentia", "senti", "sentirme", "estoy", "estaba",
+                  "estuve", "quede", "quedo", "muy"}
+_PESO_SOLO = 0.7
+
 
 def _normalizar(texto):
     """Minusculas y sin tildes, para que 'está' y 'ESTA' casen igual.
 
     Las transcripciones del STT llegan con tildes inconsistentes, asi que
-    comparar en crudo perderia la mitad de los emparejamientos."""
+    comparar en crudo perderia la mitad de los emparejamientos.
+
+    OJO: tambien convierte la ñ en n (NFD la separa en n + tilde
+    combinante). Por eso los terminos pasan por esta misma funcion al
+    cargar, ver abajo: antes "extraño" estaba escrito con ñ y no casaba
+    nunca."""
     sin_tildes = unicodedata.normalize("NFD", (texto or "").lower())
     return "".join(c for c in sin_tildes if unicodedata.category(c) != "Mn")
+
+
+# Los terminos se normalizan IGUAL que el texto: asi una clave escrita con
+# tilde o ñ no queda inalcanzable sin que nadie lo note.
+_TERMINOS = {
+    emocion: {_normalizar(t): p for t, p in terminos.items()}
+    for emocion, terminos in _TERMINOS.items()
+}
 
 
 def _esta_negado(palabras, indice):
@@ -124,6 +149,11 @@ def analizar(texto):
 
     evidencia = {}
     for i, palabra in enumerate(palabras):
+        if palabra == "solo":
+            if (i > 0 and palabras[i - 1] in _SOLO_CONTEXTO
+                    and not _esta_negado(palabras, i)):
+                evidencia["tristeza"] = evidencia.get("tristeza", 0.0) + _PESO_SOLO
+            continue
         for emocion, terminos in _TERMINOS.items():
             peso = terminos.get(palabra)
             if peso is None:

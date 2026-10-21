@@ -16,6 +16,7 @@ Documentación técnica de los 4 paquetes ROS 2 del robot ARFORD. Para saber qu�
 - [Instalación y ejecución](#instalación-y-ejecución)
 - [Verificación](#verificación)
 - [Flujo de un turno](#flujo-de-un-turno)
+- [Capa afectiva](#capa-afectiva)
 - [Decisiones de diseño](#decisiones-de-diseño)
 - [Migración desde el proyecto original](#migración-desde-el-proyecto-original)
 - [Limitaciones conocidas](#limitaciones-conocidas)
@@ -159,8 +160,9 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 | `communication_node` | `stt_tam` | `tiny` (`tiny` \| `base` \| `small`) |
 | `communication_node` | `stt_hilos` | `2` (más hilos resulta **más lento**, está medido) |
 | `moving_control_node` | `carrito_port` | `/dev/ttyACM0` |
+| `orchestrator_node` | `perfil_afectivo` | `OPTIMISTIC` (`OPTIMISTIC` \| `EMPATHETIC`) |
 
-`orchestrator_node` no declara parámetros propios: el motor de voz lo decide enteramente `communication_node`.
+`perfil_afectivo` es el *Robot Affective Profile* de la capa afectiva (ver [Capa afectiva](#capa-afectiva)). El motor de voz lo decide enteramente `communication_node`.
 
 ### Variables de entorno de `romeo_brain`
 
@@ -170,6 +172,10 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 | `PERF_MUESTREO_SEG` | `5` | Intervalo de muestreo de CPU y RAM |
 | `CHAT_LIBRE_REGISTRO` | `~/.romeo/chat_libre_training/conversaciones.jsonl` | Archivo del registro del Chat libre |
 | `CHAT_LIBRE_REGISTRAR` | `1` | `0` o `false` desactiva el registro |
+| `ROMEO_EMPATIA`, `ROMEO_ANIMO_V/A/D`, `ROMEO_DECAIMIENTO`, `ROMEO_LATENCIA` | los del perfil | Pisan un valor del perfil afectivo sin crear otro |
+| `ROMEO_PASO_DECAIMIENTO` | `5.0` | Segundos entre pasos de vuelta al ánimo base |
+| `ROMEO_AEB_TONO` | `auto` | Tono afectivo en el chat: `auto` (solo modelos sin fine-tuning), `1` siempre, `0` nunca |
+| `ROMEO_AEB_MOVIMIENTO` | `1` | `0` desactiva el gesto físico de alegría |
 
 ### Variables de entorno de `romeo_drivers` (STT)
 
@@ -316,6 +322,29 @@ ros2 service call /romeo/speak romeo_interfaces/srv/Speak "{text: 'probando la v
 ### Salir de Trivia a mitad de una pregunta
 
 Si el mensaje es corto (4 palabras o menos) y no contiene ninguna palabra clave de salida, se toma como respuesta sin consultar al LLM. Si no, decide `SALIDA_TRIVIA_MODEL`, y si Ollama no responde se usan listas de palabras clave.
+
+---
+
+## Capa afectiva
+
+Sigue el framework de la tesis de Rocha et al. (UFF): PULSE → ROSE → AEB. Todo vive en `romeo_brain` y es aritmética, sin LLM ni hardware.
+
+| Componente | Archivo | Qué hace en ARFORD |
+|---|---|---|
+| **PULSE** (ánimo del usuario) | `ter.py`, `estado_afectivo.py` | En cada turno, `ter.analizar()` lee la emoción del texto por palabras clave y la convierte a VAD. La cámara **no** entra: en el juego de caras el niño imita, no expresa lo que siente |
+| **ROSE** (ánimo de Romeo) | `estado_afectivo.EstadoAfectivo` | `empatizar()` acerca el ánimo al del usuario según la empatía del perfil; `decaer()` lo devuelve a la base según el tiempo real transcurrido |
+| **AEB** (cómo lo expresa) | `aeb.py` | `mapear()` devuelve `{estado, emocion, nivel (L0-L4), cara, tono, movimiento, musica}`. El orquestador decide qué usa |
+
+Qué parámetros del AEB se usan y dónde:
+
+- **Cara de reposo** (la que pone Romeo mientras escucha): en todos los modos.
+- **Tono**: solo en Chat libre, como una frase de estilo en el *system prompt* del LLM. Con modelos fine-tuneados (`romeo*`, `arford*`) no se manda, salvo `ROMEO_AEB_TONO=1`.
+- **Movimiento**: solo en Chat libre y solo con alegría alta (L3: `RR`, L4: `ROTATE360`). La tristeza y el enojo nunca mueven el carrito.
+- **Música**: no se usa; las canciones del robot son de la trivia y no expresan un ánimo.
+
+Las caras de la trivia y del juego de caras no las toca el AEB: siguen saliendo del dataset y del propio juego.
+
+Pruebas sin ROS: `python probar_ter.py` (TER, ROSE, perfiles y AEB) y `python probar_flujo.py` (sesión completa por terminal).
 
 ---
 

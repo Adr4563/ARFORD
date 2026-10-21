@@ -75,6 +75,15 @@ class _Node:
     def get_logger(self):
         return self._log
 
+    # Parametros: se devuelve el valor por defecto, o el de la variable
+    # ROMEO_PARAM_<NOMBRE> si esta definida (p.ej. ROMEO_PARAM_PERFIL_AFECTIVO).
+    def declare_parameter(self, nombre, defecto=None):
+        self._params = getattr(self, "_params", {})
+        self._params[nombre] = os.environ.get(f"ROMEO_PARAM_{nombre.upper()}", defecto)
+
+    def get_parameter(self, nombre):
+        return types.SimpleNamespace(value=self._params.get(nombre))
+
     def create_subscription(self, *a, **k):
         return None
 

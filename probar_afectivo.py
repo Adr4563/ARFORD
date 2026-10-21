@@ -96,12 +96,18 @@ print(f"  usuario triste      {fmt(est.vector)}")
 est.empatizar(af.ANCLAJES["tristeza"])
 print(f"  sigue triste        {fmt(est.vector)}"
       f"   <- se acumula")
-# Decaimiento: se simula el paso del tiempo saltando la latencia.
-est._ultimo_estimulo -= est.latencia + 1
+# Decaimiento: se simula el paso del tiempo pasandole el instante a
+# decaer(). El primer paso cae al terminar la latencia, y despues uno cada
+# `paso` segundos.
+t0 = est._ultimo_estimulo
 for i in range(1, 4):
-    est.decaer()
-    est._ultimo_estimulo = (est._ultimo_estimulo or 0) - est.latencia - 1
-    print(f"  pasa el tiempo ({i})  {fmt(est.vector)}")
+    ahora = t0 + est.latencia + (i - 1) * est.paso
+    est.decaer(ahora=ahora)
+    print(f"  pasa el tiempo ({i})  {fmt(est.vector)}   t={ahora - t0:.0f}s")
+est2 = af.EstadoAfectivo()
+est2.empatizar(af.ANCLAJES["tristeza"])
+est2.decaer(ahora=est2._ultimo_estimulo + 600)
+print(f"  10 min de silencio  {fmt(est2.vector)}   <- vuelve a la base")
 print()
 print("  Hoy cada turno empieza de cero. Con esto, dos mensajes tristes")
 print("  seguidos pesan mas que uno, y el efecto se diluye solo.")

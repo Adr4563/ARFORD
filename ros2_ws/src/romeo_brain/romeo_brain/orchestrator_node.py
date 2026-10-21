@@ -17,11 +17,15 @@ entero -- ver la nota larga en _ros_bridge.RosBridge._llamar_servicio_sync().
 Por eso este nodo corre con un MultiThreadedExecutor (ver main() al final)
 y no con el rclpy.spin() default de un solo hilo.
 
-Este nodo no declara ningún parámetro propio: todo lo de la voz lo resuelve
-communication_node. Antes acá se declaraba un `voz_motor` duplicado solo
-para saber si valía la pena esperar a que se conectara un teléfono antes
-del saludo de apertura -- eso desapareció junto con la página web (y el
-motor de voz por teléfono), así que la sesión arranca de una.
+Único parámetro propio: `perfil_afectivo` (OPTIMISTIC o EMPATHETIC -- ver
+estado_afectivo.PERFILES), el Robot Affective Profile de la tesis. Todo lo de la voz lo resuelve
+communication_node.
+
+Capa afectiva (tesis de Rocha et al.): TER/PULSE estima al usuario en cada
+turno, ROSE (estado_afectivo.EstadoAfectivo) mantiene el ánimo de Romeo y
+el AEB (aeb.py) lo traduce a comportamiento -- cara de reposo, tono del
+chat libre y un gesto físico de alegría. Este nodo hace de SENSEI: decide
+cuándo se usa cada parámetro del AEB.
 
 Cambio de comportamiento deliberado respecto del original: cuando el
 usuario dice "salir", el proceso original terminaba (era una app de
@@ -44,7 +48,7 @@ from ament_index_python.packages import get_package_share_directory
 
 from romeo_interfaces.msg import UserInput
 
-from . import (agente_chat, agente_trivia, estado_afectivo, frases,
+from . import (aeb, agente_chat, agente_trivia, estado_afectivo, frases,
                llama_client, preguntas, ter)
 from ._ros_bridge import RosBridge
 
@@ -153,11 +157,24 @@ class OrchestratorNode(Node):
         super().__init__('orchestrator_node')
 
         self._bridge = RosBridge(self)
+        # Robot Affective Profile (tesis, sec. 3.4.2): fija empatia, animo
+        # base, decaimiento y latencia de ROSE. Se elige en
+        # romeo_params.yaml; las variables ROMEO_EMPATIA etc. lo afinan.
+        self.declare_parameter('perfil_afectivo', estado_afectivo.PERFIL_POR_DEFECTO)
+        perfil = self.get_parameter('perfil_afectivo').value
         # El animo de Romeo, que persiste entre turnos y decae solo. Vive
         # en el nodo y no en self.estado porque self.estado se reconstruye
         # entero en cada sesion, y lo que se quiere del afecto es
         # justamente que dure. Se reinicia a mano en _iniciar_sesion().
-        self._afecto = estado_afectivo.EstadoAfectivo()
+        self._afecto = estado_afectivo.EstadoAfectivo(perfil=perfil)
+        if self._afecto.perfil != str(perfil).strip().upper():
+            self.get_logger().warning(
+                f"[afecto] perfil {perfil!r} desconocido, se usa {self._afecto.perfil}")
+        self.get_logger().info(
+            f"[afecto] perfil {self._afecto.perfil}: empatia "
+            f"{self._afecto.empatia}, base {self._afecto.animo_base}, "
+            f"decaimiento {self._afecto.decaimiento}, latencia "
+            f"{self._afecto.latencia}s")
         # Lecturas afectivas del turno en curso, pendientes de
         # fusionar. Ver _aplicar_afecto().
         self._lecturas_turno = []
@@ -256,7 +273,7 @@ class OrchestratorNode(Node):
     # Orchestrator_Management.py.
     # ══════════════════════════════════════════════════════════════════
 
-    def responder(self, mensaje_usuario):
+    def responder(self, mensaje_usuario, tono=None):
         """Chat libre -- delega en agente_chat.
 
         ATRAPA LOS FALLOS DE RED. El LLM vive en otra maquina, asi que
@@ -269,7 +286,7 @@ class OrchestratorNode(Node):
         _llamar_servicio_sync en _ros_bridge), asi que esto es lo mismo para
         el chat: se dice que no se puede ahora y se sigue vivo."""
         try:
-            return agente_chat.responder(mensaje_usuario)
+            return agente_chat.responder(mensaje_usuario, tono=tono)
         except Exception as e:  # noqa: BLE001 - seguir vivo es lo que importa
             self.get_logger().warning(
                 f"[chat] el LLM en {llama_client.CHAT_SERVER_HOST} no "
@@ -288,8 +305,8 @@ class OrchestratorNode(Node):
 
         Se llama cada vez que se añade una lectura, y es idempotente: lo
         que ya se aplico se descarta de la lista. Asi, si en un turno
-        hablan el texto y la camara, el animo se mueve una vez con la
-        media ponderada de las dos y no dos veces seguidas.
+        perciben varias modalidades, el animo se mueve una vez con la
+        media ponderada de todas y no una vez por cada una.
 
         fusionar() se usa tal cual: ya filtra las lecturas nulas o sin
         confianza y, con una sola, devuelve esa misma."""
@@ -323,15 +340,27 @@ class OrchestratorNode(Node):
 
         Con el animo cerca de su base devuelve 'content', que es lo que se
         mostraba siempre: el comportamiento solo cambia cuando de verdad
-        hay algo que mostrar."""
-        cara = self._afecto.cara()
-        # Se registra el vector, no solo la cara: la cara es una de cuatro
-        # y se queda igual durante varios turnos, asi que sin el vector no
-        # se ve si el animo se esta moviendo o esta clavado.
+        hay algo que mostrar.
+
+        La decide el AEB (ver _comportamiento)."""
+        return self._comportamiento()["cara"]
+
+    def _comportamiento(self):
+        """AEB: lo que el animo actual de Romeo pide expresar (cara de
+        reposo, tono, movimiento). Ver aeb.py.
+
+        Solo DEVUELVE los parametros; cada caller decide cuales usa. Asi la
+        trivia toma solo la cara de reposo y deja el movimiento a su
+        dataset, y el chat libre los usa todos."""
+        comp = aeb.mapear(self._afecto)
+        # Se registra el vector, no solo el resultado: la emocion se queda
+        # igual durante varios turnos, asi que sin el vector no se ve si el
+        # animo se esta moviendo o esta clavado.
         v, a, d = self._afecto.vector
         self.get_logger().info(
-            f"[afecto] v={v:+.2f} a={a:+.2f} d={d:+.2f} -> cara {cara}")
-        return cara
+            f"[aeb] v={v:+.2f} a={a:+.2f} d={d:+.2f} -> {comp['estado']} "
+            f"(cara {comp['cara']}, movimiento {comp['movimiento']})")
+        return comp
 
     @staticmethod
     def comentar_resultado(esperada, acerto):
@@ -432,20 +461,12 @@ class OrchestratorNode(Node):
         time.sleep(PAUSA_POSAR)   # que le dé tiempo a poner la cara
 
         detectada, confianza, ok = self._bridge.detectar_emocion()
-        # Lo que ve la camara alimenta el animo de Romeo (PULSE -> ROSE).
-        # Se hace aca y no en el bridge porque el bridge no debe saber de
-        # logica afectiva, solo de topicos y servicios.
-        if ok:
-            # Se acumula igual que el TER y se aplica con _aplicar_afecto,
-            # para que un turno que percibe por las dos vias mueva el animo
-            # UNA vez con la media de ambas, no dos veces seguidas.
-            vector, c = estado_afectivo.percibir_del_servicio(detectada, confianza)
-            if vector is not None:
-                self._lecturas_turno = getattr(self, "_lecturas_turno", [])
-                self._lecturas_turno.append((vector, c))
-                self.get_logger().info(
-                    f"[afecto] la camara vio {detectada} ({confianza:.0%})")
-                self._aplicar_afecto()
+        # Lo que ve la camara aca NO entra al animo de Romeo (ROSE). En
+        # este juego el niño IMITA la cara que Romeo le pide: no esta
+        # mostrando lo que siente. Si entrara, pedir "pon cara triste"
+        # entristeceria a Romeo, que es justo lo contrario de una lectura
+        # afectiva. Para percibir al usuario por la camara hace falta una
+        # ventana de percepcion fuera del juego (tesis, sec. 3.4.1.2).
         self._bridge.mostrar_cara("speaking")
 
         if not ok or detectada is None:
@@ -628,12 +649,20 @@ class OrchestratorNode(Node):
         self._bridge.mostrar_cara(self._cara_reposo())
 
     def _manejar_chat_libre(self, mensaje_usuario):
+        # El AEB se consulta ANTES de responder: el animo ya incluye lo que
+        # el TER leyo de este mensaje (ver _procesar_turno), asi que el tono
+        # de la respuesta reacciona a lo que el usuario acaba de decir.
+        comp = self._comportamiento()
         self._bridge.mostrar_cara("speaking")
-        texto_final = self.responder(mensaje_usuario)
+        texto_final = self.responder(mensaje_usuario, tono=comp["tono"])
         self.get_logger().info(f"Asistente: {texto_final}")
         self._bridge.hablar(texto_final)
+        # Mismo orden que el resto del robot: voz -> cara -> movimiento.
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara(self._cara_reposo())
+        self._bridge.mostrar_cara(comp["cara"])
+        if comp["movimiento"]:
+            self.get_logger().info(f"[aeb] gesto: {comp['movimiento']}")
+            self._bridge.mover(comp["movimiento"])
 
     # ══════════════════════════════════════════════════════════════════
     # Arranque/cierre de sesión y el callback de entrada.
@@ -719,10 +748,11 @@ class OrchestratorNode(Node):
         # de dentro, no reentradas -- ROSE no se puede actualizar dos veces
         # por turno.
         #
-        # La lectura se GUARDA en vez de aplicarse: si mas adelante en este
-        # mismo turno la camara tambien percibe algo (el juego de
-        # emociones), las dos se fusionan y ROSE se actualiza una sola vez.
-        # Ver _aplicar_afecto().
+        # La lectura se GUARDA y se aplica con _aplicar_afecto(), que
+        # fusiona todas las del turno: hoy solo hay TER, pero cuando haya
+        # otra modalidad (camara o voz en una ventana de percepcion) se
+        # suma ahi y ROSE se sigue actualizando una sola vez por turno. La
+        # camara del juego de caras NO cuenta: ver _pedir_una_emocion().
         emocion_txt, confianza_txt = ter.analizar(entrada)
         self._lecturas_turno = []
         vector_txt, c_txt = estado_afectivo.percibir_del_texto(

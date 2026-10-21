@@ -66,7 +66,27 @@ def _prompt_para(modelo):
 
 _PROMPT = _prompt_para(llama_client.CHAT_MODEL)
 
+# Tono afectivo que manda el AEB (ver aeb.py): una frase de estilo, segun
+# como se siente Romeo, que se añade al system prompt.
+#
+#   auto  (default) solo si ya hay system prompt, o sea con modelos SIN
+#         fine-tuning. A los entrenados (romeo*, arford*) no se les manda
+#         system prompt a proposito, y meterles uno solo por el tono podria
+#         desviar el comportamiento horneado.
+#   1     siempre, tambien con los entrenados (para probar si lo respetan)
+#   0     nunca
+TONO_AEB = os.environ.get("ROMEO_AEB_TONO", "auto").strip().lower()
+
 _historial = []
+
+
+def _system_prompt(tono):
+    """El system prompt de este turno, o "" si no hay que mandar ninguno."""
+    usar_tono = bool(tono) and (TONO_AEB in ("1", "true", "si")
+                                or (TONO_AEB == "auto" and _PROMPT))
+    if usar_tono:
+        return f"{_PROMPT} {tono}".strip()
+    return _PROMPT
 
 
 def reiniciar():
@@ -75,12 +95,17 @@ def reiniciar():
     _historial.clear()
 
 
-def responder(mensaje_usuario):
+def responder(mensaje_usuario, tono=None):
     """Devuelve la respuesta de Romeo, teniendo en cuenta los turnos
-    anteriores de esta sesion."""
+    anteriores de esta sesion.
+
+    `tono` es la instruccion de estilo del AEB (o None). Va solo en el
+    system prompt de ESTE turno: no se guarda en el historial, porque el
+    animo cambia de un turno a otro."""
     mensajes = list(_historial) + [{"role": "user", "content": mensaje_usuario}]
-    if _PROMPT:
-        mensajes.insert(0, {"role": "system", "content": _PROMPT})
+    sistema = _system_prompt(tono)
+    if sistema:
+        mensajes.insert(0, {"role": "system", "content": sistema})
     texto = llama_client.generar_respuesta(mensajes).strip()
 
     _historial.append({"role": "user", "content": mensaje_usuario})

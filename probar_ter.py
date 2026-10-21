@@ -135,6 +135,115 @@ comprobar("un texto alegre SUBE la valencia", e.vector[0] > antes,
 
 print()
 print("=" * 70)
+print("9. Regresiones del TER (ñ, 'solo', 'basta')")
+print("=" * 70)
+emo, _ = ter.analizar("te extraño mucho")
+comprobar('"te extraño" casa (la ñ ya no la pierde)', emo == "tristeza", f"-> {emo}")
+for texto in ["solo quiero jugar", "tan solo una pregunta mas", "solo dime la respuesta"]:
+    emo, _ = ter.analizar(texto)
+    comprobar(f'"{texto}" -> "solo" adverbio, sin evidencia', emo is None, f"-> {emo}")
+for texto in ["me siento solo", "estoy muy solo"]:
+    emo, _ = ter.analizar(texto)
+    comprobar(f'"{texto}" -> tristeza', emo == "tristeza", f"-> {emo}")
+emo, _ = ter.analizar("no me siento solo")
+comprobar('"no me siento solo" -> negado', emo is None, f"-> {emo}")
+emo, _ = ter.analizar("basta")
+comprobar('"basta" ya no es enojo', emo is None, f"-> {emo}")
+comprobar('"molesta" pesa 0.9, no 0.8',
+          ter._TERMINOS["enojo"]["molesta"] == 0.9)
+sin_normalizar = [t for terms in ter._TERMINOS.values() for t in terms
+                  if t != ter._normalizar(t)]
+comprobar("todas las claves normalizadas", not sin_normalizar, f"{sin_normalizar}")
+
+print()
+print("=" * 70)
+print("10. Decaimiento segun el tiempo real")
+print("=" * 70)
+e = af.EstadoAfectivo()
+e.empatizar(af.ANCLAJES["tristeza"])
+t0 = e._ultimo_estimulo
+tras = e.vector
+e.decaer(ahora=t0 + e.latencia - 0.1)
+comprobar("durante la latencia no decae", e.vector == tras)
+e.decaer(ahora=t0 + e.latencia)
+uno = e.vector
+comprobar("al terminar la latencia, un paso", uno != tras)
+e.decaer(ahora=t0 + e.latencia + 0.5)
+comprobar("llamar dos veces en el mismo tramo no descuenta dos veces", e.vector == uno)
+e2 = af.EstadoAfectivo()
+e2.empatizar(af.ANCLAJES["tristeza"])
+e2.decaer(ahora=e2._ultimo_estimulo + e2.latencia + 3 * e2.paso)
+e3 = af.EstadoAfectivo()
+e3.empatizar(af.ANCLAJES["tristeza"])
+for k in range(4):   # el mismo tiempo, en cuatro llamadas
+    e3.decaer(ahora=e3._ultimo_estimulo + e3.latencia + k * e3.paso)
+comprobar("de una vez o en varias llamadas da lo mismo",
+          all(abs(e2.vector[i] - e3.vector[i]) < 1e-9 for i in range(3)))
+e4 = af.EstadoAfectivo()
+e4.empatizar(af.ANCLAJES["tristeza"])
+e4.decaer(ahora=e4._ultimo_estimulo + 600)
+comprobar("10 min de silencio -> vuelve a la base", e4.vector == e4.animo_base,
+          f"-> {e4.vector}")
+
+print()
+print("=" * 70)
+print("11. Perfiles afectivos")
+print("=" * 70)
+for nombre, p in af.PERFILES.items():
+    est = af.EstadoAfectivo(perfil=nombre)
+    comprobar(f"{nombre} se carga", est.perfil == nombre and est.empatia == p["empatia"])
+est = af.EstadoAfectivo(perfil="no-existe")
+comprobar("perfil desconocido -> OPTIMISTIC", est.perfil == "OPTIMISTIC")
+comprobar("solo OPTIMISTIC y EMPATHETIC",
+          set(af.PERFILES) == {"OPTIMISTIC", "EMPATHETIC"})
+espejo = af.EstadoAfectivo(perfil="EMPATHETIC")
+espejo.empatizar(af.ANCLAJES["tristeza"], 1.0)
+comprobar("EMPATHETIC copia al usuario", espejo.vector == af.ANCLAJES["tristeza"])
+defecto = af.EstadoAfectivo()
+comprobar("sin perfil -> mismos valores que antes",
+          defecto.empatia == af.EMPATIA and defecto.animo_base == af.ANIMO_BASE)
+
+print()
+print("=" * 70)
+print("12. AEB")
+print("=" * 70)
+from romeo_brain import aeb  # noqa: E402
+
+e = af.EstadoAfectivo()
+p = aeb.mapear(e)
+comprobar("en la base -> neutral, sin tono ni movimiento",
+          p["estado"] == "neutral_L0" and p["tono"] is None and p["movimiento"] is None,
+          f"-> {p['estado']}")
+claves = {"estado", "emocion", "nivel", "cara", "tono", "movimiento", "musica"}
+comprobar("devuelve todas las claves del contrato", set(p) == claves)
+for _ in range(4):
+    v, c = af.percibir_del_texto(*ter.analizar("estoy muy triste y destrozado"))
+    e.empatizar(v, c)
+p = aeb.mapear(e)
+comprobar("usuario triste insistente -> tristeza", p["emocion"] == "tristeza"
+          and p["cara"] == "sad" and p["tono"], f"-> {p['estado']}")
+comprobar("tristeza NUNCA mueve el carrito", p["movimiento"] is None)
+comprobar("la cara del AEB coincide con estado.cara()", p["cara"] == e.cara())
+niveles = []
+e = af.EstadoAfectivo()
+for _ in range(8):
+    e.empatizar(af.ANCLAJES["felicidad"], 1.0)
+    niveles.append(aeb.mapear(e)["nivel"])
+comprobar("alegria insistente sube de nivel sin bajar",
+          niveles == sorted(niveles) and niveles[-1] >= 3, f"-> {niveles}")
+p = aeb.mapear(e)
+comprobar("alegria alta -> gesto fisico", p["movimiento"] in ("RR", "ROTATE360"),
+          f"-> {p['estado']} {p['movimiento']}")
+e = af.EstadoAfectivo()
+for _ in range(6):
+    e.empatizar(af.ANCLAJES["enojo"], 1.0)
+p = aeb.mapear(e)
+comprobar("enojo -> cara angry, tono calmado, sin movimiento",
+          p["cara"] == "angry" and p["movimiento"] is None and "calma" in p["tono"],
+          f"-> {p['estado']}")
+
+print()
+print("=" * 70)
 if fallos:
     print(f"  {len(fallos)} FALLOS:")
     for f in fallos:

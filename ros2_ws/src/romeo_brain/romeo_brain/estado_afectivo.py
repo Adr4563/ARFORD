@@ -9,12 +9,10 @@ Favela (UFF/CICESE, 2026) -- el framework del robot FRED:
     ROSE    mantiene el animo PROPIO de Romeo: se contagia del usuario
             segun un factor de empatia, y con el tiempo vuelve a su base
 
-El tercer motor del framework (AEB, que traduce la coordenada a un gesto
-concreto por distancia euclidiana) NO esta implementado: Romeo ya decide
-que cara poner con agente_trivia.elegir_cara_pregunta() y el resto de la
-logica que ya tenia, y meter otra via de decision encima solo serviria para
-que las dos se pisaran. El estado de aca queda disponible por si algun dia
-se quiere usar.
+El tercer motor del framework, AEB (que traduce el animo de Romeo a
+comportamiento: cara, tono de voz, movimiento), vive en aeb.py y lee el
+estado de aca. No pisa las caras de trivia ni del juego de caras: esas
+siguen saliendo del dataset y de la logica del orquestador.
 
 Aca NO hay IA: son formulas de aritmetica (promedios ponderados, un
 logaritmo e interpolacion lineal). La IA esta afuera,
@@ -107,6 +105,71 @@ DECAIMIENTO = float(os.environ.get("ROMEO_DECAIMIENTO", "0.5"))
 # LATENCIA (l): segundos que sostiene la emocion antes de empezar a decaer.
 # Sin esto el estado se evaporaria antes de que llegue a notarse en la voz.
 LATENCIA = float(os.environ.get("ROMEO_LATENCIA", "3.0"))
+
+# PASO (dt): cada cuantos segundos se aplica un paso de decaimiento.
+#
+# El decaimiento depende del TIEMPO, no de cuantos turnos hubo: antes se
+# daba un paso por turno, asi que tras diez minutos de silencio Romeo
+# seguia casi igual de triste que en el ultimo mensaje. Ahora decaer()
+# aplica tantos pasos como intervalos de PASO hayan pasado desde que
+# termino la latencia.
+#
+# 5 s porque es lo que dura un turno tipico en la Pi (voz + LLM): en una
+# conversacion activa el ritmo queda como antes, un paso por turno, y una
+# pausa larga si devuelve el animo a la base.
+PASO_DECAIMIENTO = float(os.environ.get("ROMEO_PASO_DECAIMIENTO", "5.0"))
+
+
+# ── Perfiles predefinidos (Robot Affective Profile de la tesis) ───────
+#
+# Cada perfil fija los cuatro parametros de ROSE. Se elige con el
+# parametro ROS `perfil_afectivo` de orchestrator_node (ver
+# romeo_params.yaml). Las variables ROMEO_EMPATIA, ROMEO_ANIMO_*,
+# ROMEO_DECAIMIENTO y ROMEO_LATENCIA, si estan definidas, pisan el valor
+# del perfil -- sirven para afinar uno sin crear otro.
+#
+# Son los dos perfiles de los escenarios de la tesis (sec. 4.1.4), con su
+# empatia y animo base. Decaimiento y latencia no los publica: se dejan los
+# de Romeo. Para añadir otro perfil basta una entrada mas aca.
+PERFILES = {
+    # El de siempre de Romeo: se entristece un poco con el usuario pero
+    # se queda en la zona positiva y puede animarlo. (Tesis, escenario 2.)
+    "OPTIMISTIC":  {"empatia": 0.4, "animo_base": (0.40, 0.30, 0.20),
+                    "decaimiento": 0.5, "latencia": 3.0},
+    # Espejo del usuario: absorbe su estado entero. (Tesis, escenario 1.)
+    # Util para comparar en experimentos; poco recomendable con niños.
+    "EMPATHETIC":  {"empatia": 1.0, "animo_base": (0.20, 0.10, 0.00),
+                    "decaimiento": 0.5, "latencia": 3.0},
+}
+PERFIL_POR_DEFECTO = "OPTIMISTIC"
+
+
+def parametros_de_perfil(nombre=None):
+    """Los parametros de ROSE para `nombre`, con las variables de entorno
+    aplicadas encima. Un nombre desconocido cae en PERFIL_POR_DEFECTO.
+
+    Devuelve (parametros, nombre_efectivo)."""
+    clave = (nombre or PERFIL_POR_DEFECTO).strip().upper()
+    if clave not in PERFILES:
+        clave = PERFIL_POR_DEFECTO
+    p = dict(PERFILES[clave])
+
+    def _env(var):
+        v = os.environ.get(var)
+        return float(v) if v not in (None, "") else None
+
+    if _env("ROMEO_EMPATIA") is not None:
+        p["empatia"] = _env("ROMEO_EMPATIA")
+    if _env("ROMEO_DECAIMIENTO") is not None:
+        p["decaimiento"] = _env("ROMEO_DECAIMIENTO")
+    if _env("ROMEO_LATENCIA") is not None:
+        p["latencia"] = _env("ROMEO_LATENCIA")
+    base = list(p["animo_base"])
+    for i, var in enumerate(("ROMEO_ANIMO_V", "ROMEO_ANIMO_A", "ROMEO_ANIMO_D")):
+        if _env(var) is not None:
+            base[i] = _env(var)
+    p["animo_base"] = tuple(base)
+    return p, clave
 
 
 
@@ -252,19 +315,34 @@ class EstadoAfectivo:
     (empatizar) y le pregunta como esta (vector, emocion_mas_cercana)."""
 
     def __init__(self, empatia=None, animo_base=None, decaimiento=None,
-                 latencia=None):
-        self.empatia = EMPATIA if empatia is None else empatia
-        self.animo_base = tuple(ANIMO_BASE if animo_base is None else animo_base)
-        self.decaimiento = DECAIMIENTO if decaimiento is None else decaimiento
-        self.latencia = LATENCIA if latencia is None else latencia
+                 latencia=None, perfil=None, paso=None):
+        # Sin perfil ni parametros sueltos se comporta como siempre: los
+        # valores de modulo (OPTIMISTIC + variables de entorno). Con
+        # `perfil`, se parte de ese perfil; los parametros sueltos que se
+        # pasen igual lo pisan.
+        if perfil is not None:
+            p, self.perfil = parametros_de_perfil(perfil)
+        else:
+            p = {"empatia": EMPATIA, "animo_base": ANIMO_BASE,
+                 "decaimiento": DECAIMIENTO, "latencia": LATENCIA}
+            self.perfil = "PERSONALIZADO"
+        self.empatia = p["empatia"] if empatia is None else empatia
+        self.animo_base = tuple(p["animo_base"] if animo_base is None else animo_base)
+        self.decaimiento = p["decaimiento"] if decaimiento is None else decaimiento
+        self.latencia = p["latencia"] if latencia is None else latencia
+        self.paso = PASO_DECAIMIENTO if paso is None else paso
         self.vector = self.animo_base
         self._ultimo_estimulo = None
+        # Cuantos pasos de decaimiento ya se aplicaron desde el ultimo
+        # estimulo (ver decaer()).
+        self._decaido_hasta = None
 
     def reiniciar(self):
         """Vuelve al animo base. Se llama al empezar una sesion nueva: el
         usuario siguiente no hereda el humor que dejo el anterior."""
         self.vector = self.animo_base
         self._ultimo_estimulo = None
+        self._decaido_hasta = None
 
     def empatizar(self, vector_usuario, confianza=1.0):
         """Mueve el estado de Romeo hacia el del usuario, segun la empatia:
@@ -296,28 +374,54 @@ class EstadoAfectivo:
             for i in range(3)
         )
         self._ultimo_estimulo = time.monotonic()
+        # Un estimulo nuevo reinicia la cuenta (tesis, fig. 18): vuelve a
+        # sostenerse `latencia` segundos antes de decaer.
+        self._decaido_hasta = None
         return self.vector
 
     def decaer(self, ahora=None):
-        """Vuelve de a poco al animo base:
+        """Vuelve de a poco al animo base, segun el TIEMPO transcurrido:
 
             s_r(t+dt) = (1 - d) * s_r(t) + d * b
 
+        aplicado una vez al terminar la latencia y otra por cada `paso`
+        segundos mas. Como es una interpolacion lineal repetida, n pasos
+        equivalen a:
+
+            s_r = b + (1 - d)^n * (s_r - b)
+
         No hace nada hasta que pasaron `latencia` segundos del ultimo
         estimulo: la emocion tiene que durar lo suficiente para que se note
-        en la voz y la cara antes de empezar a diluirse."""
+        en la voz y la cara antes de empezar a diluirse.
+
+        Se puede llamar todas las veces que se quiera: lleva la cuenta de
+        cuantos pasos ya aplico desde el ultimo estimulo
+        (`_decaido_hasta`), asi que dos llamadas seguidas no descuentan el
+        mismo tramo dos veces. paso <= 0 vuelve al comportamiento viejo: un
+        paso por llamada."""
         if self._ultimo_estimulo is None:
             return self.vector
         ahora = time.monotonic() if ahora is None else ahora
-        if ahora - self._ultimo_estimulo < self.latencia:
+        inicio = self._ultimo_estimulo + self.latencia
+        if ahora < inicio:
             return self.vector
-        d = self.decaimiento
+        if self.paso > 0:
+            debidos = int((ahora - inicio) // self.paso) + 1
+        else:
+            debidos = (self._decaido_hasta or 0) + 1
+        pasos = debidos - (self._decaido_hasta or 0)
+        if pasos <= 0:
+            return self.vector
+        self._decaido_hasta = debidos
+        factor = (1.0 - self.decaimiento) ** pasos
         self.vector = tuple(
-            (1.0 - d) * self.vector[i] + d * self.animo_base[i]
+            self.animo_base[i] + factor * (self.vector[i] - self.animo_base[i])
             for i in range(3)
         )
         if self._cerca_del_base():
+            self.vector = self.animo_base
             self._ultimo_estimulo = None
+            self._decaido_hasta = None
         return self.vector
 
     def _cerca_del_base(self, tol=0.01):
@@ -351,11 +455,23 @@ class EstadoAfectivo:
         La zona neutra es ancha a proposito: los cuatro anclajes estan
         lejos entre si, asi que con el animo cerca de la base el ganador
         saldria casi por azar y la cara parpadearia entre dos sin motivo."""
-        # Desviacion respecto al animo base.
+        direccion, magnitud = self.desviacion()
+        return "content" if magnitud < _RADIO_NEUTRAL else direccion
+
+    def desviacion(self):
+        """Hacia donde y cuanto se aparto el animo de su base.
+
+        Devuelve (cara, magnitud): la cara de las tres expresivas (happy,
+        sad, angry) cuya direccion se parece mas al desplazamiento, y la
+        longitud de ese desplazamiento en el espacio VAD. Con el animo
+        exactamente en la base devuelve ("content", 0.0).
+
+        Lo usan cara() y el AEB (aeb.py), que necesita ademas la magnitud
+        para decidir la intensidad (L1-L4)."""
         dv = tuple(self.vector[i] - self.animo_base[i] for i in range(3))
         magnitud = math.sqrt(sum(x * x for x in dv))
-        if magnitud < _RADIO_NEUTRAL:
-            return "content"
+        if magnitud == 0.0:
+            return "content", 0.0
 
         # La cara se elige por la DIRECCION del movimiento, no por donde
         # acabo el vector. Comparar la desviacion con los anclajes tal cual
@@ -377,7 +493,7 @@ class EstadoAfectivo:
             cos = sum(dv_u[i] * ancla[i] / na for i in range(3))
             if cos > mejor_cos:
                 mejor, mejor_cos = nombre, cos
-        return mejor
+        return mejor, magnitud
 
     def __repr__(self):
         v, a, d = self.vector
