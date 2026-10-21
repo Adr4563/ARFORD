@@ -1,0 +1,14 @@
+# Le pide a communication_node que diga `text` en voz alta -- BLOQUEA hasta
+# que termina de reproducirse (igual que voz_output.hablar() en el
+# proyecto original, que también bloqueaba), a propósito: orchestrator_node
+# depende de este bloqueo para preservar el orden estricto voz -> cara ->
+# (música + motores) que exige el diseño del robot -- ver la nota de
+# "Garantía de orden" en orchestrator_node.py.
+#
+# Servicio síncrono, sin streaming ni cancelación: se acepta ese trade-off
+# a propósito, mismo criterio que el proyecto original -- ahí tampoco había
+# ya ningún consumidor real del streaming token a token (se sacó el
+# print() en consola cuando se pasó a interactuar por voz_server.py).
+string text
+---
+bool success
