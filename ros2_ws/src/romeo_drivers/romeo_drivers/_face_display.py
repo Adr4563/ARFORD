@@ -23,17 +23,19 @@ import os
 import socket
 import subprocess
 import sys
+import threading
 import time
 
 from ament_index_python.packages import get_package_share_directory
 
 CARAS_VALIDAS = {"happy", "sad", "angry", "content", "speaking", "countdown"}
 
-# Caras de EMOCION: su animacion se reproduce UNA vez y se queda quieta en
-# el ultimo cuadro. Antes se repetian en bucle mientras durara el animo, y la
+# Caras de EMOCION: su animacion se reproduce UNA vez y despues vuelve sola
+# a CARA_REPOSO. Antes se repetian en bucle mientras durara el animo, y la
 # emocion se veia una y otra vez durante la conversacion. Las de estado
 # (content, speaking, countdown) siguen en bucle: son "en espera".
 CARAS_UNA_VEZ = {"happy", "sad", "angry"}
+CARA_REPOSO = "content"
 MPV_SOCKET = "/tmp/romeo_face.sock"
 
 
@@ -56,6 +58,10 @@ class Display:
         # Con $DISPLAY seteado (o en Windows) hay un escritorio real -> Tkinter.
         self.usa_drm = sys.platform.startswith('linux') and not os.environ.get('DISPLAY')
         self._proceso = None
+        # Cara que esta en pantalla, y un contador que invalida la vuelta a
+        # reposo pendiente si llega otra cara antes de que termine la emocion.
+        self._actual = None
+        self._generacion = 0
 
     def _log(self, msg):
         if self.logger is not None:
@@ -125,9 +131,50 @@ class Display:
                 break
             time.sleep(0.1)
 
+    def _mpv_pedir(self, comando, timeout=1.0):
+        """Manda un comando y devuelve su 'data' (p. ej. una propiedad), o
+        None. mpv mezcla eventos en el socket: se busca la respuesta por su
+        request_id."""
+        try:
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+                s.settimeout(timeout)
+                s.connect(MPV_SOCKET)
+                s.sendall((json.dumps({"command": comando, "request_id": 7}) + "\n").encode())
+                buf = b""
+                limite = time.monotonic() + timeout
+                while time.monotonic() < limite:
+                    buf += s.recv(4096)
+                    for linea in buf.split(b"\n"):
+                        try:
+                            msg = json.loads(linea)
+                        except ValueError:
+                            continue
+                        if msg.get("request_id") == 7:
+                            return msg.get("data")
+        except OSError:
+            pass
+        return None
+
+    def _volver_a_reposo(self, nombre, generacion):
+        """Espera a que termine la animacion de `nombre` y pone CARA_REPOSO,
+        salvo que mientras tanto se haya pedido otra cara."""
+        duracion = None
+        for _ in range(10):   # mpv tarda unos ms en conocer la duracion
+            duracion = self._mpv_pedir(["get_property", "duration"])
+            if duracion:
+                break
+            time.sleep(0.05)
+        time.sleep(max(0.0, float(duracion or 1.5) - 0.05))
+        if self._generacion == generacion and self._actual == nombre:
+            self.mostrar_cara(CARA_REPOSO)
+
     def _mostrar_cara_drm(self, ruta, una_vez=False):
         self._asegurar_visor_drm(ruta)
-        # El bucle se fija ANTES de cargar, para que valga para esta cara.
+        # Las de emocion no se repiten: se reproducen una vez y un hilo las
+        # devuelve a reposo al terminar (ver _volver_a_reposo). keep-open
+        # evita un destello negro entre el ultimo cuadro y la cara de reposo;
+        # se fija aca y no solo al lanzar mpv por si se reuso un mpv huerfano.
+        self._mpv_enviar(["set_property", "keep-open", "yes"])
         self._mpv_enviar(["set_property", "loop-file", "no" if una_vez else "inf"])
         self._mpv_enviar(["loadfile", ruta, "replace"])
 
@@ -184,8 +231,15 @@ class Display:
         if not os.path.isfile(ruta):
             self._warn(f"[display] No existe {ruta}")
             return
+        self._generacion += 1
+        self._actual = nombre
         if self.usa_drm:
-            self._mostrar_cara_drm(ruta, una_vez=nombre in CARAS_UNA_VEZ)
+            una_vez = nombre in CARAS_UNA_VEZ
+            self._mostrar_cara_drm(ruta, una_vez=una_vez)
+            if una_vez:
+                threading.Thread(target=self._volver_a_reposo,
+                                 args=(nombre, self._generacion),
+                                 daemon=True).start()
         else:
             self._mostrar_cara_tk(ruta)
 
