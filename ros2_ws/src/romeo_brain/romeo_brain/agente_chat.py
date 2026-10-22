@@ -23,6 +23,7 @@ El historial es de la SESION: se borra con reiniciar(), que el orquestador
 llama al empezar una sesion nueva. Para recuperar cosas de conversaciones
 pasadas haria falta memoria episodica, que es otra cosa y no esta.
 """
+import difflib
 import os
 
 from . import llama_client
@@ -79,6 +80,21 @@ TONO_AEB = os.environ.get("ROMEO_AEB_TONO", "auto").strip().lower()
 
 _historial = []
 
+# Parecido a partir del cual una respuesta se da por REPETIDA (ver
+# _es_repeticion). Medido con romeo-qwen-v2: con historial devolvia la misma
+# frase palabra por palabra ("¡Muy bien Adrián! Me encanta escuchar tus
+# historias...") a cualquier mensaje, incluido "estoy muy molesto"; sin
+# historial contestaba a lo que se le decia.
+_UMBRAL_REPETICION = 0.8
+
+
+def _es_repeticion(texto):
+    """True si `texto` se parece demasiado a algo que Romeo ya dijo en esta
+    sesion."""
+    return any(
+        difflib.SequenceMatcher(None, texto, m["content"]).ratio() >= _UMBRAL_REPETICION
+        for m in _historial if m["role"] == "assistant")
+
 
 def _system_prompt(tono):
     """El system prompt de este turno, o "" si no hay que mandar ninguno."""
@@ -102,11 +118,21 @@ def responder(mensaje_usuario, tono=None):
     `tono` es la instruccion de estilo del AEB (o None). Va solo en el
     system prompt de ESTE turno: no se guarda en el historial, porque el
     animo cambia de un turno a otro."""
-    mensajes = list(_historial) + [{"role": "user", "content": mensaje_usuario}]
     sistema = _system_prompt(tono)
-    if sistema:
-        mensajes.insert(0, {"role": "system", "content": sistema})
-    texto = llama_client.generar_respuesta(mensajes).strip()
+
+    def _generar(con_historial):
+        mensajes = ((list(_historial) if con_historial else [])
+                    + [{"role": "user", "content": mensaje_usuario}])
+        if sistema:
+            mensajes.insert(0, {"role": "system", "content": sistema})
+        return llama_client.primera_frase(llama_client.generar_respuesta(mensajes))
+
+    texto = _generar(con_historial=True)
+    # Un modelo pequeño se engancha a lo ultimo que dijo y lo copia. Si pasa,
+    # se pide otra vez SIN historial: pierde el hilo en este turno, pero
+    # contesta a lo que el usuario acaba de decir.
+    if _es_repeticion(texto):
+        texto = _generar(con_historial=False)
 
     _historial.append({"role": "user", "content": mensaje_usuario})
     _historial.append({"role": "assistant", "content": texto})

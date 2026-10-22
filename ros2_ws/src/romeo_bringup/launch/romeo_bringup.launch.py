@@ -32,7 +32,7 @@ def _auto_configure_and_activate(lifecycle_node):
 
 # IP de la maquina donde corren los modelos. Se puede cambiar sin tocar
 # este archivo con la variable de entorno ROMEO_PC.
-PC = os.environ.get('ROMEO_PC', '10.143.161.32')
+PC = os.environ.get('ROMEO_PC', '192.168.0.218')
 
 
 def generate_launch_description():
@@ -43,10 +43,10 @@ def generate_launch_description():
         DeclareLaunchArgument('mic_activo', default_value='true',
                                description='false desactiva el STT y deja solo el teclado'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
-        DeclareLaunchArgument('chat_model', default_value='llama3.2:1b'),
+        DeclareLaunchArgument('chat_model', default_value='romeo-qwen-v2'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
-        DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),
+        DeclareLaunchArgument('trivia_corrector_model', default_value='romeo-qwen-v2'),
         # DONDE VIVEN LAS IA. Por defecto, en la PC: el LLM, el STT y el TTS
         # corren alli y la Pi los consume por HTTP. Esa es la configuracion
         # real del robot -- con todo dentro, la Pi iba a 3.3 GB de RAM y 76%

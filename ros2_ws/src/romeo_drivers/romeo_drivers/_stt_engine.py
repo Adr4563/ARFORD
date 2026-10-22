@@ -226,14 +226,18 @@ class ReconocedorVoz:
             print(f"[STT] VAD no disponible: {e}")
             return False
 
-    def cargar(self):
+    def cargar(self, local=False):
         """Carga el modelo de reconocimiento. Devuelve True si quedo listo.
         Idempotente.
 
         Con `servidor` configurado NO se carga: whisper-small son 800 MB de
         RAM en una Pi que solo tiene 4 nucleos, y si se transcribe en otra
-        maquina ese modelo no se usa nunca. Solo se carga el VAD."""
-        if self.servidor:
+        maquina ese modelo no se usa nunca. Solo se carga el VAD.
+
+        `local=True` lo carga igual: es el respaldo de transcribir() cuando el
+        servidor no contesta. Sin esto, el respaldo usaba un reconocedor que
+        nunca se habia cargado y fallaba con 'NoneType' en cada frase."""
+        if self.servidor and not local:
             return self.cargar_vad()
         if self._recognizer is not None:
             return True
@@ -379,7 +383,7 @@ class ReconocedorVoz:
             if texto is not None:
                 return texto.strip()
 
-        if not self.cargar():
+        if not self.cargar(local=True):
             return ""
         if samples is None or len(samples) == 0:
             return ""

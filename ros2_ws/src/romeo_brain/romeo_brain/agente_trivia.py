@@ -21,7 +21,7 @@ from . import llama_client
 
 # Modelo que revisa las respuestas de trivia que la comparacion de texto da
 # por incorrectas (ver _evaluar_con_llm). Vacio = sin segunda opinion.
-CORRECTOR_LLM = os.environ.get("TRIVIA_CORRECTOR_MODEL", "romeo")
+CORRECTOR_LLM = os.environ.get("TRIVIA_CORRECTOR_MODEL", "romeo-qwen-v2")
 
 # Los ejemplos no son adorno: sin ellos un modelo de 1B DESCRIBE la
 # instruccion en vez de cumplirla ("Felicita a tu interlocutor...") o se
@@ -75,7 +75,9 @@ def comentar(pregunta, esperada, respuesta_usuario, acerto):
     # "Romeo:" a su propia respuesta.
     if texto.lower().startswith("romeo:"):
         texto = texto.split(":", 1)[1].strip()
-    texto = texto.strip('"').strip()
+    # Y a veces sigue copiandolo despues de su frase ("Pregunta: ... La
+    # persona dijo: ..."): se queda solo la primera.
+    texto = llama_client.primera_frase(texto.strip('"'))
 
     # Una respuesta vacia o kilometrica no sirve: mejor la frase fija.
     if not texto or len(texto) > 200:

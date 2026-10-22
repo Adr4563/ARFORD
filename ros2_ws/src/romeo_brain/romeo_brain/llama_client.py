@@ -16,13 +16,14 @@ ir diciendo la frase mientras llega. Parsear SSE a mano solo añadía código
 y un camino más donde fallar."""
 
 import os
+import re
 import time
 
 import requests
 
 CHAT_SERVER_HOST = os.environ.get("CHAT_SERVER_HOST", "http://localhost:11434")
 
-CHAT_MODEL = os.environ.get("CHAT_MODEL", "llama3.2:1b")
+CHAT_MODEL = os.environ.get("CHAT_MODEL", "romeo-qwen-v2")
 
 # Tope de tokens por respuesta. Con 50 las frases se cortaban a la mitad
 # ("...y es lo mas importante que estoy con"), porque 50 tokens son unas 35
@@ -32,6 +33,26 @@ CHAT_MODEL = os.environ.get("CHAT_MODEL", "llama3.2:1b")
 # un discurso: la voz tarda ~1 s cada 4 palabras, asi que una respuesta larga
 # se hace eterna de escuchar.
 MAX_TOKENS = int(os.environ.get("ROMEO_MAX_TOKENS", "120"))
+
+
+# Por debajo de esto la primera frase es solo una exclamacion ("¡Hola!",
+# "¡Claro!") y se le añade la siguiente para que diga algo.
+_FRASE_MINIMA = 25
+
+
+def primera_frase(texto):
+    """Lo que Romeo dice en voz alta: UNA frase.
+
+    El modelo pequeño se alarga: cierra con un parrafo de relleno ("Si deseas
+    hablar más... no dudes en pedirlo") o, en la trivia, copia el formato del
+    prompt ("Pregunta: ... La persona dijo: ..."). Se corta en el primer
+    salto de linea y despues en el primer final de frase."""
+    texto = (texto or "").strip().split("\n")[0].strip()
+    partes = re.split(r"(?<=[.!?])\s+", texto)
+    frase = partes[0]
+    if len(frase) < _FRASE_MINIMA and len(partes) > 1:
+        frase = f"{frase} {partes[1]}"
+    return frase.strip()
 
 
 def generar_respuesta(mensajes, temperature=0.3, max_tokens=MAX_TOKENS, modelo=None):
