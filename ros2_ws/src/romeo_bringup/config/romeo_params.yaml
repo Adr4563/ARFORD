@@ -134,10 +134,7 @@ orchestrator_node:
     #   SER  voz   (modelo en la PC, sobre el audio de la frase -- ver
     #               romeo_drivers/_ser_engine.py y ROMEO_SER_MODELO)
     # Quitar una la desactiva, p. ej. ["TER", "FER"].
-    # Solo FER por ahora: el SER del microfono de la placa salia "tristeza"
-    # todo el tiempo (la voz llega muy debil) y el TER solo ve palabras
-    # sueltas. Para volver a usarlas, agregarlas a la lista.
-    fuentes_percepcion: ["FER"]
+    fuentes_percepcion: ["TER", "FER", "SER"]
 
 # Los modelos de Ollama de orchestrator_node siguen siendo variables de
 # entorno (ver launch/romeo_bringup.launch.py).
