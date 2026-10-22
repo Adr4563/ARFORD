@@ -28,6 +28,12 @@ import time
 from ament_index_python.packages import get_package_share_directory
 
 CARAS_VALIDAS = {"happy", "sad", "angry", "content", "speaking", "countdown"}
+
+# Caras de EMOCION: su animacion se reproduce UNA vez y se queda quieta en
+# el ultimo cuadro. Antes se repetian en bucle mientras durara el animo, y la
+# emocion se veia una y otra vez durante la conversacion. Las de estado
+# (content, speaking, countdown) siguen en bucle: son "en espera".
+CARAS_UNA_VEZ = {"happy", "sad", "angry"}
 MPV_SOCKET = "/tmp/romeo_face.sock"
 
 
@@ -96,7 +102,11 @@ class Display:
             pass
         self._proceso = subprocess.Popen(
             [
+                # --keep-open=yes: al terminar una cara que no se repite,
+                # mpv se queda en su ultimo cuadro en vez de dejar la
+                # pantalla en negro.
                 "mpv", "--fs", "--vo=drm", "--idle=yes", "--loop-file=inf",
+                "--keep-open=yes",
                 "--no-osc", "--no-input-default-bindings", "--really-quiet",
                 # --no-audio: los videos de las caras no llevan sonido, pero
                 # sin esto mpv abre igual el altavoz de la placa y, como corre
@@ -115,8 +125,10 @@ class Display:
                 break
             time.sleep(0.1)
 
-    def _mostrar_cara_drm(self, ruta):
+    def _mostrar_cara_drm(self, ruta, una_vez=False):
         self._asegurar_visor_drm(ruta)
+        # El bucle se fija ANTES de cargar, para que valga para esta cara.
+        self._mpv_enviar(["set_property", "loop-file", "no" if una_vez else "inf"])
         self._mpv_enviar(["loadfile", ruta, "replace"])
 
     def _detener_drm(self):
@@ -173,7 +185,7 @@ class Display:
             self._warn(f"[display] No existe {ruta}")
             return
         if self.usa_drm:
-            self._mostrar_cara_drm(ruta)
+            self._mostrar_cara_drm(ruta, una_vez=nombre in CARAS_UNA_VEZ)
         else:
             self._mostrar_cara_tk(ruta)
 
