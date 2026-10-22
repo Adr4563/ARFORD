@@ -57,6 +57,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import numpy as np  # noqa: E402
 from flask import Flask, jsonify, request  # noqa: E402
 
+from romeo_drivers._ser_engine import ClasificadorVoz  # noqa: E402
 from romeo_drivers._stt_engine import HILOS, IDIOMA, TAM, ReconocedorVoz  # noqa: E402
 
 PUERTO = int(os.environ.get("ROMEO_STT_PUERTO", "8082"))
@@ -64,6 +65,8 @@ HOST = os.environ.get("ROMEO_STT_HOST", "0.0.0.0")
 
 app = Flask(__name__)
 reconocedor = ReconocedorVoz()
+# SER: la emocion de la voz, sobre el mismo audio (ver _ser_engine.py).
+clasificador_voz = ClasificadorVoz()
 
 # Ver el punto 2 del docstring: transcribir de a una.
 _lock = threading.Lock()
@@ -102,6 +105,8 @@ def salud():
             "hilos": reconocedor.hilos,
             "idioma": reconocedor.idioma,
             "segundos_carga": round(reconocedor.segundos_carga, 2),
+            "ser": clasificador_voz.modelo if clasificador_voz.listo else None,
+            "ser_error": clasificador_voz.error,
         }
     )
 
@@ -135,11 +140,18 @@ def transcribir():
     t0 = time.perf_counter()
     with _lock:
         texto = reconocedor.transcribir(samples, sr)
+        # SER sobre el mismo audio. Solo si hubo texto: sin palabras no hay
+        # frase del usuario que juzgar.
+        ser = clasificador_voz.clasificar(samples, sr) if texto else None
     tardanza = time.perf_counter() - t0
 
     return jsonify(
         {
             "texto": texto,
+            # Emocion de la voz como categorias (claves de estado_afectivo):
+            # {"etiquetas": [...], "probabilidades": [...]}, o null.
+            "ser": ({"etiquetas": ser[0], "probabilidades": ser[1]}
+                    if ser else None),
             "duracion_audio": round(duracion, 2),
             "segundos_proceso": round(tardanza, 2),
             "rtf": round(tardanza / duracion, 2) if duracion else None,
@@ -148,12 +160,19 @@ def transcribir():
 
 
 def main():
-    print(f"[STT] cargando whisper-{TAM} ({HILOS} hilos, idioma={IDIOMA})...")
+    print(f"[STT] cargando {reconocedor._nombre_modelo()} ({HILOS} hilos, idioma={IDIOMA})...")
     if not reconocedor.cargar():
         # Falla ruidosa a propósito: un servicio que arranca sin modelo solo
         # sirve para devolver 503 a todo el mundo. Mejor no arrancar.
         print("[STT] no se pudo cargar el modelo; el servicio no arranca")
         return 1
+
+    print(f"[SER] cargando {clasificador_voz.modelo}...")
+    if clasificador_voz.cargar():
+        print("[SER] listo: la emocion de la voz viaja con cada texto")
+    else:
+        print(f"[SER] desactivado ({clasificador_voz.error}); "
+              f"el STT sigue sin SER. ¿pip install transformers torch?")
 
     print(f"[STT] escuchando en http://{HOST}:{PUERTO}")
     print(f"[STT]   GET  /salud")

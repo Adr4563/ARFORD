@@ -17,3 +17,18 @@
 
 string text
 string source   # "voice_board" | "stdin"
+
+# Ventana de percepcion afectiva de ESTA frase (tesis de Rocha et al.,
+# sec. 3.4.1.2): cuando empezo y cuando termino de hablar el usuario, en
+# segundos de reloj (time.time()) de la Pi. orchestrator_node pide con
+# ellos el resumen de la camara (PerceiveFace) de ese mismo intervalo.
+# 0.0 cuando no hay ventana (entrada por teclado).
+float64 t_inicio
+float64 t_fin
+
+# SER: emocion de la VOZ de esta frase, calculada en la PC sobre el mismo
+# audio que se transcribe (romeo_drivers/_ser_engine.py). Categorias con
+# probabilidades, en claves de estado_afectivo.ANCLAJES. Vacios si no hubo
+# SER (teclado, frase muy corta o servidor sin modelo).
+string[] ser_etiquetas
+float32[] ser_probabilidades

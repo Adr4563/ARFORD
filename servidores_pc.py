@@ -6,7 +6,8 @@
 1. Si faltan, baja los modelos a ~/.romeo/modelos (una sola vez):
      - STT: NeMo FastConformer espanol  (asr/sherpa-onnx-nemo-...-es-1424-int8)
      - TTS: voz es_MX-claude-high       (vits-piper-es_MX-claude-high)
-2. Arranca el servidor de STT (8082) y el de TTS (8083).
+2. Arranca el servidor de STT (8082, que tambien hace el SER: la emocion de
+   la voz) y el de TTS (8083).
 3. Comprueba Ollama, STT y TTS, y dice que IP poner en la Pi.
 
 Ctrl+C apaga los dos servidores.
@@ -86,6 +87,17 @@ def main():
     print()
     for nombre, url in servicios:
         print(f"  {'OK   ' if responde(url) else 'FALLA'}  {nombre}")
+    # SER (emocion de la voz) corre dentro del servidor de STT.
+    try:
+        import json
+        salud = json.load(urllib.request.urlopen("http://localhost:8082/salud", timeout=3))
+        if salud.get("ser"):
+            print(f"  OK     SER ({salud['ser']})")
+        else:
+            print(f"  FALLA  SER: {salud.get('ser_error')}  "
+                  f"-> pip install transformers torch")
+    except Exception:
+        pass
     print(f"\nEn la Pi:\n  ROMEO_PC={ip_para_la_pi()} ros2 launch romeo_bringup romeo_bringup.launch.py")
     print("\nCtrl+C para apagar los servidores.\n")
 

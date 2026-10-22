@@ -294,7 +294,13 @@ class CommunicationNode(LifecycleNode):
             self.get_logger().debug(f"[mic] descartado (Romeo suena): {texto!r}")
             return
         self.get_logger().info(f"[mic] transcrito: {texto!r}")
-        self._publicar_entrada(texto.strip(), 'voice_board')
+        # La ventana de la frase va con el texto: orchestrator_node la usa
+        # para pedir lo que vio la camara mientras el usuario hablaba.
+        # Y la emocion de la voz (SER), que calcula la PC con el mismo audio.
+        self._publicar_entrada(texto.strip(), 'voice_board',
+                               self._stt.ultima_frase_inicio,
+                               self._stt.ultima_frase_fin,
+                               self._stt.ultima_ser)
 
     # ─── Anti-realimentación micrófono/altavoz ─────────────────────────
 
@@ -338,12 +344,17 @@ class CommunicationNode(LifecycleNode):
 
     # ─── Entrada de texto (stdin) -> /romeo/user_input ──────────────────
 
-    def _publicar_entrada(self, texto, source):
+    def _publicar_entrada(self, texto, source, t_inicio=0.0, t_fin=0.0, ser=None):
         if not self._activo or not texto:
             return
         msg = UserInput()
         msg.text = texto
         msg.source = source
+        msg.t_inicio = float(t_inicio)
+        msg.t_fin = float(t_fin)
+        if ser:
+            msg.ser_etiquetas = list(ser[0])
+            msg.ser_probabilidades = [float(p) for p in ser[1]]
         self._pub_user_input.publish(msg)
 
     def _hilo_stdin(self):

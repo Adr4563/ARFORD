@@ -164,6 +164,15 @@ class ReconocedorVoz:
         self._intento_fallido = False
         self.segundos_carga = 0.0
         self.ultima_ganancia = 1.0   # cuanto amplifico la ultima transcripcion
+        # Ventana de la ultima frase (time.time()): cuando empezo y termino
+        # de hablar el usuario. Se fijan justo antes de llamar a
+        # al_transcribir(), en el mismo hilo, asi que el callback puede
+        # leerlas sin carreras. Ver communication_node._on_texto_voz.
+        self.ultima_frase_inicio = 0.0
+        self.ultima_frase_fin = 0.0
+        # SER de la ultima frase, tal como lo devolvio el servidor de la PC:
+        # (etiquetas, probabilidades), o None. Mismo criterio que arriba.
+        self.ultima_ser = None
 
     # ------------------------------------------------------------------ carga
 
@@ -359,7 +368,12 @@ class ReconocedorVoz:
                 f"{self.servidor}/transcribir", data=buf.getvalue(),
                 headers={"Content-Type": "audio/wav"})
             with urllib.request.urlopen(req, timeout=TIMEOUT_REMOTO) as r:
-                return json.loads(r.read()).get("texto", "")
+                respuesta = json.loads(r.read())
+            ser = respuesta.get("ser") or {}
+            if ser.get("etiquetas") and ser.get("probabilidades"):
+                self.ultima_ser = (list(ser["etiquetas"]),
+                                   [float(p) for p in ser["probabilidades"]])
+            return respuesta.get("texto", "")
         except Exception as e:  # noqa: BLE001 - sin respaldo, se pierde la frase
             print(f"[STT] el servidor {self.servidor} no contesta ({e}); "
                   f"la frase se pierde (no hay STT en la Pi)")
@@ -378,6 +392,7 @@ class ReconocedorVoz:
 
         # Con un servidor configurado se transcribe SOLO alla. Si no
         # contesta, la frase se pierde: no hay modelo en la Pi.
+        self.ultima_ser = None
         if self.servidor:
             samples = self._normalizar(samples)
             texto = self._transcribir_remoto(samples, sample_rate)
@@ -540,7 +555,13 @@ class ReconocedorVoz:
                     while not self._vad.empty():
                         frase = self._vad.front.samples
                         self._vad.pop()
+                        # El VAD entrega la frase al detectar el silencio
+                        # final, asi que termino hace ~MIN_SILENCIO.
+                        fin = time.time() - MIN_SILENCIO
+                        inicio = fin - len(frase) / SAMPLE_RATE
                         texto = self.transcribir(frase)
+                        self.ultima_frase_inicio = inicio
+                        self.ultima_frase_fin = fin
                         if texto:
                             al_transcribir(texto)
         except Exception as e:  # noqa: BLE001

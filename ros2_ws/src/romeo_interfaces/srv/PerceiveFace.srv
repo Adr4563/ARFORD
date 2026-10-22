@@ -1,0 +1,15 @@
+# FER de una ventana de percepcion afectiva (tesis de Rocha et al.,
+# sec. 3.4.1.2 y fig. 14). visualization_faces_node clasifica la cara del
+# usuario de fondo (~2 fps) y guarda las probabilidades de cada cuadro; este
+# servicio devuelve el RESUMEN de los cuadros entre t_inicio y t_fin:
+# mediana por emocion, normalizada para que sume 1 (sec. 4.1.4.1).
+#
+# No abre la camara ni espera: los cuadros ya estan capturados, asi que
+# responde en milisegundos. cuadros=0 si no se vio ninguna cara en esa
+# ventana (o la camara no esta disponible).
+float64 t_inicio
+float64 t_fin
+---
+string[] etiquetas       # las 8 de FER+: neutral, felicidad, sorpresa, tristeza, enojo, asco, miedo, desprecio
+float32[] probabilidades # mismo orden que etiquetas
+int32 cuadros            # cuantos cuadros con cara entraron en el resumen

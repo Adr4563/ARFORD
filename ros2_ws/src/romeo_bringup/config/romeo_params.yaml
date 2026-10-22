@@ -95,6 +95,19 @@ communication_node:
     # que es 10x mas pequeño.
     stt_hilos: 3
 
+visualization_faces_node:
+  ros__parameters:
+    # FER de la ventana de percepción afectiva (tesis de Rocha et al.): la
+    # cámara queda abierta clasificando la cara del usuario de fondo, y con
+    # cada frase orchestrator_node pide el resumen de lo que vio mientras
+    # hablaba. false = solo se usa la cámara en el juego de caras.
+    fer_continuo: true
+    # Cuadros por segundo. 2 alcanza para una frase de 2-5 s (4-10
+    # cuadros) sin cargar la CPU de la Pi, que comparte con la voz y ROS.
+    fer_fps: 2.0
+    # Segundos de más a cada lado de la frase.
+    fer_margen_seg: 0.5
+
 moving_control_node:
   ros__parameters:
     carrito_port: "/dev/ttyACM0"
@@ -114,6 +127,14 @@ orchestrator_node:
     # Las variables ROMEO_EMPATIA, ROMEO_ANIMO_V/A/D, ROMEO_DECAIMIENTO y
     # ROMEO_LATENCIA, si están definidas, pisan el valor del perfil.
     perfil_afectivo: "OPTIMISTIC"
+    # Fuentes de la ventana de percepción que entran a PULSE (tesis, sec.
+    # 3.4.1). Se fusionan ponderando por confianza (ec. 4.4).
+    #   TER  texto (palabras clave, en la Pi)
+    #   FER  cara  (cámara de fondo, en la Pi -- ver visualization_faces_node)
+    #   SER  voz   (modelo en la PC, sobre el audio de la frase -- ver
+    #               romeo_drivers/_ser_engine.py y ROMEO_SER_MODELO)
+    # Quitar una la desactiva, p. ej. ["TER", "FER"].
+    fuentes_percepcion: ["TER", "FER", "SER"]
 
 # Los modelos de Ollama de orchestrator_node siguen siendo variables de
 # entorno (ver launch/romeo_bringup.launch.py).

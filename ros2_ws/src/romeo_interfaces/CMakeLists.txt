@@ -18,6 +18,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Speak.srv"
   "srv/PlayMusic.srv"
   "srv/DetectEmotion.srv"
+  "srv/PerceiveFace.srv"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

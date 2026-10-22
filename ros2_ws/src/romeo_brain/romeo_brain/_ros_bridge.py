@@ -13,7 +13,7 @@ integración con hardware/framework.
 import time
 
 from romeo_interfaces.msg import FaceCommand, MotionCommand
-from romeo_interfaces.srv import DetectEmotion, PlayMusic, Speak
+from romeo_interfaces.srv import DetectEmotion, PerceiveFace, PlayMusic, Speak
 
 
 class RosBridge:
@@ -28,6 +28,7 @@ class RosBridge:
         self.speak_client = node.create_client(Speak, '/romeo/speak')
         self.music_client = node.create_client(PlayMusic, '/romeo/play_music')
         self.emotion_client = node.create_client(DetectEmotion, '/romeo/detect_emotion')
+        self.perceive_client = node.create_client(PerceiveFace, '/romeo/perceive_face')
 
     # ─── El patrón central: llamar un servicio sin bloquear el proceso ──
 
@@ -125,6 +126,23 @@ class RosBridge:
         timeout = 40.0 if esperar else 5.0
         resp = self._llamar_servicio_sync(self.music_client, req, timeout_sec=timeout)
         return bool(resp and resp.reproducido)
+
+    def percibir_cara(self, t_inicio, t_fin):
+        """FER de la ventana de percepcion: lo que vio la camara entre
+        t_inicio y t_fin, resumido en una distribucion (mediana normalizada).
+        Responde al instante porque los cuadros ya estan capturados.
+
+        Devuelve (etiquetas, probabilidades, cuadros); cuadros=0 si no se
+        vio ninguna cara o la camara no esta."""
+        if not self.perceive_client.service_is_ready():
+            return [], [], 0
+        req = PerceiveFace.Request()
+        req.t_inicio = float(t_inicio)
+        req.t_fin = float(t_fin)
+        resp = self._llamar_servicio_sync(self.perceive_client, req, timeout_sec=2.0)
+        if resp is None:
+            return [], [], 0
+        return list(resp.etiquetas), list(resp.probabilidades), int(resp.cuadros)
 
     def detectar_emocion(self):
         """BLOQUEA varios segundos (ver el benchmark en DetectEmotion.srv).

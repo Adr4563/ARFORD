@@ -43,7 +43,7 @@ QUE NO HACE.
     un archivo al que mapear. La clave existe para que el contrato quede
     completo y se pueda llenar cuando haya musica afectiva.
   - Nunca mueve el carrito por tristeza o enojo. Un robot que retrocede
-    cuando el niño esta triste, o que avanza cuando esta "enojado", comunica
+    cuando el usuario esta triste, o que avanza cuando esta "enojado", comunica
     lo contrario de lo que se quiere. El unico gesto fisico es de alegria,
     y solo con el animo muy alto (L3-L4).
 
@@ -62,7 +62,7 @@ _EMOCION_DE_CARA = {"happy": "felicidad", "sad": "tristeza", "angry": "enojo"}
 
 # Instruccion de estilo para el LLM por emocion y nivel (1-2 suave, 3-4
 # intenso). No le dice al modelo QUE contestar, solo COMO: Romeo habla con
-# niños, asi que el "enojo" se expresa como seriedad tranquila, nunca como
+# personas de cualquier edad, asi que el "enojo" se expresa como seriedad tranquila, nunca como
 # agresividad, y la tristeza como ternura, nunca como desanimo.
 _TONOS = {
     "felicidad": (

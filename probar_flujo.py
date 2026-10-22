@@ -35,7 +35,7 @@ for mod, attrs in (
     ("romeo_interfaces.msg", {n: type(n, (), {}) for n in
                               ("UserInput", "FaceCommand", "MotionCommand")}),
     ("romeo_interfaces.srv", {n: type(n, (), {"Request": type("R", (), {})}) for n in
-                              ("DetectEmotion", "PlayMusic", "Speak")}),
+                              ("DetectEmotion", "PerceiveFace", "PlayMusic", "Speak")}),
 ):
     m = types.ModuleType(mod)
     for k, v in attrs.items():
@@ -129,6 +129,10 @@ class _Bridge:
     def mover(self, *a, **k):
         print("  [motores]")
         return True
+
+    def percibir_cara(self, t_inicio, t_fin):
+        # Por terminal no hay ventana de voz (t_fin=0), asi que no se llama.
+        return [], [], 0
 
     def detectar_emocion(self):
         # La camara no existe aca: se pide por teclado.

@@ -145,7 +145,7 @@ PERFILES = {
     "OPTIMISTIC":  {"empatia": 0.4, "animo_base": (0.40, 0.30, 0.20),
                     "decaimiento": 0.5, "latencia": 3.0},
     # Espejo del usuario: absorbe su estado entero. (Tesis, escenario 1.)
-    # Util para comparar en experimentos; poco recomendable con niños.
+    # Util para comparar en experimentos; poco recomendable fuera de experimentos.
     "EMPATHETIC":  {"empatia": 1.0, "animo_base": (0.20, 0.10, 0.00),
                     "decaimiento": 0.5, "latencia": 3.0},
 }
@@ -245,6 +245,24 @@ def percibir(probabilidades, etiquetas):
 
     Devuelve (vector_vad, confianza)."""
     return a_vad(probabilidades, etiquetas), confianza(probabilidades)
+
+
+def percibir_categorias(probabilidades, etiquetas):
+    """PULSE para una fuente CAT (el FER de la ventana de percepcion):
+    confianza por entropia (tesis, ec. 4.1-4.2) y conversion CAT -> VAD
+    pesada por TODA la distribucion (ec. 4.3).
+
+    Devuelve (vector_vad, confianza, dominante), donde `dominante` es la
+    etiqueta mas probable. (None, 0.0, None) si la distribucion viene
+    vacia o no coincide con las etiquetas."""
+    probs = [float(p) for p in (probabilidades or [])]
+    if not probs or len(probs) != len(etiquetas) or sum(probs) <= 0.0:
+        return None, 0.0, None
+    total = sum(probs)
+    probs = [p / total for p in probs]
+    vector, c = percibir(probs, etiquetas)
+    dominante = etiquetas[max(range(len(probs)), key=probs.__getitem__)]
+    return vector, c, dominante
 
 
 # Lo que devuelve DetectEmotion.srv, traducido a las claves de ANCLAJES.

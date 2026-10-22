@@ -43,7 +43,7 @@ for _mod, _attrs in (
     ("romeo_interfaces.msg", {n: type(n, (), {}) for n in
                               ("UserInput", "FaceCommand", "MotionCommand")}),
     ("romeo_interfaces.srv", {n: type(n, (), {"Request": type("R", (), {})})
-                              for n in ("DetectEmotion", "PlayMusic", "Speak")}),
+                              for n in ("DetectEmotion", "PerceiveFace", "PlayMusic", "Speak")}),
 ):
     _m = types.ModuleType(_mod)
     for _k, _v in _attrs.items():

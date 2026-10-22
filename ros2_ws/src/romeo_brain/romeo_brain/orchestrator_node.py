@@ -110,7 +110,7 @@ _PIDE_EMOCIONES = (
 
 
 # Saludo de apertura de cada sesión -- se elige uno al azar, así que dos
-# niños seguidos no oyen lo mismo. Todas tutean (no vosean): el fine-tune
+# usuarios seguidos no oyen lo mismo. Todas tutean (no vosean): el fine-tune
 # de Chat libre que usa el robot está entrenado en tuteo, y mezclar las dos
 # formas en la misma conversación suena raro.
 # La presentacion va SEPARADA del saludo: primero Romeo dice quien es y que
@@ -123,7 +123,7 @@ _PIDE_EMOCIONES = (
 # para elegir.
 
 
-# Lo que dice después de que el niño da su nombre: presenta las dos cosas
+# Lo que dice después de que el usuario da su nombre: presenta las dos cosas
 # que sabe hacer (trivia y charlar) y le deja elegir. Antes era UNA sola
 # frase fija; ahora son 5 variantes al azar.
 
@@ -135,12 +135,28 @@ PAUSA_ANTES_ACCION_FISICA = 1
 # termine de oír la frase y ponga la cara.
 PAUSA_POSAR = 1
 
+# Cuanto se ve la cara de una emocion (happy/sad/angry) antes de volver a
+# 'content'. Corta a proposito: la emocion se EXPRESA como una reaccion a
+# lo que dijo el usuario, no se queda pegada en la cara mientras el animo
+# decae. Y solo se muestra en el turno en que se percibio (ver
+# _mostrar_cara_reposo): antes reaparecia en cada turno hasta que el animo
+# volvia a la base.
+DURACION_EMOCION = float(os.environ.get("ROMEO_DURACION_EMOCION", "1.25"))
+
 # Frases que, a mitad de una tanda de trivia, señalan que el usuario se
 # quiere ir a otra cosa -- fallback de _quiere_salir_trivia() cuando no se
 # puede mirar las listas de frases de arriba (ver ese método).
 _PALABRAS_RESPUESTA_CORTA = 4
 
 RUTAS = ["TRIVIA", "CHAT_LIBRE"]
+
+# Fuentes de la ventana de percepcion afectiva (tesis de Rocha et al.,
+# sec. 3.4.1). Todas entregan una observacion por frase y PULSE las fusiona
+# (ec. 4.4). Ver _percibir_turno().
+#   TER  texto  -> ter.py (palabras clave), en la Pi
+#   FER  cara   -> FER+ sobre la camara de fondo, en la Pi (PerceiveFace)
+#   SER  voz    -> modelo de la PC sobre el audio de la frase (_ser_engine)
+FUENTES = ("TER", "FER", "SER")
 
 # Cada cuanto se reintenta el arranque mientras communication_node no pueda
 # hablar, y cuanto se espera como maximo (ver _arrancar). En la Pi tarda ~11 s
@@ -162,6 +178,12 @@ class OrchestratorNode(Node):
         # romeo_params.yaml; las variables ROMEO_EMPATIA etc. lo afinan.
         self.declare_parameter('perfil_afectivo', estado_afectivo.PERFIL_POR_DEFECTO)
         perfil = self.get_parameter('perfil_afectivo').value
+        # Que fuentes de la ventana de percepcion entran a PULSE. Quitar una
+        # de la lista la desactiva sin tocar codigo (p. ej. ["TER"] para
+        # probar solo con texto).
+        self.declare_parameter('fuentes_percepcion', list(FUENTES))
+        self._fuentes = {str(f).strip().upper()
+                         for f in self.get_parameter('fuentes_percepcion').value}
         # El animo de Romeo, que persiste entre turnos y decae solo. Vive
         # en el nodo y no en self.estado porque self.estado se reconstruye
         # entero en cada sesion, y lo que se quiere del afecto es
@@ -178,6 +200,10 @@ class OrchestratorNode(Node):
         # Lecturas afectivas del turno en curso, pendientes de
         # fusionar. Ver _aplicar_afecto().
         self._lecturas_turno = []
+        # True si en este turno el animo cambio por algo que se percibio:
+        # solo entonces se muestra la cara de la emocion (una vez).
+        self._emocion_pendiente = False
+        self._timer_emocion = None
         self.estado = None
         self._intentos_arranque = 0
         self._turno_lock = threading.Lock()
@@ -308,11 +334,26 @@ class OrchestratorNode(Node):
         perciben varias modalidades, el animo se mueve una vez con la
         media ponderada de todas y no una vez por cada una.
 
-        fusionar() se usa tal cual: ya filtra las lecturas nulas o sin
-        confianza y, con una sola, devuelve esa misma."""
-        if not getattr(self, "_lecturas_turno", None):
+        Cada lectura es (fuente, vector_vad, confianza, dominante).
+
+        Si TODAS las fuentes vieron neutral, no se mueve el animo: neutral
+        es el origen del espacio VAD, y como el animo base de Romeo es
+        positivo, acercarlo al origen se veria como tristeza. Basta con que
+        una fuente exprese algo para que se fusionen todas, y entonces las
+        neutras moderan la lectura, como en la tesis."""
+        lecturas = getattr(self, "_lecturas_turno", None)
+        if not lecturas:
             return
+        if all(dom == "neutral" for _f, _v, _c, dom in lecturas):
+            self._lecturas_turno = []
+            return
+        self._lecturas_turno = [(v, c) for _f, v, c, _d in lecturas]
         vector = estado_afectivo.fusionar(self._lecturas_turno)
+        if vector is not None and len(self._lecturas_turno) > 1:
+            self.get_logger().info(
+                f"[afecto] usuario (fusion de "
+                f"{'+'.join(f for f, *_ in lecturas)}): "
+                f"v={vector[0]:+.2f} a={vector[1]:+.2f} d={vector[2]:+.2f}")
         # La confianza con la que se cree la lectura fusionada es la mayor
         # de las que entraron: si la camara estaba segura, que el texto no
         # lo estuviera no debe frenar la reaccion.
@@ -322,10 +363,53 @@ class OrchestratorNode(Node):
             return
         antes = self._afecto.vector
         self._afecto.empatizar(vector, conf)
+        self._emocion_pendiente = True
         v, a, d = self._afecto.vector
         self.get_logger().info(
             f"[afecto] v {antes[0]:+.2f}->{v:+.2f}  "
             f"a {antes[1]:+.2f}->{a:+.2f}  d {antes[2]:+.2f}->{d:+.2f}")
+
+    def _percibir_cara(self, t_inicio, t_fin):
+        """FER de la ventana de percepcion afectiva (tesis, sec. 3.4.1.2):
+        lo que vio la camara MIENTRAS el usuario decia esta frase.
+
+        La ventana la marca el propio usuario: t_inicio/t_fin vienen con el
+        mensaje (communication_node los saca del VAD). Por teclado no hay
+        ventana y no se mira la camara.
+
+        visualization_faces_node ya resumio los cuadros (mediana
+        normalizada, sec. 4.1.4.1); aca se aplica PULSE: confianza por
+        entropia (ec. 4.1-4.2) y CAT -> VAD con la distribucion entera
+        (ec. 4.3). La lectura queda en _lecturas_turno para la fusion (ver
+        _aplicar_afecto, que tambien decide que hacer si todo es neutral)."""
+        if not t_fin:
+            return
+        etiquetas, probs, cuadros = self._bridge.percibir_cara(t_inicio, t_fin)
+        if cuadros <= 0:
+            self.get_logger().info(
+                f"[afecto] la camara no vio cara en la frase ({t_fin - t_inicio:.1f} s)")
+            return
+        vector, c, dominante = estado_afectivo.percibir_categorias(probs, etiquetas)
+        if vector is None:
+            return
+        self.get_logger().info(
+            f"[afecto] la camara vio {dominante} (confianza {c:.2f}, "
+            f"{cuadros} cuadros en {t_fin - t_inicio:.1f} s)")
+        self._lecturas_turno.append(("FER", vector, c, dominante))
+
+    def _percibir_voz(self, ser):
+        """SER: la emocion de la VOZ de esta frase. La calculo la PC con el
+        mismo audio que transcribio (_ser_engine.py) y llega en el mensaje
+        como categorias con probabilidades; aca se aplica PULSE igual que
+        al FER: entropia (4.1-4.2) y CAT -> VAD (4.3)."""
+        if not ser or not ser[0]:
+            return
+        vector, c, dominante = estado_afectivo.percibir_categorias(ser[1], ser[0])
+        if vector is None:
+            return
+        self.get_logger().info(
+            f"[afecto] la voz suena a {dominante} (confianza {c:.2f})")
+        self._lecturas_turno.append(("SER", vector, c, dominante))
 
     def _cara_reposo(self):
         """La cara con la que Romeo se queda ESCUCHANDO, segun como se
@@ -344,6 +428,31 @@ class OrchestratorNode(Node):
 
         La decide el AEB (ver _comportamiento)."""
         return self._comportamiento()["cara"]
+
+    def _mostrar_cara_reposo(self, cara=None):
+        """Pone la cara de reposo. Si el animo cambio en este turno, muestra
+        la cara de esa emocion DURACION_EMOCION segundos y vuelve sola a
+        'content'; si no, pone 'content' directamente.
+
+        La vuelta va en un temporizador para no frenar el turno, y solo
+        ocurre si la cara sigue siendo esa: si mientras tanto Romeo empezo
+        a hablar ('speaking'), no se pisa."""
+        cara = cara or self._cara_reposo()
+        if cara == "content" or not self._emocion_pendiente:
+            self._bridge.mostrar_cara("content")
+            return
+        self._emocion_pendiente = False
+        self._bridge.mostrar_cara(cara)
+        if self._timer_emocion is not None:
+            self._timer_emocion.cancel()
+
+        def _volver():
+            if self._bridge._cara_actual == cara:
+                self._bridge.mostrar_cara("content")
+
+        self._timer_emocion = threading.Timer(DURACION_EMOCION, _volver)
+        self._timer_emocion.daemon = True
+        self._timer_emocion.start()
 
     def _comportamiento(self):
         """AEB: lo que el animo actual de Romeo pide expresar (cara de
@@ -431,7 +540,7 @@ class OrchestratorNode(Node):
             self._bridge.mostrar_cara("speaking")
 
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara(self._cara_reposo())
+        self._mostrar_cara_reposo()
         return True
 
     def _cerrar_tanda(self):
@@ -445,7 +554,7 @@ class OrchestratorNode(Node):
         self.get_logger().info(f"Asistente: {cierre}")
         self._bridge.hablar(cierre)
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara(self._cara_reposo())
+        self._mostrar_cara_reposo()
 
     def _pedir_una_emocion(self, objetivo):
         """Pide UNA cara, la captura y la juzga.
@@ -453,7 +562,7 @@ class OrchestratorNode(Node):
         Devuelve True/False según acierte, o None si la cámara no vio
         ninguna cara (eso no cuenta para el marcador: no es culpa del
         usuario)."""
-        # Romeo pone primero la cara que pide, para que el niño la imite.
+        # Romeo pone primero la cara que pide, para que el usuario la imite.
         self._bridge.mostrar_cara(agente_trivia.cara_para_emocion(objetivo) or "content")
         pedido = frases.una(frases.PEDIDOS_EMOCION[objetivo])
         self.get_logger().info(f"Asistente: {pedido}")
@@ -462,7 +571,7 @@ class OrchestratorNode(Node):
 
         detectada, confianza, ok = self._bridge.detectar_emocion()
         # Lo que ve la camara aca NO entra al animo de Romeo (ROSE). En
-        # este juego el niño IMITA la cara que Romeo le pide: no esta
+        # este juego el usuario IMITA la cara que Romeo le pide: no esta
         # mostrando lo que siente. Si entrara, pedir "pon cara triste"
         # entristeceria a Romeo, que es justo lo contrario de una lectura
         # afectiva. Para percibir al usuario por la camara hace falta una
@@ -530,7 +639,7 @@ class OrchestratorNode(Node):
         self.get_logger().info(f"Asistente: {cierre}")
         self._bridge.hablar(cierre)
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara(self._cara_reposo())
+        self._mostrar_cara_reposo()
 
     def _iniciar_tanda(self, categoria):
         estado = self.estado
@@ -646,20 +755,26 @@ class OrchestratorNode(Node):
             self.get_logger().info(f"Asistente [{pendiente['cara']}]: {pendiente['pregunta']}")
             self._bridge.hablar(f"Retomamos donde quedamos. {pendiente['pregunta']}")
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara(self._cara_reposo())
+        self._mostrar_cara_reposo()
 
     def _manejar_chat_libre(self, mensaje_usuario):
         # El AEB se consulta ANTES de responder: el animo ya incluye lo que
         # el TER leyo de este mensaje (ver _procesar_turno), asi que el tono
         # de la respuesta reacciona a lo que el usuario acaba de decir.
         comp = self._comportamiento()
-        self._bridge.mostrar_cara("speaking")
+        # En la CONVERSACION la cara es solo el animo de Romeo: sin
+        # 'speaking' y sin el destello de DURACION_EMOCION. Se pone antes
+        # de responder y se queda durante todo el turno, asi la cara cuenta
+        # como se siente mientras habla y mientras escucha. (En la trivia y
+        # el juego de caras sigue el comportamiento de siempre.)
+        if self._timer_emocion is not None:
+            self._timer_emocion.cancel()
+        self._emocion_pendiente = False
+        self._bridge.mostrar_cara(comp["cara"])
         texto_final = self.responder(mensaje_usuario, tono=comp["tono"])
         self.get_logger().info(f"Asistente: {texto_final}")
         self._bridge.hablar(texto_final)
-        # Mismo orden que el resto del robot: voz -> cara -> movimiento.
-        time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara(comp["cara"])
+        # Mismo orden que el resto del robot: voz -> movimiento.
         if comp["movimiento"]:
             self.get_logger().info(f"[aeb] gesto: {comp['movimiento']}")
             self._bridge.mover(comp["movimiento"])
@@ -687,7 +802,7 @@ class OrchestratorNode(Node):
         self.get_logger().info(f"Asistente: {apertura}")
         self._bridge.hablar(apertura)
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._bridge.mostrar_cara(self._cara_reposo())
+        self._mostrar_cara_reposo()
 
         self.estado = {
             "esperando_nombre": True,
@@ -724,9 +839,13 @@ class OrchestratorNode(Node):
         # (necesario para que las llamadas a servicio internas no
         # deadlockeen, ver el docstring del módulo).
         with self._turno_lock:
-            self._procesar_turno((msg.text or "").strip())
+            ser = None
+            if msg.ser_etiquetas:
+                ser = (list(msg.ser_etiquetas), list(msg.ser_probabilidades))
+            self._procesar_turno((msg.text or "").strip(),
+                                 msg.t_inicio, msg.t_fin, ser)
 
-    def _procesar_turno(self, entrada):
+    def _procesar_turno(self, entrada, t_inicio=0.0, t_fin=0.0, ser=None):
         if self.estado is None or not entrada:
             return
 
@@ -748,20 +867,26 @@ class OrchestratorNode(Node):
         # de dentro, no reentradas -- ROSE no se puede actualizar dos veces
         # por turno.
         #
-        # La lectura se GUARDA y se aplica con _aplicar_afecto(), que
-        # fusiona todas las del turno: hoy solo hay TER, pero cuando haya
-        # otra modalidad (camara o voz en una ventana de percepcion) se
-        # suma ahi y ROSE se sigue actualizando una sola vez por turno. La
-        # camara del juego de caras NO cuenta: ver _pedir_una_emocion().
-        emocion_txt, confianza_txt = ter.analizar(entrada)
+        # Las lecturas se GUARDAN y se aplican juntas con _aplicar_afecto()
+        # (fusion, ec. 4.4): TER del texto, FER de la camara y SER de la
+        # voz, las tres de la misma ventana -- la frase. ROSE se actualiza
+        # una sola vez por turno. La camara del juego de caras NO cuenta:
+        # ver _pedir_una_emocion().
         self._lecturas_turno = []
-        vector_txt, c_txt = estado_afectivo.percibir_del_texto(
-            emocion_txt, confianza_txt)
-        if vector_txt is not None:
-            self._lecturas_turno.append((vector_txt, c_txt))
-            self.get_logger().info(
-                f"[afecto] el texto expresa {emocion_txt} "
-                f"(confianza {confianza_txt:.2f})")
+        self._emocion_pendiente = False
+        if "TER" in self._fuentes:
+            emocion_txt, confianza_txt = ter.analizar(entrada)
+            vector_txt, c_txt = estado_afectivo.percibir_del_texto(
+                emocion_txt, confianza_txt)
+            if vector_txt is not None:
+                self._lecturas_turno.append(("TER", vector_txt, c_txt, emocion_txt))
+                self.get_logger().info(
+                    f"[afecto] el texto expresa {emocion_txt} "
+                    f"(confianza {confianza_txt:.2f})")
+        if "FER" in self._fuentes:
+            self._percibir_cara(t_inicio, t_fin)
+        if "SER" in self._fuentes:
+            self._percibir_voz(ser)
         self._aplicar_afecto()
 
         if self.estado["esperando_nombre"]:
@@ -771,7 +896,7 @@ class OrchestratorNode(Node):
             bienvenida = frases.una(frases.BIENVENIDAS, nombre=nombre)
             self.get_logger().info(f"Asistente: {bienvenida}")
             self._bridge.hablar(bienvenida)
-            self._bridge.mostrar_cara(self._cara_reposo())
+            self._mostrar_cara_reposo()
             return
 
         if entrada.lower() in ("salir", "exit", "quit"):
@@ -782,7 +907,7 @@ class OrchestratorNode(Node):
             pendiente = self.estado["pregunta_pendiente"]
             if self._quiere_salir_trivia(entrada, pendiente["pregunta"] if pendiente else None):
                 self.estado["en_trivia"] = False
-                self._bridge.mostrar_cara(self._cara_reposo())
+                self._mostrar_cara_reposo()
                 # El mensaje con el que pide salir se atiende EN ESTE MISMO
                 # turno: antes solo se cambiaba de modo y se logueaba un aviso
                 # que nadie decia en voz alta, asi que el usuario escuchaba
@@ -799,7 +924,7 @@ class OrchestratorNode(Node):
                     self.get_logger().info(f"Asistente: {cierre}")
                     self._bridge.mostrar_cara("speaking")
                     self._bridge.hablar(cierre)
-                    self._bridge.mostrar_cara(self._cara_reposo())
+                    self._mostrar_cara_reposo()
                 return
             self._manejar_trivia(entrada)
             return
