@@ -40,7 +40,7 @@ Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reempl
 
 En cada reacción, ARFORD sigue siempre el mismo **orden**: primero habla, y después cambia de cara, suena la música y se mueve. Esa secuencia fija hace que la interacción sea predecible.
 
-El usuario puede comunicarse **por voz o por texto**, desde el teclado de la Pi o desde una página web en el teléfono. Si falta algún componente (cámara, carrito, pantalla), el robot sigue conversando con lo que tenga disponible.
+Si falta algún componente (cámara, carrito, pantalla), el robot sigue conversando con lo que tenga disponible.
 
 ---
 
@@ -182,4 +182,4 @@ source install/setup.bash
 ros2 launch romeo_bringup romeo_bringup.launch.py
 ```
 
-Después, escribe en la terminal o abre `http://<ip-de-la-pi>:8081/` en el teléfono. Los pasos completos, las opciones de configuración y cómo comprobar que todo funciona están en [`ros2_ws/README.md`](ros2_ws/README.md#instalación-y-ejecución).
+Los pasos completos, las opciones de configuración y cómo comprobar que todo funciona están en [`ros2_ws/README.md`](ros2_ws/README.md#instalación-y-ejecución).

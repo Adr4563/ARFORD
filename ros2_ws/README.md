@@ -234,38 +234,6 @@ ros2 launch romeo_bringup romeo_bringup.launch.py mic_activo:=false
 ros2 launch romeo_bringup romeo_bringup.launch.py carrito_port:=/dev/ttyUSB0
 ```
 
-### Cómo hablarle a ARFORD
-
-**Por voz (el camino normal).** El micrófono de la placa [ESP32-S3-AUDIO-Board](../firmware-audio-board/README.md) entra a la Pi como tarjeta de sonido USB, y `communication_node` lo transcribe con `_stt_engine.py` (sherpa-onnx, whisper-tiny, ~2.45 s por frase). No hay que pulsar nada: el VAD corta las frases por el silencio. Lo transcrito se publica en `/romeo/user_input` con `source: voice_board`.
-
-**Verificado en la Pi** (4 de octubre de 2026): el micrófono entrega señal real (RMS 148.6, pico 738 sobre 48.000 muestras) y la cadena completa transcribe en **1.57 s** — modelo cargado en 4.0 s, VAD activo. El micrófono de esta placa da la señal muy floja, así que la normalización de `_stt_engine.py` llega al tope de ganancia (20×); es el comportamiento previsto, no un fallo.
-
-> **Requisito de audio:** `sounddevice` necesita un servidor de audio corriendo. Su PortAudio intenta PulseAudio primero y, si no lo encuentra, **aborta en vez de caer a ALSA** (`PaErrorCode -9999`), así que el micrófono no funciona aunque `arecord` sí grabe. En la Pi se resolvió con:
->
-> ```bash
-> sudo apt install -y pipewire pipewire-pulse wireplumber
-> systemctl --user enable --now pipewire.socket pipewire-pulse.socket wireplumber.service
-> sudo loginctl enable-linger pi   # que arranque sin sesión abierta
-> ```
-
-**Por teclado (respaldo).** `communication_node` también lee de stdin. Pero **`ros2 launch` no le da una stdin interactiva a los nodos que arranca**, así que lo que escribas en la terminal del launch no le llega. Dos formas:
-
-```bash
-# Opción A -- publicar en el tópico directamente (la más cómoda para probar)
-ros2 topic pub --once /romeo/user_input romeo_interfaces/msg/UserInput \
-    "{text: 'quiero jugar trivia', source: 'stdin'}"
-```
-
-```bash
-# Opción B -- correr communication_node aparte, en su propia terminal
-ros2 run romeo_drivers communication_node --ros-args \
-    --params-file install/romeo_bringup/share/romeo_bringup/config/romeo_params.yaml
-
-# es un LifecycleNode: hay que activarlo a mano si no lo lanzó el launch
-ros2 lifecycle set /communication_node configure
-ros2 lifecycle set /communication_node activate
-```
-
 ### Micrófono y altavoz comparten dispositivo
 
 Los dos son la misma placa, así que el micrófono capta la propia voz de ARFORD. Si no se hiciera nada, el STT la transcribiría como si fuera el usuario y ARFORD se respondería en bucle. `communication_node` descarta lo que llegue del micrófono mientras está hablando (`Speak`) o mientras suena una canción con `esperar=true`.

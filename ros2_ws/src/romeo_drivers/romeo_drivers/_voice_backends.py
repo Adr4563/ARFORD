@@ -23,17 +23,8 @@ criterio de "falla gracioso" del resto de los drivers, el chat nunca se cae
 por un problema de audio. Ya NO hay motor de respaldo, así que si falta el
 modelo hay que bajarlo (ver el README del workspace).
 
-Hubo otros dos motores, los dos eliminados a propósito:
-
-- `telefono`: la voz la hacía el navegador del celular (Web Speech API) a
-  través de la página web de _web_bridge.py. Se fue junto con la página,
-  para no depender de un teléfono conectado. Ahora Romeo habla por el
-  parlante de la placa ESP32-S3 (ver `audio_salida`).
-- `edge`: edge-tts de Microsoft, mejor calidad pero sintetizando EN LA
-  NUBE, así que exigía internet en cada frase. Se fue porque Romeo tiene
-  que funcionar en una red de colegio/hospital sin dar por hecho que hay
-  salida a internet, y porque mandar a un servidor externo lo que el robot
-  le dice a un niño no hace falta para nada.
+Ahora Romeo habla por el parlante de la placa ESP32-S3 (ver
+`audio_salida`).
 
 hablar() BLOQUEA -- es lo que communication_node usa para atender el
 servicio Speak de forma síncrona (ver la nota de "Garantía de orden" en

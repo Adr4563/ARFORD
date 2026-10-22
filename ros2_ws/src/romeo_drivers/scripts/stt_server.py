@@ -6,10 +6,9 @@ Expone el motor de `_stt_engine.py` como servicio, para que cualquier cliente
 y reciba texto, sin cargar el modelo por su cuenta.
 
 Se usa Flask porque ya es dependencia de este paquete (ver requirements.txt) y
-alcanza de sobra para un único endpoint. Escucha en el 8082 -- antes había una
-página web de Flask en el 8081 (`_web_bridge.py`, eliminada junto con la voz por
-teléfono), así que hoy el puerto está libre, pero no vale la pena mover este
-servicio y romper los clientes que ya apuntan al 8082.
+alcanza de sobra para un único endpoint. Escucha en el 8082 y sirve como
+puerta de entrada local para transcribir audio desde el sistema, sin mover
+este servicio ni romper los clientes que ya apuntan al 8082.
 
 Dos decisiones importantes:
 

@@ -7,19 +7,15 @@ Orchestrator_Management.py:
 - Clients/Voice_Output_Client.py -> _voice_backends.py (voz de salida:
                                                 Piper, local)
 - Clients/Musica_Client.py -> _music_player.py (reproducción de música)
-- entrada por teclado (_hilo_stdin en Orchestrator_Management.py) -> acá mismo
-
-La página web (voz_server.py -> _web_bridge.py: Flask + SSE, entrada de
-texto desde el celular y voz de salida por Web Speech API) se ELIMINÓ: ya
-no se quiere depender de un teléfono conectado.
+- entrada por flujo de texto del sistema -> acá mismo
 
 La voz de entrada la reemplaza el STT LOCAL (_stt_engine.py, sherpa-onnx)
 leyendo el micrófono de la placa Waveshare ESP32-S3-AUDIO-Board, que la Pi
 ve como una tarjeta de sonido USB normal (UAC) -- ver
 firmware-audio-board/README.md. O sea: el audio entra por hardware USB
-estándar y la transcripción ocurre en la Pi, sin teléfono y sin nube. Los
-dos caminos de entrada (micrófono y teclado) confluyen en el mismo tópico
-/romeo/user_input, igual que antes confluían los 3 en una queue.Queue().
+estándar y la transcripción ocurre en la Pi sin depender de un servicio
+externo. Los dos caminos de entrada (micrófono y flujo de texto) confluyen
+en el mismo tópico /romeo/user_input.
 
     ATENCIÓN: al día de hoy el micrófono de la placa entrega SILENCIO
     DIGITAL EXACTO (ceros, no ruido bajo) por un problema de firmware aún
@@ -27,7 +23,7 @@ dos caminos de entrada (micrófono y teclado) confluyen en el mismo tópico
     El camino de voz de acá queda completo y probado contra un WAV
     (scripts/bench_stt.py), pero no va a transcribir nada hasta que ese
     bug se arregle. Si no hay micrófono, no hay modelos o falta
-    sherpa-onnx, el nodo arranca igual y solo queda el teclado.
+    sherpa-onnx, el nodo arranca igual y queda en modo de diagnóstico.
 
 Es un LifecycleNode: on_configure prepara el objeto Voz SIN tocar
 hardware todavía; on_activate recién ahí precarga Piper, abre el micrófono
