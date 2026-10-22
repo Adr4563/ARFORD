@@ -81,7 +81,8 @@ _TERMINOS = {
         # Sin "basta": es la palabra con la que se pide salir de la trivia
         # (frases/salir_trivia.txt), no una señal de enojo. Y "molesta"
         # estaba dos veces (0.9 y 0.8): queda solo la de arriba.
-        "fastidio": 0.8, "indigna": 0.9,
+        "fastidio": 0.8, "indigna": 0.9, "frustrante": 0.8,
+        "frustrado": 0.9, "frustrada": 0.9, "frustracion": 0.9,
         "estupido": 0.8, "idiota": 0.8,
     },
     "miedo": {

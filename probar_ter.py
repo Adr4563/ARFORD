@@ -99,29 +99,44 @@ comprobar("dos lecturas -> media ponderada",
 
 print()
 print("=" * 70)
-print("8. Hace falta insistir para que cambie la cara")
+print("8. El perfil mueve el animo de verdad (tesis, ec. 4.5)")
 print("=" * 70)
-# La confianza SE PASA a empatizar: es la que decide cuanto mueve el
-# animo. Sin ella se usaria 1.0 y el texto movería tanto como una
-# deteccion facial perfecta, que es justo lo que no debe pasar.
-e = af.EstadoAfectivo()
+# La empatia se aplica ENTERA: OPTIMISTIC mueve el 40 % hacia el usuario,
+# no 0.4 x la confianza del TER (~12 %), que no sacaba nunca al animo de
+# la zona neutra.
+e = af.EstadoAfectivo(perfil="OPTIMISTIC")
 v, c = af.percibir_del_texto(*ter.analizar("estoy triste"))
+antes = e.vector
 e.empatizar(v, c)
-comprobar("un mensaje triste NO cambia la cara", e.cara() == "content",
+esperado = tuple(0.4 * v[i] + 0.6 * antes[i] for i in range(3))
+comprobar("OPTIMISTIC mueve el 40 % del camino",
+          all(abs(e.vector[i] - esperado[i]) < 1e-9 for i in range(3)),
+          f"-> {tuple(round(x, 2) for x in e.vector)}")
+comprobar("un mensaje triste ya se nota en la cara", e.cara() == "sad",
           f"-> {e.cara()}")
-for _ in range(4):
-    v, c = af.percibir_del_texto(*ter.analizar("estoy muy triste y solo"))
-    e.empatizar(v, c)
-comprobar("insistir SI la cambia", e.cara() == "sad", f"-> {e.cara()}")
+emp = af.EstadoAfectivo(perfil="EMPATHETIC")
+emp.empatizar(v, c)
+comprobar("EMPATHETIC se mueve mas que OPTIMISTIC",
+          emp.vector[0] < e.vector[0], f"{emp.vector[0]:+.2f} < {e.vector[0]:+.2f}")
+comprobar("sin confianza no mueve nada",
+          af.EstadoAfectivo().empatizar(v, 0.0) == af.ANIMO_BASE)
 
-# La confianza importa: la misma frase con mas evidencia mueve mas.
-e1, e2 = af.EstadoAfectivo(), af.EstadoAfectivo()
-v1, c1 = af.percibir_del_texto(*ter.analizar("estoy mal"))
-v2, c2 = af.percibir_del_texto(*ter.analizar("estoy destrozado y sufriendo"))
-e1.empatizar(v1, c1)
-e2.empatizar(v2, c2)
-comprobar("mas evidencia -> el animo se mueve mas",
-          e2.vector[0] < e1.vector[0], f"{e2.vector[0]:+.3f} < {e1.vector[0]:+.3f}")
+# El caso del log del robot: enojo, 24 s, enojo otra vez. Antes el animo
+# volvia entero a la base entre turnos y nunca salia de neutral_L0.
+from romeo_brain import aeb  # noqa: E402
+e = af.EstadoAfectivo(perfil="OPTIMISTIC")
+t = 1000.0
+estados = []
+for texto in ["muy enojado porque ayer me mintieron",
+              "soy muy enojado con la mentira de mi amigo, es frustrante"]:
+    e.decaer(ahora=t)
+    v, c = af.percibir_del_texto(*ter.analizar(texto))
+    e.empatizar(v, c)
+    e._ultimo_estimulo = t
+    estados.append(aeb.mapear(e)["estado"])
+    t += 24
+comprobar("conversacion enojada real -> enojo, no neutral",
+          all(x.startswith("enojo") for x in estados), f"-> {estados}")
 
 # Un texto alegre SUBE el animo (regresion: antes lo bajaba, porque el
 # anclaje se escalaba por la confianza y quedaba cerca del origen, que es
@@ -149,6 +164,8 @@ emo, _ = ter.analizar("no me siento solo")
 comprobar('"no me siento solo" -> negado', emo is None, f"-> {emo}")
 emo, _ = ter.analizar("basta")
 comprobar('"basta" ya no es enojo', emo is None, f"-> {emo}")
+emo, _ = ter.analizar("me mintio, es frustrante")
+comprobar('"frustrante" -> enojo', emo == "enojo", f"-> {emo}")
 comprobar('"molesta" pesa 0.9, no 0.8',
           ter._TERMINOS["enojo"]["molesta"] == 0.9)
 sin_normalizar = [t for terms in ter._TERMINOS.values() for t in terms

@@ -71,10 +71,16 @@ _CARAS = {
 # Medido con detecciones al 90%: con 0.35 la felicidad tardaba CINCO
 # turnos en salir -- su desviacion maxima posible es 0.43, porque la base
 # ya es positiva y queda poco margen hacia arriba -- mientras tristeza y
-# enojo salian en uno. Con 0.25 las tres aparecen en dos o tres turnos: ni
-# tan sensible que la cara cambie por una lectura suelta, ni tan sordo que
-# la alegria no llegue nunca.
-_RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.25"))
+# enojo salian en uno.
+#
+# 0.15 desde que la empatia se aplica entera (ver empatizar): con el
+# perfil OPTIMISTIC un mensaje alegre mueve el animo 0.17 (0.4 x 0.43) y
+# uno triste o enojado 0.38-0.52, asi que con 0.15 las tres emociones se
+# notan desde el primer mensaje que las expresa. Con 0.25 la alegria no
+# salia nunca: entre turno y turno el animo decae y no llegaba a acumularse.
+# Los mensajes sin carga emocional no mueven nada (el TER devuelve "sin
+# evidencia"), asi que la cara no parpadea por cualquier frase.
+_RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.15"))
 
 
 
@@ -114,10 +120,12 @@ LATENCIA = float(os.environ.get("ROMEO_LATENCIA", "3.0"))
 # aplica tantos pasos como intervalos de PASO hayan pasado desde que
 # termino la latencia.
 #
-# 5 s porque es lo que dura un turno tipico en la Pi (voz + LLM): en una
-# conversacion activa el ritmo queda como antes, un paso por turno, y una
-# pausa larga si devuelve el animo a la base.
-PASO_DECAIMIENTO = float(os.environ.get("ROMEO_PASO_DECAIMIENTO", "5.0"))
+# 20 s porque es lo que dura un turno real (medido en el robot: 12-25 s
+# entre mensajes, contando lo que habla el usuario). Con 5 s el animo
+# volvia entero a la base antes del turno siguiente y nunca se acumulaba.
+# Asi, en una conversacion activa decae ~un paso por turno, y una pausa
+# larga si lo devuelve a la base.
+PASO_DECAIMIENTO = float(os.environ.get("ROMEO_PASO_DECAIMIENTO", "20.0"))
 
 
 # ── Perfiles predefinidos (Robot Affective Profile de la tesis) ───────
@@ -259,11 +267,11 @@ def percibir_del_texto(emocion, confianza_ter):
     ANCLAJES y no las cuatro del detector facial, porque el texto si
     distingue miedo o sorpresa aunque Romeo no sepa ponerles cara.
 
-    EL TEXTO PESA MENOS QUE LA CARA, y eso sale solo: ter.analizar() tope
-    su confianza en CONFIANZA_MAXIMA (0.6) mientras el detector facial
-    llega a 0.9+, y empatizar() usa la confianza para decidir cuanto mueve
-    el animo. No hace falta un factor aparte -- habia uno (_PESO_TEXTO) y
-    atenuaba dos veces, dejando la felicidad inalcanzable.
+    EL TEXTO PESA MENOS QUE LA CARA cuando hay varias fuentes: ter.analizar()
+    tope su confianza en CONFIANZA_MAXIMA (0.6) mientras el detector facial
+    llega a 0.9+, y fusionar() pondera por esa confianza. Con el texto como
+    unica fuente, empatizar() aplica la empatia del perfil entera (tesis,
+    ec. 4.5).
 
     Devuelve (vector_vad, confianza), o (None, 0.0) si no hubo evidencia."""
     if emocion is None or emocion not in ANCLAJES:
@@ -361,12 +369,17 @@ class EstadoAfectivo:
         Romeo en vez de subirlo, porque interpolaba hacia neutral desde una
         base mas positiva.
 
-        Ahora el vector conserva el anclaje entero (la direccion) y la
-        confianza solo modula cuanto se avanza hacia el (la magnitud),
-        atenuando la empatia efectiva."""
-        if vector_usuario is None:
+        Ahora el vector conserva el anclaje entero (la direccion).
+
+        Y LA EMPATIA SE APLICA ENTERA, como en la tesis (ec. 4.5): la
+        confianza ya hizo su trabajo antes, en fusionar(), pesando unas
+        fuentes frente a otras. Antes se multiplicaba ademas aca, y con el
+        TER (confianza ~0.3) el perfil OPTIMISTIC movia el 12 % en vez del
+        40 %: el animo nunca salia de la zona neutra. `confianza` se acepta
+        por compatibilidad pero solo descarta lecturas sin confianza (0)."""
+        if vector_usuario is None or float(confianza) <= 0.0:
             return self.vector
-        e = self.empatia * max(0.0, min(1.0, float(confianza)))
+        e = self.empatia
         if e <= 0.0:
             return self.vector
         self.vector = tuple(
