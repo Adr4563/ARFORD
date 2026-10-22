@@ -23,7 +23,7 @@ import requests
 
 CHAT_SERVER_HOST = os.environ.get("CHAT_SERVER_HOST", "http://localhost:11434")
 
-CHAT_MODEL = os.environ.get("CHAT_MODEL", "romeo-qwen-v2")
+CHAT_MODEL = os.environ.get("CHAT_MODEL", "llama3.2:1b")
 
 # Tope de tokens por respuesta. Con 50 las frases se cortaban a la mitad
 # ("...y es lo mas importante que estoy con"), porque 50 tokens son unas 35

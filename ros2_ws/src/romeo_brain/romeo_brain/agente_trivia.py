@@ -21,7 +21,7 @@ from . import llama_client
 
 # Modelo que revisa las respuestas de trivia que la comparacion de texto da
 # por incorrectas (ver _evaluar_con_llm). Vacio = sin segunda opinion.
-CORRECTOR_LLM = os.environ.get("TRIVIA_CORRECTOR_MODEL", "romeo-qwen-v2")
+CORRECTOR_LLM = os.environ.get("TRIVIA_CORRECTOR_MODEL", "romeo")
 
 # Los ejemplos no son adorno: sin ellos un modelo de 1B DESCRIBE la
 # instruccion en vez de cumplirla ("Felicita a tu interlocutor...") o se

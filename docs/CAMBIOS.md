@@ -2,17 +2,17 @@
 
 ## Modelos y red
 
-- `romeo_bringup.launch.py`: `chat_model` y `trivia_corrector_model` pasan a
-  `romeo-qwen-v2`, y la IP por defecto de la PC (`ROMEO_PC`) a `192.168.0.218`.
-- `llama_client.py`: `CHAT_MODEL` por defecto pasa a `romeo-qwen-v2`.
-- `agente_trivia.py`: `CORRECTOR_LLM` por defecto pasa a `romeo-qwen-v2`.
+- La IP por defecto de la PC (`ROMEO_PC`) pasa a `192.168.0.218`.
+- Modelos: se probó `romeo-qwen-v2` y se **volvió a los anteriores**:
+  `llama3.2:1b` para el chat y `romeo` para el corrector de trivia
+  (`romeo_bringup.launch.py`, `llama_client.py`, `agente_trivia.py`).
 
 ## STT
 
-- `_stt_engine.py`: arreglado el respaldo local. Con `stt_servidor`
-  configurado y el servidor caído, transcribir en local fallaba en cada frase
-  (`'NoneType' object has no attribute 'create_stream'`) porque whisper nunca
-  se cargaba. `cargar(local=True)` ahora lo carga.
+- `_stt_engine.py`: **sin respaldo local**. Con `stt_servidor` configurado
+  el STT corre solo en la PC; si no contesta, esa frase se pierde y la Pi no
+  carga whisper. (Antes intentaba transcribir en la Pi y fallaba con
+  `'NoneType' object has no attribute 'create_stream'`.)
 
 ## TTS
 
@@ -20,6 +20,12 @@
   8083. Responde `GET /hablar?texto=...` con un WAV, que es lo que
   `_voice_backends.py` ya pedía con `tts_servidor`. Misma voz y ajustes que la
   Pi (`es_MX-claude-high`).
+- `_voice_backends.py`: **sin respaldo local**. Con `tts_servidor`
+  configurado la Pi no carga ninguna voz; si la PC no contesta, esa frase no
+  se dice (queda en el log).
+
+Los modelos (LLM, STT y TTS) corren solo en la PC de la Universidad de Lima.
+En la Pi solo quedan el VAD, la cámara (FER), el router y la capa afectiva.
 
 ## Respuestas del LLM
 

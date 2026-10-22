@@ -43,10 +43,10 @@ def generate_launch_description():
         DeclareLaunchArgument('mic_activo', default_value='true',
                                description='false desactiva el STT y deja solo el teclado'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
-        DeclareLaunchArgument('chat_model', default_value='romeo-qwen-v2'),
+        DeclareLaunchArgument('chat_model', default_value='llama3.2:1b'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
-        DeclareLaunchArgument('trivia_corrector_model', default_value='romeo-qwen-v2'),
+        DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),
         # DONDE VIVEN LAS IA. Por defecto, en la PC: el LLM, el STT y el TTS
         # corren alli y la Pi los consume por HTTP. Esa es la configuracion
         # real del robot -- con todo dentro, la Pi iba a 3.3 GB de RAM y 76%

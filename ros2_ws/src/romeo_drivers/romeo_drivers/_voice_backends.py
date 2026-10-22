@@ -1,5 +1,12 @@
-"""Voz de salida: Romeo dice en voz alta cada respuesta. DOS motores, los
-dos 100% locales en la Pi y sin internet:
+"""Voz de salida: Romeo dice en voz alta cada respuesta.
+
+EN EL ROBOT LA VOZ SE SINTETIZA SOLO EN LA PC (tts_server.py, parametro
+`tts_servidor`): la Pi pide el WAV y lo reproduce por la placa. Con
+servidor configurado no se carga ningun modelo en la Pi y NO hay respaldo
+local: si la PC no contesta, esa frase no se dice (queda en el log).
+
+Sin `tts_servidor` se sintetiza localmente con uno de estos DOS motores
+(es el modo para probar en una maquina sin PC aparte):
 
     voz_motor=vits   (default) la voz de ROMEO: es_MX-claude-high, cargada
                        con sherpa-onnx. Es la elegida de oído ("versión
@@ -90,14 +97,22 @@ class Voz:
 
     @property
     def listo(self):
-        return self._tts_vits is not None or self._voz_piper is not None
+        # Con servidor no hay modelo local que cargar: basta con la URL.
+        return bool(self.servidor) or self._tts_vits is not None \
+            or self._voz_piper is not None
 
     # ─── Carga del motor activo ────────────────────────────────────────
 
     def cargar(self):
         """Precarga el modelo del motor activo -- llamar en on_activate()
         del LifecycleNode, no en el constructor, para no tocar hardware
-        antes de que el nodo esté realmente activo."""
+        antes de que el nodo esté realmente activo.
+
+        Con `servidor` configurado NO se carga nada: en el robot el TTS
+        corre solo en la PC, sin respaldo en la Pi."""
+        if self.servidor:
+            self._log(f"[voz] TTS en {self.servidor} (sin modelo local en la Pi)")
+            return
         if self.motor not in ("vits", "piper"):
             self._log(f"[voz] motor desconocido {self.motor!r} -- se usa vits")
             self.motor = "vits"
@@ -144,8 +159,8 @@ class Voz:
     def _hablar_remoto(self, texto):
         """Pide el WAV a un tts_server.py de otra maquina y lo reproduce.
 
-        Devuelve True si sono, False si el servidor no contesta (entonces el
-        caller sintetiza en local). Sintetizar en la Pi cuesta ~5 s por
+        Devuelve True si sono, False si el servidor no contesta. NO hay
+        respaldo local: en ese caso Romeo no habla esa frase. Sintetizar en la Pi cuesta ~5 s por
         frase y en una PC con GPU 0.2 s; lo que vuelve son ~100 KB de WAV.
         """
         import urllib.parse
@@ -166,9 +181,9 @@ class Voz:
                 sr = w.getframerate()
             self._reproducir(ruta, sr)
             return True
-        except Exception as e:  # noqa: BLE001 - se cae a sintetizar en local
-            self._log(f"[voz] el servidor {self.servidor} falló ({e}), "
-                       f"se sintetiza en local")
+        except Exception as e:  # noqa: BLE001 - sin respaldo: no se habla
+            self._log(f"[voz] el servidor {self.servidor} no contesta ({e}); "
+                       f"Romeo no dice esta frase (no hay TTS en la Pi)")
             return False
         finally:
             if ruta:
@@ -184,10 +199,6 @@ class Voz:
         ffmpeg."""
         import numpy as np
 
-        # Con un servidor configurado se sintetiza alla; si no contesta se
-        # sigue con el modelo local.
-        if self.servidor and self._hablar_remoto(texto):
-            return
 
         audio = self._tts_vits.generate(texto, sid=0)
         muestras = np.asarray(audio.samples, dtype=np.float32)
@@ -256,6 +267,8 @@ class Voz:
             self._log(f"[voz] motor {self.motor!r} no está cargado "
                        f"(ver cargar()), no se habla")
             return False
+        if self.servidor:
+            return self._hablar_remoto(texto)
         try:
             if self.motor == "vits":
                 self._hablar_vits(texto)

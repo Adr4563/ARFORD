@@ -226,18 +226,18 @@ class ReconocedorVoz:
             print(f"[STT] VAD no disponible: {e}")
             return False
 
-    def cargar(self, local=False):
+    def cargar(self):
         """Carga el modelo de reconocimiento. Devuelve True si quedo listo.
         Idempotente.
 
-        Con `servidor` configurado NO se carga: whisper-small son 800 MB de
-        RAM en una Pi que solo tiene 4 nucleos, y si se transcribe en otra
-        maquina ese modelo no se usa nunca. Solo se carga el VAD.
+        Con `servidor` configurado NO se carga NUNCA, ni como respaldo: en
+        el robot el STT corre solo en la PC. La Pi solo carga el VAD, que es
+        lo que corta las frases del microfono. Si la PC no contesta, esa
+        frase se pierde (ver transcribir()).
 
-        `local=True` lo carga igual: es el respaldo de transcribir() cuando el
-        servidor no contesta. Sin esto, el respaldo usaba un reconocedor que
-        nunca se habia cargado y fallaba con 'NoneType' en cada frase."""
-        if self.servidor and not local:
+        Sin `servidor` si se carga: es el modo de stt_server.py y del bench,
+        que corren en la PC con el modelo local."""
+        if self.servidor:
             return self.cargar_vad()
         if self._recognizer is not None:
             return True
@@ -335,7 +335,8 @@ class ReconocedorVoz:
 
     def _transcribir_remoto(self, samples, sample_rate):
         """Manda el audio a un stt_server.py de otra maquina y devuelve su
-        texto, o None si no contesta (entonces se cae al modelo local).
+        texto, o None si no contesta. NO hay respaldo local: en el robot el
+        STT corre solo en la PC.
 
         El microfono sigue estando en la Pi -- lo que viaja es el WAV ya
         recortado por el VAD, unos 100 KB por frase. Whisper-small tarda
@@ -359,9 +360,9 @@ class ReconocedorVoz:
                 headers={"Content-Type": "audio/wav"})
             with urllib.request.urlopen(req, timeout=TIMEOUT_REMOTO) as r:
                 return json.loads(r.read()).get("texto", "")
-        except Exception as e:  # noqa: BLE001 - se cae al modelo local
-            print(f"[STT] el servidor {self.servidor} falló ({e}), "
-                  f"se transcribe en local")
+        except Exception as e:  # noqa: BLE001 - sin respaldo, se pierde la frase
+            print(f"[STT] el servidor {self.servidor} no contesta ({e}); "
+                  f"la frase se pierde (no hay STT en la Pi)")
             return None
 
     def transcribir(self, samples, sample_rate=SAMPLE_RATE):
@@ -375,15 +376,14 @@ class ReconocedorVoz:
         if samples is None or len(samples) == 0:
             return ""
 
-        # Con un servidor configurado se transcribe alla; si no contesta se
-        # sigue con el modelo local, que para eso se carga igual.
+        # Con un servidor configurado se transcribe SOLO alla. Si no
+        # contesta, la frase se pierde: no hay modelo en la Pi.
         if self.servidor:
             samples = self._normalizar(samples)
             texto = self._transcribir_remoto(samples, sample_rate)
-            if texto is not None:
-                return texto.strip()
+            return (texto or "").strip()
 
-        if not self.cargar(local=True):
+        if not self.cargar():
             return ""
         if samples is None or len(samples) == 0:
             return ""
