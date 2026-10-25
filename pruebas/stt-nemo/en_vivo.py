@@ -58,13 +58,29 @@ def main():
         print(f"  {texto!r}  ({time.perf_counter() - t0:.2f} s)")
         return 0
 
+    # Los tiempos se miden aca envolviendo transcribir(), y no con
+    # rec.ultima_frase_fin: el _stt_engine.py que esta en la Pi es anterior y
+    # no tiene esos atributos.
+    medida = {}
+    original = rec.transcribir
+
+    def transcribir_medido(samples, sample_rate=16000):
+        medida["voz"] = len(samples) / sample_rate
+        t0 = time.perf_counter()
+        texto = original(samples, sample_rate)
+        medida["proceso"] = time.perf_counter() - t0
+        return texto
+
+    rec.transcribir = transcribir_medido
+
     def al_transcribir(texto):
-        # escuchar() fija ultima_frase_fin ANTES de transcribir (cuando
-        # callaste), asi que la resta es la espera real del usuario.
-        voz = rec.ultima_frase_fin - rec.ultima_frase_inicio
-        espera = time.time() - rec.ultima_frase_fin
-        print(f"  {texto}\n      {voz:.1f} s de voz, latencia {espera:.1f} s "
-              f"(ganancia x{rec.ultima_ganancia:.1f})", flush=True)
+        # Lo que espera el usuario: el silencio que el VAD necesita para dar
+        # la frase por terminada, mas lo que tarda NeMo.
+        silencio = getattr(sys.modules[type(rec).__module__], "MIN_SILENCIO", 0.0)
+        print(f"  {texto}\n      {medida['voz']:.1f} s de voz, NeMo "
+              f"{medida['proceso']:.2f} s, latencia "
+              f"{medida['proceso'] + silencio:.1f} s "
+              f"(ganancia x{getattr(rec, 'ultima_ganancia', 1.0):.1f})", flush=True)
 
     print("Habla (Ctrl+C para salir).\n", flush=True)
     try:
