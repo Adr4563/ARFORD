@@ -1,0 +1,19 @@
+# Comandos del menu de Romeo, para el modo --comandos (gramatica JSGF).
+# Una frase por linea, en minusculas. Cada palabra tiene que existir en el
+# diccionario del modelo; gramatica.py avisa si falta alguna.
+quiero jugar trivia
+juguemos trivia
+quiero conversar
+jugar con las caras
+ciencia
+historia
+música
+matemática
+geografía
+sí
+no
+salir
+avanza
+retrocede
+detente
+gira
