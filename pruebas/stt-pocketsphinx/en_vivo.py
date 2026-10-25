@@ -29,6 +29,8 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 # Mismo nombre ALSA que usa el robot para el parlante (audio_salida en
 # romeo_params.yaml): CARD=Board es la audio board, no cambia entre arranques.
 MIC = os.environ.get("ROMEO_MIC_ALSA", "plughw:CARD=Board,DEV=0")
+# Segundos que tarda pocketsphinx en cargar el modelo en la Pi (medido ~9 s).
+ESPERA_CARGA = float(os.environ.get("SPHINX_ESPERA_CARGA", "10"))
 
 
 def main():
@@ -47,6 +49,10 @@ def main():
 
     print(f"Cargando {args.modelo} (~9 s en la Pi)...", flush=True)
     sphinx = modelos.lanzar(args.modelo, gram)
+    # El micro se abre DESPUES de cargar. Si se abre a la vez, los ~9 s de
+    # audio de la carga se quedan en cola y pocketsphinx nunca los recupera:
+    # medido, cada frase llegaba 7-10 s tarde durante toda la sesion.
+    time.sleep(ESPERA_CARGA)
     grab = subprocess.Popen(
         ["arecord", "-q", "-D", args.mic, "-f", "S16_LE", "-r", "16000",
          "-c", "1", "-t", "raw"], stdout=subprocess.PIPE)
