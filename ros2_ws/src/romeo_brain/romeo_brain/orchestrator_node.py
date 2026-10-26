@@ -35,6 +35,7 @@ próximo usuario. Ver _finalizar_sesion() más abajo.
 """
 import os
 import random
+import re
 import threading
 import time
 
@@ -60,9 +61,26 @@ _RUTA_MODELO = os.path.join(
 _router = joblib.load(_RUTA_MODELO)
 
 
+# El router se entreno con frases limpias y no ve la negacion: "no quiero
+# jugar" lleva "jugar" y cae en TRIVIA igual que "quiero jugar". Con el STT
+# fallando aparece seguido, y mandar a alguien a una tanda de 5 preguntas
+# cuando acaba de decir que NO es el peor error posible de los dos.
+#
+# Esto no sustituye al router -- solo lo veta cuando el usuario negó de
+# forma explicita. Si no hay negacion, decide el modelo como siempre.
+_NEGAR_JUEGO = re.compile(
+    r"\bno\b[^.?!]{0,20}\b(quiero|queria|deseo|me apetece|gracias)?[^.?!]{0,10}"
+    r"\b(jugar|juego|trivia|trivias|preguntas?)\b", re.I)
+
+
 def enrutar(mensaje_usuario):
     """Clasifica el mensaje en TRIVIA o CHAT_LIBRE (TF-IDF de n-gramas de
-    caracteres + regresion logistica, ~95-96% medido)."""
+    caracteres + regresion logistica, ~95-96% medido).
+
+    Una negacion explicita ("no quiero jugar") manda a CHAT_LIBRE sin
+    consultar al modelo: ver _NEGAR_JUEGO."""
+    if _NEGAR_JUEGO.search(mensaje_usuario or ""):
+        return "CHAT_LIBRE"
     vector = _router["vectorizador"].transform([mensaje_usuario])
     return _router["clasificador"].predict(vector)[0]
 
@@ -677,11 +695,22 @@ class OrchestratorNode(Node):
                     self.get_logger().info(f"Asistente: {repregunta}")
                     self._bridge.hablar(repregunta)
                     return
-                categoria = random.choice(cats)
+                # Antes se elegia una categoria al azar y se empezaba a
+                # jugar: "cualquier tema es mejor que seguir atascado en el
+                # menu". Con el STT fallando eso sale caro -- el usuario
+                # decia "no quiero jugar" tres veces y acababa en una tanda
+                # de 5 preguntas de matematica. Si en dos intentos no se
+                # entendio el tema, lo honesto es soltar la trivia y volver
+                # a conversar: pedirla otra vez cuesta una frase.
+                estado["intentos_tema"] = 0
+                estado["esperando_tema"] = False
                 self.get_logger().info(
-                    f"[trivia] no se entendió el tema en "
-                    f"{estado['intentos_tema']} intentos, se elige "
-                    f"{categoria}")
+                    "[trivia] no se entendió el tema en 2 intentos, "
+                    "se vuelve al chat")
+                salida = "Mejor seguimos charlando. Si quieres una trivia, pídemela."
+                self.get_logger().info(f"Asistente: {salida}")
+                self._bridge.hablar(salida)
+                return
             estado["intentos_tema"] = 0
             estado["esperando_tema"] = False
             estado["tema_actual"] = categoria

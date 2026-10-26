@@ -53,6 +53,19 @@ _PROMPT_POR_DEFECTO = (
 
 _MODELOS_ENTRENADOS = ("romeo", "arford")
 
+# Base para los modelos entrenados. NO repite la personalidad -- esa viene
+# del fine-tuning y del SYSTEM del Modelfile -- solo corrige lo que el
+# dataset no le enseño: EmpatheticDialogues son turnos de listener, asi
+# que el 68% de sus respuestas acaban en pregunta y el modelo cierra
+# SIEMPRE igual, hasta repitiendo la que acaba de hacer.
+#
+# Va junto al tono del AEB (ver _system_prompt): sin esto el tono llegaria
+# solo, sin nada que lo encuadre.
+_PROMPT_ENTRENADO = (
+    "No termines siempre preguntando: a veces basta con acompañar lo que "
+    "te cuentan. Nunca repitas una pregunta que ya hiciste."
+)
+
 
 def _prompt_para(modelo):
     """Vacio si el modelo ya trae el comportamiento horneado."""
@@ -61,7 +74,7 @@ def _prompt_para(modelo):
         return personalizado
     nombre = (modelo or "").lower()
     if any(nombre.startswith(m) for m in _MODELOS_ENTRENADOS):
-        return ""
+        return _PROMPT_ENTRENADO
     return _PROMPT_POR_DEFECTO
 
 

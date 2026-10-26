@@ -268,9 +268,17 @@ class CommunicationNode(LifecycleNode):
         `detener` devuelve True, y nunca propaga excepciones (falla
         gracioso: loguea y vuelve), así que acá no hace falta try/except."""
         dispositivo = self.get_parameter('mic_dispositivo').value or None
+        # El motor real, no siempre whisper: con stt_servidor la frase la
+        # transcribe la PC (hoy NeMo) y la Pi no carga ningun modelo. Antes
+        # decia "whisper-small" pasara lo que pasara, igual que /salud en
+        # stt_server.py antes de arreglarlo.
+        if self._stt.servidor:
+            motor = f"servidor {self._stt.servidor}"
+        else:
+            motor = self._stt._nombre_modelo()
         self.get_logger().info(
             f"[mic] escuchando (dispositivo={dispositivo or 'default del sistema'}, "
-            f"modelo whisper-{self._stt.tam})")
+            f"{motor})")
         self._stt.escuchar(
             al_transcribir=self._on_texto_voz,
             detener=lambda: not self._activo,
