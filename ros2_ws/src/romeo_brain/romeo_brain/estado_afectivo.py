@@ -106,7 +106,17 @@ ANIMO_BASE = (
 )
 
 # DECAIMIENTO (d): que tan rapido vuelve al animo base, por paso.
-DECAIMIENTO = float(os.environ.get("ROMEO_DECAIMIENTO", "0.5"))
+#
+# 0.3 para que UN MINUTO de silencio lo devuelva a su base. Con el paso
+# de 20 s de abajo, desde una desviacion tipica de 0.40:
+#
+#     0.5 (antes) -> zona neutra a los 40 s, al minuto queda el 12%
+#     0.3 (ahora) -> zona neutra a los 20 s, al minuto queda el  3%
+#
+# El decaimiento es exponencial, asi que nunca llega a cero exacto: un 3%
+# de 0.40 son 0.012, muy por dentro del radio neutro (0.15). Para efectos
+# practicos, al minuto Romeo esta en su base.
+DECAIMIENTO = float(os.environ.get("ROMEO_DECAIMIENTO", "0.3"))
 
 # LATENCIA (l): segundos que sostiene la emocion antes de empezar a decaer.
 # Sin esto el estado se evaporaria antes de que llegue a notarse en la voz.
@@ -143,11 +153,11 @@ PERFILES = {
     # El de siempre de Romeo: se entristece un poco con el usuario pero
     # se queda en la zona positiva y puede animarlo. (Tesis, escenario 2.)
     "OPTIMISTIC":  {"empatia": 0.4, "animo_base": (0.40, 0.30, 0.20),
-                    "decaimiento": 0.5, "latencia": 3.0},
+                    "decaimiento": 0.3, "latencia": 3.0},
     # Espejo del usuario: absorbe su estado entero. (Tesis, escenario 1.)
     # Util para comparar en experimentos; poco recomendable fuera de experimentos.
     "EMPATHETIC":  {"empatia": 1.0, "animo_base": (0.20, 0.10, 0.00),
-                    "decaimiento": 0.5, "latencia": 3.0},
+                    "decaimiento": 0.3, "latencia": 3.0},
 }
 PERFIL_POR_DEFECTO = "OPTIMISTIC"
 

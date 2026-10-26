@@ -106,6 +106,25 @@ class YunetCamara:
         """Indice de camara que Picamera2 tiene que abrir, o None."""
         return getattr(self._imx, "camera_num", None) if self._imx else None
 
+    @staticmethod
+    def _puede_leer_progreso():
+        """IMX500() abre /sys/kernel/debug/imx500-fw:*/fw_progress para
+        seguir la carga del firmware, y ese directorio es solo de root.
+
+        HAY QUE COMPROBARLO ANTES de instanciar: si IMX500() falla a
+        mitad, deja tocado el logger de libcamera y el Picamera2() que
+        viene despues revienta con "Logger severity cannot be changed
+        between calls" -- la camara se queda inservible, ni con CPU."""
+        import glob
+        rutas = glob.glob("/sys/kernel/debug/imx500-fw:*/fw_progress")
+        if not rutas:
+            return True          # otra version de picamera2: que lo intente
+        try:
+            with open(rutas[0]):
+                return True
+        except OSError:
+            return False
+
     def cargar(self):
         """True si el firmware quedo en el sensor. Nunca lanza: sin esto
         el detector sigue con YuNet en la CPU."""
@@ -113,6 +132,10 @@ class YunetCamara:
             return True
         if not os.path.exists(self._rpk):
             self.error = f"no existe {self._rpk}"
+            return False
+        if not self._puede_leer_progreso():
+            self.error = ("sin permiso en /sys/kernel/debug (hace falta la "
+                          "regla de udev, ver el README)")
             return False
         try:
             from picamera2.devices import IMX500
