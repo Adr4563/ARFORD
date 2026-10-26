@@ -43,12 +43,26 @@ def generate_launch_description():
         DeclareLaunchArgument('mic_activo', default_value='true',
                                description='false desactiva el STT y deja solo el teclado'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
-        # Qwen2.5-0.5B afinado con LoRA sobre EmpatheticDialogues traducido
-        # (ver romeo_soup/NOTAS_V2.md). Cuantizado a q8_0: 531 MB y ~3,5 s por
-        # respuesta en la Pi, contra 1,3 GB de llama3.2:1b. Como el nombre
-        # empieza por "romeo", agente_chat.py NO manda system prompt propio:
-        # el de Romeo va dentro del Modelfile.
-        DeclareLaunchArgument('chat_model', default_value='romeo-empatico-v2-q8'),
+        # POR QUE NO EL MODELO AFINADO. romeo-empatico-v2-q8 (Qwen2.5-0.5B
+        # con LoRA sobre EmpatheticDialogues, ver romeo_soup/NOTAS_V2.md) es
+        # la mitad de grande y el doble de rapido, pero a 0.5B el
+        # fine-tuning no se sostiene. Comparados sobre las mismas frases:
+        #
+        #   "se murio mi perro"  qwen: "¡Ay no! ¿Como lo hiciste?"
+        #                       llama: "¿Te sentiste triste al saber que tu
+        #                               perro se fue?"
+        #   "¿como te llamas?"   qwen: "Soy Jhon. ¿Y tu?"
+        #                       llama: "Me llamo Romeo, soy un robot..."
+        #
+        # El qwen se entreno con 72 ejemplos de identidad y aun asi dice
+        # llamarse Jhon; llama lo acierta sin ningun entrenamiento, solo
+        # porque agente_chat le manda el system prompt (los modelos romeo*
+        # lo tienen desactivado a proposito, ver _MODELOS_ENTRENADOS).
+        #
+        # Cuesta 1,3 GB en vez de 531 MB y sube la espera en la Pi, pero
+        # responde a lo que se le dice. Para volver al afinado:
+        #   ros2 launch ... chat_model:=romeo-empatico-v2-q8
+        DeclareLaunchArgument('chat_model', default_value='llama3.2:1b'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
         DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),
