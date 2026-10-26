@@ -2,7 +2,10 @@
 """TER: emocion de un TEXTO en espanol con un clasificador neuronal.
 
     python3 ter.py                      # escribes frases, Enter, Ctrl+C para salir
-    python3 ter.py "hoy me siento triste" "gane el partido"
+    python3 ter.py "hoy me siento triste" "gane el partido"   # + matriz frase x emocion
+
+Por cada frase muestra las 7 emociones con su porcentaje (no solo la
+ganadora), para ver CUANTO de triste, enojado, feliz... tiene el texto.
 
 Modelo: pysentimiento/robertuito-emotion-analysis (RoBERTuito, entrenado en
 espanol). Es el equivalente en espanol al de la tesis de Rocha
@@ -89,16 +92,26 @@ def _ter_del_robot():
 
 
 def mostrar(ter, texto, robot):
+    """Las 7 emociones con su porcentaje y una barra, de mayor a menor."""
     t0 = time.perf_counter()
     p = ter.clasificar(texto)
     ms = (time.perf_counter() - t0) * 1000
-    orden = sorted(zip(ter.etiquetas, p), key=lambda kv: -kv[1])[:3]
+    for e, x in sorted(zip(ter.etiquetas, p), key=lambda kv: -kv[1]):
+        print(f"    {e:<10} {x:6.1%}  {'#' * round(x * 40)}")
     v, a, d = a_vad(p, ter.etiquetas)
-    print(f"  {', '.join(f'{e} {x:.0%}' for e, x in orden)}\n"
-          f"      confianza {confianza(p):.2f}, VAD ({v:+.2f}, {a:+.2f}, {d:+.2f}), {ms:.0f} ms")
+    print(f"    confianza {confianza(p):.2f}, VAD ({v:+.2f}, {a:+.2f}, {d:+.2f}), {ms:.0f} ms")
     if robot is not None:
         emo, c = robot.analizar(texto)
-        print(f"      palabras clave del robot: {emo or 'sin evidencia'} ({c:.2f})")
+        print(f"    palabras clave del robot: {emo or 'sin evidencia'} ({c:.2f})")
+    return p
+
+
+def matriz(ter, frases, probs):
+    """Tabla frase x emocion con todos los porcentajes."""
+    ancho = min(40, max(len(f) for f in frases))
+    print("\n" + " " * (ancho + 2) + "".join(f"{e[:9]:>10}" for e in ter.etiquetas))
+    for f, p in zip(frases, probs):
+        print(f"{f[:ancho]:<{ancho}}  " + "".join(f"{x:>10.1%}" for x in p))
 
 
 def main():
@@ -106,9 +119,12 @@ def main():
     robot = _ter_del_robot()
     frases = sys.argv[1:]
     if frases:
+        probs = []
         for f in frases:
             print(f"> {f}")
-            mostrar(ter, f, robot)
+            probs.append(mostrar(ter, f, robot))
+        if len(frases) > 1:
+            matriz(ter, frases, probs)
         return 0
     print("Escribe una frase y Enter (Ctrl+C para salir).", flush=True)
     try:
