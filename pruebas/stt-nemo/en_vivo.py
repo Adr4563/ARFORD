@@ -35,6 +35,7 @@ for rel in ("../../ros2_ws/src/romeo_drivers", "../../src/romeo_drivers"):
         break
 
 from romeo_drivers._stt_engine import ReconocedorVoz  # noqa: E402
+from ser_onnx import ClasificadorVozOnnx  # noqa: E402
 
 # Mismo valor que mic_dispositivo en romeo_params.yaml.
 MIC = os.environ.get("ROMEO_MIC", "Board: USB Audio")
@@ -45,6 +46,7 @@ def main():
     ap.add_argument("--wav")
     ap.add_argument("--mic", default=MIC)
     ap.add_argument("--hilos", type=int, default=2)
+    ap.add_argument("--sin-ser", action="store_true", help="no carga el SER")
     args = ap.parse_args()
 
     rec = ReconocedorVoz(motor="nemo", servidor="", hilos=args.hilos)
@@ -52,11 +54,20 @@ def main():
     if not rec.cargar():
         return 1
 
+    ser = None
+    if not args.sin_ser:
+        try:
+            t0 = time.perf_counter()
+            ser = ClasificadorVozOnnx(hilos=args.hilos)
+            print(f"[SER] listo en {time.perf_counter() - t0:.1f}s", flush=True)
+        except Exception as e:  # noqa: BLE001 - sin SER, el STT sigue
+            print(f"[SER] desactivado: {e}", flush=True)
+
     if args.wav:
-        t0 = time.perf_counter()
-        texto = rec.transcribir_wav(args.wav)
-        print(f"  {texto!r}  ({time.perf_counter() - t0:.2f} s)")
-        return 0
+        # Se pasa por transcribir_medido (abajo) para que tambien salga el SER.
+        args_wav = args.wav
+    else:
+        args_wav = None
 
     # Los tiempos se miden aca envolviendo transcribir(), y no con
     # rec.ultima_frase_fin: el _stt_engine.py que esta en la Pi es anterior y
@@ -67,6 +78,11 @@ def main():
     def transcribir_medido(samples, sample_rate=16000):
         medida["voz"] = len(samples) / sample_rate
         t0 = time.perf_counter()
+        # El SER va sobre el audio CRUDO, antes de la ganancia del STT, como
+        # en stt_server.py. Igual normaliza por su cuenta.
+        medida["ser"] = ser.clasificar(samples, sample_rate) if ser else None
+        medida["t_ser"] = time.perf_counter() - t0
+        t0 = time.perf_counter()
         texto = original(samples, sample_rate)
         medida["proceso"] = time.perf_counter() - t0
         return texto
@@ -75,12 +91,23 @@ def main():
 
     def al_transcribir(texto):
         # Lo que espera el usuario: el silencio que el VAD necesita para dar
-        # la frase por terminada, mas lo que tarda NeMo.
+        # la frase por terminada, mas lo que tardan NeMo y el SER.
         silencio = getattr(sys.modules[type(rec).__module__], "MIN_SILENCIO", 0.0)
+        total = medida["proceso"] + medida["t_ser"]
         print(f"  {texto}\n      {medida['voz']:.1f} s de voz, NeMo "
-              f"{medida['proceso']:.2f} s, latencia "
-              f"{medida['proceso'] + silencio:.1f} s "
+              f"{medida['proceso']:.2f} s, SER {medida['t_ser']:.2f} s, latencia "
+              f"{total + silencio:.1f} s "
               f"(ganancia x{getattr(rec, 'ultima_ganancia', 1.0):.1f})", flush=True)
+        if medida["ser"]:
+            orden = sorted(zip(*medida["ser"]), key=lambda kv: -kv[1])[:3]
+            print("      voz: " + ", ".join(f"{e} {p:.0%}" for e, p in orden), flush=True)
+        elif ser:
+            print("      voz: (frase muy corta para el SER)", flush=True)
+
+    if args_wav:
+        texto = rec.transcribir_wav(args_wav)
+        al_transcribir(texto)
+        return 0
 
     print("Habla (Ctrl+C para salir).\n", flush=True)
     try:
