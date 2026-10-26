@@ -39,19 +39,39 @@ MAX_TOKENS = int(os.environ.get("ROMEO_MAX_TOKENS", "120"))
 # "¡Claro!") y se le añade la siguiente para que diga algo.
 _FRASE_MINIMA = 25
 
+# Tope de lo que Romeo dice de una vez. Dos frases cortas caben; una frase
+# mas un parrafo de relleno, no. En voz alta, mas que esto se hace largo.
+_LARGO_MAXIMO = int(__import__("os").environ.get("ROMEO_LARGO_MAXIMO", "110"))
+
 
 def primera_frase(texto):
-    """Lo que Romeo dice en voz alta: UNA frase.
+    """Lo que Romeo dice en voz alta: hasta DOS frases.
 
     El modelo pequeño se alarga: cierra con un parrafo de relleno ("Si deseas
     hablar más... no dudes en pedirlo") o, en la trivia, copia el formato del
     prompt ("Pregunta: ... La persona dijo: ..."). Se corta en el primer
-    salto de linea y despues en el primer final de frase."""
+    salto de linea y despues en el final de frase.
+
+    POR QUE DOS Y NO UNA. Con una sola, romeo-empatico-v2-q8 perdia la
+    mitad de lo que decia: abre con la exclamacion y pregunta despues, asi
+    que "¡Que alegria escuchar eso! ¿Que te tiene tan contento?" salia por
+    el altavoz como "¡Que alegria escuchar eso!" y la conversacion se
+    quedaba sin pie. Medido sobre 12 respuestas: con una frase se recortaban
+    2, con dos no se recorta ninguna.
+
+    El tope de caracteres es lo que impide que vuelva el parrafo de relleno:
+    dos frases cortas entran, una frase corta mas un parrafo no."""
     texto = (texto or "").strip().split("\n")[0].strip()
     partes = re.split(r"(?<=[.!?])\s+", texto)
     frase = partes[0]
-    if len(frase) < _FRASE_MINIMA and len(partes) > 1:
-        frase = f"{frase} {partes[1]}"
+    for siguiente in partes[1:2]:
+        if len(frase) + 1 + len(siguiente) <= _LARGO_MAXIMO:
+            frase = f"{frase} {siguiente}"
+    # Una primera frase muy corta ("Claro.") no dice nada por si sola, pero
+    # el tope sigue mandando: si lo que sigue es un parrafo, no se pega.
+    if len(frase) < _FRASE_MINIMA and len(partes) > 2:
+        if len(frase) + 1 + len(partes[2]) <= _LARGO_MAXIMO:
+            frase = f"{frase} {partes[2]}"
     return frase.strip()
 
 
