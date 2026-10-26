@@ -1,0 +1,52 @@
+# Fine-tuning de Romeo con Soup, v3: Gemma 3 1B + LoRA sobre
+# EmpatheticDialogues traducido y rebalanceado (1825 pares).
+#
+# POR QUE GEMMA 3 1B Y NO EL QWEN 0.5B DE LA v2. A 494 M parametros el
+# fine-tuning no se sostenia: con 72 ejemplos de identidad repetidos ocho
+# veces, el modelo seguia diciendo llamarse "Jhon". Gemma 3 1B tiene el
+# doble, que suele ser la frontera donde el ajuste agarra.
+#
+# POR QUE EL DATASET v3. El v2 tenia el 68% de respuestas acabadas en
+# pregunta -- son turnos de listener de EmpatheticDialogues -- y el modelo
+# aprendia ESE MOLDE antes que el contenido: cerraba siempre igual, y
+# llegaba a repetir la pregunta que acababa de hacer. rebalancear.py baja
+# ese porcentaje al 40% quitando la pregunta a 513 respuestas que ya
+# traian una afirmacion delante. No se perdio ningun par.
+# Espejo de google/gemma-3-1b-it sin la verja de licencia: mismos pesos,
+# pero el oficial pide aceptar los terminos de Google con una cuenta de
+# HuggingFace y un token.
+base: unsloth/gemma-3-1b-it
+task: sft
+
+data:
+  train: ./data/romeo_empatico_v3.jsonl
+  format: chatml               # {"messages": [system, user, assistant]}
+  val_split: 0.05              # ~91 pares para validar
+  max_length: 512              # los pares son cortos
+  train_on_responses_only: true  # la pérdida solo cuenta la respuesta de Romeo
+
+training:
+  epochs: 2                    # en la v2 la 3a epoca solo reforzaba el molde
+  lr: 1e-4                     # la mitad que con el 0.5B: modelo mas grande,
+                               # paso mas corto para no pisar lo que ya sabe
+  batch_size: 4                # 1B en 16 bits: lotes mas chicos que el 0.5B
+  gradient_accumulation_steps: 4   # lote efectivo de 16, igual que la v2
+  warmup_ratio: 0.05
+  seed: 42
+  quantization: none
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    # Explicito, con las MLP: en la v1 "auto" eligio solo q_proj y v_proj
+    # (atencion), que cambian el estilo pero no el contenido.
+    target_modules:
+      - q_proj
+      - k_proj
+      - v_proj
+      - o_proj
+      - gate_proj
+      - up_proj
+      - down_proj
+
+output: ./output/romeo-gemma-v3

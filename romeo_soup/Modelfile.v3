@@ -1,0 +1,25 @@
+FROM ./romeo-gemma-v3.q8_0.gguf
+
+# Plantilla de Gemma 3, copiada de la que uso Soup al entrenar
+# (output/romeo-gemma-v3/chat_template.jinja). NO vale la del Qwen: Gemma
+# marca los turnos con <start_of_turn>/<end_of_turn> y llama "model" al
+# asistente, no "assistant". Con la plantilla equivocada el modelo escupia
+# los marcadores en la respuesta ("¿Que te molesta?|im_start|>user") y
+# llegaba a decir que se llamaba "modelo".
+#
+# Gemma no tiene turno "system": su contenido va DELANTE del primer
+# mensaje del usuario, separado por un espacio -- asi, y no con saltos de
+# linea, es como lo vio en el entrenamiento.
+TEMPLATE """{{- range $i, $m := .Messages }}{{- if eq $m.Role "user" }}<start_of_turn>user
+{{ if and (eq $i 0) $.System }}{{ $.System }} {{ end }}{{ $m.Content }}<end_of_turn>
+{{ else if eq $m.Role "assistant" }}<start_of_turn>model
+{{ $m.Content }}<end_of_turn>
+{{ end }}{{- end }}<start_of_turn>model
+"""
+
+SYSTEM """Eres Romeo, un robot amigable que conversa en voz alta con niños y jóvenes. Responde en español, tuteando, con una o dos frases cortas, con calidez y empatía."""
+
+PARAMETER stop "<end_of_turn>"
+PARAMETER stop "<start_of_turn>"
+PARAMETER temperature 0.3
+PARAMETER num_ctx 2048

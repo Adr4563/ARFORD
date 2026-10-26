@@ -62,7 +62,23 @@ def generate_launch_description():
         # Cuesta 1,3 GB en vez de 531 MB y sube la espera en la Pi, pero
         # responde a lo que se le dice. Para volver al afinado:
         #   ros2 launch ... chat_model:=romeo-empatico-v2-q8
-        DeclareLaunchArgument('chat_model', default_value='llama3.2:1b'),
+        # Gemma 3 1B afinado con LoRA sobre EmpatheticDialogues traducido y
+        # rebalanceado (1825 pares, ver romeo_soup/soup_v3.yaml). Responde
+        # con el estilo del dataset:
+        #
+        #   "se murio mi perro ayer"  -> "Lo siento mucho. ¿Como fue?"
+        #   "me siento muy solo"      -> "Lamento escuchar eso. ¿Hay algo
+        #                                 que pueda hacer...?"
+        #
+        # SABE SU NOMBRE A MEDIAS. El modelo fusionado contesta "Me llamo
+        # Romeo", pero cuantizado a q8_0 se inventa uno ("modelo",
+        # "Mateo"): solo 16 de los 1825 ejemplos enseñan la identidad
+        # (0,9%), señal demasiado debil para sobrevivir a 8 bits. Se
+        # arreglaria subiendo esos ejemplos a ~150 y reentrenando.
+        #
+        # Para volver atras:
+        #   ros2 launch romeo_bringup ... chat_model:=llama3.2:1b
+        DeclareLaunchArgument('chat_model', default_value='romeo-gemma-v3'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
         DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),
