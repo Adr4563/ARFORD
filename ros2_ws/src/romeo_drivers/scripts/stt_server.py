@@ -57,6 +57,7 @@ import numpy as np  # noqa: E402
 from flask import Flask, jsonify, request  # noqa: E402
 
 from romeo_drivers._ser_engine import ClasificadorVoz  # noqa: E402
+from romeo_drivers._ter_engine import ClasificadorTexto  # noqa: E402
 from romeo_drivers._stt_engine import HILOS, IDIOMA, TAM, ReconocedorVoz  # noqa: E402
 
 PUERTO = int(os.environ.get("ROMEO_STT_PUERTO", "8082"))
@@ -66,6 +67,11 @@ app = Flask(__name__)
 reconocedor = ReconocedorVoz()
 # SER: la emocion de la voz, sobre el mismo audio (ver _ser_engine.py).
 clasificador_voz = ClasificadorVoz()
+# TER: la emocion del TEXTO que se acaba de transcribir (ver _ter_engine.py).
+# Va aca y no en la Pi por lo mismo que el SER: el modelo pesa 418 MB y el
+# texto ya esta en este proceso. Si el modelo no esta, no se manda y el
+# orquestador usa sus palabras clave.
+clasificador_texto = ClasificadorTexto()
 
 # Ver el punto 2 del docstring: transcribir de a una.
 _lock = threading.Lock()
@@ -108,6 +114,8 @@ def salud():
             "segundos_carga": round(reconocedor.segundos_carga, 2),
             "ser": clasificador_voz.modelo if clasificador_voz.listo else None,
             "ser_error": clasificador_voz.error,
+            "ter": clasificador_texto.modelo if clasificador_texto.listo else None,
+            "ter_error": clasificador_texto.error,
         }
     )
 
@@ -144,6 +152,9 @@ def transcribir():
         # SER sobre el mismo audio. Solo si hubo texto: sin palabras no hay
         # frase del usuario que juzgar.
         ser = clasificador_voz.clasificar(samples, sr) if texto else None
+        # TER sobre el texto recien transcrito, dentro del mismo lock: la
+        # PC tambien tiene un numero limitado de nucleos y esto es corto.
+        ter = clasificador_texto.clasificar(texto) if texto else None
     tardanza = time.perf_counter() - t0
 
     return jsonify(
@@ -153,6 +164,10 @@ def transcribir():
             # {"etiquetas": [...], "probabilidades": [...]}, o null.
             "ser": ({"etiquetas": ser[0], "probabilidades": ser[1]}
                     if ser else None),
+            # Emocion del texto, mismo formato que el SER, o null si el
+            # modelo no esta cargado.
+            "ter": ({"etiquetas": ter[0], "probabilidades": ter[1]}
+                    if ter else None),
             "duracion_audio": round(duracion, 2),
             "segundos_proceso": round(tardanza, 2),
             "rtf": round(tardanza / duracion, 2) if duracion else None,
@@ -161,6 +176,13 @@ def transcribir():
 
 
 def main():
+    # El TER es de carga perezosa, pero se fuerza aqui: asi /salud dice la
+    # verdad desde el arranque y el primer turno no paga los ~0,8 s.
+    if clasificador_texto.cargar():
+        print(f"[TER] {clasificador_texto.modelo} listo")
+    else:
+        print(f"[TER] sin modelo ({clasificador_texto.error}); "
+              f"el orquestador usara sus palabras clave")
     print(f"[STT] cargando {reconocedor._nombre_modelo()} ({HILOS} hilos, idioma={IDIOMA})...")
     if not reconocedor.cargar():
         # Falla ruidosa a propósito: un servicio que arranca sin modelo solo

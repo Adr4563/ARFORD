@@ -32,3 +32,11 @@ float64 t_fin
 # SER (teclado, frase muy corta o servidor sin modelo).
 string[] ser_etiquetas
 float32[] ser_probabilidades
+
+# TER: emocion del TEXTO de esta frase, calculada en la PC sobre el texto
+# que acaba de transcribir (romeo_drivers/_ter_engine.py, RoBERTuito).
+# Mismo formato y mismas claves que el SER. Vacios si no hubo TER (teclado,
+# o servidor sin el modelo): entonces orchestrator_node cae a las palabras
+# clave de romeo_brain/ter.py, que corren en la Pi y no cuestan nada.
+string[] ter_etiquetas
+float32[] ter_probabilidades

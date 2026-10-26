@@ -137,7 +137,7 @@ def _esta_negado(palabras, indice):
     return any(p in _NEGACIONES for p in palabras[inicio:indice])
 
 
-def analizar(texto):
+def analizar_por_palabras(texto):
     """Devuelve (emocion, confianza) de lo que el texto EXPRESA.
 
     (None, 0.0) cuando no hay evidencia suficiente -- texto sin carga
@@ -179,3 +179,122 @@ def analizar(texto):
     # ~0.4, dos dan ~0.5, y de ahi no pasa de CONFIANZA_MAXIMA.
     confianza = CONFIANZA_MAXIMA * (1.0 - 1.0 / (1.0 + peso))
     return emocion, round(confianza, 3)
+
+
+# ── Motor neuronal opcional: RoBERTuito ───────────────────────────────
+#
+# POR QUE HAY DOS MOTORES. Las palabras clave de arriba no cuestan nada y
+# funcionan sin red, pero solo ven los terminos que estan en la tabla:
+# "no me salio nada bien" no tiene ninguno y se va en blanco. RoBERTuito
+# (pysentimiento/robertuito-emotion-analysis, entrenado con tuits en
+# espanol) lee la frase entera. Es el equivalente en espanol del modelo
+# que usa la tesis de Rocha, que solo existe en ingles.
+#
+# Se elige con ROMEO_TER_MOTOR=robertuito. El default sigue siendo
+# "palabras" para no cambiar el comportamiento de nadie que no lo pida.
+#
+# MEDIDO EN LA PC (26 oct 2026), 18 ms por frase, los dos motores sobre las
+# mismas entradas:
+#
+#     frase                          robertuito        palabras
+#     "gane el partido de futbol"    felicidad 0.85    sin evidencia
+#     "se murio mi perro"            tristeza  0.78    sin evidencia
+#     "hoy me fue muy mal"           tristeza  0.61    tristeza 0.23
+#     "no estoy triste"              tristeza  0.85    sin evidencia
+#
+# Gana en las tres primeras: lee frases que no tienen ningun termino de la
+# tabla. PIERDE en la cuarta -- no procesa la negacion, ve "triste" y
+# contesta tristeza. Las palabras clave si la manejan (_esta_negado).
+# Por eso el default no cambia: son 435 MB y un fallo conocido a cambio de
+# cubrir frases sin palabras clave. Conviene medirlo en la Pi antes de
+# ponerlo por defecto.
+#
+# El modelo vive FUERA del repo, en ~/.romeo/modelos/ter/ (ter.onnx,
+# ter.json y tokenizer.json), y se genera una vez en la PC con
+# pruebas/ter/exportar_ter.py. Si falta, o si onnxruntime no esta, se
+# avisa UNA vez y se sigue con las palabras clave: el robot nunca se queda
+# sin TER por esto.
+MOTOR = os.environ.get("ROMEO_TER_MOTOR", "palabras").strip().lower()
+DIR_MODELO = os.environ.get("ROMEO_TER_DIR", os.path.expanduser("~/.romeo/modelos/ter"))
+
+# Etiquetas del modelo -> claves de estado_afectivo.ANCLAJES.
+_TRADUCCION = {"others": "neutral", "joy": "felicidad", "sadness": "tristeza",
+               "anger": "enojo", "surprise": "sorpresa", "disgust": "asco",
+               "fear": "miedo"}
+
+# A diferencia de las palabras clave, aca la confianza SI puede llegar a 1:
+# el modelo lee la frase entera, no terminos sueltos. Aun asi se deja un
+# tope por la misma razon de siempre -- lo que el texto expresa no es lo
+# que la persona siente -- y porque el STT puede haber transcrito mal.
+CONFIANZA_MAXIMA_NEURONAL = float(os.environ.get("ROMEO_TER_CONFIANZA_MAX_NN", "0.85"))
+
+# Por debajo de esto no hay emocion clara: el modelo reparte la
+# probabilidad entre varias y ninguna manda.
+_MINIMO_NEURONAL = float(os.environ.get("ROMEO_TER_MINIMO_NN", "0.40"))
+
+_motor_nn = None          # la sesion, una vez cargada
+_nn_fallido = False       # ya se intento y no se pudo: no reintentar
+
+
+def _cargar_robertuito():
+    """Carga la sesion ONNX. Devuelve None si no se puede (y avisa una vez)."""
+    global _motor_nn, _nn_fallido
+    if _motor_nn is not None or _nn_fallido:
+        return _motor_nn
+    try:
+        import json as _json
+
+        import numpy as _np
+        import onnxruntime as _ort
+        from tokenizers import Tokenizer
+
+        with open(os.path.join(DIR_MODELO, "ter.json"), encoding="utf-8") as f:
+            id2label = _json.load(f)["id2label"]
+        etiquetas = [_TRADUCCION[id2label[str(i)]] for i in range(len(id2label))]
+        tok = Tokenizer.from_file(os.path.join(DIR_MODELO, "tokenizer.json"))
+        op = _ort.SessionOptions()
+        op.intra_op_num_threads = int(os.environ.get("ROMEO_TER_HILOS", "2"))
+        sesion = _ort.InferenceSession(os.path.join(DIR_MODELO, "ter.onnx"), op)
+        _motor_nn = (sesion, tok, etiquetas, _np)
+    except Exception as e:                                  # noqa: BLE001
+        _nn_fallido = True
+        print(f"[ter] RoBERTuito no disponible ({e}); sigo con palabras clave")
+    return _motor_nn
+
+
+def analizar_por_robertuito(texto):
+    """(emocion, confianza) segun RoBERTuito, o None si no esta cargado.
+
+    Devuelve (None, 0.0) -- como las palabras clave -- cuando ninguna
+    emocion llega a _MINIMO_NEURONAL, y cuando gana "neutral": ninguna de
+    las dos cosas dice nada del animo, y ROSE no se debe mover por eso."""
+    motor = _cargar_robertuito()
+    if motor is None:
+        return None
+    sesion, tok, etiquetas, np = motor
+
+    enc = tok.encode(texto)
+    ids = np.array([enc.ids], dtype=np.int64)
+    masc = np.array([enc.attention_mask], dtype=np.int64)
+    logits = sesion.run(None, {"input_ids": ids, "attention_mask": masc})[0][0]
+    # softmax estable (se resta el maximo antes de exponenciar)
+    e = np.exp(logits - logits.max())
+    probs = e / e.sum()
+
+    i = int(probs.argmax())
+    emocion, p = etiquetas[i], float(probs[i])
+    if emocion == "neutral" or p < _MINIMO_NEURONAL:
+        return None, 0.0
+    return emocion, round(min(p, CONFIANZA_MAXIMA_NEURONAL), 3)
+
+
+def analizar(texto):
+    """(emocion, confianza) de lo que el texto EXPRESA.
+
+    Usa el motor de ROMEO_TER_MOTOR. Con "robertuito", si el modelo no esta
+    disponible cae a las palabras clave en vez de quedarse sin TER."""
+    if MOTOR in ("robertuito", "nn", "neuronal"):
+        r = analizar_por_robertuito(texto)
+        if r is not None:
+            return r
+    return analizar_por_palabras(texto)

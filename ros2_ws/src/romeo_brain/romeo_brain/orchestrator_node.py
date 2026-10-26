@@ -842,10 +842,14 @@ class OrchestratorNode(Node):
             ser = None
             if msg.ser_etiquetas:
                 ser = (list(msg.ser_etiquetas), list(msg.ser_probabilidades))
+            ter_nn = None
+            if msg.ter_etiquetas:
+                ter_nn = (list(msg.ter_etiquetas), list(msg.ter_probabilidades))
             self._procesar_turno((msg.text or "").strip(),
-                                 msg.t_inicio, msg.t_fin, ser)
+                                 msg.t_inicio, msg.t_fin, ser, ter_nn)
 
-    def _procesar_turno(self, entrada, t_inicio=0.0, t_fin=0.0, ser=None):
+    def _procesar_turno(self, entrada, t_inicio=0.0, t_fin=0.0, ser=None,
+                        ter_nn=None):
         if self.estado is None or not entrada:
             return
 
@@ -875,14 +879,25 @@ class OrchestratorNode(Node):
         self._lecturas_turno = []
         self._emocion_pendiente = False
         if "TER" in self._fuentes:
-            emocion_txt, confianza_txt = ter.analizar(entrada)
-            vector_txt, c_txt = estado_afectivo.percibir_del_texto(
-                emocion_txt, confianza_txt)
+            # DOS CAMINOS. Si la PC mando el TER neuronal (RoBERTuito, ver
+            # _ter_engine.py) se usa ese, con la distribucion completa y
+            # PULSE igual que el FER y el SER. Si no llego -- entrada por
+            # teclado, o servidor sin el modelo -- se cae a las palabras
+            # clave de ter.py, que corren aqui y no cuestan nada.
+            if ter_nn:
+                vector_txt, c_txt, emocion_txt = estado_afectivo.percibir_categorias(
+                    ter_nn[1], ter_nn[0])
+                origen = "RoBERTuito"
+            else:
+                emocion_txt, confianza_txt = ter.analizar(entrada)
+                vector_txt, c_txt = estado_afectivo.percibir_del_texto(
+                    emocion_txt, confianza_txt)
+                origen = "palabras clave"
             if vector_txt is not None:
                 self._lecturas_turno.append(("TER", vector_txt, c_txt, emocion_txt))
                 self.get_logger().info(
                     f"[afecto] el texto expresa {emocion_txt} "
-                    f"(confianza {confianza_txt:.2f})")
+                    f"(confianza {c_txt:.2f}, {origen})")
         if "FER" in self._fuentes:
             self._percibir_cara(t_inicio, t_fin)
         if "SER" in self._fuentes:

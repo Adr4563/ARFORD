@@ -173,6 +173,7 @@ class ReconocedorVoz:
         # SER de la ultima frase, tal como lo devolvio el servidor de la PC:
         # (etiquetas, probabilidades), o None. Mismo criterio que arriba.
         self.ultima_ser = None
+        self.ultima_ter = None
 
     # ------------------------------------------------------------------ carga
 
@@ -373,6 +374,12 @@ class ReconocedorVoz:
             if ser.get("etiquetas") and ser.get("probabilidades"):
                 self.ultima_ser = (list(ser["etiquetas"]),
                                    [float(p) for p in ser["probabilidades"]])
+            # TER: lo calcula el mismo servidor sobre el texto que acaba de
+            # transcribir (ver _ter_engine.py). Null si no tiene el modelo.
+            ter = respuesta.get("ter") or {}
+            if ter.get("etiquetas") and ter.get("probabilidades"):
+                self.ultima_ter = (list(ter["etiquetas"]),
+                                   [float(p) for p in ter["probabilidades"]])
             return respuesta.get("texto", "")
         except Exception as e:  # noqa: BLE001 - sin respaldo, se pierde la frase
             print(f"[STT] el servidor {self.servidor} no contesta ({e}); "
@@ -393,6 +400,7 @@ class ReconocedorVoz:
         # Con un servidor configurado se transcribe SOLO alla. Si no
         # contesta, la frase se pierde: no hay modelo en la Pi.
         self.ultima_ser = None
+        self.ultima_ter = None
         if self.servidor:
             samples = self._normalizar(samples)
             texto = self._transcribir_remoto(samples, sample_rate)
