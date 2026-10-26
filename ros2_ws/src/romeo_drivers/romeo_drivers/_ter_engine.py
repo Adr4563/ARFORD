@@ -29,10 +29,13 @@ import numpy as np
 DIR = os.environ.get("ROMEO_TER_DIR", os.path.expanduser("~/.romeo/modelos/ter"))
 HILOS = int(os.environ.get("ROMEO_TER_HILOS", "2"))
 
-# Etiquetas del modelo -> claves de estado_afectivo.ANCLAJES.
+# Etiquetas del modelo -> las CUATRO del robot (neutral, tristeza, enojo,
+# felicidad). Mismo criterio que _ser_engine._ETIQUETAS: las que sobran se
+# agrupan en la mas cercana en vez de descartarse, para no perder la señal.
+# Varias claves pueden caer en la misma emocion; agrupar() las suma.
 TRADUCCION = {"others": "neutral", "joy": "felicidad", "sadness": "tristeza",
-              "anger": "enojo", "surprise": "sorpresa", "disgust": "asco",
-              "fear": "miedo"}
+              "anger": "enojo", "surprise": "felicidad", "disgust": "enojo",
+              "fear": "tristeza"}
 
 
 class ClasificadorTexto:
@@ -88,7 +91,13 @@ class ClasificadorTexto:
             # softmax estable: se resta el maximo antes de exponenciar
             e = np.exp(logits - logits.max())
             probs = e / e.sum()
-            return self.etiquetas, [round(float(p), 4) for p in probs]
+            # Con cuatro emociones hay etiquetas repetidas (p.ej. fear y
+            # sadness -> tristeza): se suman, como hace agrupar() con el SER.
+            acum = {}
+            for nombre, valor in zip(self.etiquetas, probs):
+                acum[nombre] = acum.get(nombre, 0.0) + float(valor)
+            claves = sorted(acum)
+            return claves, [round(acum[k], 4) for k in claves]
         except Exception as e:                              # noqa: BLE001
             self.error = str(e)
             return None

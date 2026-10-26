@@ -44,17 +44,32 @@ DURACION_MINIMA = 0.5
 # Cubre los nombres más comunes en inglés y español, para que cambiar de
 # modelo no obligue a tocar código. Lo que no está aquí ("other",
 # "unknown"...) se descarta y el resto se renormaliza.
+# CUATRO EMOCIONES, NO OCHO. El robot trabaja con neutral, tristeza, enojo
+# y felicidad, que son las unicas que la camara sabe distinguir
+# (_emotion_detector.ETIQUETAS_RELEVANTES) y las unicas que tienen cara en
+# estado_afectivo._CARAS. Las demas se AGRUPAN en la mas cercana en vez de
+# descartarse, para no tirar la señal:
+#
+#     miedo     -> tristeza   negativa; descartarlo dejaba la activacion
+#                             en -0.14 cuando el modelo veia miedo claro,
+#                             o sea pasaba de "alerta" a "apagado"
+#     asco      -> enojo      negativa y activada, como el enojo
+#     sorpresa  -> felicidad  positiva y activada
+#     desprecio -> enojo      negativa, dominante
+#
+# Medido sobre las distribuciones tipicas: en las cuatro que se conservan
+# el VAD se mueve 0.04-0.09, por debajo del ruido del propio sistema.
 _ETIQUETAS = {
     "anger": "enojo", "angry": "enojo", "ang": "enojo", "enojo": "enojo",
     "ira": "enojo",
-    "disgust": "asco", "disgusted": "asco", "asco": "asco",
-    "fear": "miedo", "fearful": "miedo", "miedo": "miedo",
+    "disgust": "enojo", "disgusted": "enojo", "asco": "enojo",
+    "contempt": "enojo", "desprecio": "enojo",
+    "fear": "tristeza", "fearful": "tristeza", "miedo": "tristeza",
     "happiness": "felicidad", "happy": "felicidad", "hap": "felicidad",
     "joy": "felicidad", "alegria": "felicidad", "felicidad": "felicidad",
+    "surprise": "felicidad", "surprised": "felicidad", "sorpresa": "felicidad",
     "neutral": "neutral", "neu": "neutral", "calm": "neutral",
     "sadness": "tristeza", "sad": "tristeza", "tristeza": "tristeza",
-    "surprise": "sorpresa", "surprised": "sorpresa", "sorpresa": "sorpresa",
-    "contempt": "desprecio", "desprecio": "desprecio",
 }
 
 

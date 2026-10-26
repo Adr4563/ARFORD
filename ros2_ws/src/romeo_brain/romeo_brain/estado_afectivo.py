@@ -247,6 +247,45 @@ def percibir(probabilidades, etiquetas):
     return a_vad(probabilidades, etiquetas), confianza(probabilidades)
 
 
+# EL ROBOT TRABAJA CON CUATRO EMOCIONES. Son las unicas que la camara sabe
+# distinguir (_emotion_detector.ETIQUETAS_RELEVANTES) y las unicas que
+# tienen cara (_CARAS, aqui arriba). Las otras cuatro del FER+ se agrupan
+# en la mas cercana en vez de descartarse, para no tirar la señal:
+#
+#     miedo     -> tristeza   negativa; descartarlo dejaba la activacion
+#                             en -0.14 con miedo claro, o sea pasaba de
+#                             "alerta" a "apagado"
+#     asco      -> enojo      negativa y activada
+#     sorpresa  -> felicidad  positiva y activada
+#     desprecio -> enojo      negativa, dominante
+#
+# El SER y el TER ya llegan agrupados (sus propias tablas de traduccion);
+# esto cubre al FER, que manda sus ocho clases tal cual, y de paso deja el
+# criterio en UN solo sitio para las tres fuentes.
+#
+# Medido: en las cuatro que se conservan el VAD se mueve 0.04-0.09, por
+# debajo del ruido del propio sistema.
+_A_CUATRO = {
+    "miedo": "tristeza",
+    "asco": "enojo",
+    "desprecio": "enojo",
+    "sorpresa": "felicidad",
+}
+
+
+def agrupar_en_cuatro(probabilidades, etiquetas):
+    """(etiquetas, probabilidades) con solo las cuatro del robot.
+
+    Suma las que caen en la misma clave. Deja pasar tal cual lo que ya
+    viene agrupado."""
+    acumulado = {}
+    for etiqueta, p in zip(etiquetas, probabilidades):
+        clave = _A_CUATRO.get(etiqueta, etiqueta)
+        acumulado[clave] = acumulado.get(clave, 0.0) + float(p)
+    claves = sorted(acumulado)
+    return claves, [acumulado[k] for k in claves]
+
+
 def percibir_categorias(probabilidades, etiquetas):
     """PULSE para una fuente CAT (el FER de la ventana de percepcion):
     confianza por entropia (tesis, ec. 4.1-4.2) y conversion CAT -> VAD
@@ -258,6 +297,7 @@ def percibir_categorias(probabilidades, etiquetas):
     probs = [float(p) for p in (probabilidades or [])]
     if not probs or len(probs) != len(etiquetas) or sum(probs) <= 0.0:
         return None, 0.0, None
+    etiquetas, probs = agrupar_en_cuatro(probs, etiquetas)
     total = sum(probs)
     probs = [p / total for p in probs]
     vector, c = percibir(probs, etiquetas)
