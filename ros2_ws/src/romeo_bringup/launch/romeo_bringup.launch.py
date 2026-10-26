@@ -43,7 +43,12 @@ def generate_launch_description():
         DeclareLaunchArgument('mic_activo', default_value='true',
                                description='false desactiva el STT y deja solo el teclado'),
         DeclareLaunchArgument('carrito_port', default_value='/dev/ttyACM0'),
-        DeclareLaunchArgument('chat_model', default_value='llama3.2:1b'),
+        # Qwen2.5-0.5B afinado con LoRA sobre EmpatheticDialogues traducido
+        # (ver romeo_soup/NOTAS_V2.md). Cuantizado a q8_0: 531 MB y ~3,5 s por
+        # respuesta en la Pi, contra 1,3 GB de llama3.2:1b. Como el nombre
+        # empieza por "romeo", agente_chat.py NO manda system prompt propio:
+        # el de Romeo va dentro del Modelfile.
+        DeclareLaunchArgument('chat_model', default_value='romeo-empatico-v2-q8'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
         DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),

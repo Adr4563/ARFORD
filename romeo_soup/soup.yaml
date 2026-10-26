@@ -1,0 +1,28 @@
+# Fine-tuning de Romeo con Soup: Qwen2.5-0.5B-Instruct + LoRA sobre
+# EmpatheticDialogues traducido (982 pares usuario -> Romeo).
+base: Qwen/Qwen2.5-0.5B-Instruct
+task: sft
+# backend: unsloth   # 2-5x más rápido en GPU NVIDIA: pip install "soup-cli[fast]"
+
+data:
+  train: ./data/romeo_empatico.jsonl
+  format: chatml               # {"messages": [system, user, assistant]}
+  val_split: 0.05              # ~50 pares para validar
+  max_length: 512              # los pares son cortos
+  train_on_responses_only: true  # la pérdida solo cuenta la respuesta de Romeo
+
+training:
+  epochs: 3
+  lr: 2e-4                     # LoRA en un modelo chico: más alto que el 2e-5 por defecto
+  batch_size: 8
+  gradient_accumulation_steps: 2   # lote efectivo de 16
+  warmup_ratio: 0.05
+  seed: 42
+  quantization: none           # 0.5B cabe entero en 16 bits; 4bit le quita calidad sin necesidad
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: auto
+
+output: ./output/romeo-empatico

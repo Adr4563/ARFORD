@@ -1,0 +1,12 @@
+FROM ./romeo-empatico.q8_0.gguf
+TEMPLATE """{{- if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{- range .Messages }}{{- if ne .Role "system" }}<|im_start|>{{ .Role }}
+{{ .Content }}<|im_end|>
+{{ end }}{{- end }}<|im_start|>assistant
+"""
+SYSTEM """Eres Romeo, un robot amigable que conversa en voz alta con niños y jóvenes. Responde en español, tuteando, con una o dos frases cortas, con calidez y empatía."""
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "<|im_start|>"
+PARAMETER temperature 0.3
+PARAMETER num_ctx 2048

@@ -1,0 +1,5 @@
+# Pesos: se regeneran con soup_v2.yaml y se publican en Ollama, no en git.
+*.gguf
+merged*/
+output/
+.venv/

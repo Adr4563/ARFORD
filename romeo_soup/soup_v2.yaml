@@ -1,0 +1,41 @@
+# Fine-tuning de Romeo con Soup, v2: Qwen2.5-0.5B-Instruct + LoRA sobre
+# EmpatheticDialogues traducido (1257 pares usuario -> Romeo).
+#
+# Cambios respecto a soup.yaml:
+#   - target_modules explicito: la v1 dejo "auto" y solo entreno q_proj/v_proj,
+#     asi que el modelo aprendio el formato de respuesta pero ningun contenido.
+#     Aqui se agregan las capas MLP, que es donde el modelo guarda lo que sabe.
+#   - 2 epocas en vez de 3: en la v1 el eval_loss bajo 0.02 entre la epoca 1 y 2,
+#     la tercera solo reforzaba la plantilla.
+base: Qwen/Qwen2.5-0.5B-Instruct
+task: sft
+
+data:
+  train: ./data/romeo_empatico_v2.jsonl
+  format: chatml               # {"messages": [system, user, assistant]}
+  val_split: 0.05              # ~63 pares para validar
+  max_length: 512              # los pares son cortos
+  train_on_responses_only: true  # la pérdida solo cuenta la respuesta de Romeo
+
+training:
+  epochs: 2
+  lr: 2e-4                     # LoRA en un modelo chico: más alto que el 2e-5 por defecto
+  batch_size: 8
+  gradient_accumulation_steps: 2   # lote efectivo de 16
+  warmup_ratio: 0.05
+  seed: 42
+  quantization: none           # 0.5B cabe entero en 16 bits; 4bit le quita calidad sin necesidad
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules:
+      - q_proj
+      - k_proj
+      - v_proj
+      - o_proj
+      - gate_proj
+      - up_proj
+      - down_proj
+
+output: ./output/romeo-empatico-v2
