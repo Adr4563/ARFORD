@@ -40,6 +40,15 @@ ETIQUETAS = ["neutral", "felicidad", "sorpresa", "tristeza", "enojo", "asco", "m
 # Las 4 que usa el juego de caras (columna 'cara' del dataset).
 ETIQUETAS_RELEVANTES = {"felicidad": "Feliz", "tristeza": "Triste", "enojo": "Enojado", "neutral": "Neutral"}
 
+# Hilos para onnxruntime y OpenCV. Ver la nota en _asegurar_modelos_cargados.
+HILOS_ONNX = int(os.environ.get("ROMEO_FER_HILOS", "2"))
+
+# Buscar la cara dentro del sensor en vez de en la CPU (ver _yunet_camara).
+# ROMEO_YUNET_CAMARA=0 lo desactiva y todo vuelve a la CPU.
+YUNET_EN_CAMARA = os.environ.get("ROMEO_YUNET_CAMARA", "1") != "0"
+
+from ._yunet_camara import YunetCamara  # noqa: E402
+
 _MAX_INTENTOS = 15
 _PAUSA_ENTRE_INTENTOS = 0.2
 
@@ -93,10 +102,24 @@ class DetectorEmocion:
 
             modelo_emocion = os.path.join(self.modelos_dir, 'emotion-ferplus-8.onnx')
             modelo_cara = os.path.join(self.modelos_dir, 'face_detection_yunet_2023mar.onnx')
-            self._sess_emocion = ort.InferenceSession(modelo_emocion)
+            # LIMITAR LOS HILOS. Sin SessionOptions, onnxruntime abre un
+            # hilo por nucleo: medido en la Pi, el nodo se iba a 347% de
+            # CPU (3,5 de 4 nucleos) con cuatro ThreadPool al ~70% cada
+            # uno, y el load average a 6.9. Eso deja sin CPU al STT, al
+            # TTS y a ROS, que comparten la misma Pi.
+            #
+            # Con 2 hilos basta: el modelo es de 35 MB y solo hay que
+            # clasificar FER_FPS cuadros por segundo, no un video entero.
+            # Es lo mismo que ya hacen pruebas/fer/fer.py y _ter_engine.py.
+            op = ort.SessionOptions()
+            op.intra_op_num_threads = HILOS_ONNX
+            op.inter_op_num_threads = 1
+            self._sess_emocion = ort.InferenceSession(modelo_emocion, op)
             self._input_name = self._sess_emocion.get_inputs()[0].name
             self._detector_cara = cv2.FaceDetectorYN_create(
                 modelo_cara, "", (320, 320), score_threshold=0.7)
+            # OpenCV (YuNet) tiene su propio pool, aparte del de onnx.
+            cv2.setNumThreads(HILOS_ONNX)
             self._deps_ok = True
         except Exception as e:
             self._log(f"[cámara] no disponible ({e}) -- sigue sin veredicto de cámara", warn=True)
@@ -115,20 +138,27 @@ class DetectorEmocion:
         return (cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) if frame.shape[-1] == 3
                 else cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR))
 
-    def _clasificar(self, frame_bgr):
+    def _clasificar(self, frame_bgr, caja=None):
         """Las 8 probabilidades de FER+ (orden ETIQUETAS) para la cara más
-        clara del cuadro, o None si no hay cara."""
+        clara del cuadro, o None si no hay cara.
+
+        `caja` es (x, y, w, h) cuando la cara YA la encontro el sensor
+        (ver _yunet_camara.py): entonces no se corre YuNet en la CPU, que
+        es el 52% del coste por cuadro. Sin caja, se busca aqui como
+        siempre."""
         import cv2
         import numpy as np
 
-        alto, ancho = frame_bgr.shape[:2]
-        self._detector_cara.setInputSize((ancho, alto))
-        _, caras = self._detector_cara.detect(frame_bgr)
-        if caras is None or len(caras) == 0:
-            return None
-
-        cara = max(caras, key=lambda c: c[14])
-        x, y, w, h = [max(0, int(v)) for v in cara[:4]]
+        if caja is not None:
+            x, y, w, h = (max(0, int(v)) for v in caja)
+        else:
+            alto, ancho = frame_bgr.shape[:2]
+            self._detector_cara.setInputSize((ancho, alto))
+            _, caras = self._detector_cara.detect(frame_bgr)
+            if caras is None or len(caras) == 0:
+                return None
+            cara = max(caras, key=lambda c: c[14])
+            x, y, w, h = [max(0, int(v)) for v in cara[:4]]
         gris = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         recorte = gris[y:y + h, x:x + w]
         if recorte.size == 0:
@@ -179,14 +209,40 @@ class DetectorEmocion:
             picam2 = None
             try:
                 from picamera2 import Picamera2
-                picam2 = Picamera2()
+
+                # YuNet dentro del sensor, si el firmware esta instalado.
+                # Si no, se sigue con YuNet en la CPU: el robot funciona
+                # igual, solo gasta mas.
+                sensor = YunetCamara(log=self._log) if YUNET_EN_CAMARA else None
+                if sensor is not None and not sensor.cargar():
+                    self._log(f"[cámara] YuNet en el sensor no disponible "
+                              f"({sensor.error}); se usa la CPU", warn=True)
+                    sensor = None
+
+                picam2 = (Picamera2(sensor.camera_num) if sensor is not None
+                          else Picamera2())
                 picam2.start(picam2.create_preview_configuration(), show_preview=False)
                 time.sleep(2)  # que asiente la exposición
-                self._log(f"[cámara] FER continuo a {self.fps:g} fps")
+                donde = "sensor" if sensor is not None else "CPU"
+                self._log(f"[cámara] FER continuo a {self.fps:g} fps "
+                          f"(cara: {donde})")
                 periodo = 1.0 / self.fps
                 while self._continuo:
                     inicio = time.time()
-                    probs = self._clasificar(self._a_bgr(picam2.capture_array("main")))
+                    if sensor is not None:
+                        # La cara la busca el acelerador del IMX500; aqui
+                        # solo se recorta y se clasifica.
+                        pedido = picam2.capture_request()
+                        try:
+                            cuadro = pedido.make_array("main")
+                            alto, ancho = cuadro.shape[:2]
+                            caja = sensor.cara(pedido.get_metadata(), ancho, alto)
+                        finally:
+                            pedido.release()
+                        probs = (self._clasificar(self._a_bgr(cuadro), caja)
+                                 if caja is not None else None)
+                    else:
+                        probs = self._clasificar(self._a_bgr(picam2.capture_array("main")))
                     if probs is not None:
                         with self._lock:
                             self._observaciones.append((inicio, probs))
