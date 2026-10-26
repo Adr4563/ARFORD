@@ -37,6 +37,7 @@ import os
 import random
 import re
 import threading
+import unicodedata
 import time
 
 import joblib
@@ -73,16 +74,45 @@ _NEGAR_JUEGO = re.compile(
     r"\b(jugar|juego|trivia|trivias|preguntas?)\b", re.I)
 
 
-def enrutar(mensaje_usuario):
-    """Clasifica el mensaje en TRIVIA o CHAT_LIBRE (TF-IDF de n-gramas de
-    caracteres + regresion logistica, ~95-96% medido).
+# A TRIVIA SOLO SI SE PIDE POR SU NOMBRE. El router (TF-IDF de n-gramas de
+# CARACTERES) decidia por parecido de letras, y eso sacaba a la gente de la
+# conversacion sin motivo: "mi perro jueGA mucho" comparte trozos con
+# "jugar" y se iba a TRIVIA con 0.85, igual que "ah, persegui una ardilla"
+# con 0.64. Ninguna de las dos pedia jugar.
+#
+# Los dos errores no cuestan lo mismo: no entender que alguien quiere
+# trivia se arregla repitiendolo, pero cortar una conversacion para soltar
+# el menu de categorias la rompe entera. Asi que ahora hace falta decir la
+# palabra.
+#
+# Las variantes son las que suelta el STT de verdad, vistas en los logs:
+# "tribia", "Tribia", "tribu". El acento y las mayusculas dan igual
+# (_normalizar_ruta). "trivial" NO cuenta: \b corta en el final de palabra.
+_PEDIR_TRIVIA = re.compile(
+    r"\b(trivia|trivias|tribia|tribias|trivi|tribu)\b", re.I)
 
-    Una negacion explicita ("no quiero jugar") manda a CHAT_LIBRE sin
-    consultar al modelo: ver _NEGAR_JUEGO."""
-    if _NEGAR_JUEGO.search(mensaje_usuario or ""):
-        return "CHAT_LIBRE"
-    vector = _router["vectorizador"].transform([mensaje_usuario])
-    return _router["clasificador"].predict(vector)[0]
+# El juego de caras se pide por su cuenta (_quiere_jugar_emociones), pero
+# tambien se menciona en el menu, asi que se reconoce aqui.
+_PEDIR_CARAS = re.compile(r"\b(juego de (las )?caras|las caras)\b", re.I)
+
+
+def _normalizar_ruta(texto):
+    """Sin acentos y en minusculas: "Tribia" y "trivia" son lo mismo."""
+    t = unicodedata.normalize("NFD", (texto or "").lower())
+    return "".join(c for c in t if unicodedata.category(c) != "Mn")
+
+
+def enrutar(mensaje_usuario):
+    """TRIVIA solo si el mensaje nombra la trivia (o el juego de caras).
+
+    Todo lo demas es conversacion. El modelo de router_modelo.joblib sigue
+    cargado por compatibilidad, pero ya no decide: ver el comentario de
+    arriba."""
+    texto = _normalizar_ruta(mensaje_usuario)
+    if _PEDIR_TRIVIA.search(texto) or _PEDIR_CARAS.search(texto):
+        return "TRIVIA"
+    return "CHAT_LIBRE"
+
 
 # No hay system prompt en ningún turno: la personalidad viene HORNEADA en
 # los modelos fine-tuneados. El original tenía un personalidad.py que armaba
