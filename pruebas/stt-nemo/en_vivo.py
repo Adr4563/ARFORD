@@ -47,6 +47,9 @@ def main():
     ap.add_argument("--mic", default=MIC)
     ap.add_argument("--hilos", type=int, default=2)
     ap.add_argument("--sin-ser", action="store_true", help="no carga el SER")
+    # Medido en la Pi, frase de 3.1 s: 2 hilos 2.85 s, 3 hilos 2.1 s, 4 hilos
+    # 1.85 s. La version int8 fue PEOR (3.2 s) y cambiaba la emocion.
+    ap.add_argument("--hilos-ser", type=int, default=4)
     args = ap.parse_args()
 
     rec = ReconocedorVoz(motor="nemo", servidor="", hilos=args.hilos)
@@ -58,7 +61,7 @@ def main():
     if not args.sin_ser:
         try:
             t0 = time.perf_counter()
-            ser = ClasificadorVozOnnx(hilos=args.hilos)
+            ser = ClasificadorVozOnnx(hilos=args.hilos_ser)
             print(f"[SER] listo en {time.perf_counter() - t0:.1f}s", flush=True)
         except Exception as e:  # noqa: BLE001 - sin SER, el STT sigue
             print(f"[SER] desactivado: {e}", flush=True)
