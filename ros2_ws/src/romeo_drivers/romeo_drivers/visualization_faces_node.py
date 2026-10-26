@@ -42,7 +42,9 @@ class VisualizationFacesNode(LifecycleNode):
         super().__init__('visualization_faces_node')
         # FER de fondo para la ventana de percepción (ver docstring).
         self.declare_parameter('fer_continuo', True)
-        self.declare_parameter('fer_fps', 2.0)
+        # Respaldo por si el nodo se lanza sin romeo_params.yaml. Mismo
+        # valor que el del YAML, que es donde se explica por que 5.
+        self.declare_parameter('fer_fps', 5.0)
         # Margen alrededor de la frase: la cara suele anticipar o prolongar
         # lo que se dice, y el VAD recorta el silencio de los bordes.
         self.declare_parameter('fer_margen_seg', 0.5)

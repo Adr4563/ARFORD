@@ -107,9 +107,21 @@ visualization_faces_node:
     # cada frase orchestrator_node pide el resumen de lo que vio mientras
     # hablaba. false = solo se usa la cámara en el juego de caras.
     fer_continuo: true
-    # Cuadros por segundo. 2 alcanza para una frase de 2-5 s (4-10
-    # cuadros) sin cargar la CPU de la Pi, que comparte con la voz y ROS.
-    fer_fps: 2.0
+    # Cuadros por segundo. Todo esto pasa DENTRO de la Pi (camara, YuNet y
+    # FER+ en ONNX): no viaja nada por la red, asi que el unico limite es
+    # su CPU.
+    #
+    # POR QUE 5 Y NO 2. La ventana se resume con la MEDIANA de cada emocion
+    # (tesis sec. 4.1.4.1), y la mediana necesita muestras para ser
+    # estable: a 2 fps una frase de 3 s da ~6 cuadros, donde un par de
+    # lecturas malas la mueven; a 5 fps da ~15 y se comporta como debe.
+    # La normalizacion no cambia (reparte sobre la suma, sean los cuadros
+    # que sean).
+    #
+    # Si la Pi no sostiene 5 fps reales, el banco lo dice:
+    #   python3 pruebas/fer/fer.py --fps 5   -> imprime los fps REALES y
+    #   los ms por cuadro. Si salen ~3, bajar este valor a lo que aguante.
+    fer_fps: 5.0
     # Segundos de más a cada lado de la frase.
     fer_margen_seg: 0.5
 
