@@ -87,7 +87,12 @@ communication_node:
     #                     Con tam=small acierta mas, pero tarda 30 s.
     #
     # whisper queda como alternativa por ser multilingue; nemo solo espanol.
-    stt_motor: "whisper"           # nemo | whisper
+    #
+    # OJO: con stt_servidor configurado (el default del launch, la PC) la Pi
+    # NO transcribe y este parametro no se usa: el motor lo elige
+    # stt_server.py en la PC con ROMEO_STT_MOTOR (default nemo). Se deja en
+    # nemo para que coincida con lo que corre de verdad.
+    stt_motor: "nemo"              # nemo | whisper
     stt_tam: "small"               # solo con stt_motor: whisper
     # 3 es el optimo medido con whisper-small en la Pi (4 nucleos), sobre 5 s
     # de audio: 2 hilos 9.9 s, 3 hilos 8.0 s, 4 hilos 12.5 s -- con 4 compite

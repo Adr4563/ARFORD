@@ -100,7 +100,9 @@ def salud():
     return jsonify(
         {
             "listo": reconocedor.listo,
-            "modelo": f"whisper-{reconocedor.tam}",
+            # El motor real (nemo o whisper-<tam>). Antes decia siempre
+            # "whisper-..." aunque el motor fuera nemo.
+            "modelo": reconocedor._nombre_modelo(),
             "hilos": reconocedor.hilos,
             "idioma": reconocedor.idioma,
             "segundos_carga": round(reconocedor.segundos_carga, 2),
