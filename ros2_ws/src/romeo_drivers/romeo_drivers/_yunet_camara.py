@@ -116,6 +116,17 @@ class YunetCamara:
         viene despues revienta con "Logger severity cannot be changed
         between calls" -- la camara se queda inservible, ni con CPU."""
         import glob
+
+        # PRIMERO el directorio padre. /sys/kernel/debug es drwx------ root
+        # root, asi que sin permiso glob() no ve NADA ahi dentro y devuelve
+        # [] -- no porque el fw_progress no exista, sino porque no puede
+        # mirar. Dar eso por bueno es lo que dejaba pasar a IMX500(), que
+        # fallaba a mitad y rompia el logger de libcamera: desde ahi, ni
+        # con CPU, solo "Logger severity cannot be changed between calls"
+        # cada 5 s para siempre.
+        if not os.access("/sys/kernel/debug", os.R_OK | os.X_OK):
+            return False
+
         rutas = glob.glob("/sys/kernel/debug/imx500-fw:*/fw_progress")
         if not rutas:
             return True          # otra version de picamera2: que lo intente

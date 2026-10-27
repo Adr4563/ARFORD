@@ -248,6 +248,18 @@ class DetectorEmocion:
                             self._observaciones.append((inicio, probs))
                     time.sleep(max(0.0, periodo - (time.time() - inicio)))
             except Exception as e:  # noqa: BLE001 - nunca tirar el nodo
+                # "Logger severity cannot be changed between calls" no se
+                # cura reintentando: libcamera quedo tocado para todo el
+                # proceso y cada intento da lo mismo. Antes eso era un
+                # mensaje cada 5 s hasta que alguien matara el nodo.
+                if "Logger severity" in str(e):
+                    self._log(
+                        "[cámara] libcamera quedó inservible en este proceso "
+                        f"({e}). Se deja de intentar: hay que relanzar el "
+                        "nodo. Si pasa al arrancar, suele ser el firmware "
+                        "del IMX500 -- ver _yunet_camara._puede_leer_progreso.",
+                        warn=True)
+                    return
                 self._log(f"[cámara] FER continuo falló ({e}), reintento en 5 s", warn=True)
                 time.sleep(5)
             finally:
