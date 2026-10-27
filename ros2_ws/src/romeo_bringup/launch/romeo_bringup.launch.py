@@ -62,23 +62,29 @@ def generate_launch_description():
         # Cuesta 1,3 GB en vez de 531 MB y sube la espera en la Pi, pero
         # responde a lo que se le dice. Para volver al afinado:
         #   ros2 launch ... chat_model:=romeo-empatico-v2-q8
-        # Gemma 3 1B afinado con LoRA sobre EmpatheticDialogues traducido y
-        # rebalanceado (1825 pares, ver romeo_soup/soup_v3.yaml). Responde
-        # con el estilo del dataset:
+        # Llama 3.2 3B afinado con LoRA sobre EmpatheticDialogues traducido
+        # y rebalanceado al 40% (1825 pares, ver romeo_soup/soup_llama_v3.yaml).
+        # Corre en la PC, no en la Pi: son 3,4 GB y los sirve el Ollama que
+        # apunta chat_server_host.
         #
-        #   "se murio mi perro ayer"  -> "Lo siento mucho. ¿Como fue?"
-        #   "me siento muy solo"      -> "Lamento escuchar eso. ¿Hay algo
-        #                                 que pueda hacer...?"
+        # EL TAMAÑO ERA EL PROBLEMA, no la cuantizacion. Qwen 0.5B decia
+        # llamarse "Jhon" y Gemma 1B cuantizado se inventaba "modelo" o
+        # "Mateo"; a 3B el nombre aguanta los 8 bits:
         #
-        # SABE SU NOMBRE A MEDIAS. El modelo fusionado contesta "Me llamo
-        # Romeo", pero cuantizado a q8_0 se inventa uno ("modelo",
-        # "Mateo"): solo 16 de los 1825 ejemplos enseñan la identidad
-        # (0,9%), señal demasiado debil para sobrevivir a 8 bits. Se
-        # arreglaria subiendo esos ejemplos a ~150 y reentrenando.
+        #   "¿como te llamas?"  -> "Me llamo Romeo. ¿Y tu como te llamas?"
         #
-        # Para volver atras:
+        # EL v3 ES EL REBALANCEADO. Entrenados los dos iguales -- misma
+        # semilla, mismos hiperparametros, solo cambia el dataset -- sobre
+        # ocho frases el v2 acaba preguntando 8 de 8 veces y el v3 solo 2:
+        #
+        #   "saque veinte en matematicas"
+        #       v2: "¡Que bien! ¿Te ayudo algo en clase?"
+        #       v3: "¡Que bien!"
+        #
+        # Para comparar con el otro, o volver atras:
+        #   ros2 launch romeo_bringup ... chat_model:=romeo-llama3b-v2
         #   ros2 launch romeo_bringup ... chat_model:=llama3.2:1b
-        DeclareLaunchArgument('chat_model', default_value='romeo-gemma-v3'),
+        DeclareLaunchArgument('chat_model', default_value='romeo-llama3b-v3'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
         DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),

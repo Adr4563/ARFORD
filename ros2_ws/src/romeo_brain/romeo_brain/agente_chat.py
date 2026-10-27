@@ -59,11 +59,24 @@ _MODELOS_ENTRENADOS = ("romeo", "arford")
 # que el 68% de sus respuestas acaban en pregunta y el modelo cierra
 # SIEMPRE igual, hasta repitiendo la que acaba de hacer.
 #
+# romeo-llama3b-v3 ya viene con eso corregido en el dataset (rebalanceado
+# al 40%): sobre ocho frases acaba preguntando 2 veces, no 8. La linea se
+# queda igual porque no estorba y sigue haciendo falta para los modelos
+# entrenados con el v2.
+#
 # Va junto al tono del AEB (ver _system_prompt): sin esto el tono llegaria
 # solo, sin nada que lo encuadre.
+#
+# LA IDENTIDAD VA AQUI, aunque el Modelfile ya la traiga. Ollama no suma
+# los dos: el system que manda el cliente SUSTITUYE al del Modelfile, y
+# sin ella el modelo contesta "Soy un modelo de lenguaje conocido como
+# Llama" a "¿que eres tu?".
 _PROMPT_ENTRENADO = (
-    "No termines siempre preguntando: a veces basta con acompañar lo que "
-    "te cuentan. Nunca repitas una pregunta que ya hiciste."
+    "Eres Romeo, un robot amigable que conversa en voz alta con niños y "
+    "jóvenes. Responde en español, tuteando, con una o dos frases cortas, "
+    "con calidez y empatía. No termines siempre preguntando: a veces basta "
+    "con acompañar lo que te cuentan. Nunca repitas una pregunta que ya "
+    "hiciste."
 )
 
 
