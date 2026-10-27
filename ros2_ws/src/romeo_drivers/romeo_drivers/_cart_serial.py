@@ -63,12 +63,28 @@ class CartSerial:
         self._watchdog_lock = threading.Lock()
 
     def _log(self, msg, warn=True):
-        if self.logger is not None:
-            # .warning, no .warn: RcutilsLogger de ROS 2 no tiene el alias
-            # corto, y un AttributeError acá rompía la petición entera en vez
-            # de solo no loguear.
-            (self.logger.warning if warn else self.logger.info)(msg)
-        else:
+        """Loguea sin poder tumbar a quien llama.
+
+        NUNCA LANZA, a proposito. El watchdog corre en un threading.Timer
+        y lo primero que hace al saltar es loguear: si eso tira, el hilo
+        muere ANTES del _mandar("S") y el carrito se queda andando hasta
+        que llegue otro comando. Paso de verdad -- "Exception in thread
+        Thread-2 ... ValueError: Logger severity cannot be changed
+        between calls" -- con el robot moviendose.
+
+        Esa excepcion es del logger de rclpy en esta Pi (Python 3.14 +
+        lyrical): alternar .warning e .info sobre el MISMO logger lo
+        rompe. Se arregla no alternando -- todo va por .warning -- y
+        ademas se blinda con el try, porque parar el carrito no puede
+        depender de que un mensaje salga por consola."""
+        if self.logger is None:
+            print(msg)
+            return
+        try:
+            # Siempre .warning: ver arriba. (.warning y no .warn: el
+            # RcutilsLogger de ROS 2 no tiene el alias corto.)
+            self.logger.warning(msg)
+        except Exception:  # noqa: BLE001 - loguear nunca es critico
             print(msg)
 
     def _resolver_puerto(self):

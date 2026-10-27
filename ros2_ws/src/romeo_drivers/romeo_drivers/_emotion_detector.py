@@ -85,10 +85,25 @@ class DetectorEmocion:
         self._continuo = False
 
     def _log(self, msg, warn=False):
-        if self.logger is not None:
-            # .warning, no .warn: RcutilsLogger de ROS 2 no tiene el alias.
-            (self.logger.warning if warn else self.logger.info)(msg)
-        else:
+        """Loguea sin poder tumbar al hilo del FER.
+
+        SIEMPRE LA MISMA SEVERIDAD. Alternar .info y .warning sobre el
+        mismo logger revienta en esta Pi (Python 3.14 + lyrical) con
+        "Logger severity cannot be changed between calls", y como el
+        primer aviso del FER es un warning ("YuNet en el sensor no
+        disponible"), el .info siguiente tiraba el hilo de captura: la
+        camara se quedaba sin FER toda la sesion.
+
+        El try ademas evita que un fallo del logger vuelva a matar la
+        captura por un mensaje de consola."""
+        if self.logger is None:
+            print(msg)
+            return
+        try:
+            # .warning y no .warn: el RcutilsLogger de ROS 2 no tiene el
+            # alias corto.
+            self.logger.warning(msg)
+        except Exception:  # noqa: BLE001 - loguear nunca es critico
             print(msg)
 
     # ─── Modelos ─────────────────────────────────────────────────────
