@@ -31,8 +31,10 @@ El espacio es VAD (Russell y Mehrabian), tres ejes en [-1, 1]:
     activacion  -1 calma/sopor            +1 euforia/rabia
     dominancia  -1 sumision/miedo         +1 control/liderazgo
 """
+import collections
 import math
 import os
+import statistics
 import time
 
 # ── Puntos de anclaje: categoria discreta -> coordenada VAD ───────────
@@ -134,13 +136,28 @@ def radio_neutral(emocion, animo_base):
 EMPATIA = float(os.environ.get("ROMEO_EMPATIA", "0.4"))
 
 # ANIMO_BASE (b): la personalidad por defecto, a la que siempre vuelve.
-# Positivo y despierto, sin llegar a eufórico.
+# Positivo y despierto, sin llegar a euforico.
 #
-# Son los valores del perfil optimista de FRED en el paper.
+# SE APARTA DEL PAPER A PROPOSITO. FRED usa (0.40, 0.30, 0.20) para su
+# perfil optimista, y con esos valores Romeo no podia alegrarse: su base
+# ya estaba tan arriba que casi cualquier usuario tiraba del animo HACIA
+# ABAJO. Con empatia 0.4, un usuario en v=+0.31 -- que es lo que salio al
+# decirle "estoy muy feliz de conocerte", con el TER al 97% -- dejaba el
+# animo en 0.4*0.31 + 0.6*0.40 = +0.364: por debajo de donde estaba.
+#
+# Ademas la base no esta en el centro del espacio, asi que cuanto mas
+# arriba, mas corto el margen hacia felicidad:
+#
+#     (0.40, 0.30, 0.20)   0.43 a felicidad, 1.29 a tristeza   1:3.0
+#     (0.25, 0.18, 0.12)   0.64 a felicidad, 1.09 a tristeza   1:1.7
+#
+# Con 0.25 el mismo usuario de +0.31 ya SUBE el animo (+0.274), y Romeo
+# sigue partiendo de un sitio positivo. Para volver al paper:
+#     ROMEO_ANIMO_V=0.40 ROMEO_ANIMO_A=0.30 ROMEO_ANIMO_D=0.20
 ANIMO_BASE = (
-    float(os.environ.get("ROMEO_ANIMO_V", "0.40")),
-    float(os.environ.get("ROMEO_ANIMO_A", "0.30")),
-    float(os.environ.get("ROMEO_ANIMO_D", "0.20")),
+    float(os.environ.get("ROMEO_ANIMO_V", "0.25")),
+    float(os.environ.get("ROMEO_ANIMO_A", "0.18")),
+    float(os.environ.get("ROMEO_ANIMO_D", "0.12")),
 )
 
 # DECAIMIENTO (d): que tan rapido vuelve al animo base, por paso.
@@ -190,7 +207,7 @@ PASO_DECAIMIENTO = float(os.environ.get("ROMEO_PASO_DECAIMIENTO", "20.0"))
 PERFILES = {
     # El de siempre de Romeo: se entristece un poco con el usuario pero
     # se queda en la zona positiva y puede animarlo. (Tesis, escenario 2.)
-    "OPTIMISTIC":  {"empatia": 0.4, "animo_base": (0.40, 0.30, 0.20),
+    "OPTIMISTIC":  {"empatia": 0.4, "animo_base": (0.25, 0.18, 0.12),
                     "decaimiento": 0.3, "latencia": 3.0},
     # Espejo del usuario: absorbe su estado entero. (Tesis, escenario 1.)
     # Util para comparar en experimentos; poco recomendable fuera de experimentos.
@@ -332,6 +349,63 @@ def agrupar_en_cuatro(probabilidades, etiquetas):
         acumulado[clave] = acumulado.get(clave, 0.0) + float(p)
     claves = sorted(acumulado)
     return claves, [acumulado[k] for k in claves]
+
+
+# ── Ventana del TER (tesis, sec. 4.1.4.1, paso 0) ────────────────────
+#
+# El FER resume los CUADROS de una frase con mediana + normalizacion
+# (_emotion_detector.resumir) y el SER clasifica el audio de la frase de
+# una vez: las dos entregan una observacion por frase y ahi se acaba.
+#
+# El TER no. Sus observaciones se acumulan a lo largo de la conversacion
+# y PULSE recibe la mediana normalizada de las ULTIMAS N frases:
+#
+#     mk = mediana(pk(1), ..., pk(N))      (a)
+#     pk = mk / Sum_j mj                   (b)
+#
+# N = 5 y no toda la sesion: con la sesion entera, cuantas mas frases
+# hay menos mueve cada una nueva -- a los 20 turnos el animo se queda
+# sordo. Con una ventana corta Romeo sigue lo reciente y una frase
+# suelta mal leida (ironia, un fallo del STT) no lo arrastra, porque la
+# mediana la descarta.
+VENTANA_TER = int(os.environ.get("ROMEO_VENTANA_TER", "5"))
+
+_ventana_ter = collections.deque(maxlen=VENTANA_TER)
+
+
+def acumular_ter(probabilidades, etiquetas):
+    """Mete la lectura de esta frase en la ventana del TER.
+
+    Las distribuciones se guardan ya agrupadas en las cuatro emociones
+    del AEB, para que todas las frases sean comparables aunque el
+    clasificador cambie de categorias."""
+    probs = [float(p) for p in (probabilidades or [])]
+    if not probs or len(probs) != len(etiquetas) or sum(probs) <= 0.0:
+        return
+    claves, valores = agrupar_en_cuatro(probs, etiquetas)
+    total = sum(valores)
+    if total > 0.0:
+        _ventana_ter.append((claves, [v / total for v in valores]))
+
+
+def resumir_ter():
+    """(etiquetas, probabilidades) de la ventana, con mediana por emocion
+    y normalizacion. (None, None) si todavia no hay ninguna lectura."""
+    if not _ventana_ter:
+        return None, None
+    claves = _ventana_ter[0][0]
+    medianas = [statistics.median([o[1][i] for o in _ventana_ter])
+                for i in range(len(claves))]
+    total = sum(medianas)
+    if total <= 0.0:
+        return None, None
+    return claves, [m / total for m in medianas]
+
+
+def olvidar_ter():
+    """Vacia la ventana. Al empezar una sesion nueva: el usuario
+    siguiente no hereda las frases del anterior."""
+    _ventana_ter.clear()
 
 
 def percibir_categorias(probabilidades, etiquetas):

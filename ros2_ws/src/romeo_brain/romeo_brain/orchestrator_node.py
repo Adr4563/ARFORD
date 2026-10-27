@@ -870,6 +870,9 @@ class OrchestratorNode(Node):
         # conversacion del anterior.
         agente_chat.reiniciar()
         self._afecto.reiniciar()
+        # Y la ventana del TER: su mediana es de las frases de ESTA
+        # conversacion, no de las del usuario anterior.
+        estado_afectivo.olvidar_ter()
         self._bridge.mostrar_cara("content")
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("speaking")
@@ -972,9 +975,16 @@ class OrchestratorNode(Node):
             # teclado, o servidor sin el modelo -- se cae a las palabras
             # clave de ter.py, que corren aqui y no cuestan nada.
             if ter_nn:
+                # Paso 0 del TER (tesis, sec. 4.1.4.1): esta frase entra en
+                # la ventana y PULSE recibe la mediana normalizada de las
+                # ultimas VENTANA_TER, no solo la de ahora. Solo por este
+                # camino: las palabras clave no dan una distribucion, solo
+                # (emocion, confianza).
+                estado_afectivo.acumular_ter(ter_nn[1], ter_nn[0])
+                etiq_ter, probs_ter = estado_afectivo.resumir_ter()
                 vector_txt, c_txt, emocion_txt = estado_afectivo.percibir_categorias(
-                    ter_nn[1], ter_nn[0])
-                origen = "RoBERTuito"
+                    probs_ter, etiq_ter)
+                origen = f"RoBERTuito, ventana de {estado_afectivo.VENTANA_TER}"
             else:
                 emocion_txt, confianza_txt = ter.analizar(entrada)
                 vector_txt, c_txt = estado_afectivo.percibir_del_texto(
