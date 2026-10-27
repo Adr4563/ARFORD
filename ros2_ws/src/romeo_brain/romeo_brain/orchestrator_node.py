@@ -51,7 +51,7 @@ from ament_index_python.packages import get_package_share_directory
 from romeo_interfaces.msg import UserInput
 
 from . import (aeb, agente_chat, agente_trivia, estado_afectivo, frases,
-               llama_client, preguntas, ter)
+               llama_client, ordenes, preguntas, ter)
 from ._ros_bridge import RosBridge
 
 # El enrutado (TRIVIA / CHAT_LIBRE) vive aca y no en un agente aparte: son
@@ -662,6 +662,27 @@ class OrchestratorNode(Node):
         time.sleep(PAUSA_CAMBIO_CARA)
         return acerto
 
+    def _obedecer(self, orden):
+        """Ejecuta una orden directa de ordenes.interpretar().
+
+        La cara pedida se queda hasta el turno siguiente, igual que la del
+        estado afectivo: _mostrar_cara_reposo() la repondria al momento y
+        el usuario no llegaria a verla."""
+        respuesta = frases.una(frases.ORDENES)
+        self.get_logger().info(
+            f"[orden] {orden['tipo']} -> {orden['valor']}")
+        self.get_logger().info(f"Asistente: {respuesta}")
+
+        if orden["tipo"] == "cara":
+            self._bridge.hablar(respuesta)
+            self._bridge.mostrar_cara(orden["valor"])
+            return
+
+        self._bridge.mostrar_cara("speaking")
+        self._bridge.hablar(respuesta)
+        self._bridge.mover(orden["valor"])
+        self._mostrar_cara_reposo()
+
     @staticmethod
     def _pregunta_capacidades(mensaje):
         """True si el usuario pregunta que sabe hacer Romeo.
@@ -1033,6 +1054,15 @@ class OrchestratorNode(Node):
         # de chat esta afinado en EmpatheticDialogues y a "¿que haces?"
         # responde "estoy para acompañarte y conversar", sin nombrar ni la
         # trivia ni las caras aunque el prompt se las liste.
+        # Ordenes directas ("gira 360", "ponte triste") ANTES del chat: el
+        # LLM no mueve el carrito ni cambia la cara, y afinado en
+        # EmpatheticDialogues a "gira" contesta algo empatico. Ver
+        # ordenes.py para por que lo decide una tabla y no el modelo.
+        orden = ordenes.interpretar(entrada)
+        if orden is not None:
+            self._obedecer(orden)
+            return
+
         if self._pregunta_capacidades(entrada):
             respuesta = frases.una(frases.CAPACIDADES)
             self.get_logger().info(f"Asistente: {respuesta}")

@@ -8,6 +8,7 @@ reiniciar el nodo -- no hace falta tocar Python ni recompilar.
 
     presentaciones.txt       lo que dice al arrancar ("soy Romeo")
     capacidades.txt          lo que sabe hacer, SOLO si se lo preguntan
+    ordenes.txt              lo que dice al obedecer una orden directa
     saludos_apertura.txt     como pide el nombre
     bienvenidas.txt          saludo con el nombre + que propone hacer
     despedidas.txt           al cerrar la sesion
@@ -79,6 +80,9 @@ BIENVENIDAS = _leer("bienvenidas")
 # Lo que sabe hacer. Frase fija y no el LLM: el chat esta afinado en
 # EmpatheticDialogues y no sabe que existen las trivias ni las caras.
 CAPACIDADES = _leer("capacidades")
+# Lo que dice al obedecer una orden directa ("gira", "ponte feliz").
+# Corta a proposito: lo que importa es que se mueva, no lo que diga.
+ORDENES = _leer("ordenes")
 DESPEDIDAS = _leer("despedidas")
 SIN_CARA = _leer("sin_cara")
 RESPUESTAS_TRIVIA_ACIERTO = _leer("respuestas_trivia_acierto")
@@ -99,4 +103,4 @@ def una(lista, **kwargs):
     return frase.format(**kwargs) if kwargs else frase
 
 
-print(f"[frases.py] {sum(len(l) for l in (PRESENTACIONES, SALUDOS_APERTURA, BIENVENIDAS, CAPACIDADES, DESPEDIDAS, SIN_CARA, RESPUESTAS_TRIVIA_ACIERTO, RESPUESTAS_TRIVIA_ERROR, SALIR_TRIVIA, TEMA_PERSONAL))} frases cargadas de data/frases/.")
+print(f"[frases.py] {sum(len(l) for l in (PRESENTACIONES, SALUDOS_APERTURA, BIENVENIDAS, CAPACIDADES, ORDENES, DESPEDIDAS, SIN_CARA, RESPUESTAS_TRIVIA_ACIERTO, RESPUESTAS_TRIVIA_ERROR, SALIR_TRIVIA, TEMA_PERSONAL))} frases cargadas de data/frases/.")
