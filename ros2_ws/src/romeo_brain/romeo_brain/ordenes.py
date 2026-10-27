@@ -72,13 +72,19 @@ _MOVIMIENTOS = [
     # Las terminaciones van de la mas larga a la mas corta: la alternancia
     # de re devuelve la PRIMERA que casa, asi que con (a|as) "avanzas"
     # casaria por "avanza" y el \b final fallaria contra la "s" suelta.
-    (re.compile(r"\b(atras|para atras|hacia atras|marcha atras|"
-                r"retroced(es|as|er|e)|reversa|recula)\b", re.I), ATRAS),
+    # "atras" solo ya basta: las variantes ("para atras", "hacia atras",
+    # "marcha atras") lo contienen.
+    (re.compile(r"\b(atras|retroced(es|as|er|e)|reversa|recula)\b",
+                re.I), ATRAS),
+    # "adelant(e|a)" porque el STT se come la vocal final: "ve adelante"
+    # llega como "hace adelanta" mas veces de las que parece (visto en el
+    # robot). La raiz sola basta -- "adelante" y "adelanta" solo salen en
+    # una orden; nadie dice "adelanta" en una conversacion con Romeo.
+    #
     # avanZar pero avanCes: el subjuntivo cambia la z por c. "avance" a
     # secas NO entra: _limpio() quita las tildes, asi que seria lo mismo
     # que "avance" de "avance mucho en la tarea", que no es una orden.
-    (re.compile(r"\b(adelante|para adelante|hacia adelante|"
-                r"avanz(as|ar|a)|avances|ve adelante)\b", re.I),
+    (re.compile(r"\b(adelant(e|a)|avanz(as|ar|a)|avances)\b", re.I),
      ADELANTE),
     (re.compile(r"\b(gira a la izquierda|giro a la izquierda|"
                 r"gira izquierda|vuelta a la izquierda|"
