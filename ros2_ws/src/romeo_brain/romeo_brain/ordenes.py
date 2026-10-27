@@ -63,10 +63,23 @@ _VUELTA = re.compile(
 # "hacia adelante" cuando el STT mete las dos (no pasa, pero el coste de
 # ordenarlo bien es cero).
 _MOVIMIENTOS = [
-    (re.compile(r"\b(atras|para atras|hacia atras|retrocede|reversa|"
-                r"marcha atras|recula)\b", re.I), ATRAS),
-    (re.compile(r"\b(adelante|para adelante|hacia adelante|avanza|"
-                r"ve adelante|camina)\b", re.I), ADELANTE),
+    # Los verbos llevan las terminaciones que importan en vez de \b, para
+    # cubrir imperativo e infinitivo de una vez ("¿podrias avanzar?" es
+    # tan orden como "avanza") sin tragarse la conversacion: "caminar" a
+    # secas NO es una orden ("me gusta caminar por el parque"), asi que
+    # solo cuenta con un "hacia adelante" al lado, que ya cae en la
+    # primera alternativa.
+    # Las terminaciones van de la mas larga a la mas corta: la alternancia
+    # de re devuelve la PRIMERA que casa, asi que con (a|as) "avanzas"
+    # casaria por "avanza" y el \b final fallaria contra la "s" suelta.
+    (re.compile(r"\b(atras|para atras|hacia atras|marcha atras|"
+                r"retroced(es|as|er|e)|reversa|recula)\b", re.I), ATRAS),
+    # avanZar pero avanCes: el subjuntivo cambia la z por c. "avance" a
+    # secas NO entra: _limpio() quita las tildes, asi que seria lo mismo
+    # que "avance" de "avance mucho en la tarea", que no es una orden.
+    (re.compile(r"\b(adelante|para adelante|hacia adelante|"
+                r"avanz(as|ar|a)|avances|ve adelante)\b", re.I),
+     ADELANTE),
     (re.compile(r"\b(gira a la izquierda|giro a la izquierda|"
                 r"gira izquierda|vuelta a la izquierda|"
                 r"voltea a la izquierda)\b", re.I), GIRO_IZQUIERDA),
