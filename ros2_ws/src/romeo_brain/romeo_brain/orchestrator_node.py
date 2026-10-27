@@ -156,6 +156,20 @@ _PIDE_EMOCIONES = (
     "imitacion", "imitar", "mueca", "muecas", "expresion", "expresiones",
 )
 
+# "¿Que haces?", "¿que sabes hacer?" -- lo unico que dispara el menu de
+# capacidades, que ya no va en el saludo. Sin tildes porque se compara
+# contra preguntas._sin_tildes().
+#
+# Se responde con una frase fija y no con el LLM a proposito: el chat
+# esta afinado en EmpatheticDialogues, que no sabe nada de trivias ni de
+# caras, y a "¿que haces?" contesta "estoy para acompañarte y conversar"
+# por mucho que el prompt le liste lo demas.
+_PIDE_CAPACIDADES = (
+    "que haces", "que sabes hacer", "que puedes hacer", "que mas haces",
+    "para que sirves", "en que me puedes ayudar", "que cosas haces",
+    "cuales son tus funciones", "que sabes",
+)
+
 
 # Saludo de apertura de cada sesión -- se elige uno al azar, así que dos
 # usuarios seguidos no oyen lo mismo. Todas tutean (no vosean): el fine-tune
@@ -649,6 +663,15 @@ class OrchestratorNode(Node):
         return acerto
 
     @staticmethod
+    def _pregunta_capacidades(mensaje):
+        """True si el usuario pregunta que sabe hacer Romeo.
+
+        Normaliza quitando tildes, igual que _quiere_jugar_emociones: el
+        STT transcribe "qué" acentuado y _PIDE_CAPACIDADES va sin tilde."""
+        limpio = preguntas._sin_tildes(mensaje)
+        return any(p in limpio for p in _PIDE_CAPACIDADES)
+
+    @staticmethod
     def _quiere_jugar_emociones(mensaje):
         """True si el usuario pide el juego de caras.
 
@@ -975,6 +998,20 @@ class OrchestratorNode(Node):
 
         if entrada.lower() in ("salir", "exit", "quit"):
             self._finalizar_sesion()
+            return
+
+        # "¿Que haces?" se contesta con una frase fija, ANTES de llegar al
+        # chat: el saludo ya no recita el menu, asi que esta es la unica
+        # forma de enterarse. Y tiene que ser frase fija porque el modelo
+        # de chat esta afinado en EmpatheticDialogues y a "¿que haces?"
+        # responde "estoy para acompañarte y conversar", sin nombrar ni la
+        # trivia ni las caras aunque el prompt se las liste.
+        if self._pregunta_capacidades(entrada):
+            respuesta = frases.una(frases.CAPACIDADES)
+            self.get_logger().info(f"Asistente: {respuesta}")
+            self._bridge.mostrar_cara("speaking")
+            self._bridge.hablar(respuesta)
+            self._mostrar_cara_reposo()
             return
 
         if self.estado["en_trivia"]:

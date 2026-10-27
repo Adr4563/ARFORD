@@ -1,5 +1,5 @@
-Hola, soy Romeo. Juego trivias, hago caras, o charlamos.
-¡Hola! Me llamo Romeo. Sé de trivias, caras y conversación.
-Buenas, soy Romeo. Podemos jugar trivia o charlar un rato.
-¡Hola! Romeo, a tus órdenes. Tengo trivias, caras y ganas de escucharte.
-Hola, yo soy Romeo. Te pregunto trivias, pongo caras, o hablamos.
+Hola, soy Romeo.
+¡Hola! Me llamo Romeo.
+Buenas, soy Romeo.
+¡Hola! Romeo, a tus órdenes.
+Hola, yo soy Romeo.
