@@ -80,7 +80,45 @@ _CARAS = {
 # salia nunca: entre turno y turno el animo decae y no llegaba a acumularse.
 # Los mensajes sin carga emocional no mueven nada (el TER devuelve "sin
 # evidencia"), asi que la cara no parpadea por cualquier frase.
-_RADIO_NEUTRAL = float(os.environ.get("ROMEO_RADIO_NEUTRAL", "0.15"))
+# Zona neutra: a menos de esto del animo base, Romeo pone 'content' en
+# vez de interpretar el desplazamiento.
+#
+# ES UNA FRACCION DEL MARGEN, NO UNA DISTANCIA FIJA. La base OPTIMISTIC
+# (0.40, 0.30, 0.20) no esta en el centro del espacio: le quedan 0.43
+# hasta el anclaje de felicidad y 1.29 hasta el de tristeza. Con un radio
+# fijo el robot queda cojo en una direccion:
+#
+#   r = 0.15  ->  sobra para tristeza, y una lectura floja del SER ya le
+#                 pone cara triste (paso en la primera sesion real: "me
+#                 llamo Adrian" acabo en tristeza_L1)
+#   r = 0.35  ->  deja 0.08 de recorrido hacia felicidad contra 0.94
+#                 hacia tristeza: Romeo no se alegra NUNCA. Con "estoy
+#                 muy feliz" y el TER al 97% se quedo en neutral_L0.
+#
+# Con una fraccion, el radio se escala solo en cada direccion: 0.086
+# hacia felicidad y 0.258 hacia tristeza. Las dos cuestan lo mismo en
+# proporcion, y el perfil sigue decidiendo cuanto se mueve el animo.
+# De la cara que devuelve desviacion() a la clave de ANCLAJES. aeb.py
+# tiene el mismo mapa, pero importarlo desde aqui seria circular: aeb
+# importa este modulo.
+_CARA_A_EMOCION = {"happy": "felicidad", "sad": "tristeza",
+                   "angry": "enojo", "content": None}
+
+_FRACCION_NEUTRAL = float(os.environ.get("ROMEO_FRACCION_NEUTRAL", "0.20"))
+
+
+def radio_neutral(emocion, animo_base):
+    """Borde de la zona neutra en la direccion de `emocion`.
+
+    Es _FRACCION_NEUTRAL del camino que va del animo base al anclaje de
+    esa emocion. Sin emocion (el animo esta justo en la base) devuelve 0:
+    cualquier desplazamiento cuenta, y quien llama ya trata la magnitud 0
+    como neutral."""
+    if not emocion or emocion not in ANCLAJES:
+        return 0.0
+    ancla = ANCLAJES[emocion]
+    margen = math.sqrt(sum((ancla[i] - animo_base[i]) ** 2 for i in range(3)))
+    return _FRACCION_NEUTRAL * margen
 
 
 
@@ -537,7 +575,11 @@ class EstadoAfectivo:
         lejos entre si, asi que con el animo cerca de la base el ganador
         saldria casi por azar y la cara parpadearia entre dos sin motivo."""
         direccion, magnitud = self.desviacion()
-        return "content" if magnitud < _RADIO_NEUTRAL else direccion
+        # El borde depende de HACIA DONDE se movio: ver radio_neutral().
+        emocion = _CARA_A_EMOCION.get(direccion)
+        return ("content"
+                if magnitud < radio_neutral(emocion, self.animo_base)
+                else direccion)
 
     def desviacion(self):
         """Hacia donde y cuanto se aparto el animo de su base.

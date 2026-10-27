@@ -102,7 +102,11 @@ def nivel(emocion, magnitud, animo_base, radio=None):
     zona neutra (radio) al anclaje de la emocion. Si el anclaje esta mas
     cerca de la base que el radio (no deberia pasar con los perfiles
     actuales), cualquier desplazamiento fuera de la zona neutra es L4."""
-    radio = estado_afectivo._RADIO_NEUTRAL if radio is None else radio
+    # El borde de la zona neutra no es fijo: es una fraccion del camino de
+    # la base al anclaje de ESTA emocion, para que alegrarse y
+    # entristecerse cuesten lo mismo en proporcion (ver radio_neutral()).
+    if radio is None:
+        radio = estado_afectivo.radio_neutral(emocion, animo_base)
     if magnitud < radio:
         return 0
     recorrido = _distancia(estado_afectivo.ANCLAJES[emocion], animo_base) - radio
