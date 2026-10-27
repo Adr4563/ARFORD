@@ -137,6 +137,16 @@ def reiniciar():
     _historial.clear()
 
 
+def sembrar_turno_robot(texto):
+    """Mete en el historial algo que Romeo dijo fuera del chat.
+
+    El saludo de apertura lo dice el orquestador, no este agente, asi que
+    el chat no se entera de que acaba de preguntar el nombre. Sin ese
+    turno, al oir "Adrian" a secas el modelo no ve un nombre y responde
+    "¿Que tal tu?"; con el, contesta "Hola Adrian"."""
+    _historial.append({"role": "assistant", "content": texto})
+
+
 def responder(mensaje_usuario, tono=None):
     """Devuelve la respuesta de Romeo, teniendo en cuenta los turnos
     anteriores de esta sesion.

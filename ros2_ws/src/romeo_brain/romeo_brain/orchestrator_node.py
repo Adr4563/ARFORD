@@ -883,6 +883,11 @@ class OrchestratorNode(Node):
                     f"{frases.una(frases.SALUDOS_APERTURA)}")
         self.get_logger().info(f"Asistente: {apertura}")
         self._bridge.hablar(apertura)
+        # El chat tiene que saber que Romeo acaba de preguntar el nombre:
+        # es el orquestador quien lo dice, no el agente. Sin este turno
+        # sembrado, al oir "Adrian" a secas el modelo no ve un nombre y
+        # contesta "¿Que tal tu?".
+        agente_chat.sembrar_turno_robot(apertura)
         time.sleep(PAUSA_CAMBIO_CARA)
         self._mostrar_cara_reposo()
 
@@ -990,7 +995,19 @@ class OrchestratorNode(Node):
             nombre = entrada or "amigo"
             self.estado["nombre"] = nombre
             self.estado["esperando_nombre"] = False
-            bienvenida = frases.una(frases.BIENVENIDAS, nombre=nombre)
+            # Saluda el chat, no una frase fija: asi el nombre entra en su
+            # historial y lo puede usar despues. La pregunta que lo provoco
+            # ya esta sembrada en _iniciar_sesion(), asi que el modelo ve
+            # "Adrian" como la respuesta que es.
+            #
+            # Si el chat no contesta (servidor caido), queda la frase de
+            # bienvenidas.txt: sin esto el usuario se quedaria sin saludo.
+            # self.responder() y no agente_chat.responder(): el envoltorio
+            # atrapa el fallo si el servidor del LLM no esta y devuelve una
+            # frase de cortesia en vez de tumbar el turno.
+            bienvenida = self.responder(entrada) if entrada else ""
+            if not bienvenida:
+                bienvenida = frases.una(frases.BIENVENIDAS, nombre=nombre)
             self.get_logger().info(f"Asistente: {bienvenida}")
             self._bridge.hablar(bienvenida)
             self._mostrar_cara_reposo()
