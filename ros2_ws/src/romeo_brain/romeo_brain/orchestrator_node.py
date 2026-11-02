@@ -838,15 +838,20 @@ class OrchestratorNode(Node):
             self._bridge.mostrar_cara("speaking")
             if pendiente["respuesta_esperada"]:
                 estado["total"] += 1
-                acerto = agente_trivia.evaluar_respuesta(pendiente["respuesta_esperada"], mensaje_usuario)
+                # EL JUEZ DECIDE Y COMENTA DE UNA VEZ. Se le pasa tambien
+                # la PREGUNTA, no solo la respuesta: sin ella no puede
+                # juzgar "de cuero" por "piel de animales". Si no contesta
+                # o no se le entiende, queda la comparacion de texto de
+                # siempre y las frases fijas.
+                acerto, comentario = agente_trivia.juzgar(
+                    pendiente["pregunta"], pendiente["respuesta_esperada"],
+                    mensaje_usuario)
+                if acerto is None:
+                    acerto = agente_trivia.evaluar_respuesta(
+                        pendiente["respuesta_esperada"], mensaje_usuario)
                 estado["aciertos"] += acerto
                 cara = agente_trivia.elegir_cara_pregunta(pendiente, acerto) or (
                     "happy" if acerto else "sad")
-                # Primero se le pide al LLM un comentario sobre lo que dijo
-                # el usuario; si no puede, se usan las frases fijas.
-                comentario = agente_trivia.comentar(
-                    pendiente["pregunta"], pendiente["respuesta_esperada"],
-                    mensaje_usuario, acerto)
                 if not comentario:
                     comentario = self.comentar_resultado(
                         pendiente["respuesta_esperada"], acerto)
@@ -876,6 +881,14 @@ class OrchestratorNode(Node):
         # (_quiere_jugar_emociones), solo que ya no se anuncia aqui.
         estado["esperando_tema"] = False
         estado["en_trivia"] = True
+        # Se avisa de que empieza el juego y de como salir, ANTES de la
+        # primera pregunta: sin esto Romeo pasaba de "quiero jugar trivia"
+        # a soltar una pregunta de geografia sin mas, y no quedaba claro
+        # que la trivia habia empezado ni como pararla.
+        intro = frases.una(frases.INICIO_TRIVIA)
+        self.get_logger().info(f"Asistente: {intro}")
+        self._bridge.mostrar_cara("speaking")
+        self._bridge.hablar(intro)
         self._iniciar_tanda(None)
 
     def _reanudar_trivia(self):

@@ -87,7 +87,17 @@ def generate_launch_description():
         DeclareLaunchArgument('chat_model', default_value='romeo-llama3b-v3'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
-        DeclareLaunchArgument('trivia_corrector_model', default_value='romeo'),
+        # El juez de trivia: decide si la respuesta vale Y escribe el
+        # comentario, en una sola llamada (agente_trivia.juzgar).
+        #
+        # Pasa de 'romeo' (Qwen 0.5B) a romeo-llama3b-v3, el mismo del
+        # chat. Medido sobre 12 respuestas reales: el Qwen acertaba 6 de 8
+        # y sus comentarios mentian -- a "Peru" cuando la respuesta era
+        # China contestaba "Correcto, Felicidad!". El 3B con la pregunta
+        # y dos ejemplos en el prompt acierta 11 de 12 y no se inventa la
+        # respuesta.
+        DeclareLaunchArgument('trivia_corrector_model',
+                              default_value='romeo-llama3b-v3'),
         # DONDE VIVEN LAS IA. Por defecto, en la PC: el LLM, el STT y el TTS
         # corren alli y la Pi los consume por HTTP. Esa es la configuracion
         # real del robot -- con todo dentro, la Pi iba a 3.3 GB de RAM y 76%

@@ -49,6 +49,85 @@ _PROMPT_COMENTARIO = (
 )
 
 
+# Veredicto Y comentario en UNA sola llamada. Antes eran dos prompts
+# distintos -- _PROMPT_CORRECTOR decidia SI/NO y _PROMPT_COMENTARIO
+# redactaba -- y el que redactaba mentia: a "Peru" cuando la respuesta
+# era China contestaba "Correcto, Felicidad!", y con "verde" se invento
+# que era azul.
+#
+# DOS COSAS LO ARREGLARON, medidas con romeo-llama3b-v3:
+#
+#   respuesta + lo dicho, sin ejemplos ......  5/8, comentarios vagos
+#   + la PREGUNTA ...........................  8/10
+#   + DOS EJEMPLOS resueltos ................ 11/12
+#
+# La pregunta da el contexto que faltaba para juzgar -- "de cuero" por
+# "piel de animales" solo se entiende sabiendo que se pregunta por el
+# pergamino -- y los ejemplos fijan el formato: sin ellos el modelo
+# describe la instruccion en vez de cumplirla.
+#
+# TODO VA EN EL MENSAJE DE USUARIO, sin turno system: Gemma no lo
+# procesa aparte (su plantilla lo mete dentro del primer mensaje) y con
+# system separado llegaba a decir SI a "Peru" cuando era China.
+_PROMPT_JUEZ = (
+    "Eres Romeo, un robot que juega trivia con niños. Te doy la pregunta, "
+    "la respuesta correcta y lo que dijo la persona.\n"
+    "Decide si acerto (aunque lo diga con otras palabras o mal transcrito).\n"
+    "Responde EXACTAMENTE en dos lineas:\n"
+    "VEREDICTO: SI o NO\n"
+    "COMENTARIO: una frase corta dirigida A LA PERSONA, tuteando.\n"
+    "\n"
+    "Ejemplo 1:\n"
+    "Pregunta: ¿Capital de Francia?\n"
+    "Respuesta correcta: Paris\n"
+    "La persona dijo: Paris obvio\n"
+    "VEREDICTO: SI\n"
+    "COMENTARIO: ¡Esa te la sabias!\n"
+    "\n"
+    "Ejemplo 2:\n"
+    "Pregunta: ¿Cuantas patas tiene una araña?\n"
+    "Respuesta correcta: 8\n"
+    "La persona dijo: seis creo\n"
+    "VEREDICTO: NO\n"
+    "COMENTARIO: Casi, pero son 8."
+)
+
+
+def juzgar(pregunta, esperada, respuesta_usuario):
+    """(acerto, comentario) del LLM en una sola llamada.
+
+    (None, None) si no hay modelo, si falla, o si lo que vuelve no trae
+    un VEREDICTO reconocible: entonces el caller se queda con la
+    comparacion de texto y las frases fijas de siempre."""
+    if not CORRECTOR_LLM:
+        return None, None
+    try:
+        texto = llama_client.generar_respuesta(
+            [{"role": "user",
+              "content": f"{_PROMPT_JUEZ}\n\nPregunta: {pregunta}\n"
+                         f"Respuesta correcta: {esperada}\n"
+                         f"La persona dijo: {respuesta_usuario}"}],
+            temperature=0.1, max_tokens=70, modelo=CORRECTOR_LLM)
+    except Exception as e:  # noqa: BLE001 - el juego sigue sin el LLM
+        print(f"[trivia] el juez LLM fallo ({e})")
+        return None, None
+
+    acerto = comentario = None
+    for linea in texto.splitlines():
+        arriba = linea.upper()
+        if "VEREDICTO" in arriba:
+            cola = arriba.split("VEREDICTO", 1)[1]
+            acerto = ("SI" in cola or "SÍ" in cola)
+        elif "COMENTARIO" in arriba:
+            comentario = linea.split(":", 1)[-1].strip() or None
+    if acerto is None:
+        return None, None
+    print(f"[trivia] {CORRECTOR_LLM}: esperada={esperada!r} "
+          f"usuario={respuesta_usuario!r} -> "
+          f"{'acierto' if acerto else 'fallo'}")
+    return acerto, comentario
+
+
 def comentar(pregunta, esperada, respuesta_usuario, acerto):
     """Comentario del veredicto hecho a medida de lo que dijo el usuario.
 
