@@ -42,10 +42,11 @@ QUE NO HACE.
     pensados para la trivia (Mario, Zelda...): sonar "algo triste" no tiene
     un archivo al que mapear. La clave existe para que el contrato quede
     completo y se pueda llenar cuando haya musica afectiva.
-  - Nunca mueve el carrito por tristeza o enojo. Un robot que retrocede
-    cuando el usuario esta triste, o que avanza cuando esta "enojado", comunica
-    lo contrario de lo que se quiere. El unico gesto fisico es de alegria,
-    y solo con el animo muy alto (L3-L4).
+  - Por TRISTEZA no se mueve. Un robot que se aleja cuando le cuentan
+    algo triste comunica rechazo justo cuando hay que acompañar;
+    quedarse quieto es el gesto. Por ENOJO retrocede (L2+): dar un paso
+    atras ante alguien alterado es leerle el espacio, no huir. Y por
+    ALEGRIA gira, solo con el animo muy alto (L3-L4).
 
 Variables de entorno:
     ROMEO_AEB_MOVIMIENTO   0 desactiva el gesto fisico (default 1)
@@ -84,10 +85,25 @@ _TONOS = {
     ),
 }
 
-# Gesto fisico por (emocion, nivel). Solo alegria, ver el docstring.
+# Gesto fisico por (emocion, nivel).
+#
+# LA TRISTEZA NO MUEVE NADA, a proposito: un robot que se aleja cuando
+# le cuentan algo triste comunica rechazo justo cuando hay que acompañar.
+# Quedarse quieto ES el gesto.
+#
+# El enojo SI retrocede -- dar un paso atras ante alguien alterado es
+# leerle el espacio, no huir. Va en L2 y no en L3 porque L3 es
+# inalcanzable con la base del paper: pediria que el usuario estuviera a
+# 1.43 del animo base de Romeo, y el espacio VAD entero mide ~1.7.
+#
+#   enojo L2  ->  desvio 0.38-0.57  (usuario a ~0.96 de la base)
+#   enojo L3  ->  desvio 0.57-0.77  (usuario a ~1.43: no pasa)
 _MOVIMIENTOS = {
     ("felicidad", 3): "RR",          # un giro corto, como un saltito
     ("felicidad", 4): "ROTATE360",   # una vuelta entera
+    ("enojo", 2): "B",               # un paso atras, darle espacio
+    ("enojo", 3): "B",
+    ("enojo", 4): "B",
 }
 
 
