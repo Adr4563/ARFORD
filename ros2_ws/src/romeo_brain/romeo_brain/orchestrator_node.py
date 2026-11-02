@@ -52,6 +52,8 @@ from romeo_interfaces.msg import UserInput
 
 from . import (aeb, agente_chat, agente_trivia, estado_afectivo, frases,
                llama_client, ordenes, preguntas, ter)
+from .medicion import activa as medicion_activa
+from .medicion import medir_bloque, tiempos, turno
 from ._ros_bridge import RosBridge
 
 # El enrutado (TRIVIA / CHAT_LIBRE) vive aca y no en un agente aparte: son
@@ -188,6 +190,10 @@ _PIDE_CAPACIDADES = (
 # Lo que dice después de que el usuario da su nombre: presenta las dos cosas
 # que sabe hacer (trivia y charlar) y le deja elegir. Antes era UNA sola
 # frase fija; ahora son 5 variantes al azar.
+
+# Donde cae la fila de cada turno con ROMEO_MEDIR=1 (ver _anotar_turno).
+CSV_TURNOS = os.environ.get("ROMEO_CSV_TURNOS",
+                            os.path.expanduser("~/romeo_medicion_turnos.csv"))
 
 PREGUNTAS_POR_TANDA = 5
 PAUSA_CAMBIO_CARA = 1       # segundos en 'content'/veredicto antes de la próxima cara
@@ -864,7 +870,8 @@ class OrchestratorNode(Node):
         # El AEB se consulta ANTES de responder: el animo ya incluye lo que
         # el TER leyo de este mensaje (ver _procesar_turno), asi que el tono
         # de la respuesta reacciona a lo que el usuario acaba de decir.
-        comp = self._comportamiento()
+        with medir_bloque("aeb"):
+            comp = self._comportamiento()
         # En la CONVERSACION la cara es solo el animo de Romeo: sin
         # 'speaking' y sin el destello de DURACION_EMOCION. Se pone antes
         # de responder y se queda durante todo el turno, asi la cara cuenta
@@ -963,6 +970,37 @@ class OrchestratorNode(Node):
                         ter_nn=None):
         if self.estado is None or not entrada:
             return
+        # Con ROMEO_MEDIR=1, el turno entero se cronometra y al final se
+        # escribe una fila. Sin la variable, turno() y _anotar_turno() no
+        # hacen nada.
+        with turno():
+            self._turno_medido(entrada, t_inicio, t_fin, ser, ter_nn)
+            self._anotar_turno(entrada, t_fin)
+
+    def _anotar_turno(self, entrada, t_fin):
+        """Una fila por turno con lo que tardo cada etapa.
+
+        t_fin va tal cual para poder calcular la latencia L: el otro
+        extremo (t_inicio_audio) lo escribe _voice_backends en su propio
+        CSV, porque corre en communication_node y no aqui. El script de
+        analisis cruza los dos por tiempo.
+
+        Nunca lanza: medir no puede tumbar un turno."""
+        if not medicion_activa():
+            return
+        try:
+            fila = tiempos()
+            fila["t_fin"] = round(t_fin, 6)
+            fila["texto"] = (entrada or "").replace(",", " ")[:60]
+            nuevo = not os.path.exists(CSV_TURNOS)
+            with open(CSV_TURNOS, "a", encoding="utf-8") as f:
+                if nuevo:
+                    print(",".join(fila), file=f)
+                print(",".join(str(v) for v in fila.values()), file=f)
+        except Exception as e:  # noqa: BLE001 - medir nunca es critico
+            self.get_logger().warning(f"[medicion] no se pudo anotar: {e}")
+
+    def _turno_medido(self, entrada, t_inicio, t_fin, ser, ter_nn):
 
         # Empieza un turno: ha pasado tiempo desde el anterior, asi que el
         # animo se acerca un paso a su base (ROSE). Sin esta llamada el
@@ -1020,7 +1058,11 @@ class OrchestratorNode(Node):
             self._percibir_cara(t_inicio, t_fin)
         if "SER" in self._fuentes:
             self._percibir_voz(ser)
-        self._aplicar_afecto()
+        # PULSE (fusion de las fuentes) + ROSE (animo del robot). El AEB
+        # se mide aparte, en _comportamiento(): son dos etapas distintas
+        # de la capa afectiva y conviene saber cual pesa.
+        with medir_bloque("pulse_rose"):
+            self._aplicar_afecto()
 
         if self.estado["esperando_nombre"]:
             nombre = entrada or "amigo"

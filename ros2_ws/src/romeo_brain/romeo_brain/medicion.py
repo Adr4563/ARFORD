@@ -42,6 +42,12 @@ ACTIVO = os.environ.get("ROMEO_MEDIR", "") not in ("", "0", "no", "false")
 _local = threading.local()
 
 
+def activa():
+    """True si la medicion esta encendida. Para que quien llama no tenga
+    que leer la constante ni la variable de entorno."""
+    return ACTIVO
+
+
 def _acumulador():
     if not hasattr(_local, "tiempos"):
         _local.tiempos = {}

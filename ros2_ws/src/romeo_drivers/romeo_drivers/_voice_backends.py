@@ -34,9 +34,52 @@ real, igual que voz_output.hablar() bloqueaba en el proyecto original).
 import os
 import subprocess
 import tempfile
+import time
 import wave
 
 from ._audio_salida import opciones_mpv
+
+# ── Medicion (ROMEO_MEDIR=1) ──────────────────────────────────────────
+#
+# Este paquete no depende de romeo_brain, asi que no se usa su modulo
+# medicion: son dos funciones que escriben una linea por turno y ya.
+#
+# AQUI NACE LA MITAD DE LA LATENCIA L. t_fin (el instante en que el
+# usuario dejo de hablar) lo pone el VAD en communication_node y viaja
+# en UserInput; t_inicio_audio lo pone _reproducir() al lanzar mpv. Los
+# dos usan time.time() del MISMO reloj -- el de la Pi -- asi que se
+# pueden restar. El CSV hace la cuenta:
+#
+#     L = t_inicio_audio - t_fin - 0.6
+#
+# (0.6 s es lo que el VAD espera en silencio antes de cerrar la frase.)
+_MEDIR = os.environ.get("ROMEO_MEDIR", "") not in ("", "0", "no", "false")
+_CSV_TTS = os.environ.get("ROMEO_CSV_TTS",
+                          os.path.expanduser("~/romeo_medicion_tts.csv"))
+_ultimo_tts_ms = None
+
+
+def _medir_tts(segundos):
+    """Guarda lo que tardo la sintesis, para la linea que escribe
+    _marcar_inicio_audio()."""
+    global _ultimo_tts_ms
+    if _MEDIR:
+        _ultimo_tts_ms = round(segundos * 1000, 1)
+
+
+def _marcar_inicio_audio(t_inicio_audio):
+    """Una linea por frase hablada: cuando empezo a sonar y cuanto tardo
+    la sintesis. Nunca lanza -- medir no puede dejar a Romeo mudo."""
+    if not _MEDIR:
+        return
+    try:
+        nuevo = not os.path.exists(_CSV_TTS)
+        with open(_CSV_TTS, "a", encoding="utf-8") as f:
+            if nuevo:
+                print("t_inicio_audio,t_tts_ms", file=f)
+            print(f"{t_inicio_audio:.6f},{_ultimo_tts_ms}", file=f)
+    except Exception:  # noqa: BLE001 - medir nunca es critico
+        pass
 
 # Cuanto se espera a un tts_server.py remoto antes de sintetizar en local.
 TIMEOUT_REMOTO = float(os.environ.get("ROMEO_TTS_TIMEOUT", "20"))
@@ -161,8 +204,12 @@ class Voz:
         try:
             url = (f"{self.servidor}/hablar?"
                    f"texto={urllib.parse.quote(texto)}")
+            # Sintesis: desde que se pide el WAV hasta tenerlo entero.
+            # No incluye la reproduccion, que es _reproducir().
+            _t_sintesis = time.perf_counter()
             with urllib.request.urlopen(url, timeout=TIMEOUT_REMOTO) as r:
                 datos = r.read()
+            _medir_tts(time.perf_counter() - _t_sintesis)
             if not datos:
                 return False
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
@@ -225,6 +272,14 @@ class Voz:
         if tono:
             f = 2 ** (tono / 12)
             cmd.insert(1, f"--af=lavfi=[asetrate={sr * f:.0f},aresample={sr},atempo={1 / f:.5f}]")
+        # t_inicio_audio: el instante en que Romeo EMPIEZA a sonar, con el
+        # mismo reloj (time.time()) que el t_fin del VAD. La latencia L es
+        # la resta de los dos, menos los 0.6 s que el VAD espera para dar
+        # la frase por cerrada.
+        #
+        # Va aqui y no mas arriba porque L se mide hasta que se OYE la
+        # respuesta, no hasta que el WAV esta listo.
+        _marcar_inicio_audio(time.time())
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def _hablar_piper(self, texto):

@@ -21,6 +21,8 @@ import time
 
 import requests
 
+from .medicion import anotar, medir
+
 CHAT_SERVER_HOST = os.environ.get("CHAT_SERVER_HOST", "http://localhost:11434")
 
 CHAT_MODEL = os.environ.get("CHAT_MODEL", "llama3.2:1b")
@@ -75,6 +77,7 @@ def primera_frase(texto):
     return frase.strip()
 
 
+@medir("llm")
 def generar_respuesta(mensajes, temperature=0.3, max_tokens=MAX_TOKENS, modelo=None):
     """Pide una respuesta al modelo y la devuelve completa."""
     resp = requests.post(
@@ -90,7 +93,18 @@ def generar_respuesta(mensajes, temperature=0.3, max_tokens=MAX_TOKENS, modelo=N
     )
     resp.raise_for_status()
     resp.encoding = "utf-8"
-    return resp.json()["choices"][0]["message"]["content"]
+    cuerpo = resp.json()
+    # Tokens generados, para sacar tokens/segundo con el tiempo que mide
+    # @medir. El endpoint /v1/chat/completions (compatible con OpenAI) da
+    # "usage" pero NO el eval_duration de Ollama; para eso habria que
+    # llamar a /api/chat, que es otro formato. La diferencia entre medir
+    # desde fuera y el eval_duration interno es el tiempo de red, que en
+    # LAN son milisegundos.
+    uso = cuerpo.get("usage") or {}
+    if uso:
+        anotar("llm_tokens_salida", uso.get("completion_tokens"))
+        anotar("llm_tokens_prompt", uso.get("prompt_tokens"))
+    return cuerpo["choices"][0]["message"]["content"]
 
 
 # Cuanto se espera a que un modelo termine de cargar. Es generoso porque es
