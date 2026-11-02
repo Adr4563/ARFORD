@@ -587,9 +587,19 @@ class OrchestratorNode(Node):
         time.sleep(PAUSA_CAMBIO_CARA)
 
     def _preguntar_siguiente(self):
+        """Lanza la siguiente pregunta. False si ya no quedan.
+
+        Al vaciarse la cola se recarga sola con otras tantas: el juego
+        encadena preguntas sin cortarse cada 5. Devuelve False solo
+        cuando se acabaron las 200 con respuesta esperada."""
         estado = self.estado
         if not estado["cola_preguntas"]:
-            return False
+            mas = preguntas.preguntas_mezcladas(
+                estado["ya_usados"], cantidad=PREGUNTAS_POR_TANDA)
+            if not mas:
+                return False
+            estado["ya_usados"].update(p["id"] for p in mas)
+            estado["cola_preguntas"] = mas
         actual = estado["cola_preguntas"].pop(0)
         estado["pregunta_pendiente"] = actual
         self._bridge.mostrar_cara("speaking")
@@ -612,13 +622,19 @@ class OrchestratorNode(Node):
         return True
 
     def _cerrar_tanda(self):
+        """Cierra el juego y dice el marcador.
+
+        Ya no salta cada 5 preguntas: _preguntar_siguiente recarga la cola
+        sola, asi que aqui solo se llega cuando se acabaron TODAS las
+        preguntas con respuesta esperada. Al salir a mano el marcador lo
+        dice _manejar_trivia."""
         estado = self.estado
         estado["en_trivia"] = False
         self._bridge.mostrar_cara("speaking")
-        cierre = "Esas eran las 5."
+        cierre = "Ya no me quedan preguntas."
         if estado["total"]:
-            cierre += f" Vas {estado['aciertos']} de {estado['total']}."
-        cierre += " ¿Seguimos con más trivia o prefieres charlar?"
+            cierre += f" Acertaste {estado['aciertos']} de {estado['total']}."
+        cierre += " ¿Charlamos un rato?"
         self.get_logger().info(f"Asistente: {cierre}")
         self._bridge.hablar(cierre)
         time.sleep(PAUSA_CAMBIO_CARA)
@@ -739,18 +755,33 @@ class OrchestratorNode(Node):
         time.sleep(PAUSA_CAMBIO_CARA)
         self._mostrar_cara_reposo()
 
-    def _iniciar_tanda(self, categoria):
+    def _iniciar_tanda(self, categoria=None):
+        """Carga preguntas y lanza la primera.
+
+        `categoria` None -- lo normal -- mezcla todas las familias. Con una
+        categoria se filtran, que es lo que hace _manejar_trivia cuando el
+        usuario pide un tema concreto.
+
+        La cola se rellena de PREGUNTAS_POR_TANDA en PREGUNTAS_POR_TANDA y
+        se vuelve a llamar sola al vaciarse (ver _preguntar_siguiente), asi
+        que el juego no se corta cada 5: sigue hasta que el usuario pida
+        salir o se acaben las 200 preguntas con respuesta."""
         estado = self.estado
-        preguntas_tanda = preguntas.preguntas_por_categoria(
-            categoria, estado["ya_usados"], cantidad=PREGUNTAS_POR_TANDA)
-        if not preguntas_tanda:
-            aviso = f"Ya jugamos todas las de {categoria}. ¿Elegimos otra?"
+        if categoria:
+            tanda = preguntas.preguntas_por_categoria(
+                categoria, estado["ya_usados"], cantidad=PREGUNTAS_POR_TANDA)
+        else:
+            tanda = preguntas.preguntas_mezcladas(
+                estado["ya_usados"], cantidad=PREGUNTAS_POR_TANDA)
+        if not tanda:
+            aviso = "Ya jugamos todas las que tengo. ¿Charlamos un rato?"
             self.get_logger().info(f"Asistente: {aviso}")
             self._bridge.hablar(aviso)
-            estado["esperando_tema"] = True   # sigue en trivia, pidiendo categoría
+            estado["en_trivia"] = False
+            self._mostrar_cara_reposo()
             return
-        estado["ya_usados"].update(p["id"] for p in preguntas_tanda)
-        estado["cola_preguntas"] = preguntas_tanda
+        estado["ya_usados"].update(p["id"] for p in tanda)
+        estado["cola_preguntas"] = tanda
         self._preguntar_siguiente()
 
     def _manejar_trivia(self, mensaje_usuario):
@@ -835,22 +866,17 @@ class OrchestratorNode(Node):
                 self._cerrar_tanda()
             return
 
-        # Se le ofrecen las 5 CATEGORÍAS, siempre las mismas y en el mismo
-        # orden. Antes se recitaban 5 de los 49 "<familia> - Nivel N" al
-        # azar, que en voz alta era imposible de seguir ("Geografía Nivel 7,
-        # Razonamiento matemático Nivel 5, ...") y además cambiaba en cada
-        # turno. Los niveles siguen usándose para elegir las preguntas, solo
-        # que ya no se mencionan -- ver preguntas.CATEGORIAS.
-        cats = preguntas.categorias_disponibles()
-        estado["esperando_tema"] = True
-        # Se menciona también el juego de caras: si no, el usuario no tiene
-        # cómo enterarse de que existe. Decirlo acá basta, porque
-        # _quiere_jugar_emociones() lo detecta en cualquier turno.
-        anuncio = (f"¿Qué quieres jugar? Tengo trivias de "
-                    f"{', '.join(cats[:-1])} o {cats[-1]}, "
-                    f"y también el juego de las caras.")
-        self.get_logger().info(f"Asistente: {anuncio}")
-        self._bridge.hablar(anuncio)
+        # SE EMPIEZA A JUGAR YA, sin preguntar tema. Antes se recitaba el
+        # menu de categorias y habia que elegir una: dos vueltas perdidas
+        # antes de la primera pregunta, y con el STT fallando ("matematica"
+        # llegaba como "Tematica") a veces mas. Las preguntas salen
+        # mezcladas de cualquier familia -- preguntas.preguntas_mezcladas().
+        #
+        # El juego de caras se sigue pudiendo pedir en cualquier turno
+        # (_quiere_jugar_emociones), solo que ya no se anuncia aqui.
+        estado["esperando_tema"] = False
+        estado["en_trivia"] = True
+        self._iniciar_tanda(None)
 
     def _reanudar_trivia(self):
         estado = self.estado
@@ -1118,6 +1144,15 @@ class OrchestratorNode(Node):
             if self._quiere_salir_trivia(entrada, pendiente["pregunta"] if pendiente else None):
                 self.estado["en_trivia"] = False
                 self._mostrar_cara_reposo()
+                # El marcador se dice AQUI porque ya no hay tandas de 5 que
+                # lo digan al cerrar: ahora las preguntas se encadenan hasta
+                # que el usuario pide salir, y este es el unico momento en
+                # que sabe como le fue.
+                if estado["total"]:
+                    marcador = (f"Acertaste {estado['aciertos']} "
+                                f"de {estado['total']}.")
+                    self.get_logger().info(f"Asistente: {marcador}")
+                    self._bridge.hablar(marcador)
                 # El mensaje con el que pide salir se atiende EN ESTE MISMO
                 # turno: antes solo se cambiaba de modo y se logueaba un aviso
                 # que nadie decia en voz alta, asi que el usuario escuchaba

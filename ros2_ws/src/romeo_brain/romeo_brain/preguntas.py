@@ -161,6 +161,40 @@ def preguntas_por_categoria(categoria, excluir=(), cantidad=5):
     return [_formatear(p) for p in elegidas]
 
 
+# Familias que NO entran en la trivia encadenada aunque tengan
+# respuesta_esperada: su "respuesta" es una CARA que el usuario tiene
+# que poner ("¿Puedes imitarme?" -> "Enojado"), no algo que se diga. Esas
+# van por el juego de emociones (_jugar_emociones), que si mira la camara.
+_FAMILIAS_NO_TRIVIA = ("juego de imitacion", "juego de emociones")
+
+
+def _es_de_trivia(p):
+    """True si la pregunta se responde HABLANDO."""
+    if not (p.get("respuesta_esperada") or "").strip():
+        return False
+    familias = [_sin_tildes(_familia_de(t)).lower() for t in _temas_de(p)]
+    return not any(f in _FAMILIAS_NO_TRIVIA for f in familias)
+
+
+def preguntas_mezcladas(excluir=(), cantidad=5):
+    """Preguntas al azar de CUALQUIER familia, sin elegir tema.
+
+    Es lo que usa la trivia encadenada: el usuario pide jugar y se le
+    pregunta directamente, sin el menu de categorias de por medio. Antes
+    habia que elegir tema primero, y con el STT fallando ("matematica"
+    llegaba como "Tematica") se perdian dos vueltas antes de empezar.
+
+    Solo devuelve las que TIENEN respuesta esperada: para encadenar hace
+    falta poder dar un veredicto en cada una."""
+    ya = set(excluir)
+    disponibles = [p for pid, p in _preguntas_cache.items()
+                   if pid not in ya and _es_de_trivia(p)]
+    if not disponibles:
+        return []
+    elegidas = random.sample(disponibles, min(cantidad, len(disponibles)))
+    return [_formatear(p) for p in elegidas]
+
+
 def _familia_de(tema):
     """"Geografía - Nivel 7" -> "Geografía". El nivel se usa para elegir
     preguntas pero nunca se le menciona al usuario."""
