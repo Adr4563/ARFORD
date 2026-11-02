@@ -138,26 +138,26 @@ EMPATIA = float(os.environ.get("ROMEO_EMPATIA", "0.4"))
 # ANIMO_BASE (b): la personalidad por defecto, a la que siempre vuelve.
 # Positivo y despierto, sin llegar a euforico.
 #
-# SE APARTA DEL PAPER A PROPOSITO. FRED usa (0.40, 0.30, 0.20) para su
-# perfil optimista, y con esos valores Romeo no podia alegrarse: su base
-# ya estaba tan arriba que casi cualquier usuario tiraba del animo HACIA
-# ABAJO. Con empatia 0.4, un usuario en v=+0.31 -- que es lo que salio al
-# decirle "estoy muy feliz de conocerte", con el TER al 97% -- dejaba el
-# animo en 0.4*0.31 + 0.6*0.40 = +0.364: por debajo de donde estaba.
+# Son los valores del perfil optimista de FRED en el paper.
 #
-# Ademas la base no esta en el centro del espacio, asi que cuanto mas
-# arriba, mas corto el margen hacia felicidad:
+# CUESTAN QUE ROMEO SE ALEGRE, y conviene saberlo al leer los logs. La
+# base esta alta, asi que con empatia 0.4 casi cualquier usuario tira del
+# animo HACIA ABAJO: uno en v=+0.31 -- lo que salio al decirle "estoy muy
+# feliz de conocerte" con el TER al 97% -- deja el animo en
+# 0.4*0.31 + 0.6*0.40 = +0.364, por debajo de donde estaba. Y como la
+# base no esta en el centro del espacio, el margen hacia felicidad es un
+# tercio del que hay hacia tristeza:
 #
 #     (0.40, 0.30, 0.20)   0.43 a felicidad, 1.29 a tristeza   1:3.0
-#     (0.25, 0.18, 0.12)   0.64 a felicidad, 1.09 a tristeza   1:1.7
 #
-# Con 0.25 el mismo usuario de +0.31 ya SUBE el animo (+0.274), y Romeo
-# sigue partiendo de un sitio positivo. Para volver al paper:
-#     ROMEO_ANIMO_V=0.40 ROMEO_ANIMO_A=0.30 ROMEO_ANIMO_D=0.20
+# Se probo (0.25, 0.18, 0.12), con la que ese mismo usuario SI sube el
+# animo, pero se vuelve al paper a proposito: los valores de la tesis
+# mandan. Para probar la otra base sin tocar codigo:
+#     ROMEO_ANIMO_V=0.25 ROMEO_ANIMO_A=0.18 ROMEO_ANIMO_D=0.12
 ANIMO_BASE = (
-    float(os.environ.get("ROMEO_ANIMO_V", "0.25")),
-    float(os.environ.get("ROMEO_ANIMO_A", "0.18")),
-    float(os.environ.get("ROMEO_ANIMO_D", "0.12")),
+    float(os.environ.get("ROMEO_ANIMO_V", "0.40")),
+    float(os.environ.get("ROMEO_ANIMO_A", "0.30")),
+    float(os.environ.get("ROMEO_ANIMO_D", "0.20")),
 )
 
 # DECAIMIENTO (d): que tan rapido vuelve al animo base, por paso.
@@ -207,7 +207,7 @@ PASO_DECAIMIENTO = float(os.environ.get("ROMEO_PASO_DECAIMIENTO", "20.0"))
 PERFILES = {
     # El de siempre de Romeo: se entristece un poco con el usuario pero
     # se queda en la zona positiva y puede animarlo. (Tesis, escenario 2.)
-    "OPTIMISTIC":  {"empatia": 0.4, "animo_base": (0.25, 0.18, 0.12),
+    "OPTIMISTIC":  {"empatia": 0.4, "animo_base": (0.40, 0.30, 0.20),
                     "decaimiento": 0.3, "latencia": 3.0},
     # Espejo del usuario: absorbe su estado entero. (Tesis, escenario 1.)
     # Util para comparar en experimentos; poco recomendable fuera de experimentos.
