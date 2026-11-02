@@ -121,6 +121,12 @@ class Display:
                 # "Device or resource busy" sobre /dev/snd/pcmC1D0p.
                 # La pantalla va montada boca abajo en el chasis.
                 "--no-audio",
+                # La pantalla es 4:3 (1024x768) y las caras 16:9 (480x270),
+                # asi que con --fs a secas mpv ajustaba al ancho y dejaba
+                # franjas negras arriba y abajo. --panscan=1.0 agranda la
+                # cara hasta cubrir la pantalla entera y recorta lo que
+                # sobra por los lados, que en estos videos es fondo.
+                "--panscan=1.0",
                 "--hwdec=auto", "--video-rotate=180",
                 f"--input-ipc-server={MPV_SOCKET}", ruta_inicial,
             ],
