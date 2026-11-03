@@ -620,7 +620,12 @@ class OrchestratorNode(Node):
             self._bridge.mostrar_cara("speaking")
 
         time.sleep(PAUSA_CAMBIO_CARA)
-        self._mostrar_cara_reposo()
+        # Mientras se presenta la pregunta y se espera la respuesta, cara
+        # neutral -- NO la afectiva. El animo (ROSE/AEB) ya se mostro tras
+        # la respuesta anterior (ver _manejar_trivia); mostrarlo otra vez
+        # aqui lo dejaba pegado al enunciado de la pregunta, como si Romeo
+        # reaccionara a algo que el usuario todavia no contesto.
+        self._bridge.mostrar_cara("content")
         return True
 
     def _cerrar_tanda(self):
@@ -868,6 +873,14 @@ class OrchestratorNode(Node):
                 if not estado.get("musica_ya_sonada", False):
                     agente_trivia.expresar_musica(pendiente, self._bridge, logger=self.get_logger())
                 # Sin movimiento de trivia: el unico que mueve es el AEB.
+
+            # La cara afectiva (ROSE/AEB) se muestra AQUI, justo despues de
+            # la respuesta del usuario y su veredicto -- no al presentar la
+            # pregunta siguiente. Asi la cara acompaña el turno que acaba de
+            # pasar, con el animo que dejo ESA respuesta, y no aparece
+            # pegada al enunciado de la proxima pregunta (que el usuario aun
+            # no contesto).
+            self._mostrar_cara_reposo()
 
             if not self._preguntar_siguiente():
                 self._cerrar_tanda()
