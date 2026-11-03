@@ -583,7 +583,9 @@ class OrchestratorNode(Node):
         self._bridge.mostrar_cara(cara)
         if not musica_ya_sonada:
             agente_trivia.expresar_musica(pregunta, self._bridge, logger=self.get_logger())
-        agente_trivia.expresar_desplazamiento(pregunta, self._bridge, logger=self.get_logger())
+        # El movimiento de la trivia (columna 'desplazamiento' del dataset)
+        # queda desactivado: el UNICO sistema que mueve a Romeo es el AEB
+        # (ver aeb.py). En la trivia solo cambia la cara y suena la musica.
         time.sleep(PAUSA_CAMBIO_CARA)
 
     def _preguntar_siguiente(self):
@@ -865,7 +867,7 @@ class OrchestratorNode(Node):
                 time.sleep(PAUSA_ANTES_ACCION_FISICA)
                 if not estado.get("musica_ya_sonada", False):
                     agente_trivia.expresar_musica(pendiente, self._bridge, logger=self.get_logger())
-                agente_trivia.expresar_desplazamiento(pendiente, self._bridge, logger=self.get_logger())
+                # Sin movimiento de trivia: el unico que mueve es el AEB.
 
             if not self._preguntar_siguiente():
                 self._cerrar_tanda()
