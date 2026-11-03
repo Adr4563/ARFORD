@@ -161,7 +161,11 @@ def responder(mensaje_usuario, tono=None):
                     + [{"role": "user", "content": mensaje_usuario}])
         if sistema:
             mensajes.insert(0, {"role": "system", "content": sistema})
-        return llama_client.primera_frase(llama_client.generar_respuesta(mensajes))
+        # Sin recorte a dos frases: en el chat libre se quiere que Romeo se
+        # exprese completo. La respuesta sale tal cual la da el modelo (solo
+        # limpia de espacios). El recorte de primera_frase() sigue en la
+        # trivia, donde las respuestas deben ser cortas.
+        return llama_client.generar_respuesta(mensajes).strip()
 
     texto = _generar(con_historial=True)
     # Un modelo pequeño se engancha a lo ultimo que dijo y lo copia. Si pasa,
