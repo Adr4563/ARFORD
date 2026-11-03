@@ -92,7 +92,13 @@ _MOVIMIENTOS = [
     (re.compile(r"\b(gira a la derecha|giro a la derecha|gira derecha|"
                 r"vuelta a la derecha|voltea a la derecha)\b", re.I),
      GIRO_DERECHA),
-    (re.compile(r"\b(para|parate|detente|quieto|alto|frena|no te muevas)\b",
+    # "para" suelto NO entra: es la preposicion mas comun del español
+    # ("para no estar enojado", "esto es para ti") y se lo llevaba todo a
+    # un STOP. Como orden solo cuenta el imperativo claro: "para" al final
+    # de la frase, o "para ya"/"para ahi"/"parate". El resto (detente,
+    # quieto, alto, frena, no te muevas) no es ambiguo.
+    (re.compile(r"(\bpara\b\s*$|\bpara (ya|ahi)\b|\bparate\b|\bdetente\b|"
+                r"\bquieto\b|\balto\b|\bfrena\b|\bno te muevas\b)",
                 re.I), PARAR),
 ]
 
