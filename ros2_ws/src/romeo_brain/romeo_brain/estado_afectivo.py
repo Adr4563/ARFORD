@@ -438,34 +438,6 @@ _DESDE_SERVICIO = {
 }
 
 
-def percibir_del_texto(emocion, confianza_ter):
-    """PULSE a partir de lo que devuelve ter.analizar().
-
-    Mismo criterio que percibir_del_servicio: se escala el anclaje por la
-    confianza, asi que un "estoy fatal" mueve el animo mas que un "bien"
-    suelto. La diferencia es que aca las emociones son las OCHO de
-    ANCLAJES y no las cuatro del detector facial, porque el texto si
-    distingue miedo o sorpresa aunque Romeo no sepa ponerles cara.
-
-    EL TEXTO PESA MENOS QUE LA CARA cuando hay varias fuentes: ter.analizar()
-    tope su confianza en CONFIANZA_MAXIMA (0.6) mientras el detector facial
-    llega a 0.9+, y fusionar() pondera por esa confianza. Con el texto como
-    unica fuente, empatizar() aplica la empatia del perfil entera (tesis,
-    ec. 4.5).
-
-    Devuelve (vector_vad, confianza), o (None, 0.0) si no hubo evidencia."""
-    if emocion is None or emocion not in ANCLAJES:
-        return None, 0.0
-    c = max(0.0, min(1.0, float(confianza_ter or 0.0)))
-    if c <= 0.0:
-        return None, 0.0
-    # El vector es el anclaje INTACTO: dice que emocion es. La confianza
-    # (atenuada por _PESO_TEXTO, porque el texto es menos fiable que la
-    # cara) viaja aparte y la usan fusionar() y empatizar() para decidir
-    # cuanto creersela. Ver la nota en empatizar().
-    return ANCLAJES[emocion], c
-
-
 def percibir_del_servicio(emocion, confianza_srv):
     """PULSE a partir de lo que entrega DetectEmotion.srv, que son solo
     (emocion, confianza) y no la distribucion entera.

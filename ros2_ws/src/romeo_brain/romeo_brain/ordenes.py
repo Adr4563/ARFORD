@@ -10,8 +10,8 @@ resuelve antes de llegar al chat, por tres razones:
   - una orden mal entendida mueve un robot de verdad, asi que conviene
     que la decida una tabla que se puede leer entera, y no un modelo.
 
-POR QUE PALABRAS CLAVE Y NO EL LLM. Mismo criterio que ter.py: cuesta
-cero, funciona sin red, y aqui ademas es mas seguro -- "no te muevas"
+POR QUE PALABRAS CLAVE Y NO EL LLM. Cuesta cero, funciona sin red, y
+aqui ademas es mas seguro -- "no te muevas"
 no debe acabar en un desplazamiento porque el modelo vio "muevas".
 
 QUE NO HACE. No hay diagonales (FL/FR/BL/BR): el firmware las soporta y

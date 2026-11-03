@@ -51,7 +51,7 @@ from ament_index_python.packages import get_package_share_directory
 from romeo_interfaces.msg import UserInput
 
 from . import (aeb, agente_chat, agente_trivia, estado_afectivo, frases,
-               llama_client, ordenes, preguntas, ter)
+               llama_client, ordenes, preguntas)
 from .medicion import activa as medicion_activa
 from .medicion import medir_bloque, tiempos, turno
 from ._ros_bridge import RosBridge
@@ -221,7 +221,7 @@ RUTAS = ["TRIVIA", "CHAT_LIBRE"]
 # Fuentes de la ventana de percepcion afectiva (tesis de Rocha et al.,
 # sec. 3.4.1). Todas entregan una observacion por frase y PULSE las fusiona
 # (ec. 4.4). Ver _percibir_turno().
-#   TER  texto  -> ter.py (palabras clave), en la Pi
+#   TER  texto  -> RoBERTuito de la PC sobre la frase (_ter_engine)
 #   FER  cara   -> FER+ sobre la camara de fondo, en la Pi (PerceiveFace)
 #   SER  voz    -> modelo de la PC sobre el audio de la frase (_ser_engine)
 FUENTES = ("TER", "FER", "SER")
@@ -1066,33 +1066,25 @@ class OrchestratorNode(Node):
         # ver _pedir_una_emocion().
         self._lecturas_turno = []
         self._emocion_pendiente = False
-        if "TER" in self._fuentes:
-            # DOS CAMINOS. Si la PC mando el TER neuronal (RoBERTuito, ver
-            # _ter_engine.py) se usa ese, con la distribucion completa y
-            # PULSE igual que el FER y el SER. Si no llego -- entrada por
-            # teclado, o servidor sin el modelo -- se cae a las palabras
-            # clave de ter.py, que corren aqui y no cuestan nada.
-            if ter_nn:
-                # Paso 0 del TER (tesis, sec. 4.1.4.1): esta frase entra en
-                # la ventana y PULSE recibe la mediana normalizada de las
-                # ultimas VENTANA_TER, no solo la de ahora. Solo por este
-                # camino: las palabras clave no dan una distribucion, solo
-                # (emocion, confianza).
-                estado_afectivo.acumular_ter(ter_nn[1], ter_nn[0])
-                etiq_ter, probs_ter = estado_afectivo.resumir_ter()
-                vector_txt, c_txt, emocion_txt = estado_afectivo.percibir_categorias(
-                    probs_ter, etiq_ter)
-                origen = f"RoBERTuito, ventana de {estado_afectivo.VENTANA_TER}"
-            else:
-                emocion_txt, confianza_txt = ter.analizar(entrada)
-                vector_txt, c_txt = estado_afectivo.percibir_del_texto(
-                    emocion_txt, confianza_txt)
-                origen = "palabras clave"
+        if "TER" in self._fuentes and ter_nn:
+            # El TER lo calcula RoBERTuito en la PC (ver _ter_engine.py) y
+            # llega con la frase. Si no llego -- entrada por teclado, o
+            # servidor sin el modelo -- este turno no hay TER, igual que el
+            # FER o el SER cuando no hay fuente. No hay respaldo local.
+            #
+            # Paso 0 del TER (tesis, sec. 4.1.4.1): esta frase entra en la
+            # ventana y PULSE recibe la mediana normalizada de las ultimas
+            # VENTANA_TER, no solo la de ahora.
+            estado_afectivo.acumular_ter(ter_nn[1], ter_nn[0])
+            etiq_ter, probs_ter = estado_afectivo.resumir_ter()
+            vector_txt, c_txt, emocion_txt = estado_afectivo.percibir_categorias(
+                probs_ter, etiq_ter)
             if vector_txt is not None:
                 self._lecturas_turno.append(("TER", vector_txt, c_txt, emocion_txt))
                 self.get_logger().info(
                     f"[afecto] el texto expresa {emocion_txt} "
-                    f"(confianza {c_txt:.2f}, {origen})")
+                    f"(confianza {c_txt:.2f}, "
+                    f"RoBERTuito, ventana de {estado_afectivo.VENTANA_TER})")
         if "FER" in self._fuentes:
             self._percibir_cara(t_inicio, t_fin)
         if "SER" in self._fuentes:
