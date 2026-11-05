@@ -845,23 +845,16 @@ class OrchestratorNode(Node):
             self._bridge.mostrar_cara("speaking")
             if pendiente["respuesta_esperada"]:
                 estado["total"] += 1
-                # EL JUEZ DECIDE Y COMENTA DE UNA VEZ. Se le pasa tambien
-                # la PREGUNTA, no solo la respuesta: sin ella no puede
-                # juzgar "de cuero" por "piel de animales". Si no contesta
-                # o no se le entiende, queda la comparacion de texto de
-                # siempre y las frases fijas.
+                # EL LLM DECIDE Y COMENTA DE UNA VEZ, comparando lo que dijo
+                # la persona con la respuesta esperada. Se le pasa tambien la
+                # PREGUNTA, no solo la respuesta: sin ella no puede juzgar
+                # "de cuero" por "piel de animales".
                 acerto, comentario = agente_trivia.juzgar(
                     pendiente["pregunta"], pendiente["respuesta_esperada"],
                     mensaje_usuario)
-                if acerto is None:
-                    acerto = agente_trivia.evaluar_respuesta(
-                        pendiente["respuesta_esperada"], mensaje_usuario)
                 estado["aciertos"] += acerto
                 cara = agente_trivia.elegir_cara_pregunta(pendiente, acerto) or (
                     "happy" if acerto else "sad")
-                if not comentario:
-                    comentario = self.comentar_resultado(
-                        pendiente["respuesta_esperada"], acerto)
                 self.get_logger().info(f"Asistente: {comentario}")
                 self._bridge.hablar(comentario)
                 self._reaccionar_veredicto(cara, pendiente, estado.get("musica_ya_sonada", False))

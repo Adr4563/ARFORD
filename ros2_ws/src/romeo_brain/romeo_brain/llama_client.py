@@ -79,17 +79,22 @@ def primera_frase(texto):
 
 
 @medir("llm")
-def generar_respuesta(mensajes, temperature=0.3, max_tokens=MAX_TOKENS, modelo=None):
-    """Pide una respuesta al modelo y la devuelve completa."""
+def generar_respuesta(mensajes, temperature=0.3, max_tokens=None, modelo=None):
+    """Pide una respuesta al modelo y la devuelve completa.
+
+    Sin tope de tokens: el modelo genera hasta que termina solo. max_tokens
+    se ignora salvo que el caller pase uno explicito."""
+    cuerpo_peticion = {
+        "model": modelo or CHAT_MODEL,
+        "messages": mensajes,
+        "temperature": temperature,
+        "stream": False,
+    }
+    if max_tokens is not None:
+        cuerpo_peticion["max_tokens"] = max_tokens
     resp = requests.post(
         f"{CHAT_SERVER_HOST}/v1/chat/completions",
-        json={
-            "model": modelo or CHAT_MODEL,
-            "messages": mensajes,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "stream": False,
-        },
+        json=cuerpo_peticion,
         timeout=120,
     )
     resp.raise_for_status()

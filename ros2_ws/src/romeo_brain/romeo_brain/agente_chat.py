@@ -25,12 +25,18 @@ pasadas haria falta memoria episodica, que es otra cosa y no esta.
 """
 import difflib
 import os
+import re
 
 from . import llama_client
 
 # Cuantos turnos (par usuario+Romeo) se recuerdan. 6 son ~12 mensajes, que
 # con respuestas cortas caben de sobra en la ventana de un modelo 1B.
 TURNOS_HISTORIAL = int(os.environ.get("ROMEO_TURNOS_HISTORIAL", "6"))
+
+# Maximo de frases en una respuesta de chat. El modelo ignora el prompt y
+# responde con parrafos largos; esto lo corta por codigo (ver
+# _limpiar_formato). Cambiable con ROMEO_MAX_FRASES sin recompilar.
+MAX_FRASES = int(os.environ.get("ROMEO_MAX_FRASES", "2"))
 
 # Instruccion de estilo, SOLO para modelos sin fine-tuning.
 #
@@ -147,6 +153,44 @@ def sembrar_turno_robot(texto):
     _historial.append({"role": "assistant", "content": texto})
 
 
+def _limpiar_formato(texto):
+    """Quita el formato de texto escrito (listas, vinetas, numeracion,
+    asteriscos, almohadillas) para que suene bien dicho EN VOZ ALTA.
+
+    El modelo a veces ignora el system prompt y responde con listas Markdown.
+    Esto no es un consejo al modelo: borra los simbolos de la salida pase lo
+    que pase, y une las vinetas en prosa corrida."""
+    lineas = []
+    for linea in texto.splitlines():
+        s = linea.strip()
+        if not s:
+            continue
+        # Vineta ("* ...", "- ...", "• ...") o numeracion ("1. ...", "2) ...").
+        s = re.sub(r"^\s*([*\-•]|\d+[.)])\s+", "", s)
+        # Enfasis/encabezados Markdown en cualquier posicion.
+        s = s.replace("*", "").replace("#", "").replace("`", "")
+        s = re.sub(r"\s{2,}", " ", s).strip()
+        if s:
+            lineas.append(s)
+    # Une todo en prosa; si una linea no cierra con puntuacion, se le pone
+    # punto para que al enlazarlas no queden frases pegadas.
+    partes = []
+    for s in lineas:
+        if s and s[-1] not in ".!?:":
+            s += "."
+        partes.append(s)
+    texto = " ".join(partes).strip()
+
+    # Recorte a MAX_FRASES: el modelo ignora el prompt y suelta parrafos de
+    # cinco consejos. Se corta por codigo tras las primeras frases para que
+    # suene breve dicho en voz alta. Se parte por . ! ? conservando el signo.
+    frases = re.findall(r"[^.!?]+[.!?]+|[^.!?]+$", texto)
+    frases = [f.strip() for f in frases if f.strip()]
+    if len(frases) > MAX_FRASES:
+        frases = frases[:MAX_FRASES]
+    return " ".join(frases).strip()
+
+
 def responder(mensaje_usuario, tono=None):
     """Devuelve la respuesta de Romeo, teniendo en cuenta los turnos
     anteriores de esta sesion.
@@ -174,6 +218,7 @@ def responder(mensaje_usuario, tono=None):
     if _es_repeticion(texto):
         texto = _generar(con_historial=False)
 
+    texto = _limpiar_formato(texto)
     _historial.append({"role": "user", "content": mensaje_usuario})
     _historial.append({"role": "assistant", "content": texto})
     # Se recorta por el principio, de dos en dos, para no dejar un turno a
