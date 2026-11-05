@@ -1,0 +1,11 @@
+{
+ "id2label": {
+  "0": "others",
+  "1": "joy",
+  "2": "sadness",
+  "3": "anger",
+  "4": "surprise",
+  "5": "disgust",
+  "6": "fear"
+ }
+}

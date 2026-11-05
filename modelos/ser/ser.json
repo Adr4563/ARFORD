@@ -1,0 +1,12 @@
+{
+ "id2label": {
+  "0": "Anger",
+  "1": "Disgust",
+  "2": "Fear",
+  "3": "Happiness",
+  "4": "Neutral",
+  "5": "Sadness"
+ },
+ "do_normalize": true,
+ "sampling_rate": 16000
+}

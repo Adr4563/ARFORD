@@ -1,0 +1,5 @@
+modelos/**/*.onnx filter=lfs diff=lfs merge=lfs -text
+modelos/**/*.tar.bz2 filter=lfs diff=lfs merge=lfs -text
+modelos/**/*.json -text
+modelos/SHA256SUMS -text
+modelos/*.sh text eol=lf
