@@ -58,6 +58,13 @@ from . import estado_afectivo
 
 MOVIMIENTO_ACTIVO = os.environ.get("ROMEO_AEB_MOVIMIENTO", "1") not in ("0", "false", "False")
 
+# Cuando Romeo se pone triste, NO mostrar la cara triste: dejar la cara
+# normal (content). El tono y el movimiento siguen como el nivel mande --
+# solo cambia la cara de reposo. Por defecto activo (la cara triste no se
+# muestra). ROMEO_CARA_TRISTE=1 vuelve a mostrarla.
+OCULTAR_CARA_TRISTE = os.environ.get(
+    "ROMEO_CARA_TRISTE", "0") not in ("1", "true", "True")
+
 # Cara de reposo -> nombre de la emocion (claves de ANCLAJES).
 _EMOCION_DE_CARA = {"happy": "felicidad", "sad": "tristeza", "angry": "enojo"}
 
@@ -85,32 +92,38 @@ _TONOS = {
     ),
 }
 
-# Gesto fisico por (emocion, nivel). Tres gestos, uno por emocion:
+# Gesto fisico por (emocion, nivel). Un GESTO de ida y vuelta por emocion:
 #
 #   Neutro   -> nada
 #   Triste   -> nada
-#   Enojado  -> atras  (B)
-#   Feliz    -> adelante (F)
+#   Enojado  -> atras y vuelve   (B, F)
+#   Feliz    -> adelante y vuelve (F, B)
+#
+# Cada gesto es una SECUENCIA de pasos que el orquestador ejecuta con una
+# pausa entre uno y otro (ver mover_gesto en orchestrator_node). Antes era
+# un solo comando y Romeo quedaba desplazado; ahora el gesto termina donde
+# empezo -- un "latido" expresivo, no un desplazamiento permanente.
 #
 # LA TRISTEZA NO MUEVE NADA, a proposito: un robot que se aleja cuando
 # le cuentan algo triste comunica rechazo justo cuando hay que acompañar.
 # Quedarse quieto ES el gesto.
 #
-# El enojo retrocede y la alegria avanza: alejarse de alguien alterado es
-# leerle el espacio, acercarse a alguien contento es acompañar su energia.
-# Ambos entran en L2 -- no en L3 -- porque L3 es inalcanzable con la base
-# del paper: pediria que el usuario estuviera a 1.43 del animo base de
-# Romeo, y el espacio VAD entero mide ~1.7.
+# El enojo arranca retrocediendo (leerle el espacio a alguien alterado) y
+# la alegria arranca avanzando (acompañar la energia del que esta contento);
+# los dos vuelven a su sitio al segundo paso. Ambos entran en L2 -- no en
+# L3 -- porque L3 es inalcanzable con la base del paper: pediria que el
+# usuario estuviera a 1.43 del animo base de Romeo, y el espacio VAD entero
+# mide ~1.7.
 #
 #   enojo/feliz L2  ->  desvio 0.38-0.57  (usuario a ~0.96 de la base)
 #   enojo/feliz L3  ->  desvio 0.57-0.77  (usuario a ~1.43: no pasa)
 _MOVIMIENTOS = {
-    ("felicidad", 2): "F",           # un paso adelante, acercarse
-    ("felicidad", 3): "F",
-    ("felicidad", 4): "F",
-    ("enojo", 2): "B",               # un paso atras, darle espacio
-    ("enojo", 3): "B",
-    ("enojo", 4): "B",
+    ("felicidad", 2): ("F", "B"),    # avanza y vuelve: acercarse un instante
+    ("felicidad", 3): ("F", "B"),
+    ("felicidad", 4): ("F", "B"),
+    ("enojo", 2): ("B", "F"),        # retrocede y vuelve: darle espacio
+    ("enojo", 3): ("B", "F"),
+    ("enojo", 4): ("B", "F"),
 }
 
 
@@ -152,11 +165,14 @@ def mapear(estado):
                 "musica": None}
 
     movimiento = _MOVIMIENTOS.get((emocion, n)) if MOVIMIENTO_ACTIVO else None
+    # La tristeza no pone cara triste: se muestra la cara normal (content),
+    # aunque el tono del LLM y el log sigan reflejando que Romeo esta triste.
+    cara = "content" if (emocion == "tristeza" and OCULTAR_CARA_TRISTE) else direccion
     return {
         "estado": f"{emocion}_L{n}",
         "emocion": emocion,
         "nivel": n,
-        "cara": direccion,
+        "cara": cara,
         "tono": _TONOS[emocion][0 if n <= 2 else 1],
         "movimiento": movimiento,
         "musica": None,

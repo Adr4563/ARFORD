@@ -986,7 +986,35 @@ class OrchestratorNode(Node):
         # Mismo orden que el resto del robot: voz -> movimiento.
         if comp["movimiento"]:
             self.get_logger().info(f"[aeb] gesto: {comp['movimiento']}")
-            self._bridge.mover(comp["movimiento"])
+            self._ejecutar_gesto(comp["movimiento"])
+
+    # Duracion de cada paso del gesto de ida y vuelta (ver _ejecutar_gesto).
+    # El firmware del carrito para la rueda a los 0.5 s si no se repite el
+    # comando (watchdog), asi que se reenvia el comando cada ~0.2 s mientras
+    # dure el paso, y luego se manda el siguiente. Ajustable sin recompilar.
+    GESTO_PASO_S = float(os.environ.get("ROMEO_AEB_PASO_S", "0.4"))
+    GESTO_REFRESCO_S = 0.2
+
+    def _ejecutar_gesto(self, gesto):
+        """Ejecuta el gesto del AEB: una SECUENCIA de comandos (p.ej.
+        ("F","B") = avanza y vuelve) con una pausa entre uno y otro, en un
+        hilo aparte para NO bloquear el turno.
+
+        Acepta tambien un comando suelto (str) por compatibilidad. Cada
+        paso se mantiene GESTO_PASO_S segundos reenviando el comando cada
+        GESTO_REFRESCO_S para burlar el watchdog del firmware, y al final
+        se manda 'S' para dejar el carrito quieto."""
+        pasos = (gesto,) if isinstance(gesto, str) else tuple(gesto)
+
+        def _correr():
+            for paso in pasos:
+                fin = time.monotonic() + self.GESTO_PASO_S
+                while time.monotonic() < fin:
+                    self._bridge.mover(paso)
+                    time.sleep(self.GESTO_REFRESCO_S)
+            self._bridge.mover("S")
+
+        threading.Thread(target=_correr, daemon=True).start()
 
     # ══════════════════════════════════════════════════════════════════
     # Arranque/cierre de sesión y el callback de entrada.
