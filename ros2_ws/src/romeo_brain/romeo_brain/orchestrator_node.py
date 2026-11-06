@@ -416,11 +416,23 @@ class OrchestratorNode(Node):
             self._lecturas_turno = []
             return
         self._lecturas_turno = [(v, c) for _f, v, c, _d in lecturas]
-        vector = estado_afectivo.fusionar(self._lecturas_turno)
+        # Fusion con consenso intermodal (PULSE, paso 3): una fuente que
+        # contradice a las demas pierde peso antes de promediar. ANTES se
+        # llamaba fusionar() con (vector, confianza) y era una media
+        # ponderada simple; ahora va con el nombre de la fuente y el log
+        # muestra cada confianza antes -> despues de la atenuacion.
+        vector = estado_afectivo.fusionar(
+            [(f, v, c) for f, v, c, _d in lecturas])
         if vector is not None and len(self._lecturas_turno) > 1:
+            validas = [(f, v, c) for f, v, c, _d in lecturas
+                       if v is not None and c > 0.0]
+            atenuadas = estado_afectivo.confianzas_por_consenso(
+                [(v, c) for _f, v, c in validas])
+            pesos = " ".join(f"{f}:{c:.2f}->{ca:.2f}"
+                             for (f, _v, c), ca in zip(validas, atenuadas))
             self.get_logger().info(
                 f"[afecto] usuario (fusion de "
-                f"{'+'.join(f for f, *_ in lecturas)}): "
+                f"{'+'.join(f for f, *_ in lecturas)}; {pesos}): "
                 f"v={vector[0]:+.2f} a={vector[1]:+.2f} d={vector[2]:+.2f}")
         # La confianza con la que se cree la lectura fusionada es la mayor
         # de las que entraron: si la camara estaba segura, que el texto no
@@ -445,10 +457,10 @@ class OrchestratorNode(Node):
         mensaje (communication_node los saca del VAD). Por teclado no hay
         ventana y no se mira la camara.
 
-        visualization_faces_node ya resumio los cuadros (mediana
-        normalizada, sec. 4.1.4.1); aca se aplica PULSE: confianza por
-        entropia (ec. 4.1-4.2) y CAT -> VAD con la distribucion entera
-        (ec. 4.3). La lectura queda en _lecturas_turno para la fusion (ver
+        visualization_faces_node ya resumio los cuadros (media ponderada
+        por la calidad YuNet, normalizada, sec. 4.1.4.1); aca se aplica
+        PULSE: confianza por margen top-1/top-2 x fiabilidad del FER y
+        CAT -> VAD con la distribucion entera (ec. 4.3). La lectura queda en _lecturas_turno para la fusion (ver
         _aplicar_afecto, que tambien decide que hacer si todo es neutral)."""
         if not t_fin:
             return
@@ -457,7 +469,8 @@ class OrchestratorNode(Node):
             self.get_logger().info(
                 f"[afecto] la camara no vio cara en la frase ({t_fin - t_inicio:.1f} s)")
             return
-        vector, c, dominante = estado_afectivo.percibir_categorias(probs, etiquetas)
+        vector, c, dominante = estado_afectivo.percibir_categorias(
+            probs, etiquetas, "FER")
         if vector is None:
             return
         self.get_logger().info(
@@ -469,10 +482,11 @@ class OrchestratorNode(Node):
         """SER: la emocion de la VOZ de esta frase. La calculo la PC con el
         mismo audio que transcribio (_ser_engine.py) y llega en el mensaje
         como categorias con probabilidades; aca se aplica PULSE igual que
-        al FER: entropia (4.1-4.2) y CAT -> VAD (4.3)."""
+        al FER: margen top-1/top-2 x fiabilidad del SER y CAT -> VAD (4.3)."""
         if not ser or not ser[0]:
             return
-        vector, c, dominante = estado_afectivo.percibir_categorias(ser[1], ser[0])
+        vector, c, dominante = estado_afectivo.percibir_categorias(
+            ser[1], ser[0], "SER")
         if vector is None:
             return
         self.get_logger().info(
@@ -1086,7 +1100,7 @@ class OrchestratorNode(Node):
             estado_afectivo.acumular_ter(ter_nn[1], ter_nn[0])
             etiq_ter, probs_ter = estado_afectivo.resumir_ter()
             vector_txt, c_txt, emocion_txt = estado_afectivo.percibir_categorias(
-                probs_ter, etiq_ter)
+                probs_ter, etiq_ter, "TER")
             if vector_txt is not None:
                 self._lecturas_turno.append(("TER", vector_txt, c_txt, emocion_txt))
                 self.get_logger().info(
