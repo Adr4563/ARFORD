@@ -14,8 +14,8 @@ comportamiento: cara, tono de voz, movimiento), vive en aeb.py y lee el
 estado de aca. No pisa las caras de trivia ni del juego de caras: esas
 siguen saliendo del dataset y de la logica del orquestador.
 
-Aca NO hay IA: son formulas de aritmetica (promedios ponderados, margenes
-de probabilidad, una exponencial e interpolacion lineal). La IA esta afuera,
+Aca NO hay IA: son formulas de aritmetica (promedios ponderados, un
+logaritmo e interpolacion lineal). La IA esta afuera,
 en los clasificadores que dan la entrada -- en Romeo, el FER de
 _emotion_detector.py. Por eso esto corre en microsegundos y no suma ni un
 MB a la Pi: el robot FRED del paper hace lo mismo en un Arduino UNO.
@@ -250,45 +250,19 @@ def parametros_de_perfil(nombre=None):
 # PULSE -- de probabilidades a una coordenada VAD
 # ══════════════════════════════════════════════════════════════════════
 
-# Fiabilidad estatica de cada modalidad (paso 1 de PULSE). El texto es la
-# fuente mas fiable en Romeo (RoBERTuito sobre lo que el usuario DIJO), la
-# cara le sigue y la voz es la mas ruidosa (microfono del robot, motores).
-# Una fuente desconocida (o sin nombre) vale 1.0: no se penaliza.
-# NUEVO: antes las tres fuentes partian con la misma confianza maxima y
-# solo las diferenciaba la entropia de su distribucion.
-WEIGHTS = {"TER": 1.00, "FER": 0.85, "SER": 0.70}
+def confianza(probabilidades):
+    """Que tan seguro esta un clasificador, por la entropia de Shannon
+    normalizada: c = 1 - H(p).
 
-# Penalizacion por discordancia intermodal (paso 3): alpha = exp(-g * d).
-# Con g = 1.5, una fuente a 0.5 del consenso del resto conserva el 47% de
-# su confianza; a 1.0, el 22%. NUEVO: antes no habia penalizacion, cada
-# fuente pesaba solo por su propia confianza.
-GAMMA_CONSENSO = float(os.environ.get("ROMEO_GAMMA_CONSENSO", "1.5"))
-
-
-def confianza(probabilidades, fuente=None):
-    """Que tan seguro esta un clasificador: margen entre la emocion mas
-    probable y la segunda, por la fiabilidad de su modalidad:
-
-        M   = p(1) - p(2)
-        c_m = WEIGHTS[m] * M
-
-    "51% feliz, 49% triste" da M = 0.02 aunque la entropia lo vea casi tan
-    concentrado como "51% feliz, 25% / 24% repartido": lo que importa para
-    decidir es si la ganadora le saca ventaja a su rival directa. Con una
-    sola categoria el margen es p(1). El resultado queda en [0, 1].
-
-    ANTES: c = 1 - H(p), la entropia de Shannon normalizada por
-    log(n_categorias), sin peso por modalidad. Medía cuanto se repartia
-    la probabilidad en TODAS las categorias, no la duda entre las dos
-    primeras, y valia igual para texto, cara y voz. El parametro `fuente`
-    es nuevo y opcional: sin el, el peso es 1.0."""
-    ps = sorted((max(0.0, float(p)) for p in (probabilidades or [])),
-                reverse=True)
-    if not ps:
-        return 0.0
-    margen = ps[0] - (ps[1] if len(ps) > 1 else 0.0)
-    peso = WEIGHTS.get((fuente or "").upper(), 1.0)
-    return max(0.0, min(1.0, peso * margen))
+    Si el FER reparte la probabilidad entre varias emociones (duda), la
+    entropia sube y la confianza baja. Si la concentra en una, al reves.
+    Asi una lectura dudosa pesa menos en la fusion, en vez de valer igual
+    que una clara."""
+    ps = [p for p in probabilidades if p > 0.0]
+    if len(ps) < 2:
+        return 1.0
+    h = -sum(p * math.log(p) for p in ps) / math.log(len(probabilidades))
+    return max(0.0, min(1.0, 1.0 - h))
 
 
 def a_vad(probabilidades, etiquetas):
@@ -309,101 +283,33 @@ def a_vad(probabilidades, etiquetas):
     return (v, a, d)
 
 
-def _media_ponderada(lecturas):
-    """sum(c * s) / sum(c) sobre [(s, c)], o None si los pesos suman 0.
+def fusionar(lecturas):
+    """Combina varias modalidades (FER, TER, SER...) pesando cada una por
+    su confianza:
 
-    NUEVA: es la cuenta que antes estaba dentro de fusionar(). Se separo
-    porque ahora se usa tres veces: S_pre, el consenso de cada fuente y
-    la fusion final."""
+        S_u = sum(c_m * S_m) / sum(c_m)
+
+    `lecturas` es una lista de (vector_vad, confianza). Con una sola
+    modalidad devuelve esa misma -- que es el caso de Romeo hoy, que solo
+    tiene FER. El dia que haya TER esto ya funciona sin tocarlo."""
+    lecturas = [(s, c) for s, c in lecturas if s is not None and c > 0.0]
+    if not lecturas:
+        return None
     total = sum(c for _, c in lecturas)
-    if not (total > 0.0) or not math.isfinite(total):
+    if total <= 0.0:
         return None
-    return tuple(sum(s[i] * c for s, c in lecturas) / total for i in range(3))
+    return tuple(
+        sum(s[i] * c for s, c in lecturas) / total
+        for i in range(3)
+    )
 
 
-def confianzas_por_consenso(lecturas, gamma=None):
-    """Las confianzas atenuadas c*_m del paso 3, en el mismo orden.
-
-    Para cada fuente m, el consenso del RESTO es su media ponderada por las
-    confianzas originales; la distancia euclidiana d_m de S_m a ese
-    consenso se convierte en un factor alpha_m = exp(-gamma * d_m) y
-    c*_m = c_m * alpha_m. Una fuente que contradice a las demas (la voz
-    triste por ruido mientras cara y texto dicen feliz) pierde peso.
-
-    Una fuente sola, o una cuyo resto no tiene confianza, se queda con su
-    c_m (alpha = 1): no hay contra quien comparar.
-
-    `lecturas` es [(vector_vad, confianza)] ya filtrada (sin None ni c<=0).
-
-    NUEVA. La usan fusionar() y el log de orchestrator_node, que muestra
-    la confianza de cada fuente antes y despues de atenuar.
-    """
-    g = GAMMA_CONSENSO if gamma is None else float(gamma)
-    atenuadas = []
-    for j, (s_m, c_m) in enumerate(lecturas):
-        otros = [l for i, l in enumerate(lecturas) if i != j]
-        consenso = _media_ponderada(otros) if otros else None
-        if consenso is None:
-            atenuadas.append(c_m)
-            continue
-        d = math.sqrt(sum((s_m[i] - consenso[i]) ** 2 for i in range(3)))
-        atenuadas.append(c_m * math.exp(-g * d))
-    return atenuadas
-
-
-def fusionar(lecturas, gamma=None):
-    """Combina varias modalidades (FER, TER, SER) con consenso intermodal
-    (paso 3 de PULSE):
-
-        S_pre = sum(c_m * S_m) / sum(c_m)                 (preliminar)
-        d_m   = || S_m - S_otros(m) ||_2
-        c*_m  = c_m * exp(-gamma * d_m)
-        S_u   = sum(c*_m * S_m) / sum(c*_m)
-
-    `lecturas` es una lista de (vector_vad, confianza) o de
-    (fuente, vector_vad, confianza). Con una sola modalidad devuelve esa
-    misma. Devuelve None si no queda ninguna lectura con confianza > 0.
-
-    Con DOS fuentes las dos quedan a la misma distancia del consenso de la
-    otra y se atenuan por igual, asi que S_u no cambia: el consenso solo
-    decide algo desde tres fuentes, cuando hay una mayoria.
-
-    ANTES: S_u = sum(c_m * S_m) / sum(c_m) directamente, que es lo que
-    ahora es S_pre. Con cara y texto felices y la voz triste por ruido,
-    la voz restaba valencia en proporcion a su confianza aunque las otras
-    dos la contradijeran. Antes solo aceptaba (vector, confianza); ahora
-    acepta tambien (fuente, vector, confianza) y valida NaN y c <= 0."""
-    normalizadas = []
-    for l in lecturas or []:
-        s, c = (l[1], l[2]) if len(l) == 3 else (l[0], l[1])
-        if s is None:
-            continue
-        try:
-            c = float(c)
-        except (TypeError, ValueError):
-            continue
-        if c > 0.0 and math.isfinite(c):
-            normalizadas.append((tuple(float(x) for x in s), c))
-    if not normalizadas:
-        return None
-    if _media_ponderada(normalizadas) is None:     # S_pre: sum(c) == 0
-        return None
-    atenuadas = confianzas_por_consenso(normalizadas, gamma)
-    final = _media_ponderada([(s, c) for (s, _), c in zip(normalizadas, atenuadas)])
-    # exp() nunca da 0 exacto, pero con distancias enormes puede quedar en
-    # underflow: entonces se vuelve a la media sin atenuar.
-    return final if final is not None else _media_ponderada(normalizadas)
-
-
-def percibir(probabilidades, etiquetas, fuente=None):
+def percibir(probabilidades, etiquetas):
     """PULSE de punta a punta para UNA modalidad: de la distribucion que
     da el clasificador al vector del usuario, con su confianza.
 
-    `fuente` ("TER", "FER", "SER") es nuevo: se pasa a confianza() para
-    aplicar el peso de la modalidad.
-
     Devuelve (vector_vad, confianza)."""
-    return a_vad(probabilidades, etiquetas), confianza(probabilidades, fuente)
+    return a_vad(probabilidades, etiquetas), confianza(probabilidades)
 
 
 # EL ROBOT TRABAJA CON CUATRO EMOCIONES. Son las unicas que la camara sabe
@@ -447,8 +353,8 @@ def agrupar_en_cuatro(probabilidades, etiquetas):
 
 # ── Ventana del TER (tesis, sec. 4.1.4.1, paso 0) ────────────────────
 #
-# El FER resume los CUADROS de una frase con media ponderada por la
-# calidad YuNet + normalizacion (_emotion_detector.resumir) y el SER clasifica el audio de la frase de
+# El FER resume los CUADROS de una frase con mediana + normalizacion
+# (_emotion_detector.resumir) y el SER clasifica el audio de la frase de
 # una vez: las dos entregan una observacion por frase y ahi se acaba.
 #
 # El TER no. Sus observaciones se acumulan a lo largo de la conversacion
@@ -502,14 +408,10 @@ def olvidar_ter():
     _ventana_ter.clear()
 
 
-def percibir_categorias(probabilidades, etiquetas, fuente=None):
-    """PULSE para una fuente CAT (FER, TER o SER): confianza por margen
-    top-1/top-2 por la fiabilidad de `fuente` (ver confianza()) y
-    conversion CAT -> VAD pesada por TODA la distribucion (ec. 4.3). El
-    margen se mide ya agrupado en las cuatro emociones del robot.
-
-    ANTES la confianza era por entropia (tesis, ec. 4.1-4.2) y la funcion
-    no sabia de que fuente venia la lectura; `fuente` es nuevo y opcional.
+def percibir_categorias(probabilidades, etiquetas):
+    """PULSE para una fuente CAT (el FER de la ventana de percepcion):
+    confianza por entropia (tesis, ec. 4.1-4.2) y conversion CAT -> VAD
+    pesada por TODA la distribucion (ec. 4.3).
 
     Devuelve (vector_vad, confianza, dominante), donde `dominante` es la
     etiqueta mas probable. (None, 0.0, None) si la distribucion viene
@@ -520,7 +422,7 @@ def percibir_categorias(probabilidades, etiquetas, fuente=None):
     etiquetas, probs = agrupar_en_cuatro(probs, etiquetas)
     total = sum(probs)
     probs = [p / total for p in probs]
-    vector, c = percibir(probs, etiquetas, fuente)
+    vector, c = percibir(probs, etiquetas)
     dominante = etiquetas[max(range(len(probs)), key=probs.__getitem__)]
     return vector, c, dominante
 

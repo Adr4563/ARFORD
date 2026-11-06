@@ -13,9 +13,8 @@ DOS MODOS DE USO
    las 8 emociones de cada cuadro con su instante. Es el FER de la ventana
    de percepción afectiva de la tesis de Rocha et al. (sec. 3.4.1.2, fig.
    14): mientras el usuario habla se acumulan observaciones, y al terminar
-   la frase resumen(t0, t1) las resume en UNA sola, con la media de cada
-   emoción ponderada por el score de YuNet de cada cuadro y normalizada
-   (paso 0, sec. 4.1.4.1). Ese resumen es lo que va a PULSE.
+   la frase resumen(t0, t1) las resume en UNA sola, con la mediana por
+   emoción normalizada (sec. 4.1.4.1). Ese resumen es lo que va a PULSE.
 
    El juego de caras (detectar_emocion) también sale de este flujo: no
    puede abrir la cámara otra vez porque solo un proceso puede tenerla.
@@ -50,30 +49,6 @@ YUNET_EN_CAMARA = os.environ.get("ROMEO_YUNET_CAMARA", "1") != "0"
 
 from ._yunet_camara import YunetCamara  # noqa: E402
 
-def _media_recortada(p, proporcion):
-    """Media recortada por columnas (respaldo de DetectorEmocion.resumir).
-
-    NUEVA. Reemplaza a la mediana como respaldo cuando no hay calidades:
-    igual que ella ignora los cuadros extremos, pero promedia los del
-    medio en vez de quedarse con uno solo.
-
-    scipy no es dependencia de la Pi: si esta se usa trim_mean, si no se
-    hace la misma cuenta -- ordenar cada columna y quitar int(proporcion*N)
-    valores de cada extremo. Con N < 7 y 15% no se quita nada y queda la
-    media simple, igual que en scipy."""
-    import numpy as np
-    try:
-        from scipy.stats import trim_mean
-        return np.asarray(trim_mean(p, proportiontocut=proporcion, axis=0), dtype=float)
-    except ImportError:
-        pass
-    n = p.shape[0]
-    k = int(proporcion * n)
-    if n - 2 * k <= 0:
-        return np.median(p, axis=0)
-    return np.sort(p, axis=0)[k:n - k].mean(axis=0)
-
-
 _MAX_INTENTOS = 15
 _PAUSA_ENTRE_INTENTOS = 0.2
 
@@ -100,11 +75,8 @@ class DetectorEmocion:
         # ETIQUETAS. None mientras no haya habido ninguna.
         self.ultimas_probabilidades = None
 
-        # Modo continuo: (instante time.time(), [8 probabilidades], q) por
-        # cada cuadro en que se vio una cara. q es el score de YuNet de esa
-        # cara, en [0, 1], o None si no se conoce. ANTES la tupla era solo
-        # (instante, probabilidades): q se agrego para la media ponderada
-        # por calidad de resumir().
+        # Modo continuo: (instante time.time(), [8 probabilidades]) por
+        # cada cuadro en que se vio una cara.
         self.fps = max(0.2, float(fps))
         self._observaciones = collections.deque(
             maxlen=int(HISTORIAL_SEG * self.fps) + 1)
@@ -192,46 +164,26 @@ class DetectorEmocion:
         import cv2
         import numpy as np
 
-        return self._clasificar_con_calidad(frame_bgr, caja)[0]
-
-    def _clasificar_con_calidad(self, frame_bgr, caja=None, score=None):
-        """(probabilidades, q) como _clasificar, con q = score de YuNet de
-        la cara elegida (columna 14 de cv2.FaceDetectorYN, o el que dio el
-        sensor en `score`). q es None si no se conoce: resumir() cae
-        entonces a la media recortada. (None, None) si no hay cara.
-
-        NUEVA: es el cuerpo que antes tenia _clasificar(). Ese codigo ya
-        leia cara[14] para elegir la cara mas clara, pero no devolvia el
-        valor. _clasificar() sigue existiendo y devuelve solo las
-        probabilidades, para el modo puntual y el juego de caras."""
-        import cv2
-        import numpy as np
-
-        q = None
         if caja is not None:
             x, y, w, h = (max(0, int(v)) for v in caja)
-            q = score
         else:
             alto, ancho = frame_bgr.shape[:2]
             self._detector_cara.setInputSize((ancho, alto))
             _, caras = self._detector_cara.detect(frame_bgr)
             if caras is None or len(caras) == 0:
-                return None, None
+                return None
             cara = max(caras, key=lambda c: c[14])
             x, y, w, h = [max(0, int(v)) for v in cara[:4]]
-            q = float(cara[14])
         gris = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         recorte = gris[y:y + h, x:x + w]
         if recorte.size == 0:
-            return None, None
+            return None
         recorte = cv2.resize(recorte, (64, 64)).astype(np.float32)
         salida = self._sess_emocion.run(
             None, {self._input_name: recorte.reshape(1, 1, 64, 64)})[0][0]
         probs = [float(p) for p in self._softmax(salida)]
         self.ultimas_probabilidades = probs
-        if q is not None:
-            q = max(0.0, min(1.0, float(q)))
-        return probs, q
+        return probs
 
     def _detectar_en_frame(self, frame_bgr):
         """(etiqueta, probabilidad) de la emoción ganadora, o (None, None)."""
@@ -299,19 +251,16 @@ class DetectorEmocion:
                         try:
                             cuadro = pedido.make_array("main")
                             alto, ancho = cuadro.shape[:2]
-                            caja, score = sensor.cara_y_score(
-                                pedido.get_metadata(), ancho, alto)
+                            caja = sensor.cara(pedido.get_metadata(), ancho, alto)
                         finally:
                             pedido.release()
-                        probs, q = (self._clasificar_con_calidad(
-                                        self._a_bgr(cuadro), caja, score)
-                                    if caja is not None else (None, None))
+                        probs = (self._clasificar(self._a_bgr(cuadro), caja)
+                                 if caja is not None else None)
                     else:
-                        probs, q = self._clasificar_con_calidad(
-                            self._a_bgr(picam2.capture_array("main")))
+                        probs = self._clasificar(self._a_bgr(picam2.capture_array("main")))
                     if probs is not None:
                         with self._lock:
-                            self._observaciones.append((inicio, probs, q))
+                            self._observaciones.append((inicio, probs))
                     time.sleep(max(0.0, periodo - (time.time() - inicio)))
             except Exception as e:  # noqa: BLE001 - nunca tirar el nodo
                 # "Logger severity cannot be changed between calls" no se
@@ -339,63 +288,33 @@ class DetectorEmocion:
                         pass
 
     def _cuadros_entre(self, t0, t1):
-        """(probabilidades, calidades) de los cuadros en [t0, t1].
-
-        ANTES devolvia solo la lista de probabilidades; ahora devuelve
-        tambien las q, en el mismo orden, para pasarselas a resumir()."""
         with self._lock:
-            sel = [(p, q) for t, p, q in self._observaciones if t0 <= t <= t1]
-        return [p for p, _ in sel], [q for _, q in sel]
+            return [p for t, p in self._observaciones if t0 <= t <= t1]
 
     @staticmethod
-    def resumir(cuadros, calidades=None):
-        """Resume varios cuadros en UNA observación (paso 0 de PULSE, tesis
-        sec. 4.1.4.1), con la MEDIA PONDERADA POR CALIDAD de YuNet:
+    def resumir(cuadros):
+        """Resume varios cuadros en UNA observación, como en la tesis
+        (sec. 4.1.4.1): mediana de cada emoción y normalización para que
+        las probabilidades vuelvan a sumar 1.
 
-            m_k = sum_i q(i) * p_k(i) / sum_i q(i)
-            p_k = m_k / sum_j m_j
-
-        q(i) en [0, 1] es el score de la cara en el cuadro i. Un cuadro con
-        la cara de perfil, borrosa o a medio salir del encuadre tiene un q
-        bajo y pesa poco, en vez de valer lo mismo que uno frontal.
-
-        RESPALDO. Si falta alguna q o todas suman 0, se usa la media
-        recortada al 15% por cada lado (scipy.stats.trim_mean si esta
-        instalado; si no, la misma cuenta en numpy). Como la mediana, eso
-        descarta los cuadros sueltos mal clasificados.
-
-        ANTES: m_k = mediana(p_k(1), ..., p_k(N)) y luego la misma
-        normalizacion. La mediana protegia de cuadros sueltos mal
-        clasificados, pero trataba igual una cara frontal y nitida que una
-        de perfil o borrosa. La ponderacion usa el score que YuNet ya
-        calculaba, asi que no cuesta nada mas por cuadro.
+        La mediana y no la media: un cuadro suelto mal clasificado (la cara
+        de perfil, un parpadeo) no arrastra el resultado.
 
         Devuelve la lista de 8 probabilidades, o None si no hay cuadros."""
         if not cuadros:
             return None
         import numpy as np
-        p = np.asarray(cuadros, dtype=float)
-        if p.ndim != 2 or p.shape[0] == 0:
+        mediana = np.median(np.asarray(cuadros, dtype=float), axis=0)
+        total = float(mediana.sum())
+        if total <= 0.0:
             return None
-        m = None
-        if calidades is not None and len(calidades) == p.shape[0] \
-                and all(q is not None for q in calidades):
-            q = np.clip(np.asarray(calidades, dtype=float), 0.0, 1.0)
-            suma_q = float(q.sum())
-            if np.isfinite(suma_q) and suma_q > 0.0:
-                m = (q[:, None] * p).sum(axis=0) / suma_q
-        if m is None:
-            m = _media_recortada(p, 0.15)
-        total = float(m.sum())
-        if not np.isfinite(total) or total <= 0.0:
-            return None
-        return [float(x) / total for x in m]
+        return [float(p) / total for p in mediana]
 
     def resumen(self, t0, t1):
         """(probabilidades, n_cuadros) de la ventana [t0, t1], en segundos
         de time.time(). (None, 0) si en esa ventana no se vio ninguna cara."""
-        cuadros, calidades = self._cuadros_entre(t0, t1)
-        return self.resumir(cuadros, calidades), len(cuadros)
+        cuadros = self._cuadros_entre(t0, t1)
+        return self.resumir(cuadros), len(cuadros)
 
     # ─── Juego de caras ──────────────────────────────────────────────
 
@@ -413,13 +332,13 @@ class DetectorEmocion:
     def _detectar_desde_continuo(self):
         desde = time.time()
         limite = desde + ESPERA_JUEGO_SEG
-        cuadros, calidades = [], []
+        cuadros = []
         while time.time() < limite:
-            cuadros, calidades = self._cuadros_entre(desde, time.time())
+            cuadros = self._cuadros_entre(desde, time.time())
             if len(cuadros) >= CUADROS_JUEGO:
                 break
             time.sleep(0.1)
-        probs = self.resumir(cuadros, calidades)
+        probs = self.resumir(cuadros)
         if probs is None:
             self._log("[cámara] no se detectó ninguna cara -- sigue sin veredicto")
             return None, None

@@ -78,18 +78,35 @@ def primera_frase(texto):
     return frase.strip()
 
 
+# Penalizacion por repetir, contra el bucle degenerado (el modelo se
+# atasca soltando "No, no, no, no..." sin parar). Sin tope de tokens no hay
+# nada que corte ese bucle, asi que se frena en el origen: se penaliza al
+# modelo por repetir lo que ya dijo. El endpoint /v1/chat/completions
+# (compatible OpenAI) usa frequency_penalty/presence_penalty en [-2, 2], NO
+# el repeat_penalty nativo de Ollama. Con 0.6/0.6 las respuestas normales no
+# cambian, pero la repeticion degenerada deja de compensar. Ajustable sin
+# recompilar; 0 desactiva.
+PENALIZACION_FRECUENCIA = float(os.environ.get("ROMEO_PENAL_FRECUENCIA", "0.6"))
+PENALIZACION_PRESENCIA = float(os.environ.get("ROMEO_PENAL_PRESENCIA", "0.6"))
+
+
 @medir("llm")
 def generar_respuesta(mensajes, temperature=0.3, max_tokens=None, modelo=None):
     """Pide una respuesta al modelo y la devuelve completa.
 
     Sin tope de tokens: el modelo genera hasta que termina solo. max_tokens
-    se ignora salvo que el caller pase uno explicito."""
+    se ignora salvo que el caller pase uno explicito. La penalizacion por
+    repeticion (ver las constantes) evita el bucle degenerado."""
     cuerpo_peticion = {
         "model": modelo or CHAT_MODEL,
         "messages": mensajes,
         "temperature": temperature,
         "stream": False,
     }
+    if PENALIZACION_FRECUENCIA:
+        cuerpo_peticion["frequency_penalty"] = PENALIZACION_FRECUENCIA
+    if PENALIZACION_PRESENCIA:
+        cuerpo_peticion["presence_penalty"] = PENALIZACION_PRESENCIA
     if max_tokens is not None:
         cuerpo_peticion["max_tokens"] = max_tokens
     resp = requests.post(

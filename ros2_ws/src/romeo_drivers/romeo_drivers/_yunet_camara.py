@@ -53,25 +53,8 @@ def decodificar(salidas, ancho, alto):
 
     `salidas` son los 12 tensores de IMX500.get_outputs(). Devuelve None
     si ninguna cara pasa UMBRAL."""
-    caja, _score = decodificar_con_score(salidas, ancho, alto)
-    return caja
-
-
-def decodificar_con_score(salidas, ancho, alto):
-    """(caja, score) de la mejor cara, o (None, 0.0).
-
-    El score es sqrt(cls * obj), la misma definicion que usa
-    cv2.FaceDetectorYN (face_detect.cpp), para que la calidad q de un
-    cuadro valga lo mismo venga la cara del sensor o de la CPU. Es la q de
-    la media ponderada por calidad (_emotion_detector.resumir).
-
-    ANTES solo existia decodificar(), que calculaba este mismo score
-    (mejor_p) para elegir la cara pero lo tiraba y devolvia solo la caja:
-    el resumen FER usaba la mediana y no necesitaba saber que tan buena
-    era cada cara. decodificar() se conserva igual, envolviendo a esta,
-    para no romper a quien la llame."""
     if not salidas or len(salidas) < 9:
-        return None, 0.0
+        return None
 
     mejor, mejor_p = None, 0.0
     for i, stride in enumerate(STRIDES):
@@ -96,14 +79,13 @@ def decodificar_con_score(salidas, ancho, alto):
         mejor = (cx + dx * stride - w / 2.0, cy + dy * stride - h / 2.0, w, h)
 
     if mejor is None or mejor_p < UMBRAL:
-        return None, 0.0
+        return None
 
     # De 640x640 a la resolucion real del cuadro.
     ex, ey = ancho / LADO, alto / LADO
     x, y, w, h = mejor
-    caja = (int(max(0, x * ex)), int(max(0, y * ey)),
+    return (int(max(0, x * ex)), int(max(0, y * ey)),
             int(w * ex), int(h * ey))
-    return caja, float(np.sqrt(max(0.0, min(1.0, mejor_p))))
 
 
 class YunetCamara:
@@ -177,21 +159,11 @@ class YunetCamara:
             return False
 
     def cara(self, metadata, ancho, alto):
-        """(x, y, w, h) de la cara en este cuadro, o None.
-
-        Sin cambios hacia fuera; ahora delega en cara_y_score()."""
-        return self.cara_y_score(metadata, ancho, alto)[0]
-
-    def cara_y_score(self, metadata, ancho, alto):
-        """((x, y, w, h), score YuNet en [0, 1]) o (None, 0.0).
-
-        NUEVA. La usa el bucle del FER continuo para guardar, junto a cada
-        cuadro, la calidad q de la cara que vio el sensor. Antes el bucle
-        llamaba a cara() y la calidad se perdia."""
+        """(x, y, w, h) de la cara en este cuadro, o None."""
         if self._imx is None:
-            return None, 0.0
+            return None
         try:
             salidas = self._imx.get_outputs(metadata, add_batch=True)
         except Exception:                                    # noqa: BLE001
-            return None, 0.0
-        return decodificar_con_score(salidas, ancho, alto)
+            return None
+        return decodificar(salidas, ancho, alto)
