@@ -485,7 +485,7 @@ class OrchestratorNode(Node):
                 f"[afecto] la camara no vio cara en la frase ({t_fin - t_inicio:.1f} s)")
             return
         vector, c, dominante = estado_afectivo.percibir_categorias(
-            probs, etiquetas, "FER")
+            probs, etiquetas)
         if vector is None:
             return
         self.get_logger().info(
@@ -501,7 +501,7 @@ class OrchestratorNode(Node):
         if not ser or not ser[0]:
             return
         vector, c, dominante = estado_afectivo.percibir_categorias(
-            ser[1], ser[0], "SER")
+            ser[1], ser[0])
         if vector is None:
             return
         self.get_logger().info(
@@ -1143,7 +1143,7 @@ class OrchestratorNode(Node):
             estado_afectivo.acumular_ter(ter_nn[1], ter_nn[0])
             etiq_ter, probs_ter = estado_afectivo.resumir_ter()
             vector_txt, c_txt, emocion_txt = estado_afectivo.percibir_categorias(
-                probs_ter, etiq_ter, "TER")
+                probs_ter, etiq_ter)
             if vector_txt is not None:
                 self._lecturas_turno.append(("TER", vector_txt, c_txt, emocion_txt))
                 self.get_logger().info(
