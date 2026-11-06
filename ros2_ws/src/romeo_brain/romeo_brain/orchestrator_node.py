@@ -408,7 +408,27 @@ class OrchestratorNode(Node):
         es el origen del espacio VAD, y como el animo base de Romeo es
         positivo, acercarlo al origen se veria como tristeza. Basta con que
         una fuente exprese algo para que se fusionen todas, y entonces las
-        neutras moderan la lectura, como en la tesis."""
+        neutras moderan la lectura, como en la tesis.
+
+        NEUTRAL TIRA HACIA EL CENTRO (ROMEO_NEUTRAL_ENCOGE, por defecto
+        activo). Con neutral=(0,0,0), una fuente neutral aporta su confianza
+        al DENOMINADOR de la fusion (ec. 4.4) pero NADA al numerador: no
+        empuja en ninguna direccion. Resultado: si 2 de 3 fuentes son
+        neutrales y una sola detecta emocion (p.ej. SER=tristeza 78%), esa
+        minoria arrastra el animo aunque la mayoria vio reposo, y la lectura
+        cruza a "triste" cuando deberia quedar neutral.
+
+        El arreglo es continuo, no un voto brusco: el vector fusionado se
+        encoge por la fraccion de confianza que SI expresa emocion,
+
+            peso_emocion = Sum(conf de las no-neutrales) / Sum(conf de todas)
+            v_final = v_fusion * peso_emocion
+
+        Asi, cuanto mas dominan los neutrales en confianza, mas se acerca el
+        resultado al origen. Con TER+FER neutrales y SER tristeza, el peso
+        cae a ~0.33 y la valencia pasa de -0.21 a ~-0.07, dentro de la zona
+        neutra. Si ninguna fuente es neutral, peso=1 y la fusion queda tal
+        cual Rocha. ROMEO_NEUTRAL_ENCOGE=0 desactiva esto (fusion pura)."""
         lecturas = getattr(self, "_lecturas_turno", None)
         if not lecturas:
             return
@@ -423,6 +443,24 @@ class OrchestratorNode(Node):
         # muestra cada confianza antes -> despues de la atenuacion.
         vector = estado_afectivo.fusionar(
             [(f, v, c) for f, v, c, _d in lecturas])
+        # Encima de la fusion, NEUTRAL TIRA HACIA EL CENTRO: el vector se
+        # encoge por la fraccion de confianza que SI expresa emocion, para
+        # que una fuente emocional minoritaria (p.ej. SER=tristeza) no
+        # arrastre al animo cuando la mayoria vio reposo (ver el docstring).
+        encoge = os.environ.get(
+            "ROMEO_NEUTRAL_ENCOGE", "1") not in ("0", "false", "False")
+        if encoge and vector is not None:
+            conf_total = sum(c for _f, _v, c, _d in lecturas)
+            conf_emocion = sum(
+                c for _f, _v, c, dom in lecturas if dom != "neutral")
+            peso = conf_emocion / conf_total if conf_total > 0.0 else 1.0
+            if peso < 1.0:
+                vector = tuple(componente * peso for componente in vector)
+                if len(lecturas) > 1:
+                    self.get_logger().info(
+                        f"[afecto] neutrales encogen la lectura x{peso:.2f} "
+                        f"-> v={vector[0]:+.2f} a={vector[1]:+.2f} "
+                        f"d={vector[2]:+.2f}")
         if vector is not None and len(self._lecturas_turno) > 1:
             validas = [(f, v, c) for f, v, c, _d in lecturas
                        if v is not None and c > 0.0]
