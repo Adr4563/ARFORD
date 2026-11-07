@@ -1061,7 +1061,18 @@ class OrchestratorNode(Node):
         # original, aunque la suscripción esté en un ReentrantCallbackGroup
         # (necesario para que las llamadas a servicio internas no
         # deadlockeen, ver el docstring del módulo).
-        with self._turno_lock:
+        #
+        # Si ya hay un turno en curso, la frase se DESCARTA en vez de
+        # esperar al lock. Antes esperaba: cada frase que llegaba mientras
+        # Romeo pensaba o hablaba ocupaba un hilo del executor, y con tres
+        # en cola los cuatro hilos quedaban bloqueados -- no quedaba ninguno
+        # para recibir la respuesta de /romeo/speak, cada frase esperaba
+        # los 60 s del timeout y las respuestas llegaban desfasadas.
+        if not self._turno_lock.acquire(blocking=False):
+            self.get_logger().info(
+                f"[turno] Romeo sigue con el turno anterior, se descarta: {msg.text!r}")
+            return
+        try:
             ser = None
             if msg.ser_etiquetas:
                 ser = (list(msg.ser_etiquetas), list(msg.ser_probabilidades))
@@ -1070,6 +1081,8 @@ class OrchestratorNode(Node):
                 ter_nn = (list(msg.ter_etiquetas), list(msg.ter_probabilidades))
             self._procesar_turno((msg.text or "").strip(),
                                  msg.t_inicio, msg.t_fin, ser, ter_nn)
+        finally:
+            self._turno_lock.release()
 
     def _procesar_turno(self, entrada, t_inicio=0.0, t_fin=0.0, ser=None,
                         ter_nn=None):
