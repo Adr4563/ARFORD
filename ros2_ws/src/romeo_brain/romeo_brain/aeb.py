@@ -53,6 +53,8 @@ Variables de entorno:
 """
 import math
 import os
+import random
+import re
 
 from . import estado_afectivo
 
@@ -68,27 +70,51 @@ OCULTAR_CARA_TRISTE = os.environ.get(
 # Cara de reposo -> nombre de la emocion (claves de ANCLAJES).
 _EMOCION_DE_CARA = {"happy": "felicidad", "sad": "tristeza", "angry": "enojo"}
 
-# Instruccion de estilo para el LLM por emocion y nivel (1-2 suave, 3-4
-# intenso). No le dice al modelo QUE contestar, solo COMO: Romeo habla con
-# personas de cualquier edad, asi que el "enojo" se expresa como seriedad tranquila, nunca como
-# agresividad, y la tristeza como ternura, nunca como desanimo.
+# Instruccion para el LLM por emocion y nivel (1-2 suave, 3-4 intenso). El
+# animo de Romeo sigue al del usuario (empatia), asi que la emocion es
+# tambien la de la persona, y la instruccion dice COMO reaccionar a ella:
+#
+#   felicidad -> apoyarla y alegrarse con ella, que se sienta mas feliz
+#   tristeza  -> reconocer lo que siente, luego "No te preocupes, esto va a
+#                pasar" y seguir la conversacion; en L3-4 ademas "aqui
+#                estoy contigo" y proponerle algo que la alegre
+#   enojo     -> ponerse de su lado en lo que siente: "Es normal que estes
+#                molesto, te entiendo", sin regañarla ni pedirle que se calme
+# Por emocion, (nivel 1-2, nivel 3-4). Dicen QUE lograr, no que frase
+# decir: con frases de ejemplo entre comillas el modelo las copiaba
+# palabra por palabra y la respuesta era nuestra, no suya. Responde a su
+# juicio y con sus palabras (ver TEMPERATURA en agente_chat).
+#
+# Primero se reconoce lo que siente y DESPUES se anima: al reves suena a
+# "no deberias sentirte asi". Con el enojo se apoya lo que SIENTE, no lo
+# que vaya a hacer. Los casos graves (hacerse daño, que la lastimen,
+# lastimar a otro) no pasan por aqui: ver seguridad.py.
+_NATURAL = (" Usa tus propias palabras y responde a lo que te conto, sin "
+            "frases hechas.")
 _TONOS = {
     "felicidad": (
-        "Estas de buen humor: responde con calidez y algo de entusiasmo.",
-        "Estas muy contento: responde con alegria y energia, celebrando lo "
-        "que te cuentan.",
+        ("La persona esta contenta: apoyala y alegrate con ella. Celebra lo "
+         "que te cuenta y haz que se sienta todavia mas feliz." + _NATURAL,),
+        ("La persona esta muy feliz: comparte su alegria con entusiasmo, "
+         "felicitala, dile lo bien que hizo y pidele que te cuente mas para "
+         "que lo siga disfrutando." + _NATURAL,),
     ),
     "tristeza": (
-        "Lo que te contaron te dejo un poco apagado: responde con suavidad "
-        "y calma, mostrando que lo entiendes.",
-        "Estas conmovido por lo que te cuentan: habla despacio y con mucha "
-        "ternura, reconoce lo que siente la persona y no la apures.",
+        ("La persona esta triste. Primero muestra que entiendes como se "
+         "siente, despues dale animo y sigue la conversacion sobre lo que le "
+         "paso." + _NATURAL,),
+        ("La persona esta muy triste. Acompañala de verdad: primero muestra "
+         "que entiendes lo que siente, despues dale animo y ayudala a "
+         "sentirse un poco mejor con algo que tenga que ver con lo que te "
+         "conto." + _NATURAL,),
     ),
     "enojo": (
-        "Estas algo serio: responde con calma y claridad, sin regañar.",
-        "Estas serio y preocupado por lo que te cuentan: responde con "
-        "calma, sin alzar el tono ni culpar a nadie, y ayuda a la persona "
-        "a tranquilizarse.",
+        ("La persona esta molesta. Ponte de su lado en lo que siente: muestra "
+         "que entiendes su enojo, sin regañarla, y sigue la conversacion "
+         "sobre lo que paso." + _NATURAL,),
+        ("La persona esta muy enojada. Ponte de su lado en lo que siente: "
+         "muestra que entiendes su enojo, sin regañarla ni pedirle que se "
+         "calme, y escuchala." + _NATURAL,),
     ),
 }
 
@@ -173,7 +199,44 @@ def mapear(estado):
         "emocion": emocion,
         "nivel": n,
         "cara": cara,
-        "tono": _TONOS[emocion][0 if n <= 2 else 1],
+        "tono": random.choice(_TONOS[emocion][0 if n <= 2 else 1]),
         "movimiento": movimiento,
         "musica": None,
     }
+
+
+# "¿Como te sientes, Romeo?" y parecidas. El tono de arriba solo dice COMO
+# contestar, asi que sin esto el LLM no sabe el animo de Romeo y se lo
+# inventa -- o, en neutral, no recibe nada. El STT suele perder tildes y
+# signos, por eso van opcionales.
+PREGUNTA_ANIMO = re.compile(
+    r"c[oó]mo te (sientes|encuentras|va)|c[oó]mo (est[aá]s|andas)|qu[eé] sientes|"
+    r"qu[eé] tal (est[aá]s|te va|te sientes)|"
+    r"est[aá]s (feliz|content|triste|enojad|molest|bien|mal)|tu [aá]nimo",
+    re.IGNORECASE)
+
+_SENTIR = {"felicidad": "feliz", "tristeza": "triste", "enojo": "serio y preocupado"}
+_INTENSIDAD = {1: "un poco ", 2: "", 3: "muy ", 4: "muy "}
+
+
+def como_se_siente(p):
+    """El animo de Romeo en palabras, a partir de lo que devuelve mapear()."""
+    if not p["nivel"]:
+        return "tranquilo, no te pasa nada"
+    return _INTENSIDAD[p["nivel"]] + _SENTIR[p["emocion"]] + " por lo que te han contado"
+
+
+def tono_para(p, mensaje):
+    """El tono de mapear(), y si `mensaje` pregunta como esta Romeo, ademas
+    su animo de verdad para que lo diga."""
+    tono = p["tono"]
+    if mensaje and PREGUNTA_ANIMO.search(mensaje):
+        # En neutral se le da la frase hecha: sin ella el modelo contesta
+        # como una maquina ("funciono dentro de los parametros normales").
+        ejemplo = (" Dilo con naturalidad, por ejemplo: 'Estoy tranquilo, no me "
+                   "pasa nada'. Nunca hables de parametros ni de que eres una "
+                   "maquina." if not p["nivel"] else "")
+        tono = ((tono or "") + " Te acaban de preguntar como te sientes: "
+                "contestalo con sinceridad y en primera persona. Ahora mismo te "
+                f"sientes {como_se_siente(p)}.{ejemplo}").strip()
+    return tono

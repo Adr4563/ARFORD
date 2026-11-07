@@ -84,11 +84,17 @@ def generate_launch_description():
         # Para comparar con el otro, o volver atras:
         #   ros2 launch romeo_bringup ... chat_model:=romeo-llama3b-v2
         #   ros2 launch romeo_bringup ... chat_model:=llama3.2:1b
-        DeclareLaunchArgument('chat_model', default_value='romeo-llama3b-v3'),
+        #
+        # Ahora gemma3:4b, sin fine-tuning: responde a su juicio con los
+        # tonos del AEB y los casos de seguridad.py como guia. Comparado en
+        # la pagina de pruebas (pruebas/web) contra llama3.2:3b, gemma2:2b y
+        # llama3.1:8b: el 3B ignoraba los tonos, el 2B se cortaba y el 8B
+        # tardaba demasiado en CPU.
+        DeclareLaunchArgument('chat_model', default_value='gemma3:4b'),
         # Modelo que da la segunda opinion sobre las respuestas de trivia que
         # la comparacion de texto da por incorrectas (ver agente_trivia).
         # El juez de trivia: decide si la respuesta vale Y escribe el
-        # comentario, en una sola llamada (agente_trivia.juzgar).
+        # comentario (agente_trivia.juzgar).
         #
         # Pasa de 'romeo' (Qwen 0.5B) a romeo-llama3b-v3, el mismo del
         # chat. Medido sobre 12 respuestas reales: el Qwen acertaba 6 de 8
@@ -96,8 +102,12 @@ def generate_launch_description():
         # China contestaba "Correcto, Felicidad!". El 3B con la pregunta
         # y dos ejemplos en el prompt acierta 11 de 12 y no se inventa la
         # respuesta.
+        #
+        # Ahora gemma3:4b, igual que el chat, y en DOS llamadas (SI/NO y
+        # despues el comentario): con la pregunta corta acierta 7 de 8 y ya
+        # no da por buena "no se".
         DeclareLaunchArgument('trivia_corrector_model',
-                              default_value='romeo-llama3b-v3'),
+                              default_value='gemma3:4b'),
         # DONDE VIVEN LAS IA. Por defecto, en la PC: el LLM, el STT y el TTS
         # corren alli y la Pi los consume por HTTP. Esa es la configuracion
         # real del robot -- con todo dentro, la Pi iba a 3.3 GB de RAM y 76%

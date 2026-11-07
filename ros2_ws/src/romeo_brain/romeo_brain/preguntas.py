@@ -169,8 +169,14 @@ _FAMILIAS_NO_TRIVIA = ("juego de imitacion", "juego de emociones")
 
 
 def _es_de_trivia(p):
-    """True si la pregunta se responde HABLANDO."""
+    """True si la pregunta se responde HABLANDO.
+
+    Tampoco entran las de reconocimiento musical (campo 'musical': la
+    cancion de Mario, Zelda, Minecraft...): se quitaron de la trivia a
+    pedido del equipo."""
     if not (p.get("respuesta_esperada") or "").strip():
+        return False
+    if (p.get("musical") or "").strip():
         return False
     familias = [_sin_tildes(_familia_de(t)).lower() for t in _temas_de(p)]
     return not any(f in _FAMILIAS_NO_TRIVIA for f in familias)

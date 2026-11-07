@@ -1,79 +1,108 @@
 # -*- coding: utf-8 -*-
 """agente_trivia -- el juego de preguntas y la expresion (cara, musica).
 
-El LLM juzga Y comenta la respuesta del usuario en UNA sola llamada
-(juzgar): se le da la pregunta, la respuesta esperada y lo que dijo la
-persona, y devuelve si acerto y una frase para decirsela. No hay
-comparacion de texto ni corrector aparte: el LLM compara directo.
+juzgar hace DOS llamadas. La primera solo decide SI o NO: se le da la
+pregunta, la respuesta esperada y lo que dijo la persona. La segunda, con
+el veredicto ya decidido, escribe el comentario como lo diria una persona:
+celebra o corrige, de vez en cuando cuenta un dato breve de la respuesta
+(PROB_DATO) y pasa a la siguiente ("No, era el emu, el ave mas veloz de
+Australia. Vamos con la siguiente."). Separadas para que el comentario no
+pueda contradecir al
+veredicto. Si la segunda falla, se usan las frases de
+data/frases/respuestas_trivia_*.txt.
+
+ANTES el LLM juzgaba y comentaba en UNA llamada, con ejemplos y formato de
+dos lineas. Medido con gemma3:4b sobre 8 respuestas, daba por buenas
+"el de Madonna" (Thriller) y hasta "no se", y comentaba con apodos
+("¡Inténtalo de nuevo, pequeño!"). Con la pregunta corta de SI/NO acierta
+7 de 8 en ~2 s (llama3.1:8b, 8 de 8 en ~12 s).
 
 La expresion (que cara poner, que musica sonar) sale de los campos de la
 propia pregunta en preguntas.jsonl.
 """
 
 import os
+import random
 
-from . import llama_client
+from . import frases, llama_client
 
-# Modelo del LLM que juzga y comenta las respuestas de trivia.
+# Modelo del LLM que juzga las respuestas de trivia.
 CORRECTOR_LLM = os.environ.get("TRIVIA_CORRECTOR_MODEL", "romeo")
 
-# Los ejemplos no son adorno: sin ellos un modelo pequeño DESCRIBE la
-# instruccion en vez de cumplirla o se inventa el veredicto. Con dos
-# ejemplos resueltos contesta en el formato correcto.
-#
 # TODO VA EN EL MENSAJE DE USUARIO, sin turno system: Gemma no lo procesa
 # aparte (su plantilla lo mete dentro del primer mensaje) y con system
 # separado llegaba a decir SI a "Peru" cuando la respuesta era China.
 _PROMPT_JUEZ = (
-    "Eres Romeo, un robot que juega trivia con niños. Te doy la pregunta, "
-    "la respuesta correcta y lo que dijo la persona.\n"
-    "Decide si acerto (aunque lo diga con otras palabras o mal transcrito).\n"
-    "Responde EXACTAMENTE en dos lineas:\n"
-    "VEREDICTO: SI o NO\n"
-    "COMENTARIO: una frase corta dirigida A LA PERSONA, tuteando.\n"
-    "\n"
-    "Ejemplo 1:\n"
-    "Pregunta: ¿Capital de Francia?\n"
-    "Respuesta correcta: Paris\n"
-    "La persona dijo: Paris obvio\n"
-    "VEREDICTO: SI\n"
-    "COMENTARIO: ¡Esa te la sabias!\n"
-    "\n"
-    "Ejemplo 2:\n"
-    "Pregunta: ¿Cuantas patas tiene una araña?\n"
-    "Respuesta correcta: 8\n"
-    "La persona dijo: seis creo\n"
-    "VEREDICTO: NO\n"
-    "COMENTARIO: Casi, pero son 8."
-)
+    "Pregunta de trivia: {pregunta}\n"
+    "Respuesta correcta: {esperada}\n"
+    "La persona respondio: {usuario}\n\n"
+    "¿La respuesta de la persona es la respuesta correcta (aunque la diga con "
+    "otras palabras o con faltas)? Si dice otra cosa, o no sabe, es NO. "
+    "Contesta solo SI o NO.")
+
+_PROMPT_COMENTARIO = (
+    "Eres Romeo, un robot que juega trivia en voz alta con una persona.\n"
+    "Pregunta: {pregunta}\n"
+    "Respuesta correcta: {esperada}\n"
+    "La persona respondio: {usuario}\n"
+    "{resultado}\n\n"
+    "Dile algo como lo diria una persona, con tus propias palabras y en "
+    "{frases} cortas: {que_hacer}{dato} Termina con una frase corta para "
+    "pasar a la siguiente pregunta, como 'Vamos con la siguiente', sin "
+    "preguntar nada. Tutea, sin apodos como 'pequeño' o 'campeón', sin "
+    "palabras con genero como 'listo' o 'lista', sin emojis. Escribe solo lo "
+    "que vas a decir.")
+
+# Cuantas veces cuenta un dato curioso. Siempre se hacia pesado (y alargaba
+# cada turno a 15-20 s), y cuantos mas datos mas se inventa: gemma3:4b dijo
+# que 54 es capicua y que "Mir" significa "espejo".
+PROB_DATO = float(os.environ.get("ROMEO_TRIVIA_DATO", "0.3"))
+
+
+def _comentar(pregunta, esperada, respuesta_usuario, acerto):
+    """El comentario del veredicto, ya decidido, dicho como una persona."""
+    if acerto:
+        resultado, que_hacer = "ACERTO.", "celebra que acerto."
+    else:
+        resultado, que_hacer = ("SE EQUIVOCO.", "dile con amabilidad que no "
+                                "era y cual era la respuesta correcta.")
+    con_dato = random.random() < PROB_DATO
+    dato = (" Agrega un dato curioso breve sobre la respuesta correcta, solo "
+            "si estas seguro de que es cierto." if con_dato else "")
+    try:
+        texto = llama_client.generar_respuesta(
+            [{"role": "user",
+              "content": _PROMPT_COMENTARIO.format(
+                  pregunta=pregunta, esperada=esperada, usuario=respuesta_usuario,
+                  resultado=resultado, que_hacer=que_hacer, dato=dato,
+                  frases="tres frases" if con_dato else "dos frases")}],
+            temperature=0.7, max_tokens=90 if con_dato else 50,
+            modelo=CORRECTOR_LLM).strip()
+        texto = " ".join(texto.split())   # sin los saltos de linea del modelo
+    except Exception:  # noqa: BLE001 - sin comentario del LLM, frase fija
+        texto = ""
+    return texto or frases.una(
+        frases.RESPUESTAS_TRIVIA_ACIERTO if acerto else frases.RESPUESTAS_TRIVIA_ERROR,
+        esperada=esperada)
 
 
 def juzgar(pregunta, esperada, respuesta_usuario):
-    """(acerto, comentario) del LLM en una sola llamada.
+    """(acerto, comentario).
 
-    El LLM compara lo que dijo la persona con la respuesta esperada y
-    devuelve si acerto (bool) y la frase para decirsela. Se le pasa tambien
-    la PREGUNTA, no solo la respuesta: sin ella no puede juzgar "de cuero"
-    por "piel de animales"."""
+    El LLM compara lo que dijo la persona con la respuesta esperada. Se le
+    pasa tambien la PREGUNTA, no solo la respuesta: sin ella no puede
+    juzgar "de cuero" por "piel de animales"."""
     texto = llama_client.generar_respuesta(
         [{"role": "user",
-          "content": f"{_PROMPT_JUEZ}\n\nPregunta: {pregunta}\n"
-                     f"Respuesta correcta: {esperada}\n"
-                     f"La persona dijo: {respuesta_usuario}"}],
-        temperature=0.1, modelo=CORRECTOR_LLM)
-
-    acerto = comentario = None
-    for linea in texto.splitlines():
-        arriba = linea.upper()
-        if "VEREDICTO" in arriba:
-            cola = arriba.split("VEREDICTO", 1)[1]
-            acerto = ("SI" in cola or "SÍ" in cola)
-        elif "COMENTARIO" in arriba:
-            comentario = linea.split(":", 1)[-1].strip() or None
+          "content": _PROMPT_JUEZ.format(pregunta=pregunta, esperada=esperada,
+                                         usuario=respuesta_usuario)}],
+        temperature=0.0, modelo=CORRECTOR_LLM)
+    acerto = texto.strip().upper().startswith(("SI", "SÍ"))
+    comentario = _comentar(pregunta, esperada, respuesta_usuario, acerto)
     print(f"[trivia] {CORRECTOR_LLM}: esperada={esperada!r} "
           f"usuario={respuesta_usuario!r} -> "
           f"{'acierto' if acerto else 'fallo'}")
-    return bool(acerto), comentario
+    return acerto, comentario
 
 
 # ─── Expresion: cara, musica (venia de agent_behavior.py) ───────────

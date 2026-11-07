@@ -27,7 +27,7 @@ import difflib
 import os
 import re
 
-from . import llama_client
+from . import llama_client, seguridad
 
 # Cuantos turnos (par usuario+Romeo) se recuerdan. 6 son ~12 mensajes, que
 # con respuestas cortas caben de sobra en la ventana de un modelo 1B.
@@ -36,7 +36,29 @@ TURNOS_HISTORIAL = int(os.environ.get("ROMEO_TURNOS_HISTORIAL", "6"))
 # Maximo de frases en una respuesta de chat. El modelo ignora el prompt y
 # responde con parrafos largos; esto lo corta por codigo (ver
 # _limpiar_formato). Cambiable con ROMEO_MAX_FRASES sin recompilar.
-MAX_FRASES = int(os.environ.get("ROMEO_MAX_FRASES", "2"))
+# Creatividad del chat. 0.7 y no el 0.3 de llama_client: los tonos del AEB
+# ya no traen frases para copiar, y con 0.3 Romeo contestaba casi igual a
+# cada mensaje parecido.
+TEMPERATURA = float(os.environ.get("ROMEO_TEMPERATURA_CHAT", "0.7"))
+
+# 3 y no 2: los tonos del AEB piden reconocer lo que siente, animar y seguir
+# la conversacion, y con 2 la respuesta se cortaba antes del animo.
+MAX_FRASES = int(os.environ.get("ROMEO_MAX_FRASES", "3"))
+
+# Cuando piden un CONSEJO, el prompt de base ("no ofrezcas ayuda, solo
+# conversa") hacia que Romeo contestara con otra pregunta ("¿Que te hace
+# sentir triste?"), y aunque los diera, MAX_FRASES los cortaba a la mitad.
+# Ese turno se le pide que ayude de verdad y se le dejan mas frases.
+MAX_FRASES_CONSEJO = int(os.environ.get("ROMEO_MAX_FRASES_CONSEJO", "4"))
+_PIDE_CONSEJO = re.compile(
+    r"consejo|aconsej|recomi[eé]nd|recomiendas|tips?\b|ideas? para|"
+    r"qu[eé] (puedo|debo|deber[ií]a|tengo que) hacer|"
+    r"c[oó]mo (puedo|hago|hacer|deber[ií]a)|ay[uú]dame a",
+    re.IGNORECASE)
+_PROMPT_CONSEJO = (
+    "Te estan pidiendo un consejo: esta vez SI ayuda. Da dos o tres consejos "
+    "concretos y faciles de hacer, dichos en frases cortas y seguidas, sin "
+    "listas ni numeros, y no respondas con otra pregunta.")
 
 # Instruccion de estilo, SOLO para modelos sin fine-tuning.
 #
@@ -86,6 +108,15 @@ _PROMPT_ENTRENADO = (
 )
 
 
+# Como trata a la persona, con cualquier modelo. Medido con gemma3:4b
+# respondiendo a su juicio: decia "Oh, cariño" a todo, y "no tienes que
+# pasar por esto solo" sin saber si habla con un hombre o una mujer.
+_PROMPT_TRATO = (
+    "No uses apodos como 'cariño', 'querida' o 'amigo'. No sabes si hablas "
+    "con un hombre o con una mujer: usa frases sin genero (por ejemplo 'no "
+    "tienes que pasarlo a solas' en vez de 'solo' o 'sola').")
+
+
 def _prompt_para(modelo):
     """Vacio si el modelo ya trae el comportamiento horneado."""
     personalizado = os.environ.get("ROMEO_PROMPT_CHAT")
@@ -93,8 +124,8 @@ def _prompt_para(modelo):
         return personalizado
     nombre = (modelo or "").lower()
     if any(nombre.startswith(m) for m in _MODELOS_ENTRENADOS):
-        return _PROMPT_ENTRENADO
-    return _PROMPT_POR_DEFECTO
+        return f"{_PROMPT_ENTRENADO} {_PROMPT_TRATO}"
+    return f"{_PROMPT_POR_DEFECTO} {_PROMPT_TRATO}"
 
 
 _PROMPT = _prompt_para(llama_client.CHAT_MODEL)
@@ -153,13 +184,22 @@ def sembrar_turno_robot(texto):
     _historial.append({"role": "assistant", "content": texto})
 
 
-def _limpiar_formato(texto):
+# Emojis y pictogramas (caras, banderas, simbolos, el selector de variante
+# y el unidor de secuencias). gemma2:2b los pone al final ("¿Como fue el
+# partido? 🤩 ⚽ 🏆") y la voz no los puede leer.
+_EMOJI = re.compile(
+    "[\U0001F000-\U0001FAFF\U00002600-\U000027BF\U00002B00-\U00002BFF"
+    "\U0000FE0F\U0000200D]")
+
+
+def _limpiar_formato(texto, max_frases=None):
     """Quita el formato de texto escrito (listas, vinetas, numeracion,
-    asteriscos, almohadillas) para que suene bien dicho EN VOZ ALTA.
+    asteriscos, almohadillas, emojis) para que suene bien dicho EN VOZ ALTA.
 
     El modelo a veces ignora el system prompt y responde con listas Markdown.
     Esto no es un consejo al modelo: borra los simbolos de la salida pase lo
     que pase, y une las vinetas en prosa corrida."""
+    texto = _EMOJI.sub("", texto)
     lineas = []
     for linea in texto.splitlines():
         s = linea.strip()
@@ -186,8 +226,9 @@ def _limpiar_formato(texto):
     # suene breve dicho en voz alta. Se parte por . ! ? conservando el signo.
     frases = re.findall(r"[^.!?]+[.!?]+|[^.!?]+$", texto)
     frases = [f.strip() for f in frases if f.strip()]
-    if len(frases) > MAX_FRASES:
-        frases = frases[:MAX_FRASES]
+    tope = MAX_FRASES if max_frases is None else max_frases
+    if len(frases) > tope:
+        frases = frases[:tope]
     return " ".join(frases).strip()
 
 
@@ -198,7 +239,17 @@ def responder(mensaje_usuario, tono=None):
     `tono` es la instruccion de estilo del AEB (o None). Va solo en el
     system prompt de ESTE turno: no se guarda en el historial, porque el
     animo cambia de un turno a otro."""
-    sistema = _system_prompt(tono)
+    # Si el mensaje es grave (hacerse daño, que lo lastimen, lastimar a
+    # otro), la instruccion de seguridad SUSTITUYE al tono: el del AEB diria
+    # "no te preocupes, esto va a pasar". Ver seguridad.py.
+    riesgo, instruccion = seguridad.revisar(mensaje_usuario)
+    if riesgo:
+        sistema = f"{_PROMPT} {instruccion}".strip()
+    else:
+        sistema = _system_prompt(tono)
+    consejo = bool(riesgo) or bool(_PIDE_CONSEJO.search(mensaje_usuario or ""))
+    if consejo and not riesgo:
+        sistema = f"{sistema} {_PROMPT_CONSEJO}".strip()
 
     def _generar(con_historial):
         mensajes = ((list(_historial) if con_historial else [])
@@ -209,7 +260,8 @@ def responder(mensaje_usuario, tono=None):
         # exprese completo. La respuesta sale tal cual la da el modelo (solo
         # limpia de espacios). El recorte de primera_frase() sigue en la
         # trivia, donde las respuestas deben ser cortas.
-        return llama_client.generar_respuesta(mensajes).strip()
+        return llama_client.generar_respuesta(
+            mensajes, temperature=TEMPERATURA).strip()
 
     texto = _generar(con_historial=True)
     # Un modelo pequeño se engancha a lo ultimo que dijo y lo copia. Si pasa,
@@ -218,7 +270,7 @@ def responder(mensaje_usuario, tono=None):
     if _es_repeticion(texto):
         texto = _generar(con_historial=False)
 
-    texto = _limpiar_formato(texto)
+    texto = _limpiar_formato(texto, MAX_FRASES_CONSEJO if consejo else None)
     _historial.append({"role": "user", "content": mensaje_usuario})
     _historial.append({"role": "assistant", "content": texto})
     # Se recorta por el principio, de dos en dos, para no dejar un turno a

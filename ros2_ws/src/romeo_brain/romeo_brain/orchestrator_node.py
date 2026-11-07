@@ -957,7 +957,8 @@ class OrchestratorNode(Node):
             self._timer_emocion.cancel()
         self._emocion_pendiente = False
         self._bridge.mostrar_cara(comp["cara"])
-        texto_final = self.responder(mensaje_usuario, tono=comp["tono"])
+        # tono_para: si le preguntan como esta, el tono lleva su animo.
+        texto_final = self.responder(mensaje_usuario, tono=aeb.tono_para(comp, mensaje_usuario))
         self.get_logger().info(f"Asistente: {texto_final}")
         self._bridge.hablar(texto_final)
         # Mismo orden que el resto del robot: voz -> movimiento.
