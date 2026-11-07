@@ -46,8 +46,16 @@ from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.lifecycle import LifecycleNode, TransitionCallbackReturn
 
+from std_msgs.msg import Empty
+
 from romeo_interfaces.msg import UserInput
 from romeo_interfaces.srv import PlayMusic, Speak
+
+# Cada cuanto, como mucho, se avisa en /romeo/voz_detectada mientras el
+# microfono oye voz. El STT llama cada 0.1 s; con 0.3 s basta para que la
+# camara no se apague a mitad de frase (visualization_faces_node la deja
+# activa fer_ventana_seg despues de cada aviso).
+PERIODO_AVISO_VOZ = 0.3
 
 from . import _music_player
 from ._stt_engine import ReconocedorVoz
@@ -199,6 +207,10 @@ class CommunicationNode(LifecycleNode):
         # create_lifecycle_publisher() en rclpy.
         self._pub_user_input = self.create_publisher(
             UserInput, '/romeo/user_input', 10)
+        # "Alguien esta hablando": la camara solo analiza caras mientras
+        # llega esto (FER bajo demanda, ver _emotion_detector).
+        self._pub_voz = self.create_publisher(Empty, '/romeo/voz_detectada', 10)
+        self._ultimo_aviso_voz = 0.0
 
         self.create_service(Speak, '/romeo/speak', self._cb_speak,
                              callback_group=self._grupo_audio)
@@ -287,8 +299,15 @@ class CommunicationNode(LifecycleNode):
             # whisper y por tanto no puede volver como entrada del usuario
             # (ver la nota de _sonando).
             pausar=self._sonando,
+            al_oir_voz=self._avisar_voz,
         )
         self.get_logger().info('[mic] se dejó de escuchar')
+
+    def _avisar_voz(self):
+        ahora = time.monotonic()
+        if ahora - self._ultimo_aviso_voz >= PERIODO_AVISO_VOZ:
+            self._ultimo_aviso_voz = ahora
+            self._pub_voz.publish(Empty())
 
     def _on_texto_voz(self, texto):
         # Si Romeo está hablando o sonando música, esto es su propio audio

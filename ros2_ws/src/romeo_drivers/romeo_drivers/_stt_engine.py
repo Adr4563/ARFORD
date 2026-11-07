@@ -444,7 +444,7 @@ class ReconocedorVoz:
     # -------------------------------------------------------------- micrófono
 
     def escuchar(self, al_transcribir, detener=None, dispositivo=None,
-                 pausar=None):
+                 pausar=None, al_oir_voz=None):
         """Escucha el micrófono y llama `al_transcribir(texto)` por cada frase.
 
         Corta las frases con el VAD (silencio de 0.25s), así que no hace falta
@@ -456,6 +456,11 @@ class ReconocedorVoz:
         `pausar` es otro callable opcional: mientras devuelva True se tira el
         audio que entra en vez de transcribirlo. El nodo le pasa su
         `_sonando()`, para no transcribir la propia voz de Romeo.
+
+        `al_oir_voz` se llama en cada bloque de 0.1 s con sonido por encima
+        de PICO_MINIMO (y fuera de `pausar`), apenas empieza la frase y no
+        al terminar como `al_transcribir`. Con eso la camara se activa solo
+        mientras alguien habla (ver _emotion_detector, bajo demanda).
 
         Esta función BLOQUEA. El llamador la corre en su propio hilo.
         """
@@ -550,6 +555,8 @@ class ReconocedorVoz:
                         else:
                             continue
                     else:
+                        if al_oir_voz is not None:
+                            al_oir_voz()
                         if silencios:
                             self._vad.accept_waveform(
                                 np.zeros(ventana, dtype="float32"))

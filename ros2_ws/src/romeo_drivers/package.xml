@@ -18,6 +18,7 @@
 
   <depend>rclpy</depend>
   <depend>lifecycle_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>romeo_interfaces</depend>
 
   <!-- Dependencias de hardware/servicios - varias no tienen rosdep key

@@ -58,14 +58,30 @@ HISTORIAL_SEG = 60.0       # cuántos segundos de cuadros se guardan
 ESPERA_JUEGO_SEG = 4.0     # cuánto espera el juego de caras a ver una cara
 CUADROS_JUEGO = 3          # con cuántos cuadros decide el juego de caras
 
+# Tamaño del cuadro que se analiza. Antes la vista previa por defecto
+# (640x480): YuNet buscaba la cara en el doble de pixeles de lo necesario
+# para una persona a 1-2 m del robot, y FER+ igual recorta a 64x64.
+RESOLUCION_POR_DEFECTO = (320, 240)
+# En reposo (bajo demanda, sin voz) el hilo solo mira el reloj cada tanto.
+PAUSA_REPOSO = 0.1
+
 
 class DetectorEmocion:
     """Estado del detector (sesión ONNX, detector de caras y, en modo
     continuo, la cámara y el historial). Se inicializa perezosamente: crear
     el objeto en on_configure() no toca nada."""
 
-    def __init__(self, logger=None, fps=FPS_POR_DEFECTO):
+    def __init__(self, logger=None, fps=FPS_POR_DEFECTO, bajo_demanda=True,
+                 resolucion=RESOLUCION_POR_DEFECTO):
         self.logger = logger
+        # BAJO DEMANDA: la camara queda abierta, pero YuNet y FER+ solo
+        # corren mientras alguien llama a activar() -- el communication_node
+        # avisa cuando el microfono oye voz, y el juego de caras activa por
+        # su cuenta. Antes clasificaba 5 cuadros por segundo SIEMPRE, aunque
+        # nadie hablara, y el orquestador solo usa los de cada frase.
+        self.bajo_demanda = bool(bajo_demanda)
+        self.resolucion = tuple(int(v) for v in resolucion)
+        self._activo_hasta = 0.0
         self.modelos_dir = os.path.join(get_package_share_directory('romeo_drivers'), 'modelos')
         self._sess_emocion = None
         self._detector_cara = None
@@ -199,6 +215,18 @@ class DetectorEmocion:
     def continuo_activo(self):
         return self._hilo is not None and self._hilo.is_alive()
 
+    def activar(self, segundos):
+        """Clasifica cuadros durante los proximos `segundos` (bajo demanda).
+        Llamarlo otra vez antes de que venza alarga la ventana."""
+        with self._lock:
+            self._activo_hasta = max(self._activo_hasta, time.time() + float(segundos))
+
+    def _toca_clasificar(self):
+        if not self.bajo_demanda:
+            return True
+        with self._lock:
+            return time.time() < self._activo_hasta
+
     def iniciar_continuo(self):
         """Abre la cámara y empieza a clasificar de fondo. Idempotente.
         Devuelve False si no hay modelos o dependencias."""
@@ -236,14 +264,30 @@ class DetectorEmocion:
 
                 picam2 = (Picamera2(sensor.camera_num) if sensor is not None
                           else Picamera2())
-                picam2.start(picam2.create_preview_configuration(), show_preview=False)
+                picam2.start(picam2.create_preview_configuration(
+                    main={"size": self.resolucion}), show_preview=False)
                 time.sleep(2)  # que asiente la exposición
                 donde = "sensor" if sensor is not None else "CPU"
-                self._log(f"[cámara] FER continuo a {self.fps:g} fps "
-                          f"(cara: {donde})")
+                modo = "solo con voz" if self.bajo_demanda else "siempre"
+                self._log(f"[cámara] FER a {self.fps:g} fps, {modo}, "
+                          f"{self.resolucion[0]}x{self.resolucion[1]} (cara: {donde})")
                 periodo = 1.0 / self.fps
+                # Cuadros clasificados en la ventana activa en curso: al
+                # cerrarse se loguean los fps REALES, para comparar.
+                ventana_inicio, ventana_cuadros = None, 0
                 while self._continuo:
+                    if not self._toca_clasificar():
+                        if ventana_inicio is not None:
+                            dur = time.time() - ventana_inicio
+                            self._log(f"[cámara] FER: {ventana_cuadros} cuadros en "
+                                      f"{dur:.1f} s ({ventana_cuadros / max(dur, 0.1):.1f} fps reales)")
+                            ventana_inicio, ventana_cuadros = None, 0
+                        time.sleep(PAUSA_REPOSO)
+                        continue
                     inicio = time.time()
+                    if ventana_inicio is None:
+                        ventana_inicio = inicio
+                    ventana_cuadros += 1
                     if sensor is not None:
                         # La cara la busca el acelerador del IMX500; aqui
                         # solo se recorta y se clasifica.
@@ -332,6 +376,9 @@ class DetectorEmocion:
     def _detectar_desde_continuo(self):
         desde = time.time()
         limite = desde + ESPERA_JUEGO_SEG
+        # En el juego la persona pone la cara sin hablar: nadie mas activa
+        # la camara, asi que se activa aqui lo que dura la espera.
+        self.activar(ESPERA_JUEGO_SEG)
         cuadros = []
         while time.time() < limite:
             cuadros = self._cuadros_entre(desde, time.time())
@@ -356,7 +403,8 @@ class DetectorEmocion:
 
         try:
             picam2 = Picamera2()
-            picam2.start(picam2.create_preview_configuration(), show_preview=False)
+            picam2.start(picam2.create_preview_configuration(
+                main={"size": self.resolucion}), show_preview=False)
             time.sleep(2)  # deja asentar AE/AWB
 
             emocion, confianza = None, None

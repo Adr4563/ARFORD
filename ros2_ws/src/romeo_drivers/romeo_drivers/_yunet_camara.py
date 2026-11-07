@@ -145,8 +145,11 @@ class YunetCamara:
             self.error = f"no existe {self._rpk}"
             return False
         if not self._puede_leer_progreso():
-            self.error = ("sin permiso en /sys/kernel/debug (hace falta la "
-                          "regla de udev, ver el README)")
+            # udev no sirve aqui: /sys/kernel/debug es un montaje de
+            # debugfs y sus permisos salen de la opcion mode= del montaje.
+            self.error = ("sin permiso en /sys/kernel/debug: montar debugfs "
+                          "con mode=0755 (linea 'debugfs /sys/kernel/debug "
+                          "debugfs defaults,mode=0755 0 0' en /etc/fstab)")
             return False
         try:
             from picamera2.devices import IMX500

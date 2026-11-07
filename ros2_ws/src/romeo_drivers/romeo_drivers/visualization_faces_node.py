@@ -29,6 +29,8 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.lifecycle import LifecycleNode, TransitionCallbackReturn
 
+from std_msgs.msg import Empty
+
 from romeo_interfaces.msg import FaceCommand
 from romeo_interfaces.srv import DetectEmotion, PerceiveFace
 
@@ -48,6 +50,12 @@ class VisualizationFacesNode(LifecycleNode):
         # Margen alrededor de la frase: la cara suele anticipar o prolongar
         # lo que se dice, y el VAD recorta el silencio de los bordes.
         self.declare_parameter('fer_margen_seg', 0.5)
+        # Bajo demanda: YuNet y FER+ solo corren mientras llega
+        # /romeo/voz_detectada (alguien habla), y fer_ventana_seg despues
+        # del ultimo aviso. false = clasificar siempre, como antes.
+        self.declare_parameter('fer_bajo_demanda', True)
+        self.declare_parameter('fer_ventana_seg', 1.5)
+        self.declare_parameter('fer_resolucion', [320, 240])
         self._activo = False
         self._display = None
         self._detector = None
@@ -62,10 +70,14 @@ class VisualizationFacesNode(LifecycleNode):
         self.get_logger().info('[visualization_faces_node] configurando...')
         self._display = Display(logger=self.get_logger())
         self._detector = DetectorEmocion(
-            logger=self.get_logger(), fps=self.get_parameter('fer_fps').value)
+            logger=self.get_logger(), fps=self.get_parameter('fer_fps').value,
+            bajo_demanda=self.get_parameter('fer_bajo_demanda').value,
+            resolucion=self.get_parameter('fer_resolucion').value)
 
         self.create_subscription(
             FaceCommand, '/romeo/face_command', self._cb_face_command, 10)
+        self.create_subscription(
+            Empty, '/romeo/voz_detectada', self._cb_voz_detectada, 10)
         self.create_service(
             DetectEmotion, '/romeo/detect_emotion', self._cb_detect_emotion,
             callback_group=self._grupo_camara)
@@ -74,6 +86,10 @@ class VisualizationFacesNode(LifecycleNode):
             callback_group=self._grupo_camara)
 
         return TransitionCallbackReturn.SUCCESS
+
+    def _cb_voz_detectada(self, _msg):
+        if self._activo and self._detector is not None:
+            self._detector.activar(self.get_parameter('fer_ventana_seg').value)
 
     def on_activate(self, state):
         self.get_logger().info('[visualization_faces_node] activando...')

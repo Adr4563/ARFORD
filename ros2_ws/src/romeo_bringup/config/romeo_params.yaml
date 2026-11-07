@@ -124,6 +124,21 @@ visualization_faces_node:
     fer_fps: 5.0
     # Segundos de más a cada lado de la frase.
     fer_margen_seg: 0.5
+    # BAJO DEMANDA. La camara sigue abierta, pero YuNet y FER+ solo corren
+    # mientras el microfono oye voz (communication_node publica
+    # /romeo/voz_detectada) y fer_ventana_seg despues del ultimo aviso.
+    # Antes clasificaba fer_fps cuadros por segundo SIEMPRE, aunque nadie
+    # hablara, y el orquestador solo usa los de cada frase. El juego de
+    # caras activa la camara por su cuenta. false = como antes.
+    #
+    # Ojo: al activarse con la voz, el margen de ANTES de la frase
+    # (fer_margen_seg) ya no tiene cuadros; el de despues si.
+    fer_bajo_demanda: true
+    fer_ventana_seg: 1.5
+    # Tamaño del cuadro que se analiza. Antes 640x480 (la vista previa por
+    # defecto); 320x240 alcanza para una cara a 1-2 m y FER+ igual la
+    # reduce a 64x64.
+    fer_resolucion: [320, 240]
 
 moving_control_node:
   ros__parameters:
