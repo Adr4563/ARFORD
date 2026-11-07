@@ -98,6 +98,12 @@ void ejecutarComando(const String& move) {
   else if (move == "T2") testWheel(IN3, IN4);  // Front Right
   else if (move == "T3") testWheel(IN5, IN6);  // Back Left
   else if (move == "T4") testWheel(IN7, IN8);  // Back Right
+  // Lo mismo hacia atras: el par de pines al reves.
+  else if (move == "T1B") testWheel(IN2, IN1);
+  else if (move == "T2B") testWheel(IN4, IN3);
+  else if (move == "T3B") testWheel(IN6, IN5);
+  else if (move == "T4B") testWheel(IN8, IN7);
+  else if (move == "TB") rearBackward();       // las dos traseras hacia atras
   else stopCar(); // incluye "S" y cualquier texto no reconocido
 }
 
@@ -109,6 +115,13 @@ void ejecutarComando(const String& move) {
 void testWheel(int a, int b){
   stopCar();
   digitalWrite(a, HIGH); digitalWrite(b, LOW);
+}
+
+// Diagnostico: solo las dos ruedas traseras hacia atras.
+void rearBackward(){
+  stopCar();
+  digitalWrite(IN5,LOW); digitalWrite(IN6,HIGH);
+  digitalWrite(IN7,LOW); digitalWrite(IN8,HIGH);
 }
 
 // ===== Motor Control Logic =====
