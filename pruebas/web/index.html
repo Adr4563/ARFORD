@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prueba afectiva Romeo</title>
+<style>
+  :root {
+    --fondo: #f9f9f7; --tarjeta: #fcfcfb; --texto: #0b0b0b; --suave: #52514e; --tenue: #898781;
+    --borde: #e1e0d9; --eje: #c3c2b7; --acento: #c2410c; --acento-texto: #ffffff;
+    --barra: #eceae4; --error: #b91c1c;
+    --fer: #2a78d6; --ser: #eb6834; --ter: #1baf7a; --fusion: #eda100; --romeo: #e87ba4;
+    --val: #2a78d6; --aro: #eb6834; --dom: #1baf7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fondo: #0d0d0d; --tarjeta: #1a1a19; --texto: #f0efec; --suave: #c3c2b7; --tenue: #898781;
+      --borde: #2c2c2a; --eje: #383835; --acento: #f97316; --acento-texto: #0b0b0b;
+      --barra: #2c2c2a; --error: #f87171;
+      --fer: #3987e5; --ser: #d95926; --ter: #199e70; --fusion: #c98500; --romeo: #d55181;
+      --val: #3987e5; --aro: #d95926; --dom: #199e70;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fondo); color: var(--texto); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .sub { color: var(--suave); margin: 0 0 16px; }
+  .estado { font-size: .875rem; color: var(--suave); margin-bottom: 20px; }
+  .estado b { color: var(--texto); font-weight: 600; }
+  .tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 20px; margin-bottom: 16px; min-width: 0; }
+  .tarjeta h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--suave); margin: 0 0 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .punto { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .entrada { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: center; }
+  @media (max-width: 640px) { .entrada { grid-template-columns: 1fr; } }
+  video { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: var(--barra); transform: scaleX(-1); display: block; }
+  .controles { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 12px 24px; background: var(--acento); color: var(--acento-texto); cursor: pointer; }
+  button.secundario { background: transparent; color: var(--suave); border: 1px solid var(--borde); padding: 8px 16px; font-weight: 500; font-size: .875rem; }
+  button:disabled { opacity: .5; cursor: default; }
+  .mic-zona { display: flex; flex-direction: column; align-items: center; gap: 10px; align-self: center; }
+  button.mic { width: 96px; height: 96px; padding: 0; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 4px 14px rgb(0 0 0 / .18); transition: transform .1s, background .15s; touch-action: manipulation; }
+  button.mic:active { transform: scale(.95); }
+  button.mic svg { width: 40px; height: 40px; }
+  button.mic.grabando { background: var(--error); animation: anillo 1.4s ease-out infinite; }
+  @keyframes anillo { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--error) 55%, transparent); } 100% { box-shadow: 0 0 0 22px transparent; } }
+  .etiqueta { font-weight: 600; font-size: .95rem; text-align: center; }
+  .ayuda { color: var(--suave); font-size: .875rem; margin: 0; }
+  .frase { font-size: 1.25rem; margin: 0; }
+  .vacio { color: var(--suave); font-style: italic; }
+  .error { color: var(--error); }
+  .tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 760px) { .tres { grid-template-columns: 1fr; } }
+  .fila { display: grid; grid-template-columns: 80px 1fr 40px; gap: 8px; align-items: center; margin: 6px 0; font-size: .9rem; }
+  .pista { height: 10px; background: var(--barra); border-radius: 5px; overflow: hidden; }
+  .lleno { height: 100%; border-radius: 5px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--suave); }
+  .fila.top { font-weight: 600; }
+  .fila.top .num { color: var(--texto); }
+  .nota { font-size: .8rem; color: var(--tenue); margin: 8px 0 0; }
+  .tooltip { position: absolute; pointer-events: none; background: var(--texto); color: var(--fondo); font-size: .8rem; padding: 6px 10px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, calc(-100% - 12px)); opacity: 0; transition: opacity .1s; font-variant-numeric: tabular-nums; }
+  .leyenda { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .85rem; color: var(--suave); margin-top: 12px; }
+  .leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; font-variant-numeric: tabular-nums; }
+  th { text-align: left; color: var(--suave); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; padding: 6px 8px; border-bottom: 1px solid var(--borde); }
+  td { padding: 8px; border-bottom: 1px solid var(--borde); }
+  td.n, th.n { text-align: right; }
+  .ficha { display: inline-flex; align-items: center; gap: 6px; }
+  .animo { font-size: .95rem; margin: 16px 0 0; }
+  .animo b { font-weight: 600; }
+  .sentir { font-size: 1.5rem; font-weight: 600; margin: 0; }
+  .marcador { margin-left: auto; text-transform: none; letter-spacing: 0; font-size: .9rem; color: var(--texto); font-variant-numeric: tabular-nums; }
+  .veredicto { margin: 0 0 8px; font-weight: 600; }
+  .veredicto.bien { color: var(--ter); }
+  .veredicto.mal { color: var(--error); }
+  #trivia-pregunta { margin-bottom: 4px; }
+  .dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; margin-top: 8px; }
+  @media (max-width: 640px) { .dos { grid-template-columns: minmax(0, 1fr); } }
+  .estado, .sub { overflow-wrap: anywhere; }
+  .sub-graf { font-size: .9rem; margin: 0 0 4px; font-weight: 600; }
+  .cubo { position: relative; margin: 4px 0 8px; }
+  .cubo canvas { width: 100%; display: block; touch-action: none; cursor: grab; border-radius: 8px; }
+  .cubo canvas:active { cursor: grabbing; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Prueba afectiva de Romeo</h1>
+  <p class="sub">Habla mirando a la cámara. Romeo lee tu cara (FER), tu voz (SER) y tu texto (TER), los junta en valencia y arousal y mueve su propio ánimo, con el mismo código del robot.</p>
+  <div class="estado" id="estado">Comprobando el servidor…</div>
+
+  <div class="tarjeta entrada">
+    <video id="video" autoplay muted playsinline></video>
+    <div class="controles">
+      <div class="mic-zona">
+        <button id="boton" class="mic" disabled aria-label="Hablar"></button>
+        <span class="etiqueta" id="etiqueta">Toca para hablar</span>
+      </div>
+      <p class="ayuda" id="ayuda">Toca el micrófono, habla mirando a la cámara y vuelve a tocarlo para enviar (en la PC también sirve la barra espaciadora). La cámara toma 5 fotos por segundo mientras hablas, como el robot.</p>
+      <button class="secundario" id="reiniciar">Reiniciar sesión</button>
+    </div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Lo que entendió</h2>
+    <p class="frase vacio" id="texto">Todavía no hablaste.</p>
+  </div>
+
+  <div class="tarjeta">
+    <h2><span class="punto" style="background:var(--romeo)"></span>Respuesta de Romeo</h2>
+    <p class="frase vacio" id="respuesta">Romeo te responde cuando hables.</p>
+    <p class="nota" id="aeb"></p>
+    <button class="secundario" id="escuchar" hidden>▶ Escuchar otra vez</button>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Cómo cambia el ánimo, frase a frase</h2>
+    <div class="dos">
+      <div>
+        <h3 class="sub-graf"><span class="punto" style="background:var(--romeo)"></span> Ánimo de Romeo</h3>
+        <div class="cubo" id="cubo-romeo"><canvas aria-label="Ánimo de Romeo en valencia, arousal y dominancia"></canvas></div>
+      </div>
+      <div>
+        <h3 class="sub-graf"><span class="punto" style="background:var(--fusion)"></span> Tu emoción (S<sub>u</sub>)</h3>
+        <div class="cubo" id="cubo-usuario"><canvas aria-label="Tu emoción en valencia, arousal y dominancia"></canvas></div>
+      </div>
+    </div>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Cada punto es una frase que le dijiste y el grande es la última; la sombra en el piso ayuda a ver la profundidad. El anillo gris es el ánimo base de Romeo, al que vuelve con el tiempo. En «Tu emoción», un punto hueco es una frase neutral: ahí Romeo no cambia su ánimo. Arrastra cualquiera de los dos cubos para girarlos; giran juntos para poder compararlos.</p>
+  </div>
+
+  <div class="tarjeta" id="trivia" hidden>
+    <h2>Trivia <span class="marcador" id="trivia-marcador"></span></h2>
+    <p class="veredicto" id="trivia-veredicto"></p>
+    <p class="frase" id="trivia-pregunta"></p>
+    <p class="nota" id="trivia-nota">Responde con el micrófono. Di «ya no quiero jugar» para parar.</p>
+  </div>
+
+  <div class="tarjeta">
+    <h2><span class="punto" style="background:var(--romeo)"></span>Cómo se siente Romeo ahora</h2>
+    <p class="sentir" id="sentir">—</p>
+    <p class="nota" id="sentir-detalle"></p>
+    <p class="nota">Se actualiza solo cada 5 s: si no le hablas, su ánimo vuelve poco a poco a lo normal. Pregúntale «¿cómo te sientes?» y te lo dice.</p>
+  </div>
+
+  <div class="tres">
+    <div class="tarjeta"><h2><span class="punto" style="background:var(--fer)"></span>Cara (FER)</h2><div id="fer" class="vacio">—</div><p class="nota" id="fer-nota"></p></div>
+    <div class="tarjeta"><h2><span class="punto" style="background:var(--ser)"></span>Voz (SER)</h2><div id="ser" class="vacio">—</div></div>
+    <div class="tarjeta"><h2><span class="punto" style="background:var(--ter)"></span>Texto (TER)</h2><div id="ter" class="vacio">—</div><p class="nota" id="ter-nota"></p></div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Los números de la última frase</h2>
+    <div>
+      <div>
+        <table>
+          <thead><tr><th>Fuente</th><th class="n">Valencia</th><th class="n">Arousal</th><th class="n">Dominancia</th><th class="n">Confianza</th></tr></thead>
+          <tbody id="tabla"><tr><td colspan="5" class="vacio">Habla para ver los valores.</td></tr></tbody>
+        </table>
+        <p class="nota" id="fusion-nota"></p>
+        <p class="animo" id="animo"></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const boton = $("boton"), video = $("video");
+const FPS_FER = 5;
+const SERIES = {
+  FER: { nombre: "Cara (FER)", color: "var(--fer)", forma: "circulo" },
+  SER: { nombre: "Voz (SER)", color: "var(--ser)", forma: "cuadrado" },
+  TER: { nombre: "Texto (TER)", color: "var(--ter)", forma: "triangulo" },
+  FUSION: { nombre: "Tú (fusión)", color: "var(--fusion)", forma: "rombo" },
+  ROMEO: { nombre: "Ánimo de Romeo", color: "var(--romeo)", forma: "estrella" },
+};
+const CARAS = { content: "normal", happy: "feliz", sad: "triste", angry: "enojado" };
+let flujo, contexto, fuente, procesador, trozos = [], fotos = [], reloj, grabando = false, ocupado = false;
+let ultimo = null, base = null, animoActual = null;
+
+// ── Servidor ──────────────────────────────────────────────────────────
+async function comprobar() {
+  try {
+    const s = await (await fetch("/salud")).json();
+    $("estado").innerHTML = [
+      `STT <b>${s.listo ? s.modelo : "sin cargar"}</b>`,
+      `SER <b>${s.ser ? "listo" : "apagado"}</b>`,
+      `TER <b>${s.ter ? "listo" : "apagado"}</b>`,
+      `FER <b>listo</b>`,
+    ].join(" · ");
+    const a = await (await fetch("/animo")).json();
+    base = a.base; animoActual = a.animo;
+    $("estado").innerHTML += ` · perfil <b>${a.perfil}</b> (empatía ${a.empatia})`;
+    mostrarAnimo(null, a.animo);
+    mostrarSentir(a.aeb);
+    dibujarHistorial();
+    await abrirMedios();
+  } catch (e) {
+    $("estado").innerHTML = '<span class="error">No responde el servidor. ¿Corriste <b>python pruebas/web/servidor.py</b>?</span>';
+  }
+}
+
+async function abrirMedios() {
+  try {
+    flujo = await navigator.mediaDevices.getUserMedia({
+      audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true },
+      video: { width: 640, height: 480, facingMode: "user" },
+    });
+    video.srcObject = flujo;
+    ponerBoton("listo");
+  } catch (e) {
+    $("ayuda").innerHTML = `<span class="error">El navegador no dio permiso para la cámara y el micrófono (${e.name}). Revisa que la dirección empiece con https.</span>`;
+  }
+}
+
+// ── Grabar ────────────────────────────────────────────────────────────
+function empezar() {
+  if (grabando || ocupado || boton.disabled) return;
+  contexto = new AudioContext();
+  fuente = contexto.createMediaStreamSource(new MediaStream(flujo.getAudioTracks()));
+  procesador = contexto.createScriptProcessor(4096, 1, 1);
+  trozos = []; fotos = [];
+  procesador.onaudioprocess = (ev) => trozos.push(new Float32Array(ev.inputBuffer.getChannelData(0)));
+  fuente.connect(procesador); procesador.connect(contexto.destination);
+  reloj = setInterval(tomarFoto, 1000 / FPS_FER);
+  tomarFoto();
+  grabando = true;
+  boton.classList.add("activo");
+  ponerBoton("grabando");
+}
+
+function tomarFoto() {
+  if (!video.videoWidth) return;
+  const lienzo = document.createElement("canvas");
+  lienzo.width = 480; lienzo.height = Math.round(480 * video.videoHeight / video.videoWidth);
+  lienzo.getContext("2d").drawImage(video, 0, 0, lienzo.width, lienzo.height);
+  fotos.push(new Promise((ok) => lienzo.toBlob(ok, "image/jpeg", 0.85)));
+}
+
+async function terminar() {
+  if (!grabando) return;
+  grabando = false;
+  clearInterval(reloj);
+  boton.classList.remove("activo");
+  procesador.disconnect(); fuente.disconnect();
+  const sr = contexto.sampleRate;
+  await contexto.close();
+
+  const total = trozos.reduce((n, t) => n + t.length, 0);
+  if (total < sr * 0.4) { ponerBoton("listo"); $("etiqueta").textContent = "Muy corto: toca, habla y vuelve a tocar"; return; }
+  const juntos = new Float32Array(total);
+  let i = 0; for (const t of trozos) { juntos.set(t, i); i += t.length; }
+
+  ocupado = true; ponerBoton("procesando");
+  try {
+    const form = new FormData();
+    form.append("audio", aWav(await a16k(juntos, sr)), "frase.wav");
+    (await Promise.all(fotos)).forEach((f, k) => f && form.append("fotos", f, `cuadro${k}.jpg`));
+    const r = await fetch("/turno", { method: "POST", body: form });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || r.status);
+    mostrar(d);
+  } catch (e) {
+    $("texto").className = "frase error";
+    $("texto").textContent = "Error: " + e.message;
+  } finally {
+    ocupado = false; ponerBoton("listo");
+  }
+}
+
+// El servidor espera WAV mono de 16 bits; se baja a 16 kHz como el micro de la Pi.
+async function a16k(muestras, sr) {
+  if (sr === 16000) return muestras;
+  const off = new OfflineAudioContext(1, Math.round(muestras.length * 16000 / sr), 16000);
+  const buf = off.createBuffer(1, muestras.length, sr);
+  buf.copyToChannel(muestras, 0);
+  const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+  return (await off.startRendering()).getChannelData(0);
+}
+
+function aWav(m) {
+  const vista = new DataView(new ArrayBuffer(44 + m.length * 2));
+  const txt = (o, s) => [...s].forEach((c, k) => vista.setUint8(o + k, c.charCodeAt(0)));
+  txt(0, "RIFF"); vista.setUint32(4, 36 + m.length * 2, true); txt(8, "WAVE");
+  txt(12, "fmt "); vista.setUint32(16, 16, true); vista.setUint16(20, 1, true); vista.setUint16(22, 1, true);
+  vista.setUint32(24, 16000, true); vista.setUint32(28, 32000, true); vista.setUint16(32, 2, true); vista.setUint16(34, 16, true);
+  txt(36, "data"); vista.setUint32(40, m.length * 2, true);
+  for (let k = 0; k < m.length; k++) vista.setInt16(44 + k * 2, Math.max(-1, Math.min(1, m[k])) * 0x7fff, true);
+  return new Blob([vista], { type: "audio/wav" });
+}
+
+// ── Mostrar ───────────────────────────────────────────────────────────
+function barras(cont, emo, color) {
+  if (!emo) { cont.className = "vacio"; cont.textContent = "Sin resultado"; return; }
+  const pares = emo.etiquetas.map((e, k) => [e, emo.probabilidades[k]]).sort((a, b) => b[1] - a[1]);
+  cont.className = "";
+  cont.innerHTML = pares.map(([e, p], k) => `
+    <div class="fila${k === 0 ? " top" : ""}">
+      <span>${e}</span>
+      <span class="pista"><span class="lleno" style="width:${(p * 100).toFixed(1)}%;background:${color}"></span></span>
+      <span class="num">${Math.round(p * 100)}%</span>
+    </div>`).join("");
+}
+
+const f2 = (x) => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(2);
+
+function mostrar(d) {
+  const t = $("texto");
+  if (d.texto) { t.className = "frase"; t.textContent = "«" + d.texto + "»"; }
+  else { t.className = "frase vacio"; t.textContent = "No entendió nada. Habla más cerca del micrófono."; }
+  barras($("fer"), d.fer, "var(--fer)");
+  barras($("ser"), d.ser, "var(--ser)");
+  barras($("ter"), d.ter, "var(--ter)");
+  $("fer-nota").textContent = d.fer_fotos ? `Cara vista en ${d.fer_cuadros} de ${d.fer_fotos} fotos.` : "No se tomaron fotos.";
+  $("ter-nota").textContent = d.ter_ventana ? "Romeo usa la mediana de tus últimas 5 frases, no solo esta." : "";
+
+  base = d.base; animoActual = d.animo;
+  ultimo = d;
+  const filas = d.lecturas.map((l) => fila(l.fuente, l, l.confianza));
+  if (d.fusion) filas.push(fila("FUSION", d.fusion, null));
+  filas.push(fila("ROMEO", d.animo, null));
+  $("tabla").innerHTML = filas.join("");
+  $("fusion-nota").textContent = d.fusion
+    ? "La fusión pesa cada fuente por su confianza (entropía), como en la tesis."
+    : (d.motivo_fusion || "");
+  mostrarAnimo(d.animo_antes, d.animo);
+  mostrarSentir(d.aeb);
+  // Sin fusion es que todo salio neutral: el usuario esta en el origen VAD.
+  historial.push({ usuario: d.fusion || { v: 0, a: 0, d: 0 }, neutral: !d.fusion, romeo: d.animo, texto: d.texto });
+  dibujarHistorial();
+  if (d.texto) pedirRespuesta(d.texto);
+}
+
+// ── Respuesta de Romeo (AEB -> tono -> chat -> voz) ───────────────────
+const EMOCIONES_AEB = { felicidad: "feliz", tristeza: "triste", enojo: "enojado", neutral: "neutral" };
+const MOVIMIENTOS = { F: "avanza", B: "retrocede", S: "quieto", L: "gira a la izquierda", R: "gira a la derecha" };
+let voz = null;
+
+async function pedirRespuesta(texto) {
+  const r = $("respuesta");
+  r.className = "frase vacio"; r.textContent = "Romeo está pensando…";
+  $("aeb").textContent = ""; $("escuchar").hidden = true;
+  try {
+    const resp = await fetch("/responder", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ texto }) });
+    const d = await resp.json();
+    if (!resp.ok) throw new Error(d.error || resp.status);
+    r.className = "frase"; r.textContent = d.respuesta;
+    const a = d.aeb;
+    $("aeb").textContent = (a.tono ? `Tono que le pidió el AEB: «${a.tono}»` : "Sin tono especial: Romeo está en su ánimo normal.")
+      + (d.pregunta_animo ? " · Le preguntaste cómo se siente: el chat recibió su ánimo para contestarte." : "")
+      + ` · modelo ${d.modelo}`;
+    mostrarSentir(a);
+    mostrarTrivia(d.trivia);
+    voz = new Audio("/hablar?texto=" + encodeURIComponent(d.respuesta));
+    voz.play().catch(() => {});
+    $("escuchar").hidden = false;
+  } catch (e) {
+    r.className = "frase error"; r.textContent = "Error: " + e.message;
+  }
+}
+
+$("escuchar").addEventListener("click", () => { if (voz) { voz.currentTime = 0; voz.play(); } });
+
+// ── Historial y cubos 3D: valencia, arousal y dominancia por frase ────
+// Un cubo para Romeo y otro para el usuario. x = valencia, y = arousal
+// (hacia arriba), z = dominancia. Se giran arrastrando, los dos a la vez;
+// proyeccion con un poco de perspectiva y la sombra de cada punto en el
+// piso (arousal = -1) para que se lea la profundidad.
+const historial = [];
+const giro = { yaw: -0.6, pitch: 0.35 };
+
+function dibujarCubo(cont, quien) {
+  const cv = cont.querySelector("canvas");
+  const w = cont.clientWidth, h = Math.min(w, 340), dpr = window.devicePixelRatio || 1;
+  cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + "px";
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  const css = getComputedStyle(document.documentElement), col = (n) => css.getPropertyValue(n).trim();
+  const R = Math.min(w, h) * 0.27, cx = w / 2, cy = h / 2;
+  const cyw = Math.cos(giro.yaw), syw = Math.sin(giro.yaw), cp = Math.cos(giro.pitch), sp = Math.sin(giro.pitch);
+  const proy = (v, a, d) => {
+    const x1 = v * cyw + d * syw, z1 = -v * syw + d * cyw;
+    const y2 = a * cp - z1 * sp, z2 = a * sp + z1 * cp;
+    const k = 4 / (4 + z2);
+    return [cx + x1 * R * k, cy - y2 * R * k, z2];
+  };
+  const linea = (p, q, color, ancho = 1) => {
+    const a = proy(...p), b = proy(...q);
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = ancho;
+    ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+  };
+
+  // Cubo de -1 a 1 y ejes por el centro
+  const esq = [-1, 1];
+  for (const a of esq) for (const b of esq) {
+    linea([-1, a, b], [1, a, b], col("--eje"));
+    linea([a, -1, b], [a, 1, b], col("--eje"));
+    linea([a, b, -1], [a, b, 1], col("--eje"));
+  }
+  linea([-1, 0, 0], [1, 0, 0], col("--tenue"), 1.5);
+  linea([0, -1, 0], [0, 1, 0], col("--tenue"), 1.5);
+  linea([0, 0, -1], [0, 0, 1], col("--tenue"), 1.5);
+  ctx.font = "12px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  for (const [p, t, c] of [[[1.32, 0, 0], "Valencia +", "--val"], [[0, 1.2, 0], "Arousal +", "--aro"], [[0, 0, 1.34], "Dominancia +", "--dom"],
+                           [[-1.2, 0, 0], "−", "--tenue"], [[0, -1.18, 0], "−", "--tenue"], [[0, 0, -1.2], "−", "--tenue"]]) {
+    const [x, y] = proy(...p); ctx.fillStyle = col(c); ctx.fillText(t, x, y);
+  }
+
+  const n = historial.length, color = col(quien === "romeo" ? "--romeo" : "--fusion");
+  const pts = historial.map((hh) => hh[quien]);
+  ctx.globalAlpha = 0.25;
+  pts.forEach((p) => { const [x, y] = proy(p.v, -1, p.d); ctx.beginPath(); ctx.fillStyle = color; ctx.arc(x, y, 3, 0, 7); ctx.fill(); });
+  ctx.globalAlpha = 1;
+  for (let i = 1; i < n; i++) linea([pts[i - 1].v, pts[i - 1].a, pts[i - 1].d], [pts[i].v, pts[i].a, pts[i].d], color, 2);
+
+  // Puntos, de atras hacia adelante
+  const marcas = pts.map((p, i) => {
+    const [x, y, z] = proy(p.v, p.a, p.d);
+    return { x, y, z, ultimo: i === n - 1, hueco: quien === "usuario" && historial[i].neutral };
+  });
+  if (quien === "romeo" && base) { const [x, y, z] = proy(base.v, base.a, base.d); marcas.push({ x, y, z, base: true }); }
+  marcas.sort((m1, m2) => m2.z - m1.z);
+  for (const m of marcas) {
+    ctx.beginPath();
+    if (m.base) { ctx.arc(m.x, m.y, 7, 0, 7); ctx.strokeStyle = col("--suave"); ctx.lineWidth = 2; ctx.stroke(); continue; }
+    ctx.arc(m.x, m.y, m.ultimo ? 7 : 4, 0, 7);
+    ctx.fillStyle = m.hueco ? col("--tarjeta") : color; ctx.fill();
+    ctx.strokeStyle = m.hueco ? color : col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
+  }
+  if (!n) {
+    ctx.fillStyle = col("--suave"); ctx.font = "italic 13px system-ui, sans-serif";
+    ctx.fillText("Habla para ver el recorrido.", cx, h - 14);
+  }
+}
+
+function dibujarHistorial() {
+  dibujarCubo($("cubo-romeo"), "romeo");
+  dibujarCubo($("cubo-usuario"), "usuario");
+}
+
+for (const id of ["cubo-romeo", "cubo-usuario"]) {
+  const cv = $(id).querySelector("canvas");
+  let previo = null;
+  cv.addEventListener("pointerdown", (ev) => { previo = [ev.clientX, ev.clientY]; cv.setPointerCapture(ev.pointerId); });
+  cv.addEventListener("pointermove", (ev) => {
+    if (!previo) return;
+    giro.yaw += (ev.clientX - previo[0]) * 0.01;
+    giro.pitch = Math.max(-1.4, Math.min(1.4, giro.pitch + (ev.clientY - previo[1]) * 0.01));
+    previo = [ev.clientX, ev.clientY];
+    dibujarHistorial();
+  });
+  const soltar = () => { previo = null; };
+  cv.addEventListener("pointerup", soltar);
+  cv.addEventListener("pointercancel", soltar);
+}
+window.addEventListener("resize", dibujarHistorial);
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", dibujarHistorial);
+
+// ── Trivia ────────────────────────────────────────────────────────────
+// La tarjeta aparece al empezar y se queda con el marcador final al salir.
+function mostrarTrivia(t) {
+  if (!t) return;
+  $("trivia").hidden = false;
+  $("trivia-marcador").textContent = t.total ? `${t.aciertos} de ${t.total}` : "";
+  const v = $("trivia-veredicto");
+  if (t.acerto === undefined) { v.textContent = ""; v.className = "veredicto"; }
+  else if (t.acerto) { v.textContent = "✓ ¡Correcto!"; v.className = "veredicto bien"; }
+  else { v.textContent = `✗ La respuesta era: ${t.esperada}`; v.className = "veredicto mal"; }
+  if (t.activa) {
+    $("trivia-pregunta").textContent = t.pregunta;
+    $("trivia-nota").textContent = "Responde con el micrófono. Di «ya no quiero jugar» para parar.";
+  } else {
+    $("trivia-pregunta").textContent = "Trivia terminada.";
+    $("trivia-nota").textContent = "Di «juguemos trivia» para empezar otra.";
+  }
+}
+
+// ── Cómo se siente Romeo (AEB del ánimo actual) ───────────────────────
+const INTENSIDAD = { 1: "Un poco ", 2: "", 3: "Muy ", 4: "Muy " };
+function mostrarSentir(a) {
+  if (!a) return;
+  const emo = EMOCIONES_AEB[a.emocion] || a.emocion;
+  $("sentir").textContent = a.nivel
+    ? INTENSIDAD[a.nivel] + emo.charAt(0).toUpperCase() + emo.slice(1) + ` · nivel ${a.nivel} de 4`
+    : "Normal, tranquilo";
+  // El AEB manda un gesto de ida y vuelta, p. ej. ["F", "B"]: basta nombrar el primer paso.
+  const mov = a.movimiento ? (MOVIMIENTOS[[].concat(a.movimiento)[0]] || a.movimiento) + " y vuelve" : "no se mueve";
+  const va = animoActual ? ` · valencia ${f2(animoActual.v)}, arousal ${f2(animoActual.a)}` : "";
+  $("sentir-detalle").textContent = `Cara: ${CARAS[a.cara] || a.cara} · carrito: ${mov}${va}`;
+}
+
+// El ánimo decae solo con el tiempo (ROSE): se vuelve a preguntar cada 5 s.
+setInterval(async () => {
+  if (ocupado || grabando) return;
+  try {
+    const d = await (await fetch("/animo")).json();
+    animoActual = d.animo;
+    mostrarSentir(d.aeb);
+    mostrarAnimo(ultimo ? ultimo.animo_antes : null, d.animo);
+  } catch (e) { /* servidor caído: se reintenta en el siguiente */ }
+}, 5000);
+
+function fila(clave, p, conf) {
+  const s = SERIES[clave];
+  return `<tr><td><span class="ficha"><span class="punto" style="background:${s.color}"></span>${s.nombre}</span></td>
+    <td class="n">${f2(p.v)}</td><td class="n">${f2(p.a)}</td><td class="n">${f2(p.d)}</td>
+    <td class="n">${conf == null ? "—" : Math.round(conf * 100) + "%"}</td></tr>`;
+}
+
+function mostrarAnimo(antes, ahora) {
+  const cara = CARAS[ahora.cara] || ahora.cara;
+  $("animo").innerHTML = antes
+    ? `Ánimo de Romeo: valencia <b>${f2(antes.v)} → ${f2(ahora.v)}</b>, arousal <b>${f2(antes.a)} → ${f2(ahora.a)}</b>. Cara: <b>${cara}</b>.`
+    : `Ánimo de Romeo: valencia <b>${f2(ahora.v)}</b>, arousal <b>${f2(ahora.a)}</b>. Cara: <b>${cara}</b>.`;
+}
+
+// ── Eventos ───────────────────────────────────────────────────────────
+$("reiniciar").addEventListener("click", async () => {
+  const d = await (await fetch("/reiniciar", { method: "POST" })).json();
+  ultimo = null; animoActual = d.animo;
+  historial.length = 0; dibujarHistorial();
+  ["fer", "ser", "ter"].forEach((k) => { $(k).className = "vacio"; $(k).textContent = "—"; });
+  ["fer-nota", "ter-nota", "fusion-nota"].forEach((k) => $(k).textContent = "");
+  $("texto").className = "frase vacio"; $("texto").textContent = "Sesión nueva. Habla cuando quieras.";
+  $("respuesta").className = "frase vacio"; $("respuesta").textContent = "Romeo te responde cuando hables.";
+  $("aeb").textContent = ""; $("escuchar").hidden = true; voz = null;
+  $("trivia").hidden = true;
+  mostrarSentir(d.aeb);
+  $("tabla").innerHTML = '<tr><td colspan="5" class="vacio">Habla para ver los valores.</td></tr>';
+  mostrarAnimo(null, d.animo);
+});
+const ICONO_MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+const ICONO_PARAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+
+// Un solo boton: toca para empezar, toca otra vez para enviar.
+function ponerBoton(estado) {
+  boton.classList.toggle("grabando", estado === "grabando");
+  boton.innerHTML = estado === "grabando" ? ICONO_PARAR : ICONO_MIC;
+  boton.disabled = estado === "procesando" || !flujo;
+  boton.setAttribute("aria-label", estado === "grabando" ? "Enviar" : "Hablar");
+  $("etiqueta").textContent = { listo: "Toca para hablar", grabando: "Escuchando… toca para enviar", procesando: "Procesando…" }[estado];
+}
+const alternar = () => (grabando ? terminar() : empezar());
+ponerBoton("listo");
+
+boton.addEventListener("click", alternar);
+document.addEventListener("keydown", (e) => { if (e.code === "Space" && !e.repeat && e.target.tagName !== "BUTTON") { e.preventDefault(); alternar(); } });
+comprobar();
+</script>
+</body>
+</html>
