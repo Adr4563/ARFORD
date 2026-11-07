@@ -13,6 +13,7 @@ Uso, en la Pi:
     python3 panel.py [ruta-del-log]       (por defecto ~/romeo_run.log)
 y abrir http://<ip-de-la-pi>:8090/
 """
+import json
 import os
 import re
 import sys
@@ -106,6 +107,31 @@ def estado():
     return jsonify(_leer())
 
 
+# Traza del calculo afectivo que escribe el orquestador, una linea JSON por
+# turno (romeo_brain/traza_afectiva.py).
+TRAZA = os.path.expanduser(os.environ.get("ROMEO_TRAZA_AFECTO", "~/romeo_afecto.jsonl"))
+
+
+@app.route("/traza")
+def traza():
+    turnos = []
+    try:
+        with open(TRAZA, encoding="utf-8") as f:
+            for linea in f.readlines()[-30:]:
+                try:
+                    turnos.append(json.loads(linea))
+                except ValueError:
+                    pass
+    except OSError:
+        return jsonify(turnos=[], error=f"No encuentro {TRAZA}. ¿Está corriendo Romeo con la traza?")
+    return jsonify(turnos=turnos)
+
+
+@app.route("/calculo")
+def calculo():
+    return CALCULO
+
+
 # Botones del carrito: se pasan tal cual a la pagina de control que sirve
 # moving_control_node (romeo_drivers/_control_web.py), asi resultados y
 # carrito quedan en UNA sola pagina sin duplicar la logica del carrito.
@@ -172,7 +198,7 @@ PAGINA = r"""<!doctype html>
   .ayuda-carrito { flex:1 1 220px; min-width:0; }
 </style></head><body><main>
   <h1>Romeo en vivo</h1>
-  <p class="sub"><span class="vivo"><i></i><span id="estado">Leyendo el log…</span></span></p>
+  <p class="sub"><span class="vivo"><i></i><span id="estado">Leyendo el log…</span></span> · <a href="calculo" style="color:inherit">Ver el cálculo de valencia y arousal →</a></p>
 
   <div class="dos">
     <div class="tarjeta"><h2>Lo que entendió</h2><p class="frase vacio" id="texto">—</p><div class="chips" id="lecturas"></div></div>
@@ -340,6 +366,166 @@ document.addEventListener("keydown", (e) => { const c = teclas[e.key.toLowerCase
 document.addEventListener("keyup", (e) => { if (teclas[e.key.toLowerCase()]) parar(); });
 window.addEventListener("blur", () => { if (reloj) parar(); });
 document.addEventListener("visibilitychange", () => { if (document.hidden && reloj) parar(); });
+</script></body></html>"""
+
+
+CALCULO = r"""<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cálculo afectivo de Romeo</title>
+<style>
+  :root { --fondo:#f9f9f7; --tarjeta:#fcfcfb; --texto:#0b0b0b; --suave:#52514e; --tenue:#898781;
+    --borde:#e1e0d9; --barra:#eceae4; --fusion:#eda100; --romeo:#e87ba4; --ser:#eb6834; --ter:#1baf7a; --fer:#2a78d6;
+    --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --fondo:#0d0d0d; --tarjeta:#1a1a19; --texto:#f0efec; --suave:#c3c2b7; --tenue:#898781;
+    --borde:#2c2c2a; --barra:#2c2c2a; --fusion:#c98500; --romeo:#d55181; --ser:#d95926; --ter:#199e70; --fer:#3987e5;
+    --val:#3987e5; --aro:#d95926; --dom:#199e70; color-scheme: dark; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:960px; margin:0 auto; padding:28px 16px 48px; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  .sub { color:var(--suave); margin:0 0 16px; overflow-wrap:anywhere; }
+  a { color:inherit; }
+  .barra-sup { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin-bottom:16px; }
+  select, label { font:inherit; font-size:.9rem; }
+  select { padding:6px 8px; border-radius:8px; border:1px solid var(--borde); background:var(--tarjeta); color:var(--texto); max-width:100%; }
+  .paso { background:var(--tarjeta); border:1px solid var(--borde); border-radius:12px; padding:20px; margin-bottom:16px; min-width:0; }
+  .paso h2 { font-size:1.05rem; margin:0 0 4px; display:flex; gap:10px; align-items:baseline; }
+  .paso h2 .n { font-size:.75rem; color:var(--suave); border:1px solid var(--borde); border-radius:999px; padding:1px 8px; font-weight:600; }
+  .que { color:var(--suave); font-size:.9rem; margin:0 0 12px; }
+  .formula { font-family:ui-monospace,Consolas,monospace; font-size:.9rem; background:var(--fondo); border:1px solid var(--borde);
+    border-radius:8px; padding:8px 12px; margin:8px 0; overflow-x:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+  .tabla { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; font-variant-numeric:tabular-nums; }
+  th { text-align:left; color:var(--suave); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; padding:6px; border-bottom:1px solid var(--borde); }
+  td { padding:6px; border-bottom:1px solid var(--borde); }
+  td.n, th.n { text-align:right; white-space:nowrap; }
+  tr.total td { font-weight:600; border-top:2px solid var(--borde); }
+  .barrita { height:8px; background:var(--barra); border-radius:4px; overflow:hidden; min-width:60px; }
+  .barrita i { display:block; height:100%; border-radius:4px; }
+  .modalidades { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; }
+  .modalidad { border:1px solid var(--borde); border-radius:10px; padding:14px; min-width:0; }
+  .modalidad h3 { margin:0 0 6px; font-size:.95rem; display:flex; gap:8px; align-items:center; }
+  .punto { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  .resultado { font-weight:600; margin:8px 0 0; }
+  .vacio { color:var(--suave); font-style:italic; }
+  .chip { display:inline-block; border:1px solid var(--borde); border-radius:999px; padding:2px 10px; font-size:.85rem; font-weight:600; }
+</style></head><body><main>
+  <h1>Cálculo de valencia y arousal</h1>
+  <p class="sub"><a href="./">← Volver a Romeo en vivo</a> · Cada paso con los números reales del turno, tal como los calcula el robot (PULSE → ROSE → AEB, metodología de Rocha).</p>
+  <div class="barra-sup">
+    <select id="turno" aria-label="Frase"></select>
+    <label><input type="checkbox" id="seguir" checked> Seguir la última frase</label>
+    <span class="que" id="info" style="margin:0"></span>
+  </div>
+  <div id="pasos"><p class="vacio">Esperando la primera frase. Háblale a Romeo.</p></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const n2 = (x) => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(2);
+const n3 = (x) => (x >= 0 ? "" : "−") + Math.abs(x).toFixed(3);
+const v3 = (v) => v ? `(${n2(v[0])}, ${n2(v[1])}, ${n2(v[2])})` : "—";
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const FUENTE = { SER: ["Voz (SER)", "--ser"], TER: ["Texto (TER)", "--ter"], FER: ["Cara (FER)", "--fer"] };
+let turnos = [], firma = "";
+
+function modalidad(l) {
+  const [nombre, color] = FUENTE[l.fuente] || [l.fuente, "--suave"];
+  const extra = l.cuadros ? ` · ${l.cuadros} cuadros` : l.ventana ? ` · mediana de las últimas ${l.ventana} frases` : "";
+  const filas = l.filas.map((f) => `<tr><td>${esc(f.emocion)}</td>
+      <td><div class="barrita"><i style="width:${(f.p * 100).toFixed(0)}%;background:var(${color})"></i></div></td>
+      <td class="n">${f.p.toFixed(3)}</td><td class="n">${v3(f.ancla)}</td><td class="n">${v3(f.aporte)}</td></tr>`).join("");
+  const terminos = l.filas.filter((f) => f.p > 0).map((f) => `${f.p.toFixed(3)}·ln ${f.p.toFixed(3)}`).join(" + ");
+  return `<div class="modalidad">
+    <h3><span class="punto" style="background:var(${color})"></span>${nombre}<span class="que" style="margin:0;font-weight:400">${extra}</span></h3>
+    <div class="tabla"><table>
+      <thead><tr><th>Emoción</th><th></th><th class="n">p</th><th class="n">Ancla (v, a, d)</th><th class="n">p × ancla</th></tr></thead>
+      <tbody>${filas}<tr class="total"><td colspan="4">S<sub>${l.fuente}</sub> = Σ p × ancla</td><td class="n">${v3(l.vad)}</td></tr></tbody>
+    </table></div>
+    <div class="formula">H = −(${terminos}) / ln ${l.k} = ${l.entropia.toFixed(3)}
+c = 1 − H = ${l.confianza.toFixed(3)}</div>
+    <p class="resultado">Dominante: ${esc(l.dominante)} · confianza ${l.confianza.toFixed(2)}</p>
+  </div>`;
+}
+
+function render(t) {
+  const p = t.perfil, b = p.base;
+  let h = "";
+  // 0. Decaimiento
+  const d0 = t.decaer.antes, d1 = t.decaer.despues, movio = d0.some((x, i) => Math.abs(x - d1[i]) > 1e-4);
+  h += `<section class="paso"><h2><span class="n">Paso 0</span>ROSE · Decaimiento hacia el ánimo base</h2>
+    <p class="que">Antes de leer la frase, el ánimo de Romeo vuelve un poco a su base según el tiempo que pasó (latencia ${p.latencia} s, un paso cada ${p.paso} s).</p>
+    <div class="formula">s_r ← b + (1 − d)ⁿ · (s_r − b)      d = ${p.decaimiento}   b = ${v3(b)}
+${v3(d0)}  →  ${v3(d1)}${movio ? "" : "   (todavía dentro de la latencia: no decae)"}</div></section>`;
+  // 1. Modalidades
+  h += `<section class="paso"><h2><span class="n">Paso 1</span>PULSE · De probabilidades a VAD, por modalidad</h2>
+    <p class="que">Cada clasificador da una probabilidad por emoción (agrupadas en las cuatro del robot). El punto VAD es el promedio de los anclajes pesado por esas probabilidades, y la confianza sale de la entropía: si duda entre varias emociones, pesa menos.</p>
+    ${t.lecturas.length ? `<div class="modalidades">${t.lecturas.map(modalidad).join("")}</div>` : '<p class="vacio">Ninguna modalidad dio lectura en esta frase.</p>'}</section>`;
+  // 2. Fusion
+  const fu = t.fusion;
+  let cuerpo;
+  if (!fu) cuerpo = '<p class="vacio">Sin lecturas: no hay nada que fusionar.</p>';
+  else if (fu.todos_neutral) cuerpo = `<p class="resultado">Todas las modalidades vieron neutral → el ánimo de Romeo no se mueve en esta frase.</p>
+      <p class="que">Neutral es el origen (0, 0, 0). Como la base de Romeo es positiva, acercarlo al origen se vería como tristeza, así que se omite.</p>`;
+  else {
+    const filas = fu.entradas.map((e) => `<tr><td>${esc((FUENTE[e.fuente] || [e.fuente])[0])}</td><td class="n">${e.confianza.toFixed(3)}</td>
+        <td class="n">${v3(e.vad)}</td><td class="n">${v3(e.vad.map((x) => x * e.confianza))}</td></tr>`).join("");
+    cuerpo = `<div class="formula">S_u = Σ c_m · S_m / Σ c_m</div>
+      <div class="tabla"><table><thead><tr><th>Fuente</th><th class="n">c</th><th class="n">S_m (v, a, d)</th><th class="n">c × S_m</th></tr></thead>
+      <tbody>${filas}<tr class="total"><td>Σ</td><td class="n">${(fu.suma_confianzas ?? 0).toFixed(3)}</td><td></td>
+      <td class="n">S_u = ${v3(fu.s_u)}</td></tr></tbody></table></div>
+      ${fu.encoge ? `<div class="formula">Extensión ROMEO_NEUTRAL_ENCOGE: S_u × ${fu.encoge.peso.toFixed(2)} = ${v3(fu.encoge.s_u)}</div>` : ""}
+      <p class="resultado">Tu emoción en esta frase: S_u = ${v3(fu.encoge ? fu.encoge.s_u : fu.s_u)}</p>`;
+  }
+  h += `<section class="paso"><h2><span class="n">Paso 2</span>PULSE · Fusión de las modalidades</h2>
+    <p class="que">Se juntan voz, texto y cara en un solo punto, pesando cada una por su confianza.</p>${cuerpo}</section>`;
+  // 3. Empatia
+  const em = t.empatia;
+  h += `<section class="paso"><h2><span class="n">Paso 3</span>ROSE · Empatía: Romeo se mueve hacia tu emoción</h2>
+    <p class="que">Romeo toma una parte (e) de tu emoción y conserva el resto de la suya: acompaña sin hundirse.</p>
+    ${em ? `<div class="formula">s_r' = e · S_u + (1 − e) · s_r        e = ${em.e}
+${["v", "a", "d"].map((k, i) => `${k}: ${em.e} × ${n3(em.s_u[i])} + ${(1 - em.e).toFixed(1)} × ${n3(em.antes[i])} = ${n3(em.despues[i])}`).join("\n")}</div>
+      <p class="resultado">Ánimo de Romeo: ${v3(em.antes)} → ${v3(em.despues)}</p>`
+    : '<p class="vacio">No se aplicó: no hubo emoción que contagiar en esta frase.</p>'}</section>`;
+  // 4. AEB
+  const a = t.aeb;
+  const cos = Object.entries(a.cosenos || {}).sort((x, y) => y[1] - x[1])
+    .map(([e, c], i) => `<tr><td>${esc(e)}${i === 0 ? " ←" : ""}</td><td class="n">${c.toFixed(3)}</td></tr>`).join("");
+  h += `<section class="paso"><h2><span class="n">Paso 4</span>AEB · Del ánimo a una emoción con nivel</h2>
+    <p class="que">Se mide cuánto y hacia dónde se apartó Romeo de su base. La dirección se elige por el coseno con cada anclaje, y el nivel por qué tan lejos llegó, en cuatro tramos.</p>
+    <div class="formula">Δ = s_r − b = ${v3(a.vector)} − ${v3(a.base)} = ${v3(a.desviacion)}
+|Δ| = ${a.magnitud.toFixed(3)}</div>
+    ${cos ? `<div class="tabla"><table><thead><tr><th>Dirección</th><th class="n">cos(Δ, ancla)</th></tr></thead><tbody>${cos}</tbody></table></div>` : ""}
+    ${a.emocion ? `<div class="formula">radio neutro = ${a.fraccion_neutral} × |ancla(${a.emocion}) − b| = ${a.radio.toFixed(3)}
+${a.magnitud < a.radio ? `|Δ| = ${a.magnitud.toFixed(3)} < radio → zona neutra, nivel 0`
+  : `nivel = 1 + ⌊4 · (|Δ| − radio) / recorrido⌋ = 1 + ⌊4 · (${a.magnitud.toFixed(3)} − ${a.radio.toFixed(3)}) / ${a.recorrido.toFixed(3)}⌋ = ${a.nivel}`}</div>` : ""}
+    <p class="resultado">Resultado: <span class="chip">${esc(a.estado.replace("_L", " · nivel "))}</span> · cara ${esc(a.cara)}${a.emocion === "tristeza" && a.cara === "content" ? " (con tristeza Romeo mantiene la cara normal)" : ""}</p></section>`;
+  $("pasos").innerHTML = h;
+  $("info").textContent = `«${t.texto}» · ${new Date(t.t * 1000).toLocaleTimeString()}`;
+}
+
+function llenarSelector() {
+  const sel = $("turno"), previo = sel.value;
+  sel.innerHTML = turnos.map((t, i) => `<option value="${i}">${i + 1}. ${esc(t.texto).slice(0, 50)}</option>`).reverse().join("");
+  sel.value = $("seguir").checked || previo === "" ? String(turnos.length - 1) : previo;
+}
+
+async function actualizar() {
+  try {
+    const d = await (await fetch("traza")).json();
+    if (d.error) { $("info").textContent = d.error; return; }
+    const nueva = JSON.stringify(d.turnos.map((t) => t.t));
+    if (nueva === firma) return;
+    firma = nueva; turnos = d.turnos;
+    if (!turnos.length) return;
+    llenarSelector();
+    render(turnos[+$("turno").value]);
+  } catch (e) { $("info").textContent = "Sin conexión con la Pi, reintentando…"; }
+}
+$("turno").addEventListener("change", () => { $("seguir").checked = +$("turno").value === turnos.length - 1; render(turnos[+$("turno").value]); });
+$("seguir").addEventListener("change", () => { if ($("seguir").checked && turnos.length) { $("turno").value = String(turnos.length - 1); render(turnos[turnos.length - 1]); } });
+actualizar(); setInterval(actualizar, 2000);
 </script></body></html>"""
 
 

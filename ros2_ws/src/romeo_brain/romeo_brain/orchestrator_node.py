@@ -51,7 +51,7 @@ from ament_index_python.packages import get_package_share_directory
 from romeo_interfaces.msg import UserInput
 
 from . import (aeb, agente_chat, agente_trivia, estado_afectivo, frases,
-               llama_client, ordenes, preguntas)
+               llama_client, ordenes, preguntas, traza_afectiva)
 from .medicion import activa as medicion_activa
 from .medicion import medir_bloque, tiempos, turno
 from ._ros_bridge import RosBridge
@@ -268,6 +268,10 @@ class OrchestratorNode(Node):
         # Lecturas afectivas del turno en curso, pendientes de
         # fusionar. Ver _aplicar_afecto().
         self._lecturas_turno = []
+        # Cada paso del calculo afectivo del turno en curso, para la
+        # pagina /calculo del panel (ver traza_afectiva).
+        self._traza = None
+        traza_afectiva.reiniciar()
         # True si en este turno el animo cambio por algo que se percibio:
         # solo entonces se muestra la cara de la emocion (una vez).
         self._emocion_pendiente = False
@@ -424,11 +428,22 @@ class OrchestratorNode(Node):
         lecturas = getattr(self, "_lecturas_turno", None)
         if not lecturas:
             return
+        traza = self._traza
+        if traza is not None:
+            traza["fusion"] = {
+                "entradas": [{"fuente": f, "vad": [round(x, 4) for x in v],
+                              "confianza": round(c, 4), "dominante": d}
+                             for f, v, c, d in lecturas],
+                "todos_neutral": all(d == "neutral" for _f, _v, _c, d in lecturas),
+            }
         if all(dom == "neutral" for _f, _v, _c, dom in lecturas):
             self._lecturas_turno = []
             return
         self._lecturas_turno = [(v, c) for _f, v, c, _d in lecturas]
         vector = estado_afectivo.fusionar(self._lecturas_turno)
+        if traza is not None and vector is not None:
+            traza["fusion"]["suma_confianzas"] = round(sum(c for _v, c in self._lecturas_turno), 4)
+            traza["fusion"]["s_u"] = [round(x, 4) for x in vector]
         # Extension opcional (apagada por defecto): ver el docstring.
         encoge = os.environ.get(
             "ROMEO_NEUTRAL_ENCOGE", "0") not in ("0", "false", "False")
@@ -439,6 +454,9 @@ class OrchestratorNode(Node):
             peso = conf_emocion / conf_total if conf_total > 0.0 else 1.0
             if peso < 1.0:
                 vector = tuple(componente * peso for componente in vector)
+                if traza is not None:
+                    traza["fusion"]["encoge"] = {"peso": round(peso, 4),
+                                                 "s_u": [round(x, 4) for x in vector]}
                 if len(lecturas) > 1:
                     self.get_logger().info(
                         f"[afecto] neutrales encogen la lectura x{peso:.2f} "
@@ -460,6 +478,11 @@ class OrchestratorNode(Node):
         self._afecto.empatizar(vector, conf)
         self._emocion_pendiente = True
         v, a, d = self._afecto.vector
+        if traza is not None:
+            traza["empatia"] = {"e": self._afecto.empatia,
+                                "s_u": [round(x, 4) for x in vector],
+                                "antes": [round(x, 4) for x in antes],
+                                "despues": [round(x, 4) for x in self._afecto.vector]}
         self.get_logger().info(
             f"[afecto] v {antes[0]:+.2f}->{v:+.2f}  "
             f"a {antes[1]:+.2f}->{a:+.2f}  d {antes[2]:+.2f}->{d:+.2f}")
@@ -492,6 +515,7 @@ class OrchestratorNode(Node):
             f"[afecto] la camara vio {dominante} (confianza {c:.2f}, "
             f"{cuadros} cuadros en {t_fin - t_inicio:.1f} s)")
         self._lecturas_turno.append(("FER", vector, c, dominante))
+        self._trazar_lectura("FER", probs, etiquetas, cuadros=cuadros)
 
     def _percibir_voz(self, ser):
         """SER: la emocion de la VOZ de esta frase. La calculo la PC con el
@@ -507,6 +531,14 @@ class OrchestratorNode(Node):
         self.get_logger().info(
             f"[afecto] la voz suena a {dominante} (confianza {c:.2f})")
         self._lecturas_turno.append(("SER", vector, c, dominante))
+        self._trazar_lectura("SER", ser[1], ser[0])
+
+    def _trazar_lectura(self, fuente, probs, etiquetas, **extra):
+        if self._traza is None:
+            return
+        detalle = traza_afectiva.lectura(fuente, probs, etiquetas, **extra)
+        if detalle is not None:
+            self._traza["lecturas"].append(detalle)
 
     def _cara_reposo(self):
         """La cara con la que Romeo se queda ESCUCHANDO, segun como se
@@ -1125,7 +1157,9 @@ class OrchestratorNode(Node):
         # estado se quedaria clavado en lo ultimo que se percibio.
         # decaer() no hace nada hasta que pasa la latencia, asi que dos
         # turnos seguidos y rapidos no borran lo que se acaba de percibir.
+        antes_decaer = self._afecto.vector
         self._afecto.decaer()
+        self._traza = traza_afectiva.nueva(entrada, self._afecto, antes_decaer)
 
         # TER: que emocion expresa lo que acaba de decir el usuario.
         #
@@ -1160,6 +1194,10 @@ class OrchestratorNode(Node):
                 probs_ter, etiq_ter)
             if vector_txt is not None:
                 self._lecturas_turno.append(("TER", vector_txt, c_txt, emocion_txt))
+                self._trazar_lectura(
+                    "TER", probs_ter, etiq_ter,
+                    ventana=estado_afectivo.tam_ventana_ter(),
+                    frase=dict(zip(ter_nn[0], (round(float(p), 4) for p in ter_nn[1]))))
                 self.get_logger().info(
                     f"[afecto] el texto expresa {emocion_txt} "
                     f"(confianza {c_txt:.2f}, "
@@ -1173,6 +1211,12 @@ class OrchestratorNode(Node):
         # de la capa afectiva y conviene saber cual pesa.
         with medir_bloque("pulse_rose"):
             self._aplicar_afecto()
+        # La traza se escribe YA, antes de la respuesta del LLM: la pagina
+        # /calculo muestra el calculo apenas termina, sin esperar al chat.
+        if self._traza is not None:
+            self._traza["aeb"] = traza_afectiva.comportamiento(self._afecto)
+            traza_afectiva.escribir(self._traza)
+            self._traza = None
 
         if self.estado["esperando_nombre"]:
             nombre = entrada or "amigo"

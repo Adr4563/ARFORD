@@ -402,6 +402,11 @@ def resumir_ter():
     return claves, [m / total for m in medianas]
 
 
+def tam_ventana_ter():
+    """Cuantas frases hay ahora en la ventana del TER."""
+    return len(_ventana_ter)
+
+
 def olvidar_ter():
     """Vacia la ventana. Al empezar una sesion nueva: el usuario
     siguiente no hereda las frases del anterior."""
