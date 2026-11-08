@@ -506,6 +506,8 @@ class OrchestratorNode(Node):
         if cuadros <= 0:
             self.get_logger().info(
                 f"[afecto] la camara no vio cara en la frase ({t_fin - t_inicio:.1f} s)")
+            if self._traza is not None:
+                self._traza["fer_sin_cara"] = round(t_fin - t_inicio, 1)
             return
         vector, c, dominante = estado_afectivo.percibir_categorias(
             probs, etiquetas)

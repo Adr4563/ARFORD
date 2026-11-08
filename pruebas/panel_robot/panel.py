@@ -405,7 +405,7 @@ PAGINA_CARRITO = r"""<!doctype html>
   .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
   .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
   .emo { font-size:1.15rem; font-weight:700; margin:2px 0 4px; }
-  .carrito { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start; }
+  .carrito { display:flex; flex-direction:column; gap:20px; align-items:center; text-align:center; }
   .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:min(100%,420px); }
   .pad button, .giro button { font:inherit; font-size:2.2rem; aspect-ratio:1; border:1px solid var(--borde); border-radius:14px;
     background:var(--fondo); color:var(--texto); cursor:pointer; touch-action:none; user-select:none; }
@@ -413,7 +413,9 @@ PAGINA_CARRITO = r"""<!doctype html>
   .pad button.stop { background:#d1352b; color:#fff; border-color:#d1352b; font-size:1.4rem; font-weight:700; }
   .giro { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:min(100%,420px); margin-top:12px; }
   .giro button { aspect-ratio:auto; padding:22px 0; font-size:1.3rem; }
-  .ayuda-carrito { flex:1 1 220px; min-width:0; }
+  .ayuda-carrito { max-width:420px; min-width:0; }
+  .carrito > div:first-child { width:min(100%,420px); }
+  .pad, .giro { margin-left:auto; margin-right:auto; }
 </style></head><body><main>
   <nav class="nav"><a href="./">Romeo en vivo</a><a href="calculo">Cálculo de valencia y arousal</a><a href="carrito" class="aqui">Carrito</a></nav>
   <h1>Carrito</h1>
@@ -563,6 +565,15 @@ c = 1 − H = ${l.confianza.toFixed(3)}</div>
   </div>`;
 }
 
+// La camara se consulto pero no vio ninguna cara: la tarjeta queda igual,
+// diciendo por que no hay lectura, en vez de desaparecer.
+function sinCara(t) {
+  if (t.fer_sin_cara == null || t.lecturas.some((l) => l.fuente === "FER")) return "";
+  return `<div class="modalidad"><h3><span class="punto" style="background:var(--fer)"></span>Cara (FER)</h3>
+    <p class="vacio" style="margin:0">Sin lectura: la cámara no vio ninguna cara en los ${t.fer_sin_cara} s que duró la frase (0 cuadros), así que la cara no entra en la fusión.</p>
+    <p class="que" style="margin:8px 0 0">Si pasa en todas las frases, revisa que la cámara mande imagen: mira a la cámara al hablar y comprueba su cable.</p></div>`;
+}
+
 function render(t) {
   const p = t.perfil, b = p.base;
   let h = "";
@@ -575,7 +586,7 @@ ${v3(d0)}  →  ${v3(d1)}${movio ? "" : "   (todavía dentro de la latencia: no 
   // 1. Modalidades
   h += `<section class="paso"><h2><span class="n">Paso 1</span>PULSE · De probabilidades a VAD, por modalidad</h2>
     <p class="que">Cada clasificador da una probabilidad por emoción (agrupadas en las cuatro del robot). El punto VAD es el promedio de los anclajes pesado por esas probabilidades, y la confianza sale de la entropía: si duda entre varias emociones, pesa menos.</p>
-    ${t.lecturas.length ? `<div class="modalidades">${t.lecturas.map(modalidad).join("")}</div>` : '<p class="vacio">Ninguna modalidad dio lectura en esta frase.</p>'}</section>`;
+    ${t.lecturas.length || t.fer_sin_cara != null ? `<div class="modalidades">${t.lecturas.map(modalidad).join("")}${sinCara(t)}</div>` : '<p class="vacio">Ninguna modalidad dio lectura en esta frase.</p>'}</section>`;
   // 2. Fusion
   const fu = t.fusion;
   let cuerpo;
