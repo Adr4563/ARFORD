@@ -160,79 +160,45 @@ PAGINA = r"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Romeo en vivo</title>
-<style>
-  :root { --fondo:#f9f9f7; --tarjeta:#fcfcfb; --texto:#0b0b0b; --suave:#52514e; --tenue:#898781;
-    --borde:#e1e0d9; --eje:#c3c2b7; --fusion:#eda100; --romeo:#e87ba4;
-    --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; --ok:#1baf7a;
-    --enojo:#d1352b; --triste:#2a78d6; --feliz:#d4a400; --normal:#0b0b0b; --punto-romeo:#e8501c; --punto-usuario:#5b21b6; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --fondo:#0d0d0d; --tarjeta:#1a1a19; --texto:#f0efec; --suave:#c3c2b7; --tenue:#898781;
-    --borde:#2c2c2a; --eje:#383835; --fusion:#c98500; --romeo:#d55181;
-    --val:#3987e5; --aro:#d95926; --dom:#199e70; --ok:#199e70;
-    --enojo:#ef5a4f; --triste:#4d94ec; --feliz:#f2c94c; --normal:#f0efec; --punto-romeo:#f2652e; --punto-usuario:#8b5cf6; color-scheme: dark; } }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
-  main { max-width:960px; margin:0 auto; padding:28px 16px 48px; }
-  h1 { font-size:1.5rem; margin:0 0 4px; }
-  .sub { color:var(--suave); margin:0 0 16px; overflow-wrap:anywhere; }
-  .vivo { display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:var(--suave); }
-  .vivo i { width:8px; height:8px; border-radius:50%; background:var(--ok); }
-  .tarjeta { background:var(--tarjeta); border:1px solid var(--borde); border-radius:12px; padding:20px; margin-bottom:16px; min-width:0; }
-  .tarjeta h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--suave); margin:0 0 12px; font-weight:600; }
-  .dos { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; }
-  @media (max-width:640px) { .dos { grid-template-columns:minmax(0,1fr); } }
-  .frase { font-size:1.15rem; margin:0; }
-  .vacio { color:var(--suave); font-style:italic; }
-  .punto { width:10px; height:10px; border-radius:50%; display:inline-block; }
-  h3 { font-size:.95rem; margin:0 0 4px; display:flex; align-items:center; gap:8px; }
-  .cubo canvas { width:100%; display:block; touch-action:none; cursor:grab; }
-  .nota { font-size:.8rem; color:var(--tenue); margin:8px 0 0; }
-  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-  .chip { border:1px solid var(--borde); border-radius:999px; padding:3px 10px; font-size:.85rem; }
-  .tabla { overflow-x:auto; }
-  table { width:100%; border-collapse:collapse; font-size:.85rem; font-variant-numeric:tabular-nums; }
-  th { text-align:left; color:var(--suave); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; padding:6px; border-bottom:1px solid var(--borde); }
-  td { padding:7px 6px; border-bottom:1px solid var(--borde); vertical-align:top; }
-  td.n { text-align:right; white-space:nowrap; }
-  .nav { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.9rem; margin:0 0 14px; }
-  .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
-  .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
-  .emo { font-size:1.15rem; font-weight:700; margin:2px 0 4px; }
-  .rombo { width:10px; height:10px; display:inline-block; transform:rotate(45deg); margin:0 2px; }
-</style></head><body><main>
-  <nav class="nav"><a href="./" class="aqui">Romeo en vivo</a><a href="calculo">Cálculo de valencia y arousal</a><a href="carrito">Carrito</a></nav>
-  <h1>Romeo en vivo</h1>
-  <p class="sub"><span class="vivo"><i></i><span id="estado">Leyendo el log…</span></span></p>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;600;700;800&display=swap">
+<style>/*TEMA*/</style></head><body>
+<header class="top"><div class="top-in"><p class="marca"><span class="rombo" style="background:var(--romeo)"></span>ROMEO</p><nav class="nav"><a href="./" class="aqui">En vivo</a><a href="calculo">Cálculo VAD</a><a href="carrito">Carrito</a></nav><span class="vivo"><i></i><span id="estado">Leyendo el log…</span></span></div></header>
+<main>
+  <div class="dos">
+    <section class="tarjeta"><h2>Lo que entendió</h2><p class="frase vacio" id="texto">—</p><div class="medidores" id="lecturas"></div></section>
+    <section class="tarjeta"><h2>Lo que respondió Romeo</h2><p class="frase vacio" id="respuesta">—</p><p class="nota" id="animo"></p></section>
+  </div>
 
   <div class="dos">
-    <div class="tarjeta"><h2>Lo que entendió</h2><p class="frase vacio" id="texto">—</p><div class="chips" id="lecturas"></div></div>
-    <div class="tarjeta"><h2>Lo que respondió Romeo</h2><p class="frase vacio" id="respuesta">—</p><p class="nota" id="animo"></p></div>
+      <section class="modulo romeo">
+        <header>Ánimo de Romeo</header>
+        <div class="modulo-in">
+          <p class="emo" id="emo-romeo">—</p>
+          <div class="vad" id="vad-romeo"></div>
+          <div class="cubo" id="cubo-romeo"><canvas></canvas></div>
+        </div>
+      </section>
+      <section class="modulo usuario">
+        <header>Tu emoción · S<sub>u</sub></header>
+        <div class="modulo-in">
+          <p class="emo" id="emo-usuario">—</p>
+          <div class="vad" id="vad-usuario"></div>
+          <div class="cubo" id="cubo-usuario"><canvas></canvas></div>
+        </div>
+      </section>
   </div>
 
-  <div class="tarjeta">
-    <h2>Cómo cambia el ánimo, frase a frase</h2>
-    <div class="dos">
-      <div><h3><span class="rombo" style="background:var(--punto-romeo)"></span>Ánimo de Romeo</h3><p class="emo" id="emo-romeo">—</p><div class="cubo" id="cubo-romeo"><canvas></canvas></div></div>
-      <div><h3><span class="rombo" style="background:var(--punto-usuario)"></span>Tu emoción (S<sub>u</sub>)</h3><p class="emo" id="emo-usuario">—</p><div class="cubo" id="cubo-usuario"><canvas></canvas></div></div>
-    </div>
-    <div class="chips" style="justify-content:center">
-      <span class="chip"><span class="rombo" style="background:var(--feliz)"></span> Feliz</span>
-      <span class="chip"><span class="rombo" style="background:var(--triste)"></span> Triste</span>
-      <span class="chip"><span class="rombo" style="background:var(--enojo)"></span> Enojado</span>
-      <span class="chip"><span class="rombo" style="background:var(--normal)"></span> Normal</span>
-      <span class="chip"><span class="rombo" style="background:var(--punto-romeo)"></span> Romeo</span>
-      <span class="chip"><span class="rombo" style="background:var(--punto-usuario)"></span> Tú</span>
-    </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. El punto naranja es <b>Romeo</b> y el morado eres <b>tú</b>: la emoción es el rombo al que se acercan. El rombo negro vacío es cómo estaba antes, con una flecha hacia cómo está ahora. Los rombos de color marcan dónde está cada emoción (ver la leyenda); el negro, Normal, es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si tu voz y tu texto salen neutrales, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
-  </div>
+  <section class="tarjeta">
+    <div class="leyenda"><span><i class="rombo" style="background:var(--feliz)"></i>Feliz</span><span><i class="rombo" style="background:var(--triste)"></i>Triste</span><span><i class="rombo" style="background:var(--enojo)"></i>Enojado</span><span><i class="rombo" style="background:var(--normal)"></i>Normal</span><span><i class="rombo" style="background:var(--punto-romeo)"></i>Romeo</span><span><i class="rombo" style="background:var(--punto-usuario)"></i>Tú</span></div>
+  </section>
 
-  <div class="tarjeta">
+  <section class="tarjeta">
     <h2>Todas las frases</h2>
     <div class="tabla"><table>
       <thead><tr><th>#</th><th>Dijiste</th><th>Lecturas</th><th class="n">Tú (v, a, d)</th><th class="n">Romeo (v, a, d)</th></tr></thead>
       <tbody id="tabla"><tr><td colspan="5" class="vacio">Háblale a Romeo.</td></tr></tbody>
     </table></div>
-  </div>
+  </section>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -352,7 +318,8 @@ function mostrar(d) {
   const ult = d.turnos[d.turnos.length - 1];
   if (ult) {
     $("texto").className = "frase"; $("texto").textContent = ult.texto;
-    $("lecturas").innerHTML = lect(ult).map((s) => `<span class="chip">${esc(s)}</span>`).join("") + `<span class="chip">Tú: ${ult.fusion ? vad(ult.fusion) : "neutral"}</span>`;
+    $("lecturas").innerHTML = ult.lecturas.map((l) => `<div class="medidor"><b>${esc(l.fuente.split(" ")[0])}</b><div class="pista"><i style="width:${Math.round(l.confianza * 100)}%"></i></div><span>${esc(EMO[l.emocion] || l.emocion)}</span><span class="n">${Math.round(l.confianza * 100)}%</span></div>`).join("")
+      + (ult.sin_cara ? '<div class="medidor"><b>Cara</b><div class="pista"></div><span class="vacio">no vio cara</span><span class="n">—</span></div>' : "");
   }
   if (d.ultima_respuesta) { $("respuesta").className = "frase"; $("respuesta").textContent = d.ultima_respuesta; }
   for (const quien of ["romeo", "usuario"]) {
@@ -362,6 +329,7 @@ function mostrar(d) {
     const el = $("emo-" + quien);
     el.textContent = (quien === "romeo" ? "Romeo está: " : "Tú estás: ") + textoEmo(e);
     el.style.color = `var(${COLOR_EMO[e.clave]})`;
+    $("vad-" + quien).innerHTML = [["Valencia", "v"], ["Arousal", "a"], ["Dominancia", "d"]].map(([n, k]) => `<div><small>${n}</small><strong>${p ? f2(p[k]) : "0.00"}</strong></div>`).join("");
     const prev = d.turnos[d.turnos.length - 2];
     if (prev) {
       const pp = quien === "romeo" ? (prev.romeo || d.base) : prev.fusion;
@@ -393,57 +361,14 @@ PAGINA_CARRITO = r"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carrito de Romeo</title>
-<style>
-  :root { --fondo:#f9f9f7; --tarjeta:#fcfcfb; --texto:#0b0b0b; --suave:#52514e; --tenue:#898781;
-    --borde:#e1e0d9; --eje:#c3c2b7; --fusion:#eda100; --romeo:#e87ba4;
-    --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; --ok:#1baf7a; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --fondo:#0d0d0d; --tarjeta:#1a1a19; --texto:#f0efec; --suave:#c3c2b7; --tenue:#898781;
-    --borde:#2c2c2a; --eje:#383835; --fusion:#c98500; --romeo:#d55181;
-    --val:#3987e5; --aro:#d95926; --dom:#199e70; --ok:#199e70; color-scheme: dark; } }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
-  main { max-width:960px; margin:0 auto; padding:28px 16px 48px; }
-  h1 { font-size:1.5rem; margin:0 0 4px; }
-  .sub { color:var(--suave); margin:0 0 16px; overflow-wrap:anywhere; }
-  .vivo { display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:var(--suave); }
-  .vivo i { width:8px; height:8px; border-radius:50%; background:var(--ok); }
-  .tarjeta { background:var(--tarjeta); border:1px solid var(--borde); border-radius:12px; padding:20px; margin-bottom:16px; min-width:0; }
-  .tarjeta h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--suave); margin:0 0 12px; font-weight:600; }
-  .dos { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; }
-  @media (max-width:640px) { .dos { grid-template-columns:minmax(0,1fr); } }
-  .frase { font-size:1.15rem; margin:0; }
-  .vacio { color:var(--suave); font-style:italic; }
-  .punto { width:10px; height:10px; border-radius:50%; display:inline-block; }
-  h3 { font-size:.95rem; margin:0 0 4px; display:flex; align-items:center; gap:8px; }
-  .cubo canvas { width:100%; display:block; touch-action:none; cursor:grab; }
-  .nota { font-size:.8rem; color:var(--tenue); margin:8px 0 0; }
-  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-  .chip { border:1px solid var(--borde); border-radius:999px; padding:3px 10px; font-size:.85rem; }
-  .tabla { overflow-x:auto; }
-  table { width:100%; border-collapse:collapse; font-size:.85rem; font-variant-numeric:tabular-nums; }
-  th { text-align:left; color:var(--suave); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; padding:6px; border-bottom:1px solid var(--borde); }
-  td { padding:7px 6px; border-bottom:1px solid var(--borde); vertical-align:top; }
-  td.n { text-align:right; white-space:nowrap; }
-  .nav { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.9rem; margin:0 0 14px; }
-  .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
-  .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
-  .emo { font-size:1.15rem; font-weight:700; margin:2px 0 4px; }
-  .carrito { display:flex; flex-direction:column; gap:20px; align-items:center; text-align:center; }
-  .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:min(100%,420px); }
-  .pad button, .giro button { font:inherit; font-size:2.2rem; aspect-ratio:1; border:1px solid var(--borde); border-radius:14px;
-    background:var(--fondo); color:var(--texto); cursor:pointer; touch-action:none; user-select:none; }
-  .pad button.activo, .giro button.activo { background:var(--romeo); color:#fff; border-color:var(--romeo); }
-  .pad button.stop { background:#d1352b; color:#fff; border-color:#d1352b; font-size:1.4rem; font-weight:700; }
-  .giro { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:min(100%,420px); margin-top:12px; }
-  .giro button { aspect-ratio:auto; padding:22px 0; font-size:1.3rem; }
-  .ayuda-carrito { max-width:420px; min-width:0; }
-  .carrito > div:first-child { width:min(100%,420px); }
-  .pad, .giro { margin-left:auto; margin-right:auto; }
-</style></head><body><main>
-  <nav class="nav"><a href="./">Romeo en vivo</a><a href="calculo">Cálculo de valencia y arousal</a><a href="carrito" class="aqui">Carrito</a></nav>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;600;700;800&display=swap">
+<style>/*TEMA*/</style></head><body>
+<header class="top"><div class="top-in"><p class="marca"><span class="rombo" style="background:var(--romeo)"></span>ROMEO</p><nav class="nav"><a href="./">En vivo</a><a href="calculo">Cálculo VAD</a><a href="carrito" class="aqui">Carrito</a></nav></div></header>
+<main>
+  <div>
   <h1>Carrito</h1>
   <p class="sub">Mueve el carrito de Romeo. Funciona con Romeo encendido: lo sirve su nodo del carrito.</p>
+  </div>
 
   <div class="tarjeta">
     <h2>Controles</h2>
@@ -509,57 +434,20 @@ CALCULO = r"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cálculo afectivo de Romeo</title>
-<style>
-  :root { --fondo:#f9f9f7; --tarjeta:#fcfcfb; --texto:#0b0b0b; --suave:#52514e; --tenue:#898781;
-    --borde:#e1e0d9; --barra:#eceae4; --fusion:#eda100; --romeo:#e87ba4; --ser:#eb6834; --ter:#1baf7a; --fer:#2a78d6;
-    --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-    --fondo:#0d0d0d; --tarjeta:#1a1a19; --texto:#f0efec; --suave:#c3c2b7; --tenue:#898781;
-    --borde:#2c2c2a; --barra:#2c2c2a; --fusion:#c98500; --romeo:#d55181; --ser:#d95926; --ter:#199e70; --fer:#3987e5;
-    --val:#3987e5; --aro:#d95926; --dom:#199e70; color-scheme: dark; } }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
-  main { max-width:960px; margin:0 auto; padding:28px 16px 48px; }
-  h1 { font-size:1.5rem; margin:0 0 4px; }
-  .sub { color:var(--suave); margin:0 0 16px; overflow-wrap:anywhere; }
-  a { color:inherit; }
-  .barra-sup { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin-bottom:16px; }
-  select, label { font:inherit; font-size:.9rem; }
-  select { padding:6px 8px; border-radius:8px; border:1px solid var(--borde); background:var(--tarjeta); color:var(--texto); max-width:100%; }
-  .paso { background:var(--tarjeta); border:1px solid var(--borde); border-radius:12px; padding:20px; margin-bottom:16px; min-width:0; }
-  .paso h2 { font-size:1.05rem; margin:0 0 4px; display:flex; gap:10px; align-items:baseline; }
-  .paso h2 .n { font-size:.75rem; color:var(--suave); border:1px solid var(--borde); border-radius:999px; padding:1px 8px; font-weight:600; }
-  .que { color:var(--suave); font-size:.9rem; margin:0 0 12px; }
-  .formula { font-family:ui-monospace,Consolas,monospace; font-size:.9rem; background:var(--fondo); border:1px solid var(--borde);
-    border-radius:8px; padding:8px 12px; margin:8px 0; overflow-x:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
-  .tabla { overflow-x:auto; }
-  table { width:100%; border-collapse:collapse; font-size:.85rem; font-variant-numeric:tabular-nums; }
-  th { text-align:left; color:var(--suave); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; padding:6px; border-bottom:1px solid var(--borde); }
-  td { padding:6px; border-bottom:1px solid var(--borde); }
-  td.n, th.n { text-align:right; white-space:nowrap; }
-  tr.total td { font-weight:600; border-top:2px solid var(--borde); }
-  .barrita { height:8px; background:var(--barra); border-radius:4px; overflow:hidden; min-width:60px; }
-  .barrita i { display:block; height:100%; border-radius:4px; }
-  .modalidades { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; }
-  .modalidad { border:1px solid var(--borde); border-radius:10px; padding:14px; min-width:0; }
-  .modalidad h3 { margin:0 0 6px; font-size:.95rem; display:flex; gap:8px; align-items:center; }
-  .punto { width:10px; height:10px; border-radius:50%; display:inline-block; }
-  .resultado { font-weight:600; margin:8px 0 0; }
-  .vacio { color:var(--suave); font-style:italic; }
-  .chip { display:inline-block; border:1px solid var(--borde); border-radius:999px; padding:2px 10px; font-size:.85rem; font-weight:600; }
-  .nav { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.9rem; margin:0 0 14px; }
-  .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
-  .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
-</style></head><body><main>
-  <nav class="nav"><a href="./">Romeo en vivo</a><a href="calculo" class="aqui">Cálculo de valencia y arousal</a><a href="carrito">Carrito</a></nav>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;600;700;800&display=swap">
+<style>/*TEMA*/</style></head><body>
+<header class="top"><div class="top-in"><p class="marca"><span class="rombo" style="background:var(--romeo)"></span>ROMEO</p><nav class="nav"><a href="./">En vivo</a><a href="calculo" class="aqui">Cálculo VAD</a><a href="carrito">Carrito</a></nav></div></header>
+<main>
+  <div>
   <h1>Cálculo de valencia y arousal</h1>
   <p class="sub">Cada paso con los números reales del turno, tal como los calcula el robot (PULSE → ROSE → AEB, metodología de Rocha).</p>
+  </div>
   <div class="barra-sup">
     <select id="turno" aria-label="Frase"></select>
     <label><input type="checkbox" id="seguir" checked> Seguir la última frase</label>
     <span class="que" id="info" style="margin:0"></span>
   </div>
-  <div id="pasos"><p class="vacio">Esperando la primera frase. Háblale a Romeo.</p></div>
+  <div id="pasos" style="display:grid;gap:18px"><p class="vacio">Esperando la primera frase. Háblale a Romeo.</p></div>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -596,6 +484,43 @@ function sinCara(t) {
   return `<div class="modalidad"><h3><span class="punto" style="background:var(--fer)"></span>Cara (FER)</h3>
     <p class="vacio" style="margin:0">Sin lectura: la cámara no vio ninguna cara en los ${t.fer_sin_cara} s que duró la frase (0 cuadros), así que la cara no entra en la fusión.</p>
     <p class="que" style="margin:8px 0 0">Si pasa en todas las frases, revisa que la cámara mande imagen: mira a la cámara al hablar y comprueba su cable.</p></div>`;
+}
+
+// Los estados posibles de Romeo, con los rangos reales de |Δ| para su animo
+// base. Misma cuenta que aeb.nivel(): radio neutro y cuatro tramos iguales.
+// Cara, movimiento y tonos resumen aeb.py (_MOVIMIENTOS, _TONOS, _TONOS_TRIVIA).
+const ESTADOS = [
+  { clave: "felicidad", nombre: "Feliz", color: "--feliz", ancla: [0.76, 0.48, 0.35], cara: "Feliz",
+    mov: ["—", "Avanza y vuelve", "Avanza y vuelve", "Avanza y vuelve"],
+    chat: ["Se alegra contigo y celebra lo que cuentas", "Comparte tu alegría con entusiasmo y te pide que cuentes más"],
+    trivia: ["Te felicita con alegría; si fallas, buen humor", "Te premia con mucho entusiasmo; si fallas, te motiva"] },
+  { clave: "tristeza", nombre: "Triste", color: "--triste", ancla: [-0.63, -0.27, -0.33], cara: "Normal (no pone cara triste)",
+    mov: ["—", "—", "—", "—"],
+    chat: ["Entiende cómo te sientes y te da ánimo", "Te acompaña y te ayuda a sentirte un poco mejor"],
+    trivia: ["Si fallas, «la próxima lo logras»; si aciertas, destaca el logro", "Igual, más suave y breve"] },
+  { clave: "enojo", nombre: "Enojado", color: "--enojo", ancla: [-0.51, 0.59, 0.25], cara: "Enojado",
+    mov: ["—", "Retrocede y vuelve", "Retrocede y vuelve", "Retrocede y vuelve"],
+    chat: ["Se pone de tu lado, sin regañarte", "Te da la razón en lo que sientes y te escucha, sin pedirte calma"],
+    trivia: ["Con calma: «la próxima te sale»", "Muy calmado y con pocas palabras"] },
+];
+
+function tablaEstados(a) {
+  const b = a.base, f = a.fraccion_neutral;
+  const datos = ESTADOS.map((e) => { const d = Math.hypot(e.ancla[0] - b[0], e.ancla[1] - b[1], e.ancla[2] - b[2]); return { ...e, radio: f * d, tramo: (d - f * d) / 4 }; });
+  const radios = datos.map((e) => e.radio);
+  const fila = (clase, celdas) => `<tr${clase ? ' class="actual"' : ""}>${celdas.map((c, i) => `<td${i === 2 ? ' class="n"' : ""}>${c}</td>`).join("")}</tr>`;
+  const marca = (si) => si ? ' <span class="chip">ahora</span>' : "";
+  let filas = fila(a.nivel === 0, [`<i class="rombo" style="background:var(--normal)"></i> Normal${marca(a.nivel === 0)}`, "L0",
+    `&lt; ${Math.min(...radios).toFixed(3)} a ${Math.max(...radios).toFixed(3)}`, "Normal", "—", "Sin tono: responde como siempre", "Comenta como siempre"]);
+  for (const e of datos) for (let n = 1; n <= 4; n++) {
+    const desde = e.radio + (n - 1) * e.tramo, hasta = e.radio + n * e.tramo, si = a.estado === `${e.clave}_L${n}`;
+    filas += fila(si, [`<i class="rombo" style="background:var(${e.color})"></i> ${e.nombre}${marca(si)}`, `L${n}`,
+      `${desde.toFixed(3)} – ${n === 4 ? "más" : hasta.toFixed(3)}`, e.cara, e.mov[n - 1], e.chat[n <= 2 ? 0 : 1], e.trivia[n <= 2 ? 0 : 1]]);
+  }
+  return `<section class="paso"><h2><span class="n">Estados</span>Niveles L1 a L4 y qué hace Romeo</h2>
+    <p class="que">El nivel sale de cuánto se apartó Romeo de su ánimo base (|Δ|). Cada emoción tiene sus propios rangos, porque cada una está a distinta distancia de la base. La fila marcada es el estado de esta frase.</p>
+    <div class="tabla"><table><thead><tr><th>Estado</th><th>Nivel</th><th class="n">|Δ|</th><th>Cara</th><th>Movimiento</th><th>En la conversación</th><th>En la trivia</th></tr></thead>
+    <tbody>${filas}</tbody></table></div></section>`;
 }
 
 function render(t) {
@@ -650,6 +575,7 @@ ${["v", "a", "d"].map((k, i) => `${k}: ${em.e} × ${n3(em.s_u[i])} + ${(1 - em.e
 ${a.magnitud < a.radio ? `|Δ| = ${a.magnitud.toFixed(3)} < radio → zona neutra, nivel 0`
   : `nivel = 1 + ⌊4 · (|Δ| − radio) / recorrido⌋ = 1 + ⌊4 · (${a.magnitud.toFixed(3)} − ${a.radio.toFixed(3)}) / ${a.recorrido.toFixed(3)}⌋ = ${a.nivel}`}</div>` : ""}
     <p class="resultado">Resultado: <span class="chip">${esc(a.estado.replace("_L", " · nivel "))}</span> · cara ${esc(a.cara)}${a.emocion === "tristeza" && a.cara === "content" ? " (con tristeza Romeo mantiene la cara normal)" : ""}</p></section>`;
+  h += tablaEstados(a);
   $("pasos").innerHTML = h;
   $("info").textContent = `«${t.texto}» · ${new Date(t.t * 1000).toLocaleTimeString()}`;
 }
@@ -676,6 +602,111 @@ $("turno").addEventListener("change", () => { $("seguir").checked = +$("turno").
 $("seguir").addEventListener("change", () => { if ($("seguir").checked && turnos.length) { $("turno").value = String(turnos.length - 1); render(turnos[turnos.length - 1]); } });
 actualizar(); setInterval(actualizar, 2000);
 </script></body></html>"""
+
+
+TEMA = r"""
+/* Consola del robot: barra de tinta arriba, modulos blancos, numeros en mono. */
+:root { --fondo:#eceff4; --tarjeta:#ffffff; --texto:#12162b; --suave:#555c74; --tenue:#8a90a3;
+  --borde:#d9dde7; --eje:#c4c9d6; --barra:#e4e7ef; --tinta:#171b34; --tinta-texto:#f2f3f9; --tinta-suave:#a9afc9;
+  --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; --ok:#35d39a; --ser:#eb6834; --ter:#1baf7a; --fer:#2a78d6;
+  --romeo:#e8501c; --fusion:#5b21b6;
+  --enojo:#d1352b; --triste:#2a78d6; --feliz:#d4a400; --normal:#0b0b0b; --punto-romeo:#e8501c; --punto-usuario:#5b21b6;
+  --ui:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --num:"IBM Plex Mono",ui-monospace,Consolas,monospace; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --fondo:#0f1120; --tarjeta:#1a1d31; --texto:#eef0f8; --suave:#b4b9cf; --tenue:#868ca6;
+  --borde:#2d3149; --eje:#3a3f5a; --barra:#2d3149; --tinta:#0a0c18; --tinta-texto:#f2f3f9; --tinta-suave:#a9afc9;
+  --val:#4d94ec; --aro:#f07a45; --dom:#2cc08c; --ser:#f07a45; --ter:#2cc08c; --fer:#4d94ec;
+  --romeo:#f2652e; --fusion:#8b5cf6;
+  --enojo:#ef5a4f; --triste:#4d94ec; --feliz:#f2c94c; --normal:#f0efec; --punto-romeo:#f2652e; --punto-usuario:#8b5cf6; color-scheme:dark; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 var(--ui); }
+a { color:inherit; }
+.top { background:var(--tinta); color:var(--tinta-texto); }
+.top-in { max-width:1120px; margin:0 auto; padding:0 20px; display:flex; flex-wrap:wrap; align-items:center; gap:4px 28px; min-height:60px; }
+.marca { font-weight:800; letter-spacing:.2em; font-size:1rem; display:inline-flex; align-items:center; gap:10px; margin:0; }
+.nav { display:flex; flex-wrap:wrap; gap:4px; flex:1 1 auto; }
+.nav a { color:var(--tinta-suave); text-decoration:none; font-size:.9rem; font-weight:600; padding:18px 12px 16px; border-bottom:3px solid transparent; }
+.nav a:hover { color:var(--tinta-texto); }
+.nav a.aqui { color:var(--tinta-texto); border-color:var(--romeo); }
+.nav a:focus-visible, button:focus-visible, select:focus-visible { outline:2px solid var(--romeo); outline-offset:2px; }
+.vivo { display:inline-flex; align-items:center; gap:8px; font-size:.8rem; color:var(--tinta-suave); overflow-wrap:anywhere; }
+.vivo i { width:8px; height:8px; border-radius:50%; background:var(--ok); flex:none; }
+main { max-width:1120px; margin:0 auto; padding:24px 20px 56px; display:grid; gap:18px; }
+main > * { min-width:0; }
+h1 { font-size:1.6rem; font-weight:800; margin:0; letter-spacing:-.01em; text-wrap:balance; }
+.sub { color:var(--suave); margin:4px 0 0; max-width:70ch; }
+.tarjeta, .paso { background:var(--tarjeta); border:1px solid var(--borde); border-radius:6px; padding:20px; min-width:0; }
+.etiqueta, .tarjeta > h2 { font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--suave); margin:0 0 10px; font-weight:700; }
+.dos { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; }
+@media (max-width:720px) { .dos { grid-template-columns:minmax(0,1fr); } }
+.frase { font-size:1.3rem; font-weight:600; line-height:1.35; margin:0; }
+.vacio { color:var(--suave); font-style:italic; font-weight:400; }
+.nota { font-size:.82rem; color:var(--suave); margin:10px 0 0; }
+.punto { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.rombo { width:10px; height:10px; display:inline-block; transform:rotate(45deg); margin:0 3px; flex:none; }
+/* Medidores de voz, texto y cara */
+.medidores { display:grid; gap:8px; margin-top:14px; }
+.medidor { display:grid; grid-template-columns:52px minmax(0,1fr) 92px 44px; gap:10px; align-items:center; font-size:.85rem; }
+.medidor b { font-weight:700; }
+.pista { height:8px; background:var(--barra); border-radius:2px; overflow:hidden; }
+.pista i { display:block; height:100%; background:var(--texto); }
+.medidor .n { font-family:var(--num); text-align:right; font-size:.8rem; }
+/* Modulos de Romeo y de la persona */
+.modulo { background:var(--tarjeta); border:1px solid var(--borde); border-radius:6px; overflow:hidden; min-width:0; }
+.modulo header { color:#fff; padding:9px 16px; font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.modulo header sub { line-height:0; }
+.modulo.romeo header { background:var(--punto-romeo); }
+.modulo.usuario header { background:var(--punto-usuario); }
+.modulo-in { padding:16px; }
+.emo { font-size:1.75rem; font-weight:800; line-height:1.15; margin:0; }
+.emo span { font-family:var(--ui); }
+.vad { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border:1px solid var(--borde); border-radius:4px; margin:14px 0 6px; }
+.vad div { padding:8px 10px; border-left:1px solid var(--borde); min-width:0; }
+.vad div:first-child { border-left:0; }
+.vad small { display:block; font-size:.68rem; color:var(--suave); text-transform:uppercase; letter-spacing:.06em; font-weight:700; }
+.vad strong { font-family:var(--num); font-size:1.05rem; font-weight:600; }
+.cubo canvas { width:100%; display:block; touch-action:none; cursor:grab; }
+.leyenda { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 18px; font-size:.85rem; font-weight:600; }
+.leyenda span { display:inline-flex; align-items:center; gap:7px; }
+details { font-size:.85rem; color:var(--suave); margin-top:10px; }
+summary { cursor:pointer; font-weight:700; text-align:center; }
+.chip { display:inline-block; border:1px solid var(--borde); border-radius:3px; padding:2px 10px; font-size:.85rem; font-weight:700; }
+.tabla { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:.86rem; }
+th { text-align:left; color:var(--suave); font-size:.68rem; text-transform:uppercase; letter-spacing:.07em; padding:7px 8px; border-bottom:2px solid var(--borde); }
+td { padding:8px; border-bottom:1px solid var(--borde); vertical-align:top; }
+td.n, th.n { text-align:right; white-space:nowrap; font-family:var(--num); font-size:.8rem; }
+tr.total td { font-weight:700; border-top:2px solid var(--borde); }
+tr.actual td { background:var(--barra); font-weight:700; }
+td .rombo { width:9px; height:9px; margin-right:6px; }
+/* Carrito */
+.carrito { display:flex; flex-direction:column; gap:20px; align-items:center; text-align:center; }
+.carrito > div:first-child { width:min(100%,420px); }
+.pad { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:min(100%,420px); margin:0 auto; }
+.pad button, .giro button { font:inherit; font-size:2.2rem; aspect-ratio:1; border:0; border-radius:6px; background:var(--tinta); color:var(--tinta-texto); cursor:pointer; touch-action:none; user-select:none; }
+.pad button.activo, .giro button.activo { background:var(--romeo); color:#fff; }
+.pad button.stop { background:var(--enojo); color:#fff; font-size:1.3rem; font-weight:800; letter-spacing:.06em; }
+.giro { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:min(100%,420px); margin:10px auto 0; }
+.giro button { aspect-ratio:auto; padding:20px 0; font-size:1.2rem; font-weight:700; }
+.ayuda-carrito { max-width:420px; min-width:0; }
+/* Calculo */
+.barra-sup { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; }
+select, label { font:inherit; font-size:.9rem; }
+select { padding:7px 9px; border-radius:4px; border:1px solid var(--borde); background:var(--tarjeta); color:var(--texto); max-width:100%; }
+.paso h2 { font-size:1.08rem; font-weight:800; margin:0 0 4px; display:flex; flex-wrap:wrap; gap:10px; align-items:baseline; }
+.paso h2 .n { font-family:var(--num); font-size:.72rem; background:var(--tinta); color:var(--tinta-texto); border-radius:3px; padding:2px 8px; font-weight:600; }
+.que { color:var(--suave); font-size:.9rem; margin:0 0 12px; }
+.formula { font-family:var(--num); font-size:.86rem; background:var(--tinta); color:var(--tinta-texto); border-radius:4px; padding:10px 14px; margin:10px 0; overflow-x:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+.barrita { height:8px; background:var(--barra); border-radius:2px; overflow:hidden; min-width:60px; }
+.barrita i { display:block; height:100%; }
+.modalidades { display:grid; grid-template-columns:minmax(0,1fr); gap:14px; }
+.modalidad { border:1px solid var(--borde); border-radius:4px; padding:14px; min-width:0; }
+.modalidad h3 { margin:0 0 6px; font-size:.95rem; display:flex; gap:8px; align-items:center; }
+.resultado { font-weight:700; margin:10px 0 0; }
+@media (max-width:560px) { .medidor { grid-template-columns:44px minmax(0,1fr) 72px 40px; } .emo { font-size:1.45rem; } }
+"""
+for _n in ("PAGINA", "PAGINA_CARRITO", "CALCULO"):
+    globals()[_n] = globals()[_n].replace("/*TEMA*/", TEMA)
 
 
 if __name__ == "__main__":
