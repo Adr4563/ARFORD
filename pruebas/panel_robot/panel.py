@@ -219,10 +219,10 @@ PAGINA = r"""<!doctype html>
       <span class="chip"><span class="punto" style="background:var(--triste)"></span> Triste</span>
       <span class="chip"><span class="punto" style="background:var(--enojo)"></span> Enojado</span>
       <span class="chip"><span class="punto" style="background:var(--normal)"></span> Normal</span>
-      <span class="chip"><span class="punto" style="background:var(--antes)"></span> Frase anterior</span>
-      <span class="chip"><span class="punto" style="background:var(--ahora)"></span> Frase actual</span>
+      <span class="chip"><span class="punto" style="border:2px solid var(--normal);box-sizing:border-box"></span> Frase anterior (vacío)</span>
+      <span class="chip"><span class="punto" style="background:linear-gradient(90deg,var(--feliz),var(--triste),var(--enojo))"></span> Frase actual (color de su emoción)</span>
     </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el chico es la frase anterior y el grande la actual, con una flecha de uno a otro. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). En «Tu emoción», un punto hueco es una frase en la que todo salió neutral: ahí Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el círculo negro vacío es la frase anterior y el punto relleno es la actual, pintado con el color de su emoción, con una flecha de uno a otro. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si en una frase todo salió neutral, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
   </div>
 
   <div class="tarjeta">
@@ -279,12 +279,13 @@ function cubo(cont, quien) {
   L([-1, 0, 0], [1, 0, 0], col("--tenue"), 1.5); L([0, -1, 0], [0, 1, 0], col("--tenue"), 1.5); L([0, 0, -1], [0, 0, 1], col("--tenue"), 1.5);
   ctx.font = "12px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   for (const [p, t, c] of [[[1.32, 0, 0], "Valencia +", "--val"], [[0, 1.2, 0], "Arousal +", "--aro"], [[0, 0, 1.34], "Dominancia +", "--dom"], [[-1.2, 0, 0], "−", "--tenue"], [[0, -1.18, 0], "−", "--tenue"], [[0, 0, -1.2], "−", "--tenue"]]) { const [x, y] = P(...p); ctx.fillStyle = col(c); ctx.fillText(t, x, y); }
-  const cAntes = col("--antes"), cAhora = col("--ahora"), color = cAhora;
+  // Punto actual: relleno con el color de su emocion. Anterior: circulo negro vacio.
+  const cNegro = col("--normal"), color = cNegro;
   // Solo la frase anterior y la actual, no todo el registro.
   const turnos = datos.turnos.slice(-2);
   const pts = turnos.map((t) => quien === "romeo" ? (t.romeo || datos.base) : (t.fusion || { v: 0, a: 0, d: 0 }));
   const n = pts.length;
-  ctx.globalAlpha = 0.3; pts.forEach((p, i) => { if (!p) return; const [x, y] = P(p.v, -1, p.d); ctx.beginPath(); ctx.fillStyle = i === n - 1 ? cAhora : cAntes; ctx.arc(x, y, 3, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.3; pts.forEach((p, i) => { if (!p) return; const [x, y] = P(p.v, -1, p.d); ctx.beginPath(); ctx.fillStyle = col("--tenue"); ctx.arc(x, y, 3, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
   if (n === 2 && pts[0] && pts[1]) {
     const A = P(pts[0].v, pts[0].a, pts[0].d), B = P(pts[1].v, pts[1].a, pts[1].d);
     ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); ctx.setLineDash([]);
@@ -310,7 +311,7 @@ function cubo(cont, quien) {
     ctx.beginPath(); ctx.fillStyle = cn; ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.fill();
     ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", x + 26, y + 12);
   }
-  const marcas = pts.map((p, i) => { if (!p) return null; const [x, y, z] = P(p.v, p.a, p.d); return { x, y, z, ultimo: i === n - 1, hueco: quien === "usuario" && !turnos[i].fusion, emo: textoEmo(emocionDe(p, centro)) }; }).filter(Boolean);
+  const marcas = pts.map((p, i) => { if (!p) return null; const [x, y, z] = P(p.v, p.a, p.d); return { x, y, z, ultimo: i === n - 1, clave: emocionDe(p, centro).clave }; }).filter(Boolean);
   if (quien === "romeo" && datos.base) { const [x, y, z] = P(datos.base.v, datos.base.a, datos.base.d); marcas.push({ x, y, z, base: true }); }
   marcas.sort((a, b) => b.z - a.z);
   for (const m of marcas) {
@@ -319,10 +320,17 @@ function cubo(cont, quien) {
       ctx.fillStyle = col("--normal"); ctx.moveTo(m.x, m.y - 7); ctx.lineTo(m.x + 7, m.y); ctx.lineTo(m.x, m.y + 7); ctx.lineTo(m.x - 7, m.y); ctx.fill();
       ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", m.x + 26, m.y + 12); continue;
     }
-    const cp = m.ultimo ? cAhora : cAntes;
-    ctx.arc(m.x, m.y, m.ultimo ? 8 : 6, 0, 7); ctx.fillStyle = m.hueco ? col("--tarjeta") : cp; ctx.fill();
-    ctx.strokeStyle = m.hueco ? cp : col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
-    ctx.fillStyle = cp; ctx.font = "bold 11px system-ui, sans-serif";
+    if (m.ultimo) {
+      const ce = col(COLOR_EMO[m.clave]);
+      ctx.arc(m.x, m.y, 9, 0, 7); ctx.fillStyle = ce; ctx.fill();
+      ctx.strokeStyle = col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = ce;
+    } else {
+      ctx.arc(m.x, m.y, 7, 0, 7); ctx.fillStyle = col("--tarjeta"); ctx.fill();
+      ctx.strokeStyle = cNegro; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.fillStyle = cNegro;
+    }
+    ctx.font = "bold 11px system-ui, sans-serif";
     ctx.fillText(m.ultimo ? "ahora" : "antes", m.x, m.y - 15);
   }
   if (!n) { ctx.fillStyle = col("--suave"); ctx.font = "italic 13px system-ui, sans-serif"; ctx.fillText("Háblale a Romeo para ver el recorrido.", cx, h - 14); }
