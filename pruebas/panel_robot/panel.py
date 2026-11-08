@@ -406,13 +406,13 @@ PAGINA_CARRITO = r"""<!doctype html>
   .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
   .emo { font-size:1.15rem; font-weight:700; margin:2px 0 4px; }
   .carrito { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start; }
-  .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:min(100%,280px); }
-  .pad button, .giro button { font:inherit; font-size:1.4rem; aspect-ratio:1; border:1px solid var(--borde); border-radius:14px;
+  .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:min(100%,420px); }
+  .pad button, .giro button { font:inherit; font-size:2.2rem; aspect-ratio:1; border:1px solid var(--borde); border-radius:14px;
     background:var(--fondo); color:var(--texto); cursor:pointer; touch-action:none; user-select:none; }
   .pad button.activo, .giro button.activo { background:var(--romeo); color:#fff; border-color:var(--romeo); }
-  .pad button.stop { background:#d1352b; color:#fff; border-color:#d1352b; font-size:1rem; font-weight:700; }
-  .giro { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:min(100%,280px); margin-top:8px; }
-  .giro button { aspect-ratio:auto; padding:14px 0; font-size:1rem; }
+  .pad button.stop { background:#d1352b; color:#fff; border-color:#d1352b; font-size:1.4rem; font-weight:700; }
+  .giro { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:min(100%,420px); margin-top:12px; }
+  .giro button { aspect-ratio:auto; padding:22px 0; font-size:1.3rem; }
   .ayuda-carrito { flex:1 1 220px; min-width:0; }
 </style></head><body><main>
   <nav class="nav"><a href="./">Romeo en vivo</a><a href="calculo">Cálculo de valencia y arousal</a><a href="carrito" class="aqui">Carrito</a></nav>
