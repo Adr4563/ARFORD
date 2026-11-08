@@ -112,6 +112,7 @@ _PROMPT_ENTRENADO = (
 # respondiendo a su juicio: decia "Oh, cariño" a todo, y "no tienes que
 # pasar por esto solo" sin saber si habla con un hombre o una mujer.
 _PROMPT_TRATO = (
+    "Tutea siempre a la persona, nunca le hables de usted. "
     "No uses apodos como 'cariño', 'querida' o 'amigo'. No sabes si hablas "
     "con un hombre o con una mujer: usa frases sin genero (por ejemplo 'no "
     "tienes que pasarlo a solas' en vez de 'solo' o 'sola').")

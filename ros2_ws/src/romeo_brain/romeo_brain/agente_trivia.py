@@ -4,10 +4,8 @@
 juzgar hace DOS llamadas. La primera solo decide SI o NO: se le da la
 pregunta, la respuesta esperada y lo que dijo la persona. La segunda, con
 el veredicto ya decidido, escribe el comentario como lo diria una persona:
-celebra o corrige, de vez en cuando cuenta un dato breve de la respuesta
-(PROB_DATO) y pasa a la siguiente ("No, era el emu, el ave mas veloz de
-Australia. Vamos con la siguiente."). Separadas para que el comentario no
-pueda contradecir al
+celebra o corrige y pasa a la siguiente ("No, era el emu. Vamos con la
+siguiente."). Separadas para que el comentario no pueda contradecir al
 veredicto. Si la segunda falla, se usan las frases de
 data/frases/respuestas_trivia_*.txt.
 
@@ -22,7 +20,6 @@ propia pregunta en preguntas.jsonl.
 """
 
 import os
-import random
 
 from . import aeb, frases, llama_client
 
@@ -47,16 +44,16 @@ _PROMPT_COMENTARIO = (
     "La persona respondio: {usuario}\n"
     "{resultado}\n\n"
     "Dile algo como lo diria una persona, con tus propias palabras y en "
-    "{frases} cortas: {que_hacer}{dato}{tono} Termina con una frase corta para "
+    "{frases} cortas: {que_hacer}{tono} Termina con una frase corta para "
     "pasar a la siguiente pregunta, como 'Vamos con la siguiente', sin "
-    "preguntar nada. Tutea, sin apodos como 'pequeño' o 'campeón', sin "
-    "palabras con genero como 'listo' o 'lista', sin emojis. Escribe solo lo "
-    "que vas a decir.")
+    "preguntar nada. No agregues datos ni explicaciones sobre la respuesta. "
+    "Tutea, sin apodos como 'amigo', 'querido' o 'campeón', sin palabras con "
+    "genero como 'listo' o 'tranquilo', sin emojis. Escribe solo lo que vas "
+    "a decir.")
 
-# Cuantas veces cuenta un dato curioso. Siempre se hacia pesado (y alargaba
-# cada turno a 15-20 s), y cuantos mas datos mas se inventa: gemma3:4b dijo
-# que 54 es capicua y que "Mir" significa "espejo".
-PROB_DATO = float(os.environ.get("ROMEO_TRIVIA_DATO", "0.3"))
+# SIN DATOS CURIOSOS. Las preguntas no traen ninguno verificado y el modelo
+# se los inventaba: gemma3:4b dijo que 54 es capicua, que "Mir" significa
+# "espejo" y que en 1939 se invento la radio.
 
 
 def _comentar(pregunta, esperada, respuesta_usuario, acerto, comportamiento=None):
@@ -71,20 +68,17 @@ def _comentar(pregunta, esperada, respuesta_usuario, acerto, comportamiento=None
     else:
         resultado, que_hacer = ("SE EQUIVOCO.", "dile con amabilidad que no "
                                 "era y cual era la respuesta correcta.")
-    con_dato = random.random() < PROB_DATO
-    dato = (" Agrega un dato curioso breve sobre la respuesta correcta, solo "
-            "si estas seguro de que es cierto." if con_dato else "")
     try:
         texto = llama_client.generar_respuesta(
             [{"role": "user",
               "content": _PROMPT_COMENTARIO.format(
                   pregunta=pregunta, esperada=esperada, usuario=respuesta_usuario,
-                  resultado=resultado, que_hacer=que_hacer, dato=dato,
+                  resultado=resultado, que_hacer=que_hacer,
                   tono=(f" {tono} No digas como se siente la persona ni como "
                         f"te sientes tu: que se note solo en como lo dices.") if tono else "",
                   # Con tono hace falta una frase mas: la de animo no cabia en dos.
-                  frases="tres frases" if (con_dato or tono) else "dos frases")}],
-            temperature=0.7, max_tokens=(90 if con_dato else 50) + (25 if tono else 0),
+                  frases="tres frases" if tono else "dos frases")}],
+            temperature=0.7, max_tokens=50 + (25 if tono else 0),
             modelo=CORRECTOR_LLM).strip()
         texto = " ".join(texto.split())   # sin los saltos de linea del modelo
     except Exception:  # noqa: BLE001 - sin comentario del LLM, frase fija

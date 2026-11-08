@@ -181,7 +181,6 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 | `ROMEO_TEMPERATURA_CHAT` | `0.7` | Temperatura del chat |
 | `ROMEO_MAX_FRASES`, `ROMEO_MAX_FRASES_CONSEJO` | `3`, `4` | Largo máximo de la respuesta |
 | `ROMEO_TURNOS_HISTORIAL` | `6` (`lanzar_romeo.sh` usa `3`) | Turnos que recuerda el chat |
-| `ROMEO_TRIVIA_DATO` | `0.3` | Probabilidad de dato curioso en la trivia |
 | `ROMEO_TRAZA_AFECTO` | `~/romeo_afecto.jsonl` | Traza del cálculo afectivo para la página `/calculo` del panel |
 | `PERF_MUESTREO_SEG` | `5` | Intervalo de muestreo de CPU y RAM |
 | `CHAT_LIBRE_REGISTRO` | `~/.romeo/chat_libre_training/conversaciones.jsonl` | Archivo del registro del Chat libre |

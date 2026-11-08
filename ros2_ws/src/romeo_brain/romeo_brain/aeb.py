@@ -100,13 +100,16 @@ _TONOS = {
          "que lo siga disfrutando." + _NATURAL,),
     ),
     "tristeza": (
-        ("La persona esta triste. Primero muestra que entiendes como se "
-         "siente, despues dale animo y sigue la conversacion sobre lo que le "
-         "paso." + _NATURAL,),
-        ("La persona esta muy triste. Acompañala de verdad: primero muestra "
-         "que entiendes lo que siente, despues dale animo y ayudala a "
-         "sentirse un poco mejor con algo que tenga que ver con lo que te "
-         "conto." + _NATURAL,),
+        # "Sin hacer ninguna pregunta" porque el prompt de base le permite
+        # una, y gemma3:4b la hacia en lugar de dar animo.
+        ("La persona esta triste. Responde en dos frases y sin hacer ninguna "
+         "pregunta. En la primera muestra que entiendes como se siente. En "
+         "la segunda dale animo: dile que esto va a mejorar o que puede "
+         "salir adelante." + _NATURAL,),
+        ("La persona esta muy triste. Responde en dos frases y sin hacer "
+         "ninguna pregunta. En la primera acompañala mostrando que entiendes "
+         "lo que siente. En la segunda dale animo con algo que tenga que ver "
+         "con lo que te conto." + _NATURAL,),
     ),
     "enojo": (
         ("La persona esta molesta. Ponte de su lado en lo que siente: muestra "
@@ -277,16 +280,16 @@ def como_se_siente(p):
 
 
 def tono_para(p, mensaje):
-    """El tono de mapear(), y si `mensaje` pregunta como esta Romeo, ademas
-    su animo de verdad para que lo diga."""
-    tono = p["tono"]
-    if mensaje and PREGUNTA_ANIMO.search(mensaje):
-        # En neutral se le da la frase hecha: sin ella el modelo contesta
-        # como una maquina ("funciono dentro de los parametros normales").
-        ejemplo = (" Dilo con naturalidad, por ejemplo: 'Estoy tranquilo, no me "
-                   "pasa nada'. Nunca hables de parametros ni de que eres una "
-                   "maquina." if not p["nivel"] else "")
-        tono = ((tono or "") + " Te acaban de preguntar como te sientes: "
-                "contestalo con sinceridad y en primera persona. Ahora mismo te "
-                f"sientes {como_se_siente(p)}.{ejemplo}").strip()
-    return tono
+    """El tono de mapear(); si `mensaje` pregunta como esta Romeo, solo su
+    animo de verdad para que lo diga. Con el tono hacia la persona al lado
+    se mezclaban ("Me parece incomodo escuchar sobre tu dolor")."""
+    if not (mensaje and PREGUNTA_ANIMO.search(mensaje)):
+        return p["tono"]
+    # En neutral se le da la frase hecha: sin ella el modelo contesta
+    # como una maquina ("funciono dentro de los parametros normales").
+    ejemplo = (" Dilo con naturalidad, por ejemplo: 'Estoy tranquilo, no me "
+               "pasa nada'. Nunca hables de parametros ni de que eres una "
+               "maquina." if not p["nivel"] else "")
+    return ("Te acaban de preguntar como te sientes. Responde en primera "
+            f"persona y di claramente que te sientes {como_se_siente(p)}. No "
+            f"cambies esa emocion por otra y no hagas ninguna pregunta.{ejemplo}")
