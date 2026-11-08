@@ -219,10 +219,8 @@ PAGINA = r"""<!doctype html>
       <span class="chip"><span class="punto" style="background:var(--triste)"></span> Triste</span>
       <span class="chip"><span class="punto" style="background:var(--enojo)"></span> Enojado</span>
       <span class="chip"><span class="punto" style="background:var(--normal)"></span> Normal</span>
-      <span class="chip"><span class="punto" style="border:2px solid var(--normal);box-sizing:border-box"></span> Frase anterior (vacío)</span>
-      <span class="chip"><span class="punto" style="background:linear-gradient(90deg,var(--feliz),var(--triste),var(--enojo))"></span> Frase actual (color de su emoción)</span>
     </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el círculo negro vacío es la frase anterior y el punto relleno es la actual, pintado con el color de su emoción, con una flecha de uno a otro. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si en una frase todo salió neutral, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. En el cubo de la izquierda el punto grande es <b>Romeo</b>, y en el de la derecha eres <b>tú</b>: su color dice la emoción. El círculo negro vacío es cómo estaba antes, con una flecha hacia cómo está ahora. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si tu voz y tu texto salen neutrales, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
   </div>
 
   <div class="tarjeta">
@@ -267,11 +265,11 @@ const textoEmo = (e) => e.clave === "neutral" ? "Normal" : (INTENS[e.nivel] + NO
 const centroDe = (quien) => quien === "romeo" ? (datos.base ? [datos.base.v, datos.base.a, datos.base.d] : [0.4, 0.3, 0.2]) : [0, 0, 0];
 
 function cubo(cont, quien) {
-  const cv = cont.querySelector("canvas"), w = cont.clientWidth, h = Math.min(w, 340), dpr = window.devicePixelRatio || 1;
+  const cv = cont.querySelector("canvas"), w = cont.clientWidth, h = Math.min(w, 420), dpr = window.devicePixelRatio || 1;
   cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + "px";
   const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
   const css = getComputedStyle(document.documentElement), col = (n) => css.getPropertyValue(n).trim();
-  const R = Math.min(w, h) * 0.27, cx = w / 2, cy = h / 2;
+  const R = Math.min(w, h) * 0.34, cx = w / 2, cy = h / 2;
   const c1 = Math.cos(giro.yaw), s1 = Math.sin(giro.yaw), c2 = Math.cos(giro.pitch), s2 = Math.sin(giro.pitch);
   const P = (v, a, d) => { const x1 = v * c1 + d * s1, z1 = -v * s1 + d * c1, y2 = a * c2 - z1 * s2, z2 = a * s2 + z1 * c2, k = 4 / (4 + z2); return [cx + x1 * R * k, cy - y2 * R * k, z2]; };
   const L = (p, q, c, wd = 1) => { const A = P(...p), B = P(...q); ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = wd; ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); };
@@ -322,16 +320,18 @@ function cubo(cont, quien) {
     }
     if (m.ultimo) {
       const ce = col(COLOR_EMO[m.clave]);
-      ctx.arc(m.x, m.y, 9, 0, 7); ctx.fillStyle = ce; ctx.fill();
+      ctx.arc(m.x, m.y, 12, 0, 7); ctx.fillStyle = ce; ctx.fill();
       ctx.strokeStyle = col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = ce;
     } else {
-      ctx.arc(m.x, m.y, 7, 0, 7); ctx.fillStyle = col("--tarjeta"); ctx.fill();
+      ctx.arc(m.x, m.y, 8, 0, 7); ctx.fillStyle = col("--tarjeta"); ctx.fill();
       ctx.strokeStyle = cNegro; ctx.lineWidth = 2.5; ctx.stroke();
       ctx.fillStyle = cNegro;
     }
     ctx.font = "bold 11px system-ui, sans-serif";
-    ctx.fillText(m.ultimo ? "ahora" : "antes", m.x, m.y - 15);
+    ctx.font = m.ultimo ? "bold 13px system-ui, sans-serif" : "bold 11px system-ui, sans-serif";
+    // "Romeo"/"Tu" arriba del punto grande y "antes" debajo del circulo, para que no se monten.
+    ctx.fillText(m.ultimo ? (quien === "romeo" ? "Romeo" : "Tú") : "antes", m.x, m.y + (m.ultimo ? -21 : 19));
   }
   if (!n) { ctx.fillStyle = col("--suave"); ctx.font = "italic 13px system-ui, sans-serif"; ctx.fillText("Háblale a Romeo para ver el recorrido.", cx, h - 14); }
 }
