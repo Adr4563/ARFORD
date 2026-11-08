@@ -146,19 +146,28 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 |---|---|---|
 | `mic_activo` | `true` | `false` desactiva el STT y deja solo el teclado |
 | `carrito_port` | `/dev/ttyACM0` | Puerto Serial del ESP32-S3 |
-| `chat_model` |  `romeo` | Se pasa al orquestador como `CHAT_MODEL` |
-| `salida_trivia_model` | `romeo-salida-trivia-v2` | Se pasa como `SALIDA_TRIVIA_MODEL` |
-| `chat_server_host` | `http://localhost:11434` | Se pasa como `CHAT_SERVER_HOST` |
+| `chat_model` | `gemma3:4b` | Se pasa al orquestador como `CHAT_MODEL` |
+| `trivia_corrector_model` | `gemma3:4b` | Se pasa como `TRIVIA_CORRECTOR_MODEL` |
+| `chat_server_host` | `http://<ROMEO_PC>:11434` | Se pasa como `CHAT_SERVER_HOST` |
+| `stt_servidor` | `http://<ROMEO_PC>:8082` | Servidor de STT, SER y TER. Vacío = transcribir en la Pi |
+| `tts_servidor` | `http://<ROMEO_PC>:8083` | Servidor de TTS. Vacío = sintetizar en la Pi |
 
 ### Parámetros ROS 2 (`src/romeo_bringup/config/romeo_params.yaml`)
 
 | Nodo | Parámetro | Por defecto |
 |---|---|---|
-| `communication_node` | `voz_piper_modelo` | `""` (usa `~/piper-voces/es_MX-claude-high.onnx`) |
+| `communication_node` | `voz_motor` | `vits` (`vits` \| `piper`) |
+| `communication_node` | `voz_vits_dir` | `/home/pi/.romeo/modelos/vits-piper-es_MX-claude-high` |
 | `communication_node` | `mic_activo` | `true` |
-| `communication_node` | `mic_dispositivo` | `Romeo` (subcadena del nombre; `""` = default del sistema) |
-| `communication_node` | `stt_tam` | `tiny` (`tiny` \| `base` \| `small`) |
-| `communication_node` | `stt_hilos` | `2` (más hilos resulta **más lento**, está medido) |
+| `communication_node` | `mic_dispositivo` | `Board: USB Audio` (subcadena del nombre; `""` = default del sistema) |
+| `communication_node` | `stt_motor` | `nemo` (`nemo` \| `whisper`) |
+| `communication_node` | `stt_tam` | `small` (solo con `stt_motor: whisper`) |
+| `communication_node` | `stt_hilos` | `3` |
+| `visualization_faces_node` | `fer_continuo` | `true` |
+| `visualization_faces_node` | `fer_fps` | `5.0` |
+| `visualization_faces_node` | `fer_bajo_demanda` | `true` (analiza caras solo mientras alguien habla) |
+| `visualization_faces_node` | `fer_ventana_seg` | `1.5` |
+| `visualization_faces_node` | `fer_resolucion` | `[320, 240]` |
 | `moving_control_node` | `carrito_port` | `/dev/ttyACM0` |
 | `orchestrator_node` | `perfil_afectivo` | `OPTIMISTIC` (`OPTIMISTIC` \| `EMPATHETIC`) |
 
@@ -168,14 +177,19 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 
 | Variable | Por defecto | Uso |
 |---|---|---|
-| `CHAT_SERVER_HOST`, `CHAT_MODEL`, `SALIDA_TRIVIA_MODEL` | ver [Modelos](../README.md#modelos-de-lenguaje-ollama) | Conexión con Ollama. El launch las fija a partir de sus argumentos |
+| `CHAT_SERVER_HOST`, `CHAT_MODEL`, `TRIVIA_CORRECTOR_MODEL` | ver [Modelos](../README.md#modelos-de-lenguaje-ollama) | Conexión con Ollama. El launch las fija a partir de sus argumentos |
+| `ROMEO_TEMPERATURA_CHAT` | `0.7` | Temperatura del chat |
+| `ROMEO_MAX_FRASES`, `ROMEO_MAX_FRASES_CONSEJO` | `3`, `4` | Largo máximo de la respuesta |
+| `ROMEO_TURNOS_HISTORIAL` | `6` (`lanzar_romeo.sh` usa `3`) | Turnos que recuerda el chat |
+| `ROMEO_TRIVIA_DATO` | `0.3` | Probabilidad de dato curioso en la trivia |
+| `ROMEO_TRAZA_AFECTO` | `~/romeo_afecto.jsonl` | Traza del cálculo afectivo para la página `/calculo` del panel |
 | `PERF_MUESTREO_SEG` | `5` | Intervalo de muestreo de CPU y RAM |
 | `CHAT_LIBRE_REGISTRO` | `~/.romeo/chat_libre_training/conversaciones.jsonl` | Archivo del registro del Chat libre |
 | `CHAT_LIBRE_REGISTRAR` | `1` | `0` o `false` desactiva el registro |
 | `ROMEO_EMPATIA`, `ROMEO_ANIMO_V/A/D`, `ROMEO_DECAIMIENTO`, `ROMEO_LATENCIA` | los del perfil | Pisan un valor del perfil afectivo sin crear otro |
-| `ROMEO_PASO_DECAIMIENTO` | `5.0` | Segundos entre pasos de vuelta al ánimo base |
+| `ROMEO_PASO_DECAIMIENTO` | `20.0` | Segundos entre pasos de vuelta al ánimo base |
 | `ROMEO_AEB_TONO` | `auto` | Tono afectivo en el chat: `auto` (solo modelos sin fine-tuning), `1` siempre, `0` nunca |
-| `ROMEO_AEB_MOVIMIENTO` | `1` | `0` desactiva el gesto físico de alegría |
+| `ROMEO_AEB_MOVIMIENTO` | `1` | `0` desactiva el gesto físico del AEB |
 
 ### Variables de entorno de `romeo_drivers` (STT)
 
@@ -183,6 +197,7 @@ Los parámetros ROS 2 `stt_tam` y `stt_hilos` tienen prioridad sobre `ROMEO_STT_
 
 | Variable | Por defecto | Uso |
 |---|---|---|
+| `ROMEO_STT_MOTOR` | `nemo` | Motor de STT en la PC: `nemo` o `whisper` |
 | `ROMEO_STT_MODELOS_DIR` | `~/.romeo/modelos` | Carpeta de los modelos de sherpa-onnx |
 | `ROMEO_STT_TAM` | `tiny` | Modelo de whisper (lo sobreescribe `stt_tam`) |
 | `ROMEO_STT_HILOS` | `2` | Hilos de onnxruntime (lo sobreescribe `stt_hilos`) |
@@ -191,7 +206,9 @@ Los parámetros ROS 2 `stt_tam` y `stt_hilos` tienen prioridad sobre `ROMEO_STT_
 
 La normalización **no es opcional en la práctica**: el micrófono de la placa entrega la señal muy floja (pico del 26-31 % de la escala hablándole de cerca), y con ese nivel whisper alucina en vez de transcribir — devolvía `[MÚSICA]` o repetía "hola, hola, hola…". Ver el detalle en `_stt_engine.py`.
 
-### Modelos de STT (una sola vez, en la Pi)
+### Modelos de STT (una sola vez)
+
+Con `stt_servidor` configurado, que es lo normal, la Pi solo necesita `silero_vad.onnx`; los demás modelos van en la PC y se instalan con `bash modelos/instalar_modelos.sh`. Lo de abajo es para transcribir en la Pi con whisper.
 
 ```bash
 mkdir -p ~/.romeo/modelos && cd ~/.romeo/modelos
@@ -220,8 +237,8 @@ pip install -r src/romeo_brain/requirements.txt
 colcon build --symlink-install
 source install/setup.bash
 
-# 3. Tener Ollama en marcha con los 3 modelos importados
-#    (el CHAT_MODEL y romeo-salida-trivia-v2, con `ollama create`)
+# 3. Tener Ollama en marcha en la PC con el modelo descargado
+#    (ollama pull gemma3:4b) y los servidores stt_server.py y tts_server.py
 
 # 4. Lanzar todo
 ros2 launch romeo_bringup romeo_bringup.launch.py
@@ -267,17 +284,17 @@ ros2 service call /romeo/speak romeo_interfaces/srv/Speak "{text: 'probando la v
 
 1. Llega el texto por `/romeo/user_input`.
 2. `enrutar()` lo clasifica como Chat libre (sin LLM).
-4. `llama_client` genera la respuesta con `CHAT_MODEL`, sin system prompt: el comportamiento viene del fine-tuning.
+4. `agente_chat` arma el *system prompt* (base, trato y tono del AEB, o el caso de `seguridad.py`) y `llama_client` genera la respuesta con `CHAT_MODEL`.
 6. `FaceCommand` `speaking` → `Speak` (bloquea) → `FaceCommand` `content`.
 
 ### Trivia
 
-1. Al entrar en Trivia se ofrecen 5 temas al azar y el usuario elige uno (coincidencia exacta o aproximada, sin LLM).
-2. `preguntas.py` carga una tanda de 5 preguntas del tema.
-3. Se hace la pregunta con la cara `speaking` y `Speak`. Si es musical, primero suena la canción completa (`PlayMusic` con `esperar=true`).
-4. Con la respuesta del usuario, `agente_trivia` decide si es correcta y elige la cara y ARFORD dice una frase fija elegida al azar.
-5. La reacción sigue un **orden estricto**: primero `Speak` (bloquea) y después `FaceCommand`, `PlayMusic` (`esperar=false`) y `MotionCommand`, en paralelo.
-6. Se pasa a la siguiente pregunta o se cierra con el resumen de aciertos.
+1. Al decir «trivia», Romeo avisa cómo salir y empieza sin pedir tema.
+2. `preguntas.preguntas_mezcladas()` arma una cola de 5 preguntas al azar, sin repetir y sin las de canciones. Al vaciarse se recarga sola.
+3. Se hace la pregunta con la cara `speaking` y `Speak`.
+4. Con la respuesta, `agente_trivia.juzgar()` hace dos llamadas al LLM: una decide SI o NO y otra escribe el comentario, con el tono de `aeb.tono_trivia()`.
+5. La reacción sigue un **orden estricto**: primero `Speak` (bloquea) y después la cara del veredicto, que sale del dataset.
+6. Se pasa a la siguiente pregunta. El juego termina cuando la persona pide salir, y ahí Romeo dice el marcador.
 
 ### Juego de emociones
 
@@ -289,7 +306,7 @@ ros2 service call /romeo/speak romeo_interfaces/srv/Speak "{text: 'probando la v
 
 ### Salir de Trivia a mitad de una pregunta
 
-Si el mensaje es corto (4 palabras o menos) y no contiene ninguna palabra clave de salida, se toma como respuesta sin consultar al LLM. Si no, decide `SALIDA_TRIVIA_MODEL`, y si Ollama no responde se usan listas de palabras clave.
+Si el mensaje contiene una frase de `frases.SALIR_TRIVIA` o `frases.TEMA_PERSONAL`, Romeo dice el marcador y sale. Si además contó algo (más de 4 palabras), el chat le responde en el mismo turno. No se consulta al LLM para decidirlo.
 
 ---
 
@@ -299,20 +316,20 @@ Sigue el framework de la tesis de Rocha et al. (UFF): PULSE → ROSE → AEB. To
 
 | Componente | Archivo | Qué hace en ARFORD |
 |---|---|---|
-| **PULSE** (ánimo del usuario) | `ter.py`, `estado_afectivo.py` | En cada turno, `ter.analizar()` lee la emoción del texto por palabras clave y la convierte a VAD. La cámara **no** entra: en el juego de caras el niño imita, no expresa lo que siente |
+| **PULSE** (ánimo del usuario) | `estado_afectivo.py` | En cada frase lee la voz (SER), el texto (TER) y la cara (FER), convierte cada una a VAD y las fusiona pesando por su confianza. El juego de caras no entra: ahí la persona imita, no expresa lo que siente |
 | **ROSE** (ánimo de Romeo) | `estado_afectivo.EstadoAfectivo` | `empatizar()` acerca el ánimo al del usuario según la empatía del perfil; `decaer()` lo devuelve a la base según el tiempo real transcurrido |
 | **AEB** (cómo lo expresa) | `aeb.py` | `mapear()` devuelve `{estado, emocion, nivel (L0-L4), cara, tono, movimiento, musica}`. El orquestador decide qué usa |
 
 Qué parámetros del AEB se usan y dónde:
 
 - **Cara de reposo** (la que pone Romeo mientras escucha): en todos los modos.
-- **Tono**: solo en Chat libre, como una frase de estilo en el *system prompt* del LLM. Con modelos fine-tuneados (`romeo*`, `arford*`) no se manda, salvo `ROMEO_AEB_TONO=1`.
-- **Movimiento**: solo en Chat libre y solo con alegría alta (L3: `RR`, L4: `ROTATE360`). La tristeza y el enojo nunca mueven el carrito.
+- **Tono**: en Chat libre (`_TONOS`) y en el comentario de la Trivia (`_TONOS_TRIVIA`), como guías, sin frases fijas. Nivel L1-L2 o L3-L4. `lanzar_romeo.sh` fija `ROMEO_AEB_TONO=1`.
+- **Movimiento**: gesto de ida y vuelta desde L2. Feliz: avanza y vuelve. Enojado: retrocede y vuelve. Triste: no se mueve.
 - **Música**: no se usa; las canciones del robot son de la trivia y no expresan un ánimo.
 
-Las caras de la trivia y del juego de caras no las toca el AEB: siguen saliendo del dataset y del propio juego.
+Las caras del veredicto de la trivia y del juego de caras no las toca el AEB: salen del dataset y del propio juego. Con tristeza, Romeo mantiene la cara normal (`ROMEO_CARA_TRISTE=1` la vuelve a mostrar).
 
-Pruebas sin ROS: `python probar_ter.py` (TER, ROSE, perfiles y AEB) y `python probar_flujo.py` (sesión completa por terminal).
+Cada paso del cálculo se registra en `traza_afectiva.py` y se ve en vivo en la página `/calculo` de `pruebas/panel_robot/panel.py`.
 
 ---
 
@@ -323,9 +340,9 @@ Pruebas sin ROS: `python probar_ter.py` (TER, ROSE, perfiles y AEB) y `python pr
 - **Llamar a servicios desde un callback sin bloqueo mutuo (deadlock).** `client.call()` se queda bloqueado con un `SingleThreadedExecutor`; la solución es `call_async()` con una espera activa corta y un `MultiThreadedExecutor`. Está documentado en `romeo_brain/_ros_bridge.py::_llamar_servicio_sync()` y es lo más fácil de romper al modificar este código.
 - **Degradación elegante.** Sin cámara, carrito o `mpv`, el nodo correspondiente sigue vivo y responde `detected=false` o `success=false`, sin lanzar nunca una excepción no controlada. El robot sigue conversando.
 - **"Salir" termina la sesión, no el proceso.** En el original, "salir" cerraba el script. Aquí ARFORD se despide y queda lista para el siguiente usuario, como corresponde a un robot desplegado (`orchestrator_node.py::_finalizar_sesion()`).
-- **Mandan las mediciones de latencia.** El router y el corrector dejaron de usar el LLM por mediciones hechas en la Pi. Ninguna capa nueva (tópicos, servicios, DDS) debería añadir una latencia perceptible a la conversación.
-- **STT: `whisper-small` con 3 hilos, por medición.** `_stt_engine.py` usa sherpa-onnx porque corre sobre `onnxruntime`, que ya está instalado para el detector de emociones, y porque no arrastra el fallo de hilos de `faster-whisper`. Medido en la Pi con un audio de 3.8 s (`scripts/bench_stt.py`): `tiny`/2 hilos da 2.22 s sin carga y **2.45 s con Ollama generando**, contra 4.41 s de `base`/2 hilos. Dos resultados contraintuitivos: **más hilos es más lento** (4 hilos sube a 3.45 s y dispara la varianza) y el mínimo no está en 1 hilo (3.29 s bajo carga). El precio de `tiny` es que transcribe "Hola Laura" donde `base` acierta "Hola Romeo"; para Trivia lo absorbe el `agent_corrector`, pero si el nombre llega a importar hay que volver a `base`.
-- **Recursos muy limitados.** La Pi 4 no tiene GPU y reparte la CPU entre Ollama (~3 de sus 4 núcleos mientras genera, con ~545 MB de RAM residente), la síntesis de voz, la decodificación de video y la cámara. Cada nodo nuevo añade su propio proceso y la sobrecarga de DDS.
+- **Mandan las mediciones de latencia.** El LLM, el STT y el TTS se movieron a la PC porque con todo dentro la Pi llegaba a 3.3 GB de RAM y un turno tardaba ~40 s. Ninguna capa nueva (tópicos, servicios, DDS) debería añadir una latencia perceptible a la conversación.
+- **STT: NVIDIA FastConformer en la PC, por medición.** Transcribe mejor en español y es unas 4 veces más rápido que whisper-base (ver `_stt_engine.py`). Whisper queda como alternativa con `ROMEO_STT_MOTOR=whisper`.
+- **Recursos muy limitados.** La Pi 4 no tiene GPU y reparte la CPU entre los nodos, el VAD, la decodificación de video y la cámara; la PC tiene 8 GB de RAM y corre gemma3:4b en CPU. Por eso Ollama atiende una petición a la vez y FER solo analiza mientras alguien habla.
 
 ---
 

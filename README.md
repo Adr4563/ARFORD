@@ -34,11 +34,11 @@ Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reempl
 
 | Modo | Qué ocurre |
 |---|---|
-| **Chat libre** | Conversa de forma abierta y recuerda fragmentos de conversaciones anteriores cuando son relevantes. |
-| **Trivia** | Ofrece 5 temas al azar entre 51 (248 preguntas en total) y hace una tanda de 5 preguntas. Reacciona a cada respuesta con voz, cara, música y movimiento. |
+| **Chat libre** | Conversa de forma abierta con gemma3:4b y recuerda los últimos turnos. Adapta el tono al ánimo de Romeo, que sigue al de la persona. |
+| **Trivia** | Empieza al decir «trivia» y encadena preguntas al azar de un banco de 185 (sin las de canciones ni las del juego de caras) hasta que la persona pide parar. Una IA decide si acertó y comenta como una persona, con un tono que cambia según el ánimo de Romeo. |
 | **Juego de emociones** | Pide al usuario que imite una expresión ("¡Hazme una cara de feliz!"), la reconoce con la cámara y le dice si acertó. |
 
-En cada reacción, ARFORD sigue siempre el mismo **orden**: primero habla, y después cambia de cara, suena la música y se mueve. Esa secuencia fija hace que la interacción sea predecible.
+En cada reacción, ROMEO sigue siempre el mismo **orden**: primero habla y después cambia de cara. Esa secuencia fija hace que la interacción sea predecible. El único movimiento del carrito lo decide la capa afectiva (AEB).
 
 Si falta algún componente (cámara, carrito, pantalla), el robot sigue conversando con lo que tenga disponible.
 
@@ -49,10 +49,11 @@ Si falta algún componente (cámara, carrito, pantalla), el robot sigue conversa
 | Componente | Detalle | Conexión |
 |---|---|---|
 | **Computador principal** | Raspberry Pi 4, 8 GB de RAM, sin GPU (ARM Cortex-A72) | — |
-| **Motores** | Carrito mecanum de 4 ruedas, driver L298N, controlado por un **ESP32-S3 DevKitC-1** | Serial/USB a 115200 baudios (`/dev/ttyACM0` por defecto) |
+| **PC de inferencia** | PC con Windows 10 Pro, 8 GB de RAM, sin GPU | Red local; ejecuta el LLM, STT, TTS, SER y TER |
+| **Motores** | Carrito mecanum de 4 ruedas, 2 drivers L298N, controlado por un **ESP32-S3 DevKitC-1** | Serial/USB a 115200 baudios (`/dev/ttyACM0` por defecto) |
 | **Cámara** | Raspberry Pi AI Camera (Sony IMX500) | `picamera2` |
-| **Pantalla** | LCD/HDMI, sin sesión gráfica (headless) | `mpv --vo=drm` |
-| **Micrófono y voz remotos** | Navegador del teléfono (Web Speech API) | Página web servida por la Pi en el puerto 8081 |
+| **Pantalla** | MPI5008, 5 pulgadas, 800 × 480, HDMI, sin sesión gráfica (headless) | `mpv --vo=drm` |
+| **Audio** | Waveshare ESP32-S3-AUDIO-Board (micrófonos y altavoz) | USB Audio Class 2.0 |
 
 ### Protocolo de motores
 
@@ -72,12 +73,14 @@ El firmware tiene un **watchdog**: si no llega otro comando en 500 ms, detiene l
 
 ### Cámara y emociones
 
-El NPU del IMX500 **no se usa** para las emociones, porque no existe un modelo de expresión facial publicado para su formato `.rpk`. La detección corre en la **CPU** con `onnxruntime` y dos modelos ONNX preentrenados:
+La lectura facial (FER) corre con dos modelos ONNX preentrenados:
 
-- `face_detection_yunet_2023mar.onnx` (~230 KB): detector de caras YuNet.
-- `emotion-ferplus-8.onnx` (~35 MB): clasificador FER+. De sus 8 clases se usan 4: `Feliz`, `Triste`, `Enojado` y `Neutral`.
+- `face_detection_yunet_2023mar.onnx` (~230 KB): detector de caras YuNet. Corre en la **CPU**. También hay una versión para el acelerador del IMX500 (`imx500_network_yunet.rpk`), que se usa si la Pi tiene permiso de lectura en `/sys/kernel/debug`.
+- `emotion-ferplus-8.onnx` (~35 MB): clasificador FER+. Sus 8 clases se agrupan en las 4 del robot: felicidad, tristeza, enojo y neutral.
 
-Se hacen hasta 15 intentos de captura y detección, con 0.2 s entre intentos. Es obligatorio llamar a `picam2.stop()` **y** a `picam2.close()`: sin el `close()`, el siguiente `Picamera2()` del mismo proceso no puede adquirir la cámara.
+La cámara queda abierta, pero YuNet y FER+ solo trabajan **mientras alguien habla** (5 cuadros por segundo a 320 × 240): `communication_node` avisa por `/romeo/voz_detectada`. El juego de caras la activa por su cuenta. Con `fer_bajo_demanda: false` clasifica todo el tiempo.
+
+En el juego de caras, si el modo continuo no está activo, se hacen hasta 15 intentos de captura y detección, con 0.2 s entre intentos. Es obligatorio llamar a `picam2.stop()` **y** a `picam2.close()`: sin el `close()`, el siguiente `Picamera2()` del mismo proceso no puede adquirir la cámara.
 
 ### Pantalla
 
@@ -91,19 +94,19 @@ El backend se elige automáticamente: **Linux sin `$DISPLAY` → DRM (mpv)**. En
 
 ## Modelos de lenguaje (Ollama)
 
-Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con OpenAI (`/v1/chat/completions`). Los tres modelos son fine-tunes **LoRA** de `qwen2.5:0.5b` (~397 MB cada uno) y se importan con `ollama create`, no con `ollama pull`.
+Ollama corre **en la PC**, no en la Pi, y se usa su API compatible con OpenAI (`/v1/chat/completions`). Un solo modelo hace todo: **`gemma3:4b`**, sin fine-tuning, descargado con `ollama pull`.
 
-| Variable de entorno | Valor por defecto | Rol |
+| Variable de entorno | Valor al lanzar | Rol |
 |---|---|---|
-| `CHAT_MODEL` |  `romeo` | Genera las respuestas del Chat libre |
-| `SALIDA_TRIVIA_MODEL` | `romeo-salida-trivia-v2` | Decide si el mensaje es una RESPUESTA o una petición de SALIR a mitad de una pregunta de Trivia |
+| `CHAT_MODEL` | `gemma3:4b` | Respuestas del Chat libre |
+| `TRIVIA_CORRECTOR_MODEL` | `gemma3:4b` | Veredicto y comentario de la Trivia |
 
-- Se eligió `qwen2.5:0.5b` en lugar de `llama3.2:3b` tras comparar 7 modelos: 484 MB de RAM y 1-3 s por respuesta, frente a 2.5 GB y 7-12 s, con la misma calidad medida.
-- Conviene usar `OLLAMA_KEEP_ALIVE=-1` para que los modelos no se descarguen de memoria: recargarlos desde disco costaba entre 15 y 28 s en el peor caso.
-- **El router y el corrector no usan LLM**, por velocidad y precisión:
-  - `orchestrator_node.enrutar()`: expresión regular. Va a Trivia solo si el mensaje nombra la trivia o el juego de caras; todo lo demás es Chat libre.
-  - `agente_trivia.evaluar_respuesta()`: comparación numérica si la respuesta esperada es un número; si es texto, normalización, coincidencia de palabras clave y comparación aproximada (`difflib`). Acierta el 98.4 % sobre 187 preguntas reales y nunca da por buena una respuesta incorrecta.
-- Si Ollama no responde, `clasificar_salida_trivia()` devuelve `None` y el orquestador recurre a listas de palabras clave.
+- **Chat libre:** temperatura 0.7, hasta 3 frases (4 si piden un consejo) y memoria de los últimos 3 turnos. El *system prompt* se arma en `agente_chat.py` con la base, el trato (sin apodos y neutro de género) y el tono del AEB.
+- **Casos graves** (`seguridad.py`): si la persona habla de hacerse daño, de que la lastiman o de lastimar a alguien, la instrucción reemplaza al tono. Romeo escucha y pide hablar con alguien de confianza.
+- **Trivia** (`agente_trivia.juzgar`): dos llamadas. La primera, con temperatura 0.0, contesta solo SI o NO. La segunda, con 0.7, escribe el comentario; un dato curioso sale el 30 % de las veces.
+- **Enrutado sin LLM:** `orchestrator_node.enrutar()` usa una expresión regular. Va a Trivia solo si el mensaje nombra la trivia o el juego de caras; todo lo demás es Chat libre.
+- **Salir de la Trivia sin LLM:** se buscan las frases de `frases.SALIR_TRIVIA` y `frases.TEMA_PERSONAL`.
+- Si el LLM no responde, el chat lo avisa y sigue vivo, y la trivia usa frases de respaldo.
 
 ---
 
@@ -111,27 +114,23 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 
 ### Salida (lo que dice ROMEO)
 
-Hay tres motores de voz, que se eligen con el parámetro `voz_motor`:
-
-| Motor | Cómo funciona | Cuándo usarlo |
-|---|---|---|
-| `telefono` (**por defecto**) | Sintetiza el **navegador del teléfono** (`speechSynthesis`), que recibe el texto por SSE | No consume CPU en la Pi. Requiere tener la página abierta y haber tocado "Activar voz" |
-| `piper` | TTS neuronal 100 % local (ONNX), voz `es_MX-claude-high` (~60 MB) | Sin internet. Usa un solo hilo para dejar CPU a Ollama (sintetiza igual de rápido con 1 hilo que con 4) |
-| `edge` | `edge-tts` (Microsoft, en la nube), voz `es-AR-ElenaNeural` | **Respaldo** automático si nadie conecta el teléfono en 20 s o si Piper no carga |
-
-ARFORD espera a terminar de hablar antes de continuar con el turno.
+El TTS corre en la PC (`tts_server.py`, puerto 8083): **Piper VITS, voz `es_MX-claude-high`**, con sherpa-onnx. La Pi pide el audio y lo reproduce en la placa de audio. `voz_motor` admite `vits` (por defecto) y `piper`. ROMEO espera a terminar de hablar antes de continuar con el turno.
 
 ### Entrada (lo que dice el usuario)
 
-No hay reconocimiento de voz local en la Pi. Se probó `faster-whisper`, pero se cuelga sin dar error si se construye fuera del hilo principal, y ese problema no se resolvió.
+El micrófono es el de la placa de audio. La Pi detecta el inicio y el fin de cada frase con **Silero VAD** y manda el audio a la PC (`stt_server.py`, puerto 8082), que devuelve:
 
-La transcripción la hace el **navegador del teléfono** (`SpeechRecognition`). Funciona bien en Chrome para Android; Safari en iOS no lo implementa. Además exige un contexto seguro (HTTPS o localhost), y la Pi sirve HTTP plano en una IP de la red local, así que hay que activar una vez en cada teléfono el flag de Chrome que trata ese origen como seguro.
+- el texto, con **NVIDIA FastConformer en español** (`ROMEO_STT_MOTOR=nemo`; `whisper` es la alternativa);
+- la emoción de la voz (**SER**, wav2vec2 MESD);
+- la emoción del texto (**TER**, RoBERTuito).
+
+Mientras Romeo suena, el audio que entra se descarta para que no se transcriba a sí mismo. Si llega una frase mientras sigue el turno anterior, también se descarta.
 
 ---
 
 ## Datos
 
-- **Preguntas de Trivia:** `romeo_brain/data/preguntas.jsonl`, con 248 preguntas en 51 temas, cargadas en memoria al iniciar. Cada fila tiene esta forma:
+- **Preguntas de Trivia:** `romeo_brain/data/preguntas.jsonl`, con 211 filas: 200 tienen respuesta esperada y 5 de ellas son de canciones, que la trivia ya no usa. Se cargan en memoria al iniciar. Cada fila tiene esta forma:
   ```json
   {"id": 1, "pregunta": "...", "cara": "Neutral",
    "respuesta_esperada": "...", "tema": "Arte, música y cultura - Nivel 1",
@@ -139,8 +138,8 @@ La transcripción la hace el **navegador del teléfono** (`SpeechRecognition`). 
    "musical": "", "desplazamiento": "Adelante"}
   ```
   `desplazamiento` admite `Adelante`, `Atrás`, `Izquierda`, `Derecha` y `Girar 360°`. Hay 13 preguntas duplicadas por texto (con `id` distinto) que siguen sin resolverse.
-- **Personalidad:** ARFORD tiene un perfil Big Five (OCEAN) fijo, en escala 1-5: **Extraversión 2, Amabilidad 2, Responsabilidad 5, Neuroticismo 2, Apertura 3**. No se aplica por system prompt, sino que está **incorporado en los modelos por fine-tuning** (`romeo-chat-libre-v4`). Hubo un `personalidad.py` que lo convertía en un system prompt para modelos base; se eliminó porque con los fine-tunes del robot siempre quedaba vacío. Si se usa un modelo sin fine-tuning, hay que volver a construirlo a partir de estos valores.
-- **Música:** `romeo_drivers/data/musica/` contiene `angry-birds`, `danza-kuduro`, `minecraft`, `more-than-words-heaven`, `plantas-vs-zombies`, `super-mario-bros` y `zelda` (mp3).
+- **Personalidad:** el trato de ROMEO lo definen los prompts de `agente_chat.py`; `gemma3:4b` no trae personalidad entrenada.
+- **Música:** `romeo_drivers/data/musica/` contiene `angry-birds`, `danza-kuduro`, `minecraft`, `more-than-words-heaven`, `plantas-vs-zombies`, `super-mario-bros` y `zelda` (mp3). La trivia ya no usa las preguntas de canciones.
 
 ---
 
@@ -156,6 +155,10 @@ Socially-Friendly-Robot-Romeo-Astro/
 │       ├── romeo_drivers/      nodos de hardware: voz, cámara y pantalla, motores
 │       ├── romeo_brain/        el cerebro: máquina de estados de la conversación
 │       └── romeo_bringup/      launch y parámetros
+├── pruebas/
+│   ├── web/               simulación de un turno completo en la PC, sin la Pi
+│   └── panel_robot/       panel en vivo del robot: resultados, cálculo VAD y carrito
+├── modelos/               modelos de IA (Git LFS) y su instalador
 ├── firmware-audio-board/  firmware de la placa de audio ESP32-S3
 │   ├── README.md          documentación del firmware
 │   └── main/              el código (C, ESP-IDF)
@@ -172,7 +175,7 @@ El **carrito mecanum** lo controla un ESP32-S3-DevKitC-1 que traduce comandos de
 
 ## Inicio rápido
 
-Requisitos: la Raspberry Pi del robot corre **Ubuntu con ROS 2 lyrical**; también vale cualquier distro de ROS 2 reciente (Jazzy o posterior) en otra máquina o WSL2. Además `mpv` y **Ollama** con los 3 modelos importados.
+Requisitos: la Raspberry Pi del robot corre **Ubuntu 26.04 con ROS 2 Lyrical**, con `mpv`. La PC corre **Ollama con `gemma3:4b`** y los servidores `stt_server.py` y `tts_server.py`; la Pi los encuentra con la variable `ROMEO_PC`.
 
 ```bash
 cd ros2_ws
@@ -181,5 +184,7 @@ colcon build --symlink-install
 source install/setup.bash
 ros2 launch romeo_bringup romeo_bringup.launch.py
 ```
+
+Para ver los resultados en vivo, corre `python3 pruebas/panel_robot/panel.py` en la Pi (lee el log de `ros2 launch`, por defecto `~/romeo_run.log`) y abre `http://<ip-de-la-pi>:8090/`.
 
 Los pasos completos, las opciones de configuración y cómo comprobar que todo funciona están en [`ros2_ws/README.md`](ros2_ws/README.md#instalación-y-ejecución).
