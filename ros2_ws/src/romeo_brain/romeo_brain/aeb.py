@@ -118,6 +118,56 @@ _TONOS = {
     ),
 }
 
+# Como comenta la TRIVIA segun el animo de Romeo (agente_trivia._comentar).
+# El animo sigue al de la persona (empatia), asi que esto es reaccionar a
+# como esta ella. Neutral comenta como siempre (sin tono). Mismo criterio
+# que _TONOS: dice QUE lograr, no que frase decir, para que no se repita.
+# Sin palabras con genero: "con calma" y no "tranquilo/a".
+_TONOS_TRIVIA = {
+    # emocion: ((L1-L2 si acierta, L1-L2 si falla), (L3-L4 si acierta, L3-L4 si falla))
+    "felicidad": (
+        ("Estas de buen animo: felicitala con alegria.",
+         "Estas de buen animo: tomalo con buen humor y animala a seguir."),
+        ("Estas muy contento: premiala con mucho entusiasmo, como un logro grande.",
+         "Estas muy contento: motivala con energia, que la siguiente la saca."),
+    ),
+    "tristeza": (
+        ("La persona esta algo desanimada: destaca que lo hizo bien para "
+         "levantarle el animo, con calidez y sin exclamaciones fuertes.",
+         "La persona esta algo desanimada: dile que no se preocupe y que en "
+         "la proxima lo va a lograr, con calidez y sin exclamaciones fuertes."),
+        ("La persona esta muy desanimada: habla suave y breve, y hazle notar "
+         "que lo hizo bien para que se sienta mejor.",
+         "La persona esta muy desanimada: habla suave y breve, quitale el "
+         "peso: que no se preocupe, que la proxima sale."),
+    ),
+    "enojo": (
+        ("La persona esta algo molesta: reconocelo con calma, sin exagerar.",
+         "La persona esta algo molesta: dile que no se preocupe y que la "
+         "proxima le va a salir. Hablale con calma y serenidad."),
+        ("La persona esta muy molesta: con calma y pocas palabras, reconocelo "
+         "con serenidad.",
+         "La persona esta muy molesta: dile que no pase nada, que no se "
+         "preocupe y que la proxima sale. Hablale con calma, sin "
+         "exclamaciones ni apurarla."),
+    ),
+}
+
+
+def tono_trivia(p, acerto):
+    """Guia para el comentario de trivia segun el AEB `p` (aeb.mapear) y el
+    veredicto, o None si Romeo esta neutral: entonces comenta como siempre.
+
+    Se da SOLO la guia del veredicto que toco: con las dos juntas la IA las
+    mezclaba ("no te preocupes por el error" cuando habia acertado)."""
+    if not p or not p.get("nivel"):
+        return None
+    tonos = _TONOS_TRIVIA.get(p.get("emocion"))
+    if not tonos:
+        return None
+    return tonos[0 if p["nivel"] <= 2 else 1][0 if acerto else 1]
+
+
 # Gesto fisico por (emocion, nivel). Un GESTO de ida y vuelta por emocion:
 #
 #   Neutro   -> nada

@@ -24,7 +24,7 @@ propia pregunta en preguntas.jsonl.
 import os
 import random
 
-from . import frases, llama_client
+from . import aeb, frases, llama_client
 
 # Modelo del LLM que juzga las respuestas de trivia.
 CORRECTOR_LLM = os.environ.get("TRIVIA_CORRECTOR_MODEL", "romeo")
@@ -47,7 +47,7 @@ _PROMPT_COMENTARIO = (
     "La persona respondio: {usuario}\n"
     "{resultado}\n\n"
     "Dile algo como lo diria una persona, con tus propias palabras y en "
-    "{frases} cortas: {que_hacer}{dato} Termina con una frase corta para "
+    "{frases} cortas: {que_hacer}{dato}{tono} Termina con una frase corta para "
     "pasar a la siguiente pregunta, como 'Vamos con la siguiente', sin "
     "preguntar nada. Tutea, sin apodos como 'pequeño' o 'campeón', sin "
     "palabras con genero como 'listo' o 'lista', sin emojis. Escribe solo lo "
@@ -59,8 +59,13 @@ _PROMPT_COMENTARIO = (
 PROB_DATO = float(os.environ.get("ROMEO_TRIVIA_DATO", "0.3"))
 
 
-def _comentar(pregunta, esperada, respuesta_usuario, acerto):
-    """El comentario del veredicto, ya decidido, dicho como una persona."""
+def _comentar(pregunta, esperada, respuesta_usuario, acerto, comportamiento=None):
+    """El comentario del veredicto, ya decidido, dicho como una persona.
+
+    `comportamiento` es el AEB del momento (aeb.mapear): con el, la
+    reaccion cambia segun el animo de Romeo (aeb.tono_trivia). None o
+    neutral = como siempre."""
+    tono = aeb.tono_trivia(comportamiento, acerto)
     if acerto:
         resultado, que_hacer = "ACERTO.", "celebra que acerto."
     else:
@@ -75,8 +80,11 @@ def _comentar(pregunta, esperada, respuesta_usuario, acerto):
               "content": _PROMPT_COMENTARIO.format(
                   pregunta=pregunta, esperada=esperada, usuario=respuesta_usuario,
                   resultado=resultado, que_hacer=que_hacer, dato=dato,
-                  frases="tres frases" if con_dato else "dos frases")}],
-            temperature=0.7, max_tokens=90 if con_dato else 50,
+                  tono=(f" {tono} No digas como se siente la persona ni como "
+                        f"te sientes tu: que se note solo en como lo dices.") if tono else "",
+                  # Con tono hace falta una frase mas: la de animo no cabia en dos.
+                  frases="tres frases" if (con_dato or tono) else "dos frases")}],
+            temperature=0.7, max_tokens=(90 if con_dato else 50) + (25 if tono else 0),
             modelo=CORRECTOR_LLM).strip()
         texto = " ".join(texto.split())   # sin los saltos de linea del modelo
     except Exception:  # noqa: BLE001 - sin comentario del LLM, frase fija
@@ -86,8 +94,8 @@ def _comentar(pregunta, esperada, respuesta_usuario, acerto):
         esperada=esperada)
 
 
-def juzgar(pregunta, esperada, respuesta_usuario):
-    """(acerto, comentario).
+def juzgar(pregunta, esperada, respuesta_usuario, comportamiento=None):
+    """(acerto, comentario). `comportamiento`: ver _comentar.
 
     El LLM compara lo que dijo la persona con la respuesta esperada. Se le
     pasa tambien la PREGUNTA, no solo la respuesta: sin ella no puede
@@ -98,7 +106,7 @@ def juzgar(pregunta, esperada, respuesta_usuario):
                                          usuario=respuesta_usuario)}],
         temperature=0.0, modelo=CORRECTOR_LLM)
     acerto = texto.strip().upper().startswith(("SI", "SÍ"))
-    comentario = _comentar(pregunta, esperada, respuesta_usuario, acerto)
+    comentario = _comentar(pregunta, esperada, respuesta_usuario, acerto, comportamiento)
     print(f"[trivia] {CORRECTOR_LLM}: esperada={esperada!r} "
           f"usuario={respuesta_usuario!r} -> "
           f"{'acierto' if acerto else 'fallo'}")

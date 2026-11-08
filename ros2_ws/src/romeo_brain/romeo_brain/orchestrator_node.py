@@ -908,13 +908,15 @@ class OrchestratorNode(Node):
             self._bridge.mostrar_cara("speaking")
             if pendiente["respuesta_esperada"]:
                 estado["total"] += 1
-                # EL LLM DECIDE Y COMENTA DE UNA VEZ, comparando lo que dijo
-                # la persona con la respuesta esperada. Se le pasa tambien la
-                # PREGUNTA, no solo la respuesta: sin ella no puede juzgar
-                # "de cuero" por "piel de animales".
+                # El LLM decide (SI/NO) y despues comenta, comparando lo que
+                # dijo la persona con la respuesta esperada. Se le pasa
+                # tambien la PREGUNTA: sin ella no puede juzgar "de cuero"
+                # por "piel de animales". El comentario cambia segun el
+                # animo de Romeo (aeb.tono_trivia): ya se aplico el afecto
+                # de esta respuesta, asi que es el animo de ahora.
                 acerto, comentario = agente_trivia.juzgar(
                     pendiente["pregunta"], pendiente["respuesta_esperada"],
-                    mensaje_usuario)
+                    mensaje_usuario, comportamiento=self._comportamiento())
                 estado["aciertos"] += acerto
                 cara = agente_trivia.elegir_cara_pregunta(pendiente, acerto) or (
                     "happy" if acerto else "sad")
