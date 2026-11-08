@@ -132,11 +132,16 @@ def calculo():
     return CALCULO
 
 
-# Botones del carrito: se pasan tal cual a la pagina de control que sirve
-# moving_control_node (romeo_drivers/_control_web.py), asi resultados y
-# carrito quedan en UNA sola pagina sin duplicar la logica del carrito.
-CARRITO = os.environ.get("ROMEO_CARRITO_WEB", "http://127.0.0.1:8080")
+# Botones del carrito (pagina /carrito): se pasan tal cual a la pagina de
+# control que sirve moving_control_node (romeo_drivers/_control_web.py),
+# asi no se duplica la logica del carrito.
+CARRITO_WEB = os.environ.get("ROMEO_CARRITO_WEB", "http://127.0.0.1:8080")
 MOVIMIENTOS = {"F", "B", "SL", "SR", "RL", "RR", "FL", "FR", "BL", "BR", "S"}
+
+
+@app.route("/carrito")
+def carrito():
+    return PAGINA_CARRITO
 
 
 @app.route("/cmd/<comando>", methods=["POST"])
@@ -144,7 +149,7 @@ def cmd(comando):
     if comando not in MOVIMIENTOS:
         return jsonify(ok=False, error="comando desconocido"), 400
     try:
-        req = urllib.request.Request(f"{CARRITO}/cmd/{comando}", method="POST")
+        req = urllib.request.Request(f"{CARRITO_WEB}/cmd/{comando}", method="POST")
         with urllib.request.urlopen(req, timeout=1.5) as r:
             return r.read(), r.status, {"Content-Type": "application/json"}
     except Exception as e:  # noqa: BLE001 - nodo del carrito apagado
@@ -187,18 +192,14 @@ PAGINA = r"""<!doctype html>
   th { text-align:left; color:var(--suave); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; padding:6px; border-bottom:1px solid var(--borde); }
   td { padding:7px 6px; border-bottom:1px solid var(--borde); vertical-align:top; }
   td.n { text-align:right; white-space:nowrap; }
-  .carrito { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start; }
-  .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:min(100%,280px); }
-  .pad button, .giro button { font:inherit; font-size:1.4rem; aspect-ratio:1; border:1px solid var(--borde); border-radius:14px;
-    background:var(--fondo); color:var(--texto); cursor:pointer; touch-action:none; user-select:none; }
-  .pad button.activo, .giro button.activo { background:var(--romeo); color:#fff; border-color:var(--romeo); }
-  .pad button.stop { background:#d1352b; color:#fff; border-color:#d1352b; font-size:1rem; font-weight:700; }
-  .giro { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:min(100%,280px); margin-top:8px; }
-  .giro button { aspect-ratio:auto; padding:14px 0; font-size:1rem; }
-  .ayuda-carrito { flex:1 1 220px; min-width:0; }
+  .nav { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.9rem; margin:0 0 14px; }
+  .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
+  .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
+  .emo { font-size:1.15rem; font-weight:700; margin:2px 0 4px; }
 </style></head><body><main>
+  <nav class="nav"><a href="./" class="aqui">Romeo en vivo</a><a href="calculo">Cálculo de valencia y arousal</a><a href="carrito">Carrito</a></nav>
   <h1>Romeo en vivo</h1>
-  <p class="sub"><span class="vivo"><i></i><span id="estado">Leyendo el log…</span></span> · <a href="calculo" style="color:inherit">Ver el cálculo de valencia y arousal →</a></p>
+  <p class="sub"><span class="vivo"><i></i><span id="estado">Leyendo el log…</span></span></p>
 
   <div class="dos">
     <div class="tarjeta"><h2>Lo que entendió</h2><p class="frase vacio" id="texto">—</p><div class="chips" id="lecturas"></div></div>
@@ -208,37 +209,10 @@ PAGINA = r"""<!doctype html>
   <div class="tarjeta">
     <h2>Cómo cambia el ánimo, frase a frase</h2>
     <div class="dos">
-      <div><h3><span class="punto" style="background:var(--romeo)"></span>Ánimo de Romeo</h3><div class="cubo" id="cubo-romeo"><canvas></canvas></div></div>
-      <div><h3><span class="punto" style="background:var(--fusion)"></span>Tu emoción (S<sub>u</sub>)</h3><div class="cubo" id="cubo-usuario"><canvas></canvas></div></div>
+      <div><h3><span class="punto" style="background:var(--romeo)"></span>Ánimo de Romeo</h3><p class="emo" id="emo-romeo">—</p><div class="cubo" id="cubo-romeo"><canvas></canvas></div></div>
+      <div><h3><span class="punto" style="background:var(--fusion)"></span>Tu emoción (S<sub>u</sub>)</h3><p class="emo" id="emo-usuario">—</p><div class="cubo" id="cubo-usuario"><canvas></canvas></div></div>
     </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el chico es la frase anterior y el grande la actual, con una flecha de uno a otro. El anillo gris es el ánimo base de Romeo. En «Tu emoción», un punto hueco es una frase en la que todo salió neutral: ahí Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
-  </div>
-
-  <div class="tarjeta">
-    <h2>Carrito</h2>
-    <div class="carrito">
-      <div>
-        <div class="pad">
-          <button data-c="FL" aria-label="Diagonal adelante izquierda">↖</button>
-          <button data-c="F" aria-label="Adelante">↑</button>
-          <button data-c="FR" aria-label="Diagonal adelante derecha">↗</button>
-          <button data-c="SL" aria-label="Lateral izquierda">←</button>
-          <button class="stop" data-stop aria-label="Parar">STOP</button>
-          <button data-c="SR" aria-label="Lateral derecha">→</button>
-          <button data-c="BL" aria-label="Diagonal atrás izquierda">↙</button>
-          <button data-c="B" aria-label="Atrás">↓</button>
-          <button data-c="BR" aria-label="Diagonal atrás derecha">↘</button>
-        </div>
-        <div class="giro">
-          <button data-c="RL" aria-label="Girar a la izquierda">⟲ Girar</button>
-          <button data-c="RR" aria-label="Girar a la derecha">Girar ⟳</button>
-        </div>
-      </div>
-      <div class="ayuda-carrito">
-        <p class="frase" id="carrito-estado" style="font-size:1rem">Mantén apretado un botón para mover el carrito; al soltarlo se para.</p>
-        <p class="nota">En la PC también sirven las flechas del teclado y Q / E para girar. Si se corta el WiFi, el carrito se para solo en medio segundo.</p>
-      </div>
-    </div>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el chico es la frase anterior y el grande la actual, con una flecha de uno a otro. Los rombos grises marcan dónde está Feliz, Triste y Enojado, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base (anillo gris). La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). En «Tu emoción», un punto hueco es una frase en la que todo salió neutral: ahí Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
   </div>
 
   <div class="tarjeta">
@@ -257,6 +231,30 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const EMO = { felicidad: "felicidad", tristeza: "tristeza", enojo: "enojo", miedo: "miedo", sorpresa: "sorpresa", asco: "asco", neutral: "neutral" };
 let datos = { turnos: [], base: null }, firma = "";
 const giro = { yaw: -0.6, pitch: 0.35 };
+
+// Emocion de un punto, con la regla del AEB (aeb.mapear): direccion por
+// coseno respecto al centro, zona neutra = 20 % del camino al anclaje y
+// nivel 1-4 en tramos iguales. Para Romeo el centro es su animo base (da lo
+// mismo que su log); para el usuario, el origen.
+const ANCLAS = { felicidad: [0.76, 0.48, 0.35], tristeza: [-0.63, -0.27, -0.33], enojo: [-0.51, 0.59, 0.25] };
+const NOMBRE = { felicidad: "Feliz", tristeza: "Triste", enojo: "Enojado", neutral: "Normal" };
+const COLOR_EMO = { felicidad: "--dom", tristeza: "--val", enojo: "--aro", neutral: "--suave" };
+const INTENS = { 1: "un poco ", 2: "", 3: "muy ", 4: "muy " };
+function emocionDe(p, centro) {
+  if (!p) return { clave: "neutral", nivel: 0 };
+  const dv = [p.v - centro[0], p.a - centro[1], p.d - centro[2]], mag = Math.hypot(...dv);
+  if (mag < 1e-6) return { clave: "neutral", nivel: 0 };
+  let mejor = null, cos = -2;
+  for (const [k, a] of Object.entries(ANCLAS)) {
+    const c = (dv[0] * a[0] + dv[1] * a[1] + dv[2] * a[2]) / (mag * Math.hypot(...a));
+    if (c > cos) { cos = c; mejor = k; }
+  }
+  const a = ANCLAS[mejor], dist = Math.hypot(a[0] - centro[0], a[1] - centro[1], a[2] - centro[2]), radio = 0.2 * dist;
+  if (mag < radio) return { clave: "neutral", nivel: 0 };
+  return { clave: mejor, nivel: Math.max(1, Math.min(4, 1 + Math.floor(4 * (mag - radio) / (dist - radio)))) };
+}
+const textoEmo = (e) => e.clave === "neutral" ? "Normal" : (INTENS[e.nivel] + NOMBRE[e.clave].toLowerCase()).replace(/^./, (c) => c.toUpperCase());
+const centroDe = (quien) => quien === "romeo" ? (datos.base ? [datos.base.v, datos.base.a, datos.base.d] : [0.4, 0.3, 0.2]) : [0, 0, 0];
 
 function cubo(cont, quien) {
   const cv = cont.querySelector("canvas"), w = cont.clientWidth, h = Math.min(w, 340), dpr = window.devicePixelRatio || 1;
@@ -288,12 +286,21 @@ function cubo(cont, quien) {
       ctx.lineTo(px - 9 * Math.cos(ang + 0.45), py - 9 * Math.sin(ang + 0.45)); ctx.fill();
     }
   }
-  const marcas = pts.map((p, i) => { if (!p) return null; const [x, y, z] = P(p.v, p.a, p.d); return { x, y, z, ultimo: i === n - 1, hueco: quien === "usuario" && !turnos[i].fusion }; }).filter(Boolean);
+  // Referencias: donde estan Feliz, Triste y Enojado, y el centro "Normal".
+  const centro = centroDe(quien);
+  ctx.font = "11px system-ui, sans-serif";
+  for (const [k, a] of Object.entries(ANCLAS)) {
+    const [x, y] = P(...a);
+    ctx.beginPath(); ctx.fillStyle = col("--tenue"); ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 5, y); ctx.fill();
+    ctx.fillStyle = col("--suave"); ctx.fillText(NOMBRE[k], x, y + 13);
+  }
+  if (quien === "usuario") { const [x, y] = P(0, 0, 0); ctx.fillStyle = col("--suave"); ctx.fillText("Normal", x + 22, y + 12); }
+  const marcas = pts.map((p, i) => { if (!p) return null; const [x, y, z] = P(p.v, p.a, p.d); return { x, y, z, ultimo: i === n - 1, hueco: quien === "usuario" && !turnos[i].fusion, emo: textoEmo(emocionDe(p, centro)) }; }).filter(Boolean);
   if (quien === "romeo" && datos.base) { const [x, y, z] = P(datos.base.v, datos.base.a, datos.base.d); marcas.push({ x, y, z, base: true }); }
   marcas.sort((a, b) => b.z - a.z);
   for (const m of marcas) {
     ctx.beginPath();
-    if (m.base) { ctx.arc(m.x, m.y, 7, 0, 7); ctx.strokeStyle = col("--suave"); ctx.lineWidth = 2; ctx.stroke(); continue; }
+    if (m.base) { ctx.arc(m.x, m.y, 7, 0, 7); ctx.strokeStyle = col("--suave"); ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = col("--suave"); ctx.font = "11px system-ui, sans-serif"; ctx.fillText("Normal", m.x + 24, m.y + 12); continue; }
     ctx.globalAlpha = m.ultimo ? 1 : 0.55;
     ctx.arc(m.x, m.y, m.ultimo ? 8 : 5, 0, 7); ctx.fillStyle = m.hueco ? col("--tarjeta") : color; ctx.fill();
     ctx.strokeStyle = m.hueco ? color : col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
@@ -324,6 +331,22 @@ function mostrar(d) {
     $("lecturas").innerHTML = lect(ult).map((s) => `<span class="chip">${esc(s)}</span>`).join("") + `<span class="chip">Tú: ${ult.fusion ? vad(ult.fusion) : "neutral"}</span>`;
   }
   if (d.ultima_respuesta) { $("respuesta").className = "frase"; $("respuesta").textContent = d.ultima_respuesta; }
+  for (const quien of ["romeo", "usuario"]) {
+    const t = d.turnos[d.turnos.length - 1];
+    const p = !t ? (quien === "romeo" ? d.base : null) : (quien === "romeo" ? (t.romeo || d.base) : t.fusion);
+    const e = emocionDe(p, centroDe(quien));
+    const el = $("emo-" + quien);
+    el.textContent = (quien === "romeo" ? "Romeo está: " : "Tú estás: ") + textoEmo(e);
+    el.style.color = `var(${COLOR_EMO[e.clave]})`;
+    const prev = d.turnos[d.turnos.length - 2];
+    if (prev) {
+      const pp = quien === "romeo" ? (prev.romeo || d.base) : prev.fusion;
+      const s = document.createElement("span");
+      s.style.cssText = "display:block;font-size:.8rem;font-weight:400;color:var(--suave)";
+      s.textContent = "antes: " + textoEmo(emocionDe(pp, centroDe(quien)));
+      el.appendChild(s);
+    }
+  }
   if (d.romeo) $("animo").textContent = `Ánimo de Romeo: ${vad(d.romeo)}${d.estado_romeo ? " · " + d.estado_romeo.replace("_L", " nivel ") : ""}`;
   $("tabla").innerHTML = d.turnos.length ? d.turnos.map((t, i) => `<tr><td>${i + 1}</td><td>${esc(t.texto)}</td><td>${esc(lect(t).join(" · ") || "—")}</td><td class="n">${t.fusion ? vad(t.fusion) : "neutral"}</td><td class="n">${vad(t.romeo)}</td></tr>`).reverse().join("")
     : '<tr><td colspan="5" class="vacio">Háblale a Romeo.</td></tr>';
@@ -339,6 +362,93 @@ async function actualizar() {
 }
 actualizar(); setInterval(actualizar, 2000);
 
+</script></body></html>"""
+
+
+PAGINA_CARRITO = r"""<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrito de Romeo</title>
+<style>
+  :root { --fondo:#f9f9f7; --tarjeta:#fcfcfb; --texto:#0b0b0b; --suave:#52514e; --tenue:#898781;
+    --borde:#e1e0d9; --eje:#c3c2b7; --fusion:#eda100; --romeo:#e87ba4;
+    --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; --ok:#1baf7a; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --fondo:#0d0d0d; --tarjeta:#1a1a19; --texto:#f0efec; --suave:#c3c2b7; --tenue:#898781;
+    --borde:#2c2c2a; --eje:#383835; --fusion:#c98500; --romeo:#d55181;
+    --val:#3987e5; --aro:#d95926; --dom:#199e70; --ok:#199e70; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:960px; margin:0 auto; padding:28px 16px 48px; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  .sub { color:var(--suave); margin:0 0 16px; overflow-wrap:anywhere; }
+  .vivo { display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:var(--suave); }
+  .vivo i { width:8px; height:8px; border-radius:50%; background:var(--ok); }
+  .tarjeta { background:var(--tarjeta); border:1px solid var(--borde); border-radius:12px; padding:20px; margin-bottom:16px; min-width:0; }
+  .tarjeta h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--suave); margin:0 0 12px; font-weight:600; }
+  .dos { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; }
+  @media (max-width:640px) { .dos { grid-template-columns:minmax(0,1fr); } }
+  .frase { font-size:1.15rem; margin:0; }
+  .vacio { color:var(--suave); font-style:italic; }
+  .punto { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  h3 { font-size:.95rem; margin:0 0 4px; display:flex; align-items:center; gap:8px; }
+  .cubo canvas { width:100%; display:block; touch-action:none; cursor:grab; }
+  .nota { font-size:.8rem; color:var(--tenue); margin:8px 0 0; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .chip { border:1px solid var(--borde); border-radius:999px; padding:3px 10px; font-size:.85rem; }
+  .tabla { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; font-variant-numeric:tabular-nums; }
+  th { text-align:left; color:var(--suave); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; padding:6px; border-bottom:1px solid var(--borde); }
+  td { padding:7px 6px; border-bottom:1px solid var(--borde); vertical-align:top; }
+  td.n { text-align:right; white-space:nowrap; }
+  .nav { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.9rem; margin:0 0 14px; }
+  .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
+  .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
+  .emo { font-size:1.15rem; font-weight:700; margin:2px 0 4px; }
+  .carrito { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start; }
+  .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:min(100%,280px); }
+  .pad button, .giro button { font:inherit; font-size:1.4rem; aspect-ratio:1; border:1px solid var(--borde); border-radius:14px;
+    background:var(--fondo); color:var(--texto); cursor:pointer; touch-action:none; user-select:none; }
+  .pad button.activo, .giro button.activo { background:var(--romeo); color:#fff; border-color:var(--romeo); }
+  .pad button.stop { background:#d1352b; color:#fff; border-color:#d1352b; font-size:1rem; font-weight:700; }
+  .giro { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:min(100%,280px); margin-top:8px; }
+  .giro button { aspect-ratio:auto; padding:14px 0; font-size:1rem; }
+  .ayuda-carrito { flex:1 1 220px; min-width:0; }
+</style></head><body><main>
+  <nav class="nav"><a href="./">Romeo en vivo</a><a href="calculo">Cálculo de valencia y arousal</a><a href="carrito" class="aqui">Carrito</a></nav>
+  <h1>Carrito</h1>
+  <p class="sub">Mueve el carrito de Romeo. Funciona con Romeo encendido: lo sirve su nodo del carrito.</p>
+
+  <div class="tarjeta">
+    <h2>Controles</h2>
+    <div class="carrito">
+      <div>
+        <div class="pad">
+          <button data-c="FL" aria-label="Diagonal adelante izquierda">↖</button>
+          <button data-c="F" aria-label="Adelante">↑</button>
+          <button data-c="FR" aria-label="Diagonal adelante derecha">↗</button>
+          <button data-c="SL" aria-label="Lateral izquierda">←</button>
+          <button class="stop" data-stop aria-label="Parar">STOP</button>
+          <button data-c="SR" aria-label="Lateral derecha">→</button>
+          <button data-c="BL" aria-label="Diagonal atrás izquierda">↙</button>
+          <button data-c="B" aria-label="Atrás">↓</button>
+          <button data-c="BR" aria-label="Diagonal atrás derecha">↘</button>
+        </div>
+        <div class="giro">
+          <button data-c="RL" aria-label="Girar a la izquierda">⟲ Girar</button>
+          <button data-c="RR" aria-label="Girar a la derecha">Girar ⟳</button>
+        </div>
+      </div>
+      <div class="ayuda-carrito">
+        <p class="frase" id="carrito-estado" style="font-size:1rem">Mantén apretado un botón para mover el carrito; al soltarlo se para.</p>
+        <p class="nota">En la PC también sirven las flechas del teclado y Q / E para girar. Si se corta el WiFi, el carrito se para solo en medio segundo.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
 // ── Carrito: mientras el boton esta apretado manda el comando cada 150 ms
 // (el firmware se para solo si deja de recibir); al soltar manda "S".
 let reloj = null, botonActivo = null;
@@ -411,9 +521,13 @@ CALCULO = r"""<!doctype html>
   .resultado { font-weight:600; margin:8px 0 0; }
   .vacio { color:var(--suave); font-style:italic; }
   .chip { display:inline-block; border:1px solid var(--borde); border-radius:999px; padding:2px 10px; font-size:.85rem; font-weight:600; }
+  .nav { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.9rem; margin:0 0 14px; }
+  .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
+  .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
 </style></head><body><main>
+  <nav class="nav"><a href="./">Romeo en vivo</a><a href="calculo" class="aqui">Cálculo de valencia y arousal</a><a href="carrito">Carrito</a></nav>
   <h1>Cálculo de valencia y arousal</h1>
-  <p class="sub"><a href="./">← Volver a Romeo en vivo</a> · Cada paso con los números reales del turno, tal como los calcula el robot (PULSE → ROSE → AEB, metodología de Rocha).</p>
+  <p class="sub">Cada paso con los números reales del turno, tal como los calcula el robot (PULSE → ROSE → AEB, metodología de Rocha).</p>
   <div class="barra-sup">
     <select id="turno" aria-label="Frase"></select>
     <label><input type="checkbox" id="seguir" checked> Seguir la última frase</label>
