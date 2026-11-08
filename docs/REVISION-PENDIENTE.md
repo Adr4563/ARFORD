@@ -44,7 +44,5 @@ cerraron con una pregunta o sin animar, y a veces el ánimo suena poético
   ```
 - **Medición de FER:** comparar CPU, RAM y temperatura con
   `fer_bajo_demanda` en `true` y `false` cuando la cámara dé imagen.
-- **Pi sin actualizar:** falta `git pull`, compilar `romeo_brain` y copiar
-  `pruebas/panel_robot/panel.py` a `~/romeo_panel.py`.
 - **Scripts que solo están en la Pi:** `lanzar_tunel.sh`, `reiniciar_romeo.sh`,
   `reiniciar_panel.sh`, `apagar_romeo.sh` y `carrito_prueba.sh`.
