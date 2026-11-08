@@ -222,7 +222,7 @@ PAGINA = r"""<!doctype html>
       <span class="chip"><span class="punto" style="background:var(--punto-romeo)"></span> Romeo</span>
       <span class="chip"><span class="punto" style="background:var(--punto-usuario)"></span> Tú</span>
     </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. El punto naranja es <b>Romeo</b> y el morado eres <b>tú</b>: la emoción es el rombo al que se acercan. El círculo negro vacío es cómo estaba antes, con una flecha hacia cómo está ahora. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si tu voz y tu texto salen neutrales, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. El punto naranja es <b>Romeo</b> y el morado eres <b>tú</b>: la emoción es el rombo al que se acercan. El círculo negro vacío es cómo estaba antes, con una flecha hacia cómo está ahora. Los rombos de color marcan dónde está cada emoción (ver la leyenda); el negro, Normal, es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si tu voz y tu texto salen neutrales, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
   </div>
 
   <div class="tarjeta">
@@ -271,7 +271,7 @@ function cubo(cont, quien) {
   cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + "px";
   const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
   const css = getComputedStyle(document.documentElement), col = (n) => css.getPropertyValue(n).trim();
-  const R = Math.min(w, h) * 0.30, cx = w / 2, cy = h / 2 + 8;
+  const R = Math.min(w, h) * 0.26, cx = w / 2, cy = h / 2 + 10;
   const c1 = Math.cos(giro.yaw), s1 = Math.sin(giro.yaw), c2 = Math.cos(giro.pitch), s2 = Math.sin(giro.pitch);
   const P = (v, a, d) => { const x1 = v * c1 + d * s1, z1 = -v * s1 + d * c1, y2 = a * c2 - z1 * s2, z2 = a * s2 + z1 * c2, k = 4 / (4 + z2); return [cx + x1 * R * k, cy - y2 * R * k, z2]; };
   const L = (p, q, c, wd = 1) => { const A = P(...p), B = P(...q); ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = wd; ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); };
@@ -304,12 +304,10 @@ function cubo(cont, quien) {
     const [x, y] = P(...a);
     const ce = col(COLOR_EMO[k]);
     ctx.beginPath(); ctx.fillStyle = ce; ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.fill();
-    ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillStyle = ce; ctx.fillText(NOMBRE[k], x, y + 16);
   }
   if (quien === "usuario") {
     const [x, y] = P(0, 0, 0), cn = col("--normal");
     ctx.beginPath(); ctx.fillStyle = cn; ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.fill();
-    ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", x + 26, y + 12);
   }
   const marcas = pts.map((p, i) => { if (!p) return null; const [x, y, z] = P(p.v, p.a, p.d); return { x, y, z, ultimo: i === n - 1, clave: emocionDe(p, centro).clave }; }).filter(Boolean);
   if (quien === "romeo" && datos.base) { const [x, y, z] = P(datos.base.v, datos.base.a, datos.base.d); marcas.push({ x, y, z, base: true }); }
@@ -318,7 +316,7 @@ function cubo(cont, quien) {
     ctx.beginPath();
     if (m.base) {   // Normal de Romeo = su animo base: rombo negro, como las demas emociones
       ctx.fillStyle = col("--normal"); ctx.moveTo(m.x, m.y - 7); ctx.lineTo(m.x + 7, m.y); ctx.lineTo(m.x, m.y + 7); ctx.lineTo(m.x - 7, m.y); ctx.fill();
-      ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", m.x + 26, m.y + 12); continue;
+      continue;
     }
     if (m.ultimo) {
       // Romeo naranja, la persona morada; del tamaño de los rombos.
@@ -331,10 +329,6 @@ function cubo(cont, quien) {
       ctx.strokeStyle = cNegro; ctx.lineWidth = 2.5; ctx.stroke();
       ctx.fillStyle = cNegro;
     }
-    ctx.font = "bold 11px system-ui, sans-serif";
-    ctx.font = m.ultimo ? "bold 13px system-ui, sans-serif" : "bold 11px system-ui, sans-serif";
-    // "Romeo"/"Tu" arriba del punto grande y "antes" debajo del circulo, para que no se monten.
-    ctx.fillText(m.ultimo ? (quien === "romeo" ? "Romeo" : "Tú") : "antes", m.x, m.y + (m.ultimo ? -16 : 17));
   }
   if (!n) { ctx.fillStyle = col("--suave"); ctx.font = "italic 13px system-ui, sans-serif"; ctx.fillText("Háblale a Romeo para ver el recorrido.", cx, h - 14); }
 }
