@@ -29,18 +29,11 @@ Verificar con:
 rpicam-still -n --timeout 1500 --width 640 --height 480 -o /tmp/prueba.jpg
 ```
 
-### 2. Respuesta a «¿cómo te sientes, Romeo?»
+### 2. Ánimo con tristeza profunda (L3-L4)
 
-Si Romeo no está en Normal, la IA recibe a la vez el tono hacia la persona y
-su propio ánimo, y responde mal («Me parece incómodo escuchar sobre tu dolor»).
-La pregunta debería llevar solo el ánimo de Romeo (`aeb.tono_para`).
-
-### 3. Comentarios del chat y de la trivia
-
-- Con tristeza, el chat a veces entiende a la persona pero no le da ánimo.
-- Se le escapó un «usted» («¿Cómo se siente?»).
-- El dato curioso de la trivia puede ser inventado: dijo que en 1939 se
-  inventó la radio.
+Con gemma3:4b, 8 de 12 respuestas dieron ánimo sin preguntar. Las demás
+cerraron con una pregunta o sin animar, y a veces el ánimo suena poético
+(«la belleza de un atardecer»).
 
 ## Por decidir o instalar
 
@@ -49,10 +42,6 @@ La pregunta debería llevar solo el ánimo de Romeo (`aeb.tono_para`).
   echo "debugfs /sys/kernel/debug debugfs defaults,mode=0755 0 0" | sudo tee -a /etc/fstab
   sudo mount -o remount,mode=0755 /sys/kernel/debug
   ```
-- **`ROMEO_NEUTRAL_ENCOGE`:** está activo en `lanzar_romeo.sh` y no es parte de
-  la metodología de Rocha. Decidir si se deja o se usa solo la fórmula original.
-- **Modelo SER:** se usa wav2vec2 MESD, aunque WavLM clasificó mejor los audios
-  de prueba (`ROMEO_SER_MODELO`).
 - **Medición de FER:** comparar CPU, RAM y temperatura con
   `fer_bajo_demanda` en `true` y `false` cuando la cámara dé imagen.
 - **Pi sin actualizar:** falta `git pull`, compilar `romeo_brain` y copiar

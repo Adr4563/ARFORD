@@ -549,8 +549,7 @@ ${v3(d0)}  →  ${v3(d1)}${movio ? "" : "   (todavía dentro de la latencia: no 
       <div class="tabla"><table><thead><tr><th>Fuente</th><th class="n">c</th><th class="n">S_m (v, a, d)</th><th class="n">c × S_m</th></tr></thead>
       <tbody>${filas}<tr class="total"><td>Σ</td><td class="n">${(fu.suma_confianzas ?? 0).toFixed(3)}</td><td></td>
       <td class="n">S_u = ${v3(fu.s_u)}</td></tr></tbody></table></div>
-      ${fu.encoge ? `<div class="formula">Extensión ROMEO_NEUTRAL_ENCOGE: S_u × ${fu.encoge.peso.toFixed(2)} = ${v3(fu.encoge.s_u)}</div>` : ""}
-      <p class="resultado">Tu emoción en esta frase: S_u = ${v3(fu.encoge ? fu.encoge.s_u : fu.s_u)}</p>`;
+      <p class="resultado">Tu emoción en esta frase: S_u = ${v3(fu.s_u)}</p>`;
   }
   h += `<section class="paso"><h2><span class="n">Paso 2</span>PULSE · Fusión de las modalidades</h2>
     <p class="que">Se juntan voz, texto y cara en un solo punto, pesando cada una por su confianza.</p>${cuerpo}</section>`;

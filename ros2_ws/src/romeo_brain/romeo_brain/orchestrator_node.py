@@ -388,19 +388,7 @@ class OrchestratorNode(Node):
         es el origen del espacio VAD, y como el animo base de Romeo es
         positivo, acercarlo al origen se veria como tristeza. Basta con que
         una fuente exprese algo para que se fusionen todas, y entonces las
-        neutras moderan la lectura, como en la tesis.
-
-        EXTENSION OPCIONAL (ROMEO_NEUTRAL_ENCOGE, APAGADA por defecto). El
-        codigo base es Rocha puro: con la variable en 0 (default) nada de
-        esto corre. Activada, corrige una rareza del espacio VAD: neutral es
-        (0,0,0), asi que una fuente neutral aporta su confianza al
-        DENOMINADOR de la fusion pero NADA al numerador (no empuja). Por eso,
-        si TER+FER son neutrales y solo el SER detecta tristeza, esa minoria
-        arrastra el animo aunque haya poca evidencia. Al activarla, el vector
-        se encoge por la fraccion de confianza que SI expresa emocion
-        (peso = conf_no_neutrales / conf_total): con TER+FER neutral y SER
-        tristeza la valencia pasa de -0.21 a ~-0.07, dentro de la zona
-        neutra. NO es metodologia de Rocha; es una extension propia."""
+        neutras moderan la lectura, como en la tesis."""
         lecturas = getattr(self, "_lecturas_turno", None)
         if not lecturas:
             return
@@ -420,24 +408,6 @@ class OrchestratorNode(Node):
         if traza is not None and vector is not None:
             traza["fusion"]["suma_confianzas"] = round(sum(c for _v, c in self._lecturas_turno), 4)
             traza["fusion"]["s_u"] = [round(x, 4) for x in vector]
-        # Extension opcional (apagada por defecto): ver el docstring.
-        encoge = os.environ.get(
-            "ROMEO_NEUTRAL_ENCOGE", "0") not in ("0", "false", "False")
-        if encoge and vector is not None:
-            conf_total = sum(c for _f, _v, c, _d in lecturas)
-            conf_emocion = sum(
-                c for _f, _v, c, dom in lecturas if dom != "neutral")
-            peso = conf_emocion / conf_total if conf_total > 0.0 else 1.0
-            if peso < 1.0:
-                vector = tuple(componente * peso for componente in vector)
-                if traza is not None:
-                    traza["fusion"]["encoge"] = {"peso": round(peso, 4),
-                                                 "s_u": [round(x, 4) for x in vector]}
-                if len(lecturas) > 1:
-                    self.get_logger().info(
-                        f"[afecto] neutrales encogen la lectura x{peso:.2f} "
-                        f"-> v={vector[0]:+.2f} a={vector[1]:+.2f} "
-                        f"d={vector[2]:+.2f}")
         if vector is not None and len(self._lecturas_turno) > 1:
             self.get_logger().info(
                 f"[afecto] usuario (fusion de "

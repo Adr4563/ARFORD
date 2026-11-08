@@ -359,11 +359,6 @@ def turno():
             motivo_fusion = "todas las fuentes salieron neutral: el ánimo no se mueve"
         else:
             fusion = estado_afectivo.fusionar([(v, c) for _f, v, c, _d in lecturas])
-            if os.environ.get("ROMEO_NEUTRAL_ENCOGE", "0") not in ("0", "false", "False"):
-                total = sum(c for *_x, c, _d in lecturas)
-                emocion = sum(c for *_x, c, d in lecturas if d != "neutral")
-                peso = emocion / total if total > 0.0 else 1.0
-                fusion = tuple(x * peso for x in fusion)
             afecto.empatizar(fusion, max(c for *_x, c, _d in lecturas))
         despues = _animo()
         comp = _aeb()
