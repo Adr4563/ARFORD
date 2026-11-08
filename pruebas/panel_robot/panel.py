@@ -164,12 +164,12 @@ PAGINA = r"""<!doctype html>
   :root { --fondo:#f9f9f7; --tarjeta:#fcfcfb; --texto:#0b0b0b; --suave:#52514e; --tenue:#898781;
     --borde:#e1e0d9; --eje:#c3c2b7; --fusion:#eda100; --romeo:#e87ba4;
     --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; --ok:#1baf7a;
-    --enojo:#d1352b; --triste:#2a78d6; --feliz:#d4a400; --normal:#0b0b0b; --punto-romeo:#eb6834; --punto-usuario:#8b5cf6; }
+    --enojo:#d1352b; --triste:#2a78d6; --feliz:#d4a400; --normal:#0b0b0b; --punto-romeo:#e8501c; --punto-usuario:#5b21b6; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
     --fondo:#0d0d0d; --tarjeta:#1a1a19; --texto:#f0efec; --suave:#c3c2b7; --tenue:#898781;
     --borde:#2c2c2a; --eje:#383835; --fusion:#c98500; --romeo:#d55181;
     --val:#3987e5; --aro:#d95926; --dom:#199e70; --ok:#199e70;
-    --enojo:#ef5a4f; --triste:#4d94ec; --feliz:#f2c94c; --normal:#f0efec; --punto-romeo:#f07a45; --punto-usuario:#a78bfa; color-scheme: dark; } }
+    --enojo:#ef5a4f; --triste:#4d94ec; --feliz:#f2c94c; --normal:#f0efec; --punto-romeo:#f2652e; --punto-usuario:#8b5cf6; color-scheme: dark; } }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
   main { max-width:960px; margin:0 auto; padding:28px 16px 48px; }
@@ -198,6 +198,7 @@ PAGINA = r"""<!doctype html>
   .nav a { color:var(--suave); text-decoration:none; border-bottom:2px solid transparent; padding-bottom:2px; }
   .nav a.aqui { color:var(--texto); border-color:var(--romeo); font-weight:600; }
   .emo { font-size:1.15rem; font-weight:700; margin:2px 0 4px; }
+  .rombo { width:10px; height:10px; display:inline-block; transform:rotate(45deg); margin:0 2px; }
 </style></head><body><main>
   <nav class="nav"><a href="./" class="aqui">Romeo en vivo</a><a href="calculo">Cálculo de valencia y arousal</a><a href="carrito">Carrito</a></nav>
   <h1>Romeo en vivo</h1>
@@ -211,18 +212,18 @@ PAGINA = r"""<!doctype html>
   <div class="tarjeta">
     <h2>Cómo cambia el ánimo, frase a frase</h2>
     <div class="dos">
-      <div><h3><span class="punto" style="background:var(--punto-romeo)"></span>Ánimo de Romeo</h3><p class="emo" id="emo-romeo">—</p><div class="cubo" id="cubo-romeo"><canvas></canvas></div></div>
-      <div><h3><span class="punto" style="background:var(--punto-usuario)"></span>Tu emoción (S<sub>u</sub>)</h3><p class="emo" id="emo-usuario">—</p><div class="cubo" id="cubo-usuario"><canvas></canvas></div></div>
+      <div><h3><span class="rombo" style="background:var(--punto-romeo)"></span>Ánimo de Romeo</h3><p class="emo" id="emo-romeo">—</p><div class="cubo" id="cubo-romeo"><canvas></canvas></div></div>
+      <div><h3><span class="rombo" style="background:var(--punto-usuario)"></span>Tu emoción (S<sub>u</sub>)</h3><p class="emo" id="emo-usuario">—</p><div class="cubo" id="cubo-usuario"><canvas></canvas></div></div>
     </div>
     <div class="chips" style="justify-content:center">
-      <span class="chip"><span class="punto" style="background:var(--feliz)"></span> Feliz</span>
-      <span class="chip"><span class="punto" style="background:var(--triste)"></span> Triste</span>
-      <span class="chip"><span class="punto" style="background:var(--enojo)"></span> Enojado</span>
-      <span class="chip"><span class="punto" style="background:var(--normal)"></span> Normal</span>
-      <span class="chip"><span class="punto" style="background:var(--punto-romeo)"></span> Romeo</span>
-      <span class="chip"><span class="punto" style="background:var(--punto-usuario)"></span> Tú</span>
+      <span class="chip"><span class="rombo" style="background:var(--feliz)"></span> Feliz</span>
+      <span class="chip"><span class="rombo" style="background:var(--triste)"></span> Triste</span>
+      <span class="chip"><span class="rombo" style="background:var(--enojo)"></span> Enojado</span>
+      <span class="chip"><span class="rombo" style="background:var(--normal)"></span> Normal</span>
+      <span class="chip"><span class="rombo" style="background:var(--punto-romeo)"></span> Romeo</span>
+      <span class="chip"><span class="rombo" style="background:var(--punto-usuario)"></span> Tú</span>
     </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. El punto naranja es <b>Romeo</b> y el morado eres <b>tú</b>: la emoción es el rombo al que se acercan. El círculo negro vacío es cómo estaba antes, con una flecha hacia cómo está ahora. Los rombos de color marcan dónde está cada emoción (ver la leyenda); el negro, Normal, es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si tu voz y tu texto salen neutrales, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. El punto naranja es <b>Romeo</b> y el morado eres <b>tú</b>: la emoción es el rombo al que se acercan. El rombo negro vacío es cómo estaba antes, con una flecha hacia cómo está ahora. Los rombos de color marcan dónde está cada emoción (ver la leyenda); el negro, Normal, es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). Si tu voz y tu texto salen neutrales, tu punto queda en Normal y Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
   </div>
 
   <div class="tarjeta">
@@ -274,6 +275,8 @@ function cubo(cont, quien) {
   const R = Math.min(w, h) * 0.26, cx = w / 2, cy = h / 2 + 10;
   const c1 = Math.cos(giro.yaw), s1 = Math.sin(giro.yaw), c2 = Math.cos(giro.pitch), s2 = Math.sin(giro.pitch);
   const P = (v, a, d) => { const x1 = v * c1 + d * s1, z1 = -v * s1 + d * c1, y2 = a * c2 - z1 * s2, z2 = a * s2 + z1 * c2, k = 4 / (4 + z2); return [cx + x1 * R * k, cy - y2 * R * k, z2]; };
+  // Todos los puntos del cubo son rombos.
+  const rombo = (x, y, r) => { ctx.moveTo(x, y - r); ctx.lineTo(x + r, y); ctx.lineTo(x, y + r); ctx.lineTo(x - r, y); ctx.closePath(); };
   const L = (p, q, c, wd = 1) => { const A = P(...p), B = P(...q); ctx.beginPath(); ctx.strokeStyle = c; ctx.lineWidth = wd; ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); };
   for (const a of [-1, 1]) for (const b of [-1, 1]) { L([-1, a, b], [1, a, b], col("--eje")); L([a, -1, b], [a, 1, b], col("--eje")); L([a, b, -1], [a, b, 1], col("--eje")); }
   L([-1, 0, 0], [1, 0, 0], col("--tenue"), 1.5); L([0, -1, 0], [0, 1, 0], col("--tenue"), 1.5); L([0, 0, -1], [0, 0, 1], col("--tenue"), 1.5);
@@ -285,7 +288,7 @@ function cubo(cont, quien) {
   const turnos = datos.turnos.slice(-2);
   const pts = turnos.map((t) => quien === "romeo" ? (t.romeo || datos.base) : (t.fusion || { v: 0, a: 0, d: 0 }));
   const n = pts.length;
-  ctx.globalAlpha = 0.3; pts.forEach((p, i) => { if (!p) return; const [x, y] = P(p.v, -1, p.d); ctx.beginPath(); ctx.fillStyle = col("--tenue"); ctx.arc(x, y, 3, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.3; pts.forEach((p, i) => { if (!p) return; const [x, y] = P(p.v, -1, p.d); ctx.beginPath(); ctx.fillStyle = col("--tenue"); rombo(x, y, 3); ctx.fill(); }); ctx.globalAlpha = 1;
   if (n === 2 && pts[0] && pts[1]) {
     const A = P(pts[0].v, pts[0].a, pts[0].d), B = P(pts[1].v, pts[1].a, pts[1].d);
     ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); ctx.setLineDash([]);
@@ -321,11 +324,10 @@ function cubo(cont, quien) {
     if (m.ultimo) {
       // Romeo naranja, la persona morada; del tamaño de los rombos.
       const ce = col(quien === "romeo" ? "--punto-romeo" : "--punto-usuario");
-      ctx.arc(m.x, m.y, 7, 0, 7); ctx.fillStyle = ce; ctx.fill();
-      ctx.strokeStyle = col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
+      rombo(m.x, m.y, 7); ctx.fillStyle = ce; ctx.fill();
       ctx.fillStyle = ce;
     } else {
-      ctx.arc(m.x, m.y, 7, 0, 7); ctx.fillStyle = col("--tarjeta"); ctx.fill();
+      rombo(m.x, m.y, 7); ctx.fillStyle = col("--tarjeta"); ctx.fill();
       ctx.strokeStyle = cNegro; ctx.lineWidth = 2.5; ctx.stroke();
       ctx.fillStyle = cNegro;
     }
