@@ -13,12 +13,12 @@ EL MODELO ES INTERCAMBIABLE (variable ROMEO_SER_MODELO). Cualquier modelo de
 `audio-classification` de HuggingFace sirve, siempre que sus etiquetas
 estén en _ETIQUETAS (inglés o español, se traducen solas). Por defecto:
 
-    somosnlp-hackathon-2022/wav2vec2-base-finetuned-sentiment-mesd
-        wav2vec2-base afinado con MESD (Mexican Emotional Speech Database),
-        o sea entrenado en ESPAÑOL. 6 emociones: Anger, Disgust, Fear,
-        Happiness, Neutral, Sadness. 83 % de precisión en MESD.
-        Limitación: MESD son frases cortas actuadas; con habla espontánea
-        acierta menos, y por eso la confianza que calcula PULSE importa.
+    xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned
+        HuBERT large afinado con Dusha, habla natural en RUSO. Emociones:
+        neutral, angry, positive, sad, other ("other" cuenta como neutral).
+        Se eligió comparándolo con MESD, SpeechBrain y ehcalabres.
+        Limitación: no está entrenado en español, y por eso la confianza
+        que calcula PULSE importa.
 
 Variables de entorno:
     ROMEO_SER          0 lo desactiva (default 1)
@@ -33,7 +33,7 @@ import numpy as np
 
 MODELO = os.environ.get(
     "ROMEO_SER_MODELO",
-    "somosnlp-hackathon-2022/wav2vec2-base-finetuned-sentiment-mesd")
+    "xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned")
 ACTIVO = os.environ.get("ROMEO_SER", "1") not in ("0", "false", "False")
 SAMPLE_RATE = 16000
 
@@ -42,8 +42,8 @@ DURACION_MINIMA = 0.5
 
 # Etiqueta del modelo -> clave de ANCLAJES (romeo_brain/estado_afectivo.py).
 # Cubre los nombres más comunes en inglés y español, para que cambiar de
-# modelo no obligue a tocar código. Lo que no está aquí ("other",
-# "unknown"...) se descarta y el resto se renormaliza.
+# modelo no obligue a tocar código. Lo que no está aquí ("unknown"...) se
+# descarta y el resto se renormaliza.
 # CUATRO EMOCIONES, NO OCHO. El robot trabaja con neutral, tristeza, enojo
 # y felicidad, que son las unicas que la camara sabe distinguir
 # (_emotion_detector.ETIQUETAS_RELEVANTES) y las unicas que tienen cara en
@@ -66,9 +66,9 @@ _ETIQUETAS = {
     "contempt": "enojo", "desprecio": "enojo",
     "fear": "tristeza", "fearful": "tristeza", "miedo": "tristeza",
     "happiness": "felicidad", "happy": "felicidad", "hap": "felicidad",
-    "joy": "felicidad", "alegria": "felicidad", "felicidad": "felicidad",
+    "positive": "felicidad", "joy": "felicidad", "alegria": "felicidad", "felicidad": "felicidad",
     "surprise": "felicidad", "surprised": "felicidad", "sorpresa": "felicidad",
-    "neutral": "neutral", "neu": "neutral", "calm": "neutral",
+    "neutral": "neutral", "neu": "neutral", "calm": "neutral", "other": "neutral",
     "sadness": "tristeza", "sad": "tristeza", "tristeza": "tristeza",
 }
 

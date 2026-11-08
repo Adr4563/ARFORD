@@ -119,7 +119,7 @@ El TTS corre en la PC (`tts_server.py`, puerto 8083): **Piper VITS, voz `es_MX-c
 El micrófono es el de la placa de audio. La Pi detecta el inicio y el fin de cada frase con **Silero VAD** y manda el audio a la PC (`stt_server.py`, puerto 8082), que devuelve:
 
 - el texto, con **NVIDIA FastConformer en español** (`ROMEO_STT_MOTOR=nemo`; `whisper` es la alternativa);
-- la emoción de la voz (**SER**, wav2vec2 MESD);
+- la emoción de la voz (**SER**, HuBERT Dusha);
 - la emoción del texto (**TER**, RoBERTuito).
 
 Mientras Romeo suena, el audio que entra se descarta para que no se transcriba a sí mismo. Si llega una frase mientras sigue el turno anterior, también se descarta.

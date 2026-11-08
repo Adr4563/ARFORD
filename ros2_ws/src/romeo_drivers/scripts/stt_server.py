@@ -67,11 +67,9 @@ app = Flask(__name__)
 reconocedor = ReconocedorVoz()
 # SER: la emocion de la voz, sobre el mismo audio (ver _ser_engine.py).
 #
-# DOS MOTORES. El de serie (wav2vec2 + MESD) esta entrenado con frases
-# actuadas en estudio y con el microfono de la placa se iba a "Neutral"
-# casi siempre. El de WavLM (_ser_wavlm.py) sale del baseline del Odyssey
-# Challenge, entrenado con habla espontanea, y distingue de verdad:
-# sobre el mismo audio triste, Sad 0.93 contra Neutral 0.87.
+# DOS MOTORES. El de serie es HuBERT (Dusha, ver _ser_engine.py). El de
+# WavLM (_ser_wavlm.py) sale del baseline del Odyssey Challenge, entrenado
+# con habla espontanea.
 #
 # Se elige con ROMEO_SER_MODELO. Como el de WavLM trae una arquitectura
 # propia, necesita su modulo; el resto de modelos de HuggingFace siguen
