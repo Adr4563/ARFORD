@@ -40,13 +40,11 @@ import threading
 import unicodedata
 import time
 
-import joblib
 import rclpy
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
-from ament_index_python.packages import get_package_share_directory
 
 from romeo_interfaces.msg import UserInput
 
@@ -56,29 +54,9 @@ from .medicion import activa as medicion_activa
 from .medicion import medir_bloque, tiempos, turno
 from ._ros_bridge import RosBridge
 
-# El enrutado (TRIVIA / CHAT_LIBRE) vive aca y no en un agente aparte: son
-# cuatro lineas de scikit-learn sobre un joblib ya entrenado, sin estado ni
-# hardware. Tenerlo en su propio modulo solo añadia un archivo que leer.
-_RUTA_MODELO = os.path.join(
-    get_package_share_directory('romeo_brain'), 'data', 'router_modelo.joblib')
-_router = joblib.load(_RUTA_MODELO)
-
-
-# El router se entreno con frases limpias y no ve la negacion: "no quiero
-# jugar" lleva "jugar" y cae en TRIVIA igual que "quiero jugar". Con el STT
-# fallando aparece seguido, y mandar a alguien a una tanda de 5 preguntas
-# cuando acaba de decir que NO es el peor error posible de los dos.
-#
-# Esto no sustituye al router -- solo lo veta cuando el usuario negó de
-# forma explicita. Si no hay negacion, decide el modelo como siempre.
-_NEGAR_JUEGO = re.compile(
-    r"\bno\b[^.?!]{0,20}\b(quiero|queria|deseo|me apetece|gracias)?[^.?!]{0,10}"
-    r"\b(jugar|juego|trivia|trivias|preguntas?)\b", re.I)
-
-
-# A TRIVIA SOLO SI SE PIDE POR SU NOMBRE. El router (TF-IDF de n-gramas de
-# CARACTERES) decidia por parecido de letras, y eso sacaba a la gente de la
-# conversacion sin motivo: "mi perro jueGA mucho" comparte trozos con
+# A TRIVIA SOLO SI SE PIDE POR SU NOMBRE. Antes decidia un modelo (TF-IDF
+# de n-gramas de CARACTERES) por parecido de letras, y eso sacaba a la gente
+# de la conversacion sin motivo: "mi perro jueGA mucho" comparte trozos con
 # "jugar" y se iba a TRIVIA con 0.85, igual que "ah, persegui una ardilla"
 # con 0.64. Ninguna de las dos pedia jugar.
 #
@@ -107,9 +85,7 @@ def _normalizar_ruta(texto):
 def enrutar(mensaje_usuario):
     """TRIVIA solo si el mensaje nombra la trivia (o el juego de caras).
 
-    Todo lo demas es conversacion. El modelo de router_modelo.joblib sigue
-    cargado por compatibilidad, pero ya no decide: ver el comentario de
-    arriba."""
+    Todo lo demas es conversacion: ver el comentario de arriba."""
     texto = _normalizar_ruta(mensaje_usuario)
     if _PEDIR_TRIVIA.search(texto) or _PEDIR_CARAS.search(texto):
         return "TRIVIA"

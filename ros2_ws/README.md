@@ -46,7 +46,7 @@ ros2_ws/src/
 │       ├── agente_trivia.py, agente_chat.py
 │       ├── llama_client.py              HTTP directo a Ollama
 │       ├── preguntas.py
-│       └── data/  preguntas.jsonl, router_modelo.joblib
+│       └── data/  preguntas.jsonl
 └── romeo_bringup/               launch + parámetros (ament_cmake)
     ├── launch/romeo_bringup.launch.py
     └── config/romeo_params.yaml

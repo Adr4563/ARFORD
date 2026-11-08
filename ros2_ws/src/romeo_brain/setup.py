@@ -13,7 +13,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        # router_modelo.joblib (Agent_Router) y preguntas.jsonl (preguntas.py)
+        # preguntas.jsonl (preguntas.py)
         # -- se ubican en runtime con ament_index_python, mismo criterio que
         # los assets de romeo_drivers.
         (os.path.join('share', package_name, 'data'),

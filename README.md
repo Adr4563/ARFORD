@@ -101,7 +101,7 @@ Ollama corre en local (`http://localhost:11434`) y se usa su API compatible con 
 - Se eligió `qwen2.5:0.5b` en lugar de `llama3.2:3b` tras comparar 7 modelos: 484 MB de RAM y 1-3 s por respuesta, frente a 2.5 GB y 7-12 s, con la misma calidad medida.
 - Conviene usar `OLLAMA_KEEP_ALIVE=-1` para que los modelos no se descarguen de memoria: recargarlos desde disco costaba entre 15 y 28 s en el peor caso.
 - **El router y el corrector no usan LLM**, por velocidad y precisión:
-  - `orchestrator_node.enrutar()`: TF-IDF de n-gramas de caracteres + regresión logística (`scikit-learn`, `router_modelo.joblib`). Acierta ~95-96 % en validación y responde en microsegundos.
+  - `orchestrator_node.enrutar()`: expresión regular. Va a Trivia solo si el mensaje nombra la trivia o el juego de caras; todo lo demás es Chat libre.
   - `agente_trivia.evaluar_respuesta()`: comparación numérica si la respuesta esperada es un número; si es texto, normalización, coincidencia de palabras clave y comparación aproximada (`difflib`). Acierta el 98.4 % sobre 187 preguntas reales y nunca da por buena una respuesta incorrecta.
 - Si Ollama no responde, `clasificar_salida_trivia()` devuelve `None` y el orquestador recurre a listas de palabras clave.
 

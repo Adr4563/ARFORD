@@ -116,7 +116,7 @@ cmd_estado() {
     done
 
     info "Dependencias de Python (las usa el runtime de los nodos)"
-    for m in rclpy sherpa_onnx onnxruntime flask numpy serial cv2 rank_bm25 sklearn; do
+    for m in rclpy sherpa_onnx onnxruntime flask numpy serial cv2 rank_bm25; do
         if python3 -c "import $m" 2>/dev/null; then
             echo "  OK     $m"
         else
