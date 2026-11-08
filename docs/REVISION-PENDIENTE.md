@@ -1,133 +1,102 @@
 # Revisión pendiente
 
-Dos problemas detectados interactuando con el robot el 15 de octubre de 2026.
-Ninguno está resuelto.
+Lista actualizada el 8 de noviembre de 2026.
 
-## 1. La placa de audio se desconecta del USB
+## Por arreglar
 
-Medido en la Raspberry: **65 desconexiones**, reconectando cada 1-2 segundos.
+### 1. La cámara no entrega imagen
 
-```
-[ 3841.536561] usb 1-1.3: USB disconnect
-[ 3841.706034] usb 1-1.3: new full-speed USB device    <- 0.2 s despues
-[ 3843.152678] usb 1-1.3: USB disconnect               <- 1.4 s despues
-[ 3844.297085] usb 1-1.3: new full-speed USB device
-[ 3845.097171] usb 1-1.3: USB disconnect
-[ 3845.272091] usb 1-1.3: new full-speed USB device
-```
-
-Justo antes de cada caída aparece:
+La Pi detecta la cámara (`imx500` aparece en `rpicam-hello --list-cameras`),
+pero no recibe cuadros:
 
 ```
-usb 1-1.3: cannot get connectors status: req = 0x81, wValue = 0x200, ...
+ERROR RPI pipeline_base.cpp:1356 Camera frontend has timed out!
 ```
 
-Es el driver UAC perdiendo respuesta de la placa.
+`rpicam-still` tampoco logra sacar una foto, así que no es un problema del
+código de Romeo. El firmware de la IMX500 está instalado y reiniciar la Pi no
+lo resolvió. Sin imagen, FER no da lecturas y Romeo usa solo voz y texto.
 
-Cuando se cae, el micrófono muere a mitad de frase y whisper recibe audio
-cortado. De ahí transcripciones como `'9. 3.'`, `'que se les en'` o
-`'el otro de la coda'`.
+Qué probar, con la Pi apagada:
 
-### Qué se descartó
-
-- No es software ni configuración: el puerto `1-1.3` desaparece de
-  `/sys/bus/usb/devices/` y `lsusb` deja de verla.
-- No es el hub entero: el `1-1.4` (CH340 del carrito) sigue vivo en el mismo
-  hub mientras el `1-1.3` se cae.
-- No es el nombre del dispositivo: `mic_dispositivo: "Board: USB Audio"` es
-  correcto y coincide con un único dispositivo cuando la placa está conectada.
-
-### Qué probar
-
-1. **Conectar la placa directo a un puerto de la Pi**, sin el hub VIA Labs.
-   El ESP32-S3 con el códec de audio pide corriente que un hub sin
-   alimentación propia no sostiene.
-2. **Cambiar el cable USB.** Los de solo carga dan exactamente este patrón.
-3. **Bajar el volumen.** El comentario de `romeo_params.yaml` ya avisa de que
-   con la música fuerte "la placa pedía demasiada corriente y se
-   desconectaba". Está en 60: probar a 40.
+1. Dar vuelta el cable flex en el conector de la Pi.
+2. Probar con otro flex.
+3. Si sigue igual, la cámara está dañada.
 
 Verificar con:
+
+```bash
+rpicam-still -n --timeout 1500 --width 640 --height 480 -o /tmp/prueba.jpg
+```
+
+### 2. La rueda trasera derecha no gira hacia adelante
+
+Con `T4B` gira hacia atrás y con `T4` no gira. Hacia atrás usa GPIO 4 y hacia
+adelante GPIO 5, así que el motor, el driver y la batería responden y el fallo
+está en la señal de GPIO 5 → IN3 del segundo L298N.
+
+Qué probar: revisar ese cable en los dos extremos. Si sigue igual, intercambiar
+IN3 e IN4 en el driver: si la falla cambia de sentido, es el cable o el pin del
+ESP32; si no cambia, es la entrada IN3 del driver.
+
+### 3. Respuesta a «¿cómo te sientes, Romeo?»
+
+Si Romeo no está en Normal, la IA recibe a la vez el tono hacia la persona y
+su propio ánimo, y responde mal («Me parece incómodo escuchar sobre tu dolor»).
+La pregunta debería llevar solo el ánimo de Romeo (`aeb.tono_para`).
+
+### 4. Comentarios del chat y de la trivia
+
+- Con tristeza, el chat a veces entiende a la persona pero no le da ánimo.
+- Se le escapó un «usted» («¿Cómo se siente?»).
+- El dato curioso de la trivia puede ser inventado: dijo que en 1939 se
+  inventó la radio.
+
+## Por comprobar
+
+No se han vuelto a medir desde que el STT pasó a la PC.
+
+### 5. La placa de audio se desconectaba del USB
+
+El 15 de octubre se midieron 65 desconexiones, cada 1-2 s. Desde entonces el
+micrófono ha funcionado en las sesiones, pero no se revisó `dmesg`.
 
 ```bash
 sudo dmesg -w | grep "1-1"
 ```
 
-Si pasa 2 minutos sin `USB disconnect`, era el hub o el cable.
+Si reaparece: conectar la placa directo a la Pi sin hub, cambiar el cable USB y
+bajar el volumen.
 
-## 2. El robot se transcribe a sí mismo
+### 6. Nivel del micrófono
 
-El micrófono y el altavoz están en la misma placa, a centímetros. Cuando Romeo
-habla, su propio micrófono lo oye, whisper lo transcribe y el orquestador lo
-procesa como si fuera el usuario. Romeo acaba conversando consigo mismo.
+El 15 de octubre la placa entregaba un pico del 4,3 % de la escala. El STT
+todavía entiende mal algunas frases.
 
-Pares reales del log:
+No tocar los parámetros del STT a ciegas: un ajuste de varios a la vez dejó al
+VAD sin detectar voz. Grabar un WAV, medir el nivel y cambiar un parámetro por
+vez. La ganancia del códec ES7210 solo se cambia en `firmware-audio-board/`.
 
-```
-Asistente: "Me alegra escuchar que te sientes bien. ¿Cómo te sientes con
-            respecto a la conexión con los..."
-[mic]:     'de alegras, escucha que de cientes bien, como de cientes con
-            respecto la conexión con'
+### 7. Eco de Romeo en su propio micrófono
 
-Asistente: "Parece que estás experimentando un sentimiento de desesperanza..."
-[mic]:     'parece que está se experimentando en sentimiento de desesperanza.'
+Ya no apareció en los logs: el audio se descarta mientras Romeo suena y el STT
+responde rápido. `lanzar_romeo.sh` usa `ROMEO_GRACIA_ECO=0`. Si vuelve, subir
+ese valor o activar el módulo `echo-cancel` de PipeWire.
 
-Asistente: "¿Cómo te sientes en este momento?"
-[mic]:     'que si antes en este momento'
-```
+## Por decidir o instalar
 
-También tomó **"Lora"** como nombre del usuario, captado de su propia voz
-diciendo "Lora Audio Board".
-
-### Por qué el filtro actual no basta
-
-`communication_node` ya tiene anti-realimentación: `_mientras_suena()` marca
-el altavoz como ocupado y `_on_texto_voz()` descarta lo que llegue mientras
-`_sonando()` sea True.
-
-El problema es el momento. whisper-tiny tarda **~4 s** en transcribir en la
-Pi, así que:
-
-1. Romeo habla -> `_reproduciendo = 1` -> el micrófono capta su voz
-2. Romeo termina -> `_reproduciendo = 0`
-3. **4 s después**, whisper acaba de transcribir ese audio
-4. `_on_texto_voz` pregunta `_sonando()` -> ya es False -> lo publica
-
-El filtro llega tarde. Es un bug real, no un problema de configuración.
-
-### Qué probar
-
-Una **ventana de gracia**: que `_sonando()` siga devolviendo True unos
-segundos después de que el altavoz calle, cubriendo la latencia de whisper.
-
-Se intentó con 5 s y funcionó para el eco, pero se desplegó junto a un timeout
-de inactividad de 6 s y la combinación dejó a Romeo hablando solo sin dejar
-hueco al usuario: cada frase suya bloqueaba el micrófono 5 s, y a los 6 s
-volvía a hablar. **La ventana de gracia sola era correcta; el error fue
-meterla junto al timeout.** Ambos se revirtieron.
-
-La solución de fondo sería **cancelación de eco acústico (AEC)**. PipeWire
-trae un módulo `echo-cancel` que no está activado.
-
-## 3. Nota sobre el nivel del micrófono
-
-Medido: la placa entrega un pico del **4,3%** de la escala (RMS 207). El
-comentario de `_stt_engine.py` da por bueno un 26-31% hablándole de cerca, así
-que estamos **6 veces por debajo**.
-
-Con ese nivel whisper alucina: devuelve la misma palabra repetida
-(`'nuevo nuevo nuevo...'`, `'escucha, escucha, escucha...'`,
-`'bien, bien, bien, bien'`).
-
-**No tocar los parámetros del STT a ciegas.** Se intentó ajustar
-`PICO_MINIMO`, `GANANCIA_MAX`, `min_silence_duration`, el `threshold` del VAD
-y `min_speech_duration`, más un filtro de repeticiones. Resultado: el VAD dejó
-de detectar voz y el robot pasó de 13-14 transcripciones por sesión a **0**.
-Todo revertido con git.
-
-Si se retoma: grabar la voz del usuario a un WAV, medir el nivel real y
-comparar la transcripción antes y después de cada cambio. Un parámetro a la
-vez, midiendo, no varios a la vez.
-
-El nivel bajo se origina en la ganancia del códec ES7210, que solo se cambia
-en el firmware del ESP32-S3 (`firmware-audio-board/`), no desde la Pi.
+- **YuNet en el sensor IMX500:** falta dar permiso a debugfs en la Pi:
+  ```bash
+  echo "debugfs /sys/kernel/debug debugfs defaults,mode=0755 0 0" | sudo tee -a /etc/fstab
+  sudo mount -o remount,mode=0755 /sys/kernel/debug
+  ```
+- **`ROMEO_NEUTRAL_ENCOGE`:** está activo en `lanzar_romeo.sh` y no es parte de
+  la metodología de Rocha. Decidir si se deja o se usa solo la fórmula original.
+- **Modelo SER:** se usa wav2vec2 MESD, aunque WavLM clasificó mejor los audios
+  de prueba (`ROMEO_SER_MODELO`).
+- **Medición de FER:** comparar CPU, RAM y temperatura con
+  `fer_bajo_demanda` en `true` y `false` cuando la cámara dé imagen.
+- **Pi sin actualizar:** falta `git pull`, compilar `romeo_brain` y copiar
+  `pruebas/panel_robot/panel.py` a `~/romeo_panel.py`.
+- **Scripts que solo están en la Pi:** `lanzar_tunel.sh`, `reiniciar_romeo.sh`,
+  `reiniciar_panel.sh`, `apagar_romeo.sh` y `carrito_prueba.sh`.
