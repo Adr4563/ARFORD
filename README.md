@@ -23,8 +23,8 @@ Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reempl
 - [Inicio rápido](#inicio-rápido)
 
 > **Revisión pendiente:** los problemas abiertos están en
-> [`docs/REVISION-PENDIENTE.md`](docs/REVISION-PENDIENTE.md). Los principales: la
-> cámara no entrega imagen y la rueda trasera derecha no gira hacia adelante.
+> [`docs/REVISION-PENDIENTE.md`](docs/REVISION-PENDIENTE.md). El principal: la
+> cámara no entrega imagen.
 
 ---
 

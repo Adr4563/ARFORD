@@ -29,59 +29,18 @@ Verificar con:
 rpicam-still -n --timeout 1500 --width 640 --height 480 -o /tmp/prueba.jpg
 ```
 
-### 2. La rueda trasera derecha no gira hacia adelante
-
-Con `T4B` gira hacia atrás y con `T4` no gira. Hacia atrás usa GPIO 4 y hacia
-adelante GPIO 5, así que el motor, el driver y la batería responden y el fallo
-está en la señal de GPIO 5 → IN3 del segundo L298N.
-
-Qué probar: revisar ese cable en los dos extremos. Si sigue igual, intercambiar
-IN3 e IN4 en el driver: si la falla cambia de sentido, es el cable o el pin del
-ESP32; si no cambia, es la entrada IN3 del driver.
-
-### 3. Respuesta a «¿cómo te sientes, Romeo?»
+### 2. Respuesta a «¿cómo te sientes, Romeo?»
 
 Si Romeo no está en Normal, la IA recibe a la vez el tono hacia la persona y
 su propio ánimo, y responde mal («Me parece incómodo escuchar sobre tu dolor»).
 La pregunta debería llevar solo el ánimo de Romeo (`aeb.tono_para`).
 
-### 4. Comentarios del chat y de la trivia
+### 3. Comentarios del chat y de la trivia
 
 - Con tristeza, el chat a veces entiende a la persona pero no le da ánimo.
 - Se le escapó un «usted» («¿Cómo se siente?»).
 - El dato curioso de la trivia puede ser inventado: dijo que en 1939 se
   inventó la radio.
-
-## Por comprobar
-
-No se han vuelto a medir desde que el STT pasó a la PC.
-
-### 5. La placa de audio se desconectaba del USB
-
-El 15 de octubre se midieron 65 desconexiones, cada 1-2 s. Desde entonces el
-micrófono ha funcionado en las sesiones, pero no se revisó `dmesg`.
-
-```bash
-sudo dmesg -w | grep "1-1"
-```
-
-Si reaparece: conectar la placa directo a la Pi sin hub, cambiar el cable USB y
-bajar el volumen.
-
-### 6. Nivel del micrófono
-
-El 15 de octubre la placa entregaba un pico del 4,3 % de la escala. El STT
-todavía entiende mal algunas frases.
-
-No tocar los parámetros del STT a ciegas: un ajuste de varios a la vez dejó al
-VAD sin detectar voz. Grabar un WAV, medir el nivel y cambiar un parámetro por
-vez. La ganancia del códec ES7210 solo se cambia en `firmware-audio-board/`.
-
-### 7. Eco de Romeo en su propio micrófono
-
-Ya no apareció en los logs: el audio se descarta mientras Romeo suena y el STT
-responde rápido. `lanzar_romeo.sh` usa `ROMEO_GRACIA_ECO=0`. Si vuelve, subir
-ese valor o activar el módulo `echo-cancel` de PipeWire.
 
 ## Por decidir o instalar
 
