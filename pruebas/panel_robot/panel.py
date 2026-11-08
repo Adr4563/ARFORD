@@ -222,7 +222,7 @@ PAGINA = r"""<!doctype html>
       <span class="chip"><span class="punto" style="background:var(--antes)"></span> Frase anterior</span>
       <span class="chip"><span class="punto" style="background:var(--ahora)"></span> Frase actual</span>
     </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el chico es la frase anterior y el grande la actual, con una flecha de uno a otro. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base (anillo negro). La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). En «Tu emoción», un punto hueco es una frase en la que todo salió neutral: ahí Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el chico es la frase anterior y el grande la actual, con una flecha de uno a otro. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base. La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). En «Tu emoción», un punto hueco es una frase en la que todo salió neutral: ahí Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
   </div>
 
   <div class="tarjeta">
@@ -315,7 +315,10 @@ function cubo(cont, quien) {
   marcas.sort((a, b) => b.z - a.z);
   for (const m of marcas) {
     ctx.beginPath();
-    if (m.base) { ctx.arc(m.x, m.y, 7, 0, 7); ctx.strokeStyle = col("--normal"); ctx.lineWidth = 2.5; ctx.stroke(); ctx.fillStyle = col("--normal"); ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", m.x + 26, m.y + 12); continue; }
+    if (m.base) {   // Normal de Romeo = su animo base: rombo negro, como las demas emociones
+      ctx.fillStyle = col("--normal"); ctx.moveTo(m.x, m.y - 7); ctx.lineTo(m.x + 7, m.y); ctx.lineTo(m.x, m.y + 7); ctx.lineTo(m.x - 7, m.y); ctx.fill();
+      ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", m.x + 26, m.y + 12); continue;
+    }
     const cp = m.ultimo ? cAhora : cAntes;
     ctx.arc(m.x, m.y, m.ultimo ? 8 : 6, 0, 7); ctx.fillStyle = m.hueco ? col("--tarjeta") : cp; ctx.fill();
     ctx.strokeStyle = m.hueco ? cp : col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
