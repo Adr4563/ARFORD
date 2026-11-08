@@ -163,11 +163,13 @@ PAGINA = r"""<!doctype html>
 <style>
   :root { --fondo:#f9f9f7; --tarjeta:#fcfcfb; --texto:#0b0b0b; --suave:#52514e; --tenue:#898781;
     --borde:#e1e0d9; --eje:#c3c2b7; --fusion:#eda100; --romeo:#e87ba4;
-    --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; --ok:#1baf7a; }
+    --val:#2a78d6; --aro:#eb6834; --dom:#1baf7a; --ok:#1baf7a;
+    --enojo:#d1352b; --triste:#2a78d6; --feliz:#d4a400; --normal:#0b0b0b; --antes:#8b5cf6; --ahora:#16a34a; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
     --fondo:#0d0d0d; --tarjeta:#1a1a19; --texto:#f0efec; --suave:#c3c2b7; --tenue:#898781;
     --borde:#2c2c2a; --eje:#383835; --fusion:#c98500; --romeo:#d55181;
-    --val:#3987e5; --aro:#d95926; --dom:#199e70; --ok:#199e70; color-scheme: dark; } }
+    --val:#3987e5; --aro:#d95926; --dom:#199e70; --ok:#199e70;
+    --enojo:#ef5a4f; --triste:#4d94ec; --feliz:#f2c94c; --normal:#f0efec; --antes:#a78bfa; --ahora:#22c55e; color-scheme: dark; } }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--fondo); color:var(--texto); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
   main { max-width:960px; margin:0 auto; padding:28px 16px 48px; }
@@ -212,7 +214,15 @@ PAGINA = r"""<!doctype html>
       <div><h3><span class="punto" style="background:var(--romeo)"></span>Ánimo de Romeo</h3><p class="emo" id="emo-romeo">—</p><div class="cubo" id="cubo-romeo"><canvas></canvas></div></div>
       <div><h3><span class="punto" style="background:var(--fusion)"></span>Tu emoción (S<sub>u</sub>)</h3><p class="emo" id="emo-usuario">—</p><div class="cubo" id="cubo-usuario"><canvas></canvas></div></div>
     </div>
-    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el chico es la frase anterior y el grande la actual, con una flecha de uno a otro. Los rombos grises marcan dónde está Feliz, Triste y Enojado, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base (anillo gris). La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). En «Tu emoción», un punto hueco es una frase en la que todo salió neutral: ahí Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
+    <div class="chips" style="justify-content:center">
+      <span class="chip"><span class="punto" style="background:var(--feliz)"></span> Feliz</span>
+      <span class="chip"><span class="punto" style="background:var(--triste)"></span> Triste</span>
+      <span class="chip"><span class="punto" style="background:var(--enojo)"></span> Enojado</span>
+      <span class="chip"><span class="punto" style="background:var(--normal)"></span> Normal</span>
+      <span class="chip"><span class="punto" style="background:var(--antes)"></span> Frase anterior</span>
+      <span class="chip"><span class="punto" style="background:var(--ahora)"></span> Frase actual</span>
+    </div>
+    <p class="nota">Ejes: valencia, arousal y dominancia, de −1 a 1. Solo se ven dos puntos: el chico es la frase anterior y el grande la actual, con una flecha de uno a otro. Los rombos de color marcan dónde está cada emoción, y «Normal» es el centro: para ti el origen, para Romeo su ánimo base (anillo negro). La emoción sale de hacia dónde se aleja el punto del centro y cuánto, con la misma regla que usa Romeo (AEB). En «Tu emoción», un punto hueco es una frase en la que todo salió neutral: ahí Romeo no cambia su ánimo. Arrastra para girar; los dos cubos giran juntos.</p>
   </div>
 
   <div class="tarjeta">
@@ -238,7 +248,7 @@ const giro = { yaw: -0.6, pitch: 0.35 };
 // mismo que su log); para el usuario, el origen.
 const ANCLAS = { felicidad: [0.76, 0.48, 0.35], tristeza: [-0.63, -0.27, -0.33], enojo: [-0.51, 0.59, 0.25] };
 const NOMBRE = { felicidad: "Feliz", tristeza: "Triste", enojo: "Enojado", neutral: "Normal" };
-const COLOR_EMO = { felicidad: "--dom", tristeza: "--val", enojo: "--aro", neutral: "--suave" };
+const COLOR_EMO = { felicidad: "--feliz", tristeza: "--triste", enojo: "--enojo", neutral: "--normal" };
 const INTENS = { 1: "un poco ", 2: "", 3: "muy ", 4: "muy " };
 function emocionDe(p, centro) {
   if (!p) return { clave: "neutral", nivel: 0 };
@@ -269,12 +279,12 @@ function cubo(cont, quien) {
   L([-1, 0, 0], [1, 0, 0], col("--tenue"), 1.5); L([0, -1, 0], [0, 1, 0], col("--tenue"), 1.5); L([0, 0, -1], [0, 0, 1], col("--tenue"), 1.5);
   ctx.font = "12px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   for (const [p, t, c] of [[[1.32, 0, 0], "Valencia +", "--val"], [[0, 1.2, 0], "Arousal +", "--aro"], [[0, 0, 1.34], "Dominancia +", "--dom"], [[-1.2, 0, 0], "−", "--tenue"], [[0, -1.18, 0], "−", "--tenue"], [[0, 0, -1.2], "−", "--tenue"]]) { const [x, y] = P(...p); ctx.fillStyle = col(c); ctx.fillText(t, x, y); }
-  const color = col(quien === "romeo" ? "--romeo" : "--fusion");
+  const cAntes = col("--antes"), cAhora = col("--ahora"), color = cAhora;
   // Solo la frase anterior y la actual, no todo el registro.
   const turnos = datos.turnos.slice(-2);
   const pts = turnos.map((t) => quien === "romeo" ? (t.romeo || datos.base) : (t.fusion || { v: 0, a: 0, d: 0 }));
   const n = pts.length;
-  ctx.globalAlpha = 0.25; pts.forEach((p) => { if (!p) return; const [x, y] = P(p.v, -1, p.d); ctx.beginPath(); ctx.fillStyle = color; ctx.arc(x, y, 3, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.3; pts.forEach((p, i) => { if (!p) return; const [x, y] = P(p.v, -1, p.d); ctx.beginPath(); ctx.fillStyle = i === n - 1 ? cAhora : cAntes; ctx.arc(x, y, 3, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
   if (n === 2 && pts[0] && pts[1]) {
     const A = P(pts[0].v, pts[0].a, pts[0].d), B = P(pts[1].v, pts[1].a, pts[1].d);
     ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke(); ctx.setLineDash([]);
@@ -291,21 +301,25 @@ function cubo(cont, quien) {
   ctx.font = "11px system-ui, sans-serif";
   for (const [k, a] of Object.entries(ANCLAS)) {
     const [x, y] = P(...a);
-    ctx.beginPath(); ctx.fillStyle = col("--tenue"); ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 5, y); ctx.fill();
-    ctx.fillStyle = col("--suave"); ctx.fillText(NOMBRE[k], x, y + 13);
+    const ce = col(COLOR_EMO[k]);
+    ctx.beginPath(); ctx.fillStyle = ce; ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.fill();
+    ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillStyle = ce; ctx.fillText(NOMBRE[k], x, y + 16);
   }
-  if (quien === "usuario") { const [x, y] = P(0, 0, 0); ctx.fillStyle = col("--suave"); ctx.fillText("Normal", x + 22, y + 12); }
+  if (quien === "usuario") {
+    const [x, y] = P(0, 0, 0), cn = col("--normal");
+    ctx.beginPath(); ctx.fillStyle = cn; ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.fill();
+    ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", x + 26, y + 12);
+  }
   const marcas = pts.map((p, i) => { if (!p) return null; const [x, y, z] = P(p.v, p.a, p.d); return { x, y, z, ultimo: i === n - 1, hueco: quien === "usuario" && !turnos[i].fusion, emo: textoEmo(emocionDe(p, centro)) }; }).filter(Boolean);
   if (quien === "romeo" && datos.base) { const [x, y, z] = P(datos.base.v, datos.base.a, datos.base.d); marcas.push({ x, y, z, base: true }); }
   marcas.sort((a, b) => b.z - a.z);
   for (const m of marcas) {
     ctx.beginPath();
-    if (m.base) { ctx.arc(m.x, m.y, 7, 0, 7); ctx.strokeStyle = col("--suave"); ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = col("--suave"); ctx.font = "11px system-ui, sans-serif"; ctx.fillText("Normal", m.x + 24, m.y + 12); continue; }
-    ctx.globalAlpha = m.ultimo ? 1 : 0.55;
-    ctx.arc(m.x, m.y, m.ultimo ? 8 : 5, 0, 7); ctx.fillStyle = m.hueco ? col("--tarjeta") : color; ctx.fill();
-    ctx.strokeStyle = m.hueco ? color : col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = col("--suave"); ctx.font = "11px system-ui, sans-serif";
+    if (m.base) { ctx.arc(m.x, m.y, 7, 0, 7); ctx.strokeStyle = col("--normal"); ctx.lineWidth = 2.5; ctx.stroke(); ctx.fillStyle = col("--normal"); ctx.font = "bold 11px system-ui, sans-serif"; ctx.fillText("Normal", m.x + 26, m.y + 12); continue; }
+    const cp = m.ultimo ? cAhora : cAntes;
+    ctx.arc(m.x, m.y, m.ultimo ? 8 : 6, 0, 7); ctx.fillStyle = m.hueco ? col("--tarjeta") : cp; ctx.fill();
+    ctx.strokeStyle = m.hueco ? cp : col("--tarjeta"); ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = cp; ctx.font = "bold 11px system-ui, sans-serif";
     ctx.fillText(m.ultimo ? "ahora" : "antes", m.x, m.y - 15);
   }
   if (!n) { ctx.fillStyle = col("--suave"); ctx.font = "italic 13px system-ui, sans-serif"; ctx.fillText("Háblale a Romeo para ver el recorrido.", cx, h - 14); }
