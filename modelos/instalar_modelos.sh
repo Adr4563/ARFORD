@@ -15,7 +15,7 @@
 # y romeo_params.yaml):
 #     ter/   -> ~/.romeo/modelos/ter/
 #     ser/   -> ~/.romeo/modelos/ser/
-#     asr/   -> ~/.romeo/modelos/     (whisper-tiny se descomprime ahi)
+#     asr/   -> ~/.romeo/modelos/     (silero_vad.onnx)
 #     voz/   -> ~/.romeo/modelos/     (vits-piper, para sherpa-onnx)
 #               ~/piper-voces/        (es_MX-claude-high.onnx, para piper)
 set -euo pipefail
@@ -50,7 +50,7 @@ copiar voz/es_MX-claude-high.onnx.json "$PIPER/es_MX-claude-high.onnx.json"
 
 # Los .tar.bz2 se descomprimen solo si cambiaron: se guarda su sha256 en
 # un archivo oculto al lado para comparar la proxima vez.
-for tar in asr/*.tar.bz2 voz/*.tar.bz2; do
+for tar in voz/*.tar.bz2; do
     nombre="$(basename "$tar")"
     suma="$(sha256sum "$tar" | cut -d' ' -f1)"
     if [ "$(cat "$DESTINO/.$nombre.sha256" 2>/dev/null)" != "$suma" ]; then

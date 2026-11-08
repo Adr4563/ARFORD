@@ -25,8 +25,7 @@ Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reempl
 > **Revisión pendiente:** hay dos problemas abiertos de audio documentados en
 > [`docs/REVISION-PENDIENTE.md`](docs/REVISION-PENDIENTE.md) — la placa se
 > desconecta del USB (65 veces, cada 1-2 s) y el robot se transcribe a sí
-> mismo. El plan de la siguiente iteración está en
-> [`docs/arquitectura-v2.md`](docs/arquitectura-v2.md).
+> mismo.
 
 ---
 
