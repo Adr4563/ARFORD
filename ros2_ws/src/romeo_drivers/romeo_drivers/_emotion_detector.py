@@ -62,6 +62,12 @@ CUADROS_JUEGO = 3          # con cuántos cuadros decide el juego de caras
 # (640x480): YuNet buscaba la cara en el doble de pixeles de lo necesario
 # para una persona a 1-2 m del robot, y FER+ igual recorta a 64x64.
 RESOLUCION_POR_DEFECTO = (320, 240)
+# Formato de captura. Por defecto picamera2 da XBGR8888 (RGBA, 4 canales),
+# que obliga a convertir RGBA->BGR cada cuadro antes de YuNet. Pidiendo
+# "BGR888" (3 canales) la camara entrega ya el formato que usa OpenCV, y
+# _a_bgr no copia ni convierte nada: menos CPU por cuadro (el nodo FER es
+# lo que mas calienta la Pi). YuNet y FER trabajan en BGR/gris igual.
+FORMATO_CAPTURA = "BGR888"
 # En reposo (bajo demanda, sin voz) el hilo solo mira el reloj cada tanto.
 PAUSA_REPOSO = 0.1
 
@@ -165,9 +171,20 @@ class DetectorEmocion:
 
     @staticmethod
     def _a_bgr(frame):
+        """Lleva el cuadro a BGR, el formato que esperan YuNet y FER.
+
+        Con FORMATO_CAPTURA="BGR888" la camara ya entrega 3 canales en orden
+        BGR: no hay nada que convertir y se devuelve tal cual (ahorra una
+        conversion por cuadro). Si llegara RGBA (4 canales, formato viejo) o
+        RGB, se convierte como antes."""
         import cv2
-        return (cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) if frame.shape[-1] == 3
-                else cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR))
+        canales = frame.shape[-1]
+        if canales == 4:
+            return cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
+        if canales == 3 and FORMATO_CAPTURA != "BGR888":
+            # 3 canales pero no pedimos BGR: el driver dio RGB, hay que girar.
+            return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        return frame  # ya es BGR888: sin conversion
 
     def _clasificar(self, frame_bgr, caja=None):
         """Las 8 probabilidades de FER+ (orden ETIQUETAS) para la cara más
@@ -265,7 +282,8 @@ class DetectorEmocion:
                 picam2 = (Picamera2(sensor.camera_num) if sensor is not None
                           else Picamera2())
                 picam2.start(picam2.create_preview_configuration(
-                    main={"size": self.resolucion}), show_preview=False)
+                    main={"size": self.resolucion, "format": FORMATO_CAPTURA}),
+                    show_preview=False)
                 time.sleep(2)  # que asiente la exposición
                 donde = "sensor" if sensor is not None else "CPU"
                 modo = "solo con voz" if self.bajo_demanda else "siempre"
@@ -404,7 +422,8 @@ class DetectorEmocion:
         try:
             picam2 = Picamera2()
             picam2.start(picam2.create_preview_configuration(
-                main={"size": self.resolucion}), show_preview=False)
+                main={"size": self.resolucion, "format": FORMATO_CAPTURA}),
+                show_preview=False)
             time.sleep(2)  # deja asentar AE/AWB
 
             emocion, confianza = None, None
