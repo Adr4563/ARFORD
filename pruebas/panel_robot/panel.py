@@ -491,7 +491,7 @@ function sinCara(t) {
 // Cara, movimiento y tonos resumen aeb.py (_MOVIMIENTOS, _TONOS, _TONOS_TRIVIA).
 const ESTADOS = [
   { clave: "felicidad", nombre: "Feliz", color: "--feliz", ancla: [0.76, 0.48, 0.35], cara: "Feliz",
-    mov: ["—", "Avanza y vuelve", "Avanza y vuelve", "Avanza y vuelve"],
+    mov: ["Avanza y vuelve", "Avanza y vuelve", "Avanza y vuelve", "Avanza y vuelve"],
     chat: ["Se alegra contigo y celebra lo que cuentas", "Comparte tu alegría con entusiasmo y te pide que cuentes más"],
     trivia: ["Te felicita con alegría; si fallas, buen humor", "Te premia con mucho entusiasmo; si fallas, te motiva"] },
   { clave: "tristeza", nombre: "Triste", color: "--triste", ancla: [-0.63, -0.27, -0.33], cara: "Normal (no pone cara triste)",
@@ -499,7 +499,7 @@ const ESTADOS = [
     chat: ["Entiende cómo te sientes y te da ánimo", "Te acompaña y te ayuda a sentirte un poco mejor"],
     trivia: ["Si fallas, «la próxima lo logras»; si aciertas, destaca el logro", "Igual, más suave y breve"] },
   { clave: "enojo", nombre: "Enojado", color: "--enojo", ancla: [-0.51, 0.59, 0.25], cara: "Enojado",
-    mov: ["—", "Retrocede y vuelve", "Retrocede y vuelve", "Retrocede y vuelve"],
+    mov: ["Retrocede y vuelve", "Retrocede y vuelve", "Retrocede y vuelve", "Retrocede y vuelve"],
     chat: ["Se pone de tu lado, sin regañarte", "Te da la razón en lo que sientes y te escucha, sin pedirte calma"],
     trivia: ["Con calma: «la próxima te sale»", "Muy calmado y con pocas palabras"] },
 ];
