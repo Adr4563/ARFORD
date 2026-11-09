@@ -60,6 +60,30 @@ _PROMPT_CONSEJO = (
     "concretos y faciles de hacer, dichos en frases cortas y seguidas, sin "
     "listas ni numeros, y no respondas con otra pregunta.")
 
+# Cuando preguntan algo FACTUAL (una definicion, un dato, "que es X", "por
+# que Y", "quien fue Z"), el prompt de base ("solo conversa, no ofrezcas
+# ayuda") hacia que Romeo esquivara con otra pregunta en vez de responder.
+# Ese turno se le deja contestar de verdad, breve y hablado, y se le pide que
+# admita cuando NO sabe en vez de inventar (un modelo chico alucina en temas
+# que no domina). Asi Romeo es versatil: conversa, pero tambien informa.
+MAX_FRASES_FACTUAL = int(os.environ.get("ROMEO_MAX_FRASES_FACTUAL", "4"))
+_PIDE_DATO = re.compile(
+    r"\bqu[eé] (es|son|significa|quiere decir)\b|"
+    r"\bqui[eé]n(es)? (es|son|fue|fueron|invent\w*|descubri\w*)|"
+    r"\bpor qu[eé]\b|\bpara qu[eé] sirve\b|"
+    r"\bcu[aá]l(es)? (es|son|fue)\b|\bcu[aá]nto(s|as)?\b|"
+    r"\bcu[aá]ndo (fue|paso|ocurri|empez|naci)\b|\bd[oó]nde (esta|queda|naci)\b|"
+    r"\bdefin(e|icion|ir|eme)\b|\bexplic(a|ame|ar|as)\b|"
+    r"\bqu[eé] diferencia\b|\bde qu[eé] (trata|esta hecho)\b|"
+    r"\bh[aá]blame (de|sobre)\b|\bqu[eé] sabes (de|sobre)\b",
+    re.IGNORECASE)
+_PROMPT_FACTUAL = (
+    "Te estan preguntando por un dato o una definicion: esta vez RESPONDE de "
+    "verdad, no contestes con otra pregunta. Da la respuesta clara en dos a "
+    "cuatro frases cortas, dichas en voz alta, sin listas ni numeracion. Si "
+    "no conoces el tema o la pregunta es ambigua, dilo con naturalidad y pide "
+    "que te aclaren, en vez de inventar datos.")
+
 # Instruccion de estilo, SOLO para modelos sin fine-tuning.
 #
 # El modulo no mandaba system prompt a proposito, porque con romeo (el
@@ -251,6 +275,13 @@ def responder(mensaje_usuario, tono=None):
     consejo = bool(riesgo) or bool(_PIDE_CONSEJO.search(mensaje_usuario or ""))
     if consejo and not riesgo:
         sistema = f"{sistema} {_PROMPT_CONSEJO}".strip()
+    # Pregunta factual (definicion/dato): deja que Romeo responda de verdad.
+    # El riesgo y el consejo mandan sobre esto (una peticion de ayuda grave o
+    # un consejo no se tratan como una consulta de datos).
+    factual = (not riesgo and not consejo
+               and bool(_PIDE_DATO.search(mensaje_usuario or "")))
+    if factual:
+        sistema = f"{sistema} {_PROMPT_FACTUAL}".strip()
 
     def _generar(con_historial):
         mensajes = ((list(_historial) if con_historial else [])
@@ -271,7 +302,13 @@ def responder(mensaje_usuario, tono=None):
     if _es_repeticion(texto):
         texto = _generar(con_historial=False)
 
-    texto = _limpiar_formato(texto, MAX_FRASES_CONSEJO if consejo else None)
+    if consejo:
+        tope_frases = MAX_FRASES_CONSEJO
+    elif factual:
+        tope_frases = MAX_FRASES_FACTUAL
+    else:
+        tope_frases = None
+    texto = _limpiar_formato(texto, tope_frases)
     _historial.append({"role": "user", "content": mensaje_usuario})
     _historial.append({"role": "assistant", "content": texto})
     # Se recorta por el principio, de dos en dos, para no dejar un turno a
