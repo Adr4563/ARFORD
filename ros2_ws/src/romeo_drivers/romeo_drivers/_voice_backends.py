@@ -280,7 +280,16 @@ class Voz:
         # Va aqui y no mas arriba porque L se mide hasta que se OYE la
         # respuesta, no hasta que el WAV esta listo.
         _marcar_inicio_audio(time.time())
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # Antes se tragaba stderr con DEVNULL y los fallos de audio eran
+        # mudos: mpv no sonaba y no quedaba ni una linea. Ahora se captura y,
+        # SOLO si mpv devuelve error (dmix ocupado, device busy, etc.), se
+        # loguea con el motivo. En el camino normal no cambia nada.
+        res = subprocess.run(cmd, stdout=subprocess.DEVNULL,
+                             stderr=subprocess.PIPE)
+        if res.returncode != 0:
+            err = (res.stderr or b"").decode("utf-8", "replace").strip()
+            self._log(f"[voz] mpv fallo al reproducir (codigo {res.returncode}): "
+                      f"{err[-200:] or 'sin mensaje'}")
 
     def _hablar_piper(self, texto):
         """Ver la nota histórica en Voice_Output_Client.py sobre por qué NO
