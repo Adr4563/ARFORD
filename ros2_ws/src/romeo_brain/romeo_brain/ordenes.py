@@ -58,8 +58,17 @@ _PIDE_CARA = re.compile(
 # "transformacion" / "transformate" / "transforma", Romeo muestra bostezo,
 # luego pingpong y al final la transformacion. Es un numerito, no una
 # emocion, por eso va aparte de _CARAS.
+#
+# Cada cara se ve SU animacion ENTERA antes de pasar a la siguiente: las
+# duraciones son las reales de los .mp4 (medidas con ffprobe) mas un
+# pequeño margen para que el ultimo cuadro alcance a verse. Asi la
+# transformacion se reproduce completa en vez de cortarse a un tiempo fijo.
 _TRANSFORMACION = re.compile(r"\btransforma", re.I)
-SECUENCIA_TRANSFORMACION = ("bostezo", "pingpong", "transformacion")
+SECUENCIA_TRANSFORMACION = (
+    ("bostezo", 5.5),
+    ("pingpong", 10.3),
+    ("transformacion", 3.7),
+)
 
 # Giro completo. "360" solo ya es inequivoco; "da una vuelta" tambien.
 _VUELTA = re.compile(
@@ -142,7 +151,9 @@ def interpretar(texto):
     # "transformacion": secuencia de caras (bostezo -> pingpong ->
     # transformacion). Va antes que la cara simple para que gane.
     if _TRANSFORMACION.search(t):
-        return {"tipo": "secuencia_caras", "valor": list(SECUENCIA_TRANSFORMACION)}
+        return {"tipo": "secuencia_caras",
+                "valor": [c for c, _ in SECUENCIA_TRANSFORMACION],
+                "duraciones": [d for _, d in SECUENCIA_TRANSFORMACION]}
 
     m = _PIDE_CARA.search(t)
     if m:

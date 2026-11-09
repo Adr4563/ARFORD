@@ -721,14 +721,18 @@ class OrchestratorNode(Node):
             return
 
         if orden["tipo"] == "secuencia_caras":
-            # "Transformacion": muestra las caras una tras otra con una pausa
-            # entre cada una, y al final vuelve a reposo. La pausa da tiempo a
-            # que cada animacion se vea antes de pasar a la siguiente
-            # (ROMEO_CARA_SECUENCIA_S, por defecto 2.5 s).
+            # "Transformacion": muestra las caras una tras otra y al final
+            # vuelve a reposo. Cada cara se queda en pantalla SU animacion
+            # entera: 'duraciones' trae la duracion real de cada .mp4
+            # (ver ordenes.SECUENCIA_TRANSFORMACION), asi la secuencia se
+            # reproduce completa en vez de cortarse a un tiempo fijo. Si una
+            # cara no trae duracion, cae a SECUENCIA_CARA_S como respaldo.
             self._bridge.hablar(respuesta)
-            for cara in orden["valor"]:
+            duraciones = orden.get("duraciones") or []
+            for i, cara in enumerate(orden["valor"]):
                 self._bridge.mostrar_cara(cara)
-                time.sleep(SECUENCIA_CARA_S)
+                espera = duraciones[i] if i < len(duraciones) else SECUENCIA_CARA_S
+                time.sleep(espera)
             self._mostrar_cara_reposo()
             return
 
