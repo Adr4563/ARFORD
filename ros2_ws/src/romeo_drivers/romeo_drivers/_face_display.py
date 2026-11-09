@@ -28,7 +28,7 @@ import time
 
 from ament_index_python.packages import get_package_share_directory
 
-CARAS_VALIDAS = {"happy", "sad", "angry", "content", "speaking", "countdown"}
+CARAS_VALIDAS = {"happy", "sad", "angry", "content", "speaking", "countdown", "transformacion", "pingpong", "bostezo"}
 
 # Caras de EMOCION: su animacion se reproduce UNA vez y despues vuelve sola
 # a CARA_REPOSO. Antes se repetian en bucle mientras durara el animo, y la
