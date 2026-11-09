@@ -121,7 +121,16 @@ class Display:
                 # "Device or resource busy" sobre /dev/snd/pcmC1D0p.
                 # La pantalla va montada boca abajo en el chasis.
                 "--no-audio",
-                "--hwdec=auto", "--video-rotate=180",
+                # --hwdec=no (decodificacion por SOFTWARE): las caras son
+                # videos minusculos (480x270, 1-2 s, h264), triviales para la
+                # CPU de la Pi 4. Con --hwdec=auto, cada cara abria un
+                # decodificador V4L2 por hardware y, tras muchas cargas en una
+                # sesion larga (un loadfile por turno), los buffers del
+                # hardware se agotaban y mpv dejaba de repintar: la pantalla se
+                # congelaba en la ultima cara aunque el socket seguia vivo.
+                # Por eso "despues de un rato ya no mostraba las caras". Por
+                # software no hay ese limite.
+                "--hwdec=no", "--video-rotate=180",
                 f"--input-ipc-server={MPV_SOCKET}", ruta_inicial,
             ],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
