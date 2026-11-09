@@ -39,7 +39,14 @@ communication_node:
     # La placa es una tarjeta de sonido USB. OJO con el nombre: es "Board"
     # (de "Lora Audio Board"), el que reporta la placa YA FLASHEADA -- ver
     # la nota de mic_dispositivo más abajo. Vacío = salida por defecto.
-    audio_salida: "alsa/plughw:CARD=Board,DEV=0"
+    #
+    # Se usa "alsa/romeo" (dmix de ~/.asoundrc), NO "plughw" directo: el
+    # servicio romeo-altavoz.service mantiene el parlante despierto con un
+    # aplay de silencio por ese MISMO dmix, y plughw pide acceso exclusivo
+    # al hardware. Con plughw los dos chocan ("Device or resource busy"): la
+    # voz de Romeo no suena y, por el conflicto en la placa USB, el micro
+    # tampoco captura. Por el dmix comparten la placa y conviven.
+    audio_salida: "alsa/romeo"
     # La placa solo acepta 16 kHz: se le fuerza el remuestreo a mpv, que lo
     # hace con filtro de calidad. Si lo hace el `plughw` de ALSA (lineal,
     # sin filtro) la voz suena metálica. 0 = no forzar.
