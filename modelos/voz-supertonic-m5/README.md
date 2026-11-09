@@ -1,7 +1,8 @@
 # Voz Supertonic M5 (infantil)
 
-Voz opcional para Romeo. **No está activada:** Romeo sigue hablando con Piper
-`es_MX-claude-high`, y `instalar_modelos.sh` no copia esta carpeta.
+Voz opcional para Romeo. **Ya está integrada en `tts_server.py`** (ver más
+abajo), pero sigue apagada por defecto: Romeo habla con `es_MX-claude-high`
+salvo que se arranque el TTS con el motor `supertonic`.
 
 Se eligió escuchando varias voces locales en español. Es la voz adulta M5 de
 Supertonic 3 con el tono subido; no es un modelo entrenado con voces de niños.
@@ -63,11 +64,29 @@ with wave.open("voz_m5.wav", "wb") as w:
     w.writeframes((x * 32767).astype(np.int16).tobytes())
 ```
 
-## Para activarla más adelante
+## Cómo activarla
 
-Todavía no se puede activar con un parámetro. `stt_server.py` y `tts_server.py`
-corren en la PC, y `tts_server.py` solo carga voces VITS, así que habría que
-agregarle Supertonic y el cambio de tono de arriba.
+`tts_server.py` (en la PC) ya trae los dos motores. Se elige al arrancarlo:
+
+```powershell
+# Voz mexicana de siempre (por defecto):
+.\arrancar_servidores_pc.ps1
+
+# Voz infantil Supertonic:
+.\arrancar_servidores_pc.ps1 -Voz infantil
+```
+
+O a mano, con la variable de entorno:
+
+```powershell
+$env:ROMEO_TTS_MOTOR = "supertonic"
+python tts_server.py
+```
+
+**No hay que recompilar nada** (es un script suelto, no un paquete ROS2) ni
+tocar la Pi: el robot pide el audio ya sintetizado al puerto 8083, sin saber
+qué voz es. Ajustes finos: `ROMEO_TTS_SEMITONOS` (tono, default 5),
+`ROMEO_TTS_SID` (voz, default 4 = M5), `ROMEO_TTS_PASOS` (default 12).
 
 ## Origen y licencia
 
