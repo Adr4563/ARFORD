@@ -54,6 +54,14 @@ _CARAS = {
 _PIDE_CARA = re.compile(
     r"\b(pon|ponte|pongas|muestra|muestrame|haz|hazme|cambia)\b", re.I)
 
+# "cara de feliz", "cara triste", "la cara de enojado" -- un pedido de UNA
+# cara aunque el STT se haya comido el verbo ("pon"). Visto en el robot:
+# "cara de feliz" y "una cara de" llegaban sin verbo y, sin esto, caian en
+# el JUEGO de caras (cualquier mencion de "cara" lo disparaba) en vez de
+# poner la cara pedida. Pide "cara" + una emocion para no confundirse con
+# el juego ("juguemos a las caras"), que no nombra ninguna emocion.
+_CARA_DIRECTA = re.compile(r"\bcara(s)?\b", re.I)
+
 # "Transformacion": una SECUENCIA de caras, no una sola. Al oir
 # "transformacion" / "transformate" / "transforma", Romeo muestra bostezo,
 # luego pingpong y al final la transformacion. Es un numerito, no una
@@ -163,6 +171,13 @@ def interpretar(texto):
             # Sin \b al final: asi "enojada" casa con "enojado" y
             # "contenta" con "contento", sin repetir cada genero.
             if re.search(rf"\b{palabra}", resto):
+                return {"tipo": "cara", "valor": cara}
+
+    # Sin verbo pero con "cara" + una emocion: "cara de feliz", "cara
+    # triste". Es un pedido de UNA cara, no el juego de caras.
+    if _CARA_DIRECTA.search(t):
+        for palabra, cara in _CARAS.items():
+            if re.search(rf"\b{palabra}", t):
                 return {"tipo": "cara", "valor": cara}
 
     if _VUELTA.search(t):

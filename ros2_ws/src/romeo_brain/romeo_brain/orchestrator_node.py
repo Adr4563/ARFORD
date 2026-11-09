@@ -752,11 +752,27 @@ class OrchestratorNode(Node):
 
     @staticmethod
     def _quiere_jugar_emociones(mensaje):
-        """True si el usuario pide el juego de caras.
+        """True si el usuario pide el JUEGO de caras (no UNA cara concreta).
 
         Normaliza quitando tildes: el STT transcribe "emoción" e
-        "imitación" acentuadas, y _PIDE_EMOCIONES las lleva sin tilde."""
-        return any(p in preguntas._sin_tildes(mensaje) for p in _PIDE_EMOCIONES)
+        "imitación" acentuadas, y _PIDE_EMOCIONES las lleva sin tilde.
+
+        Si la frase nombra una EMOCION concreta (feliz, triste, enojado,
+        neutral) NO es el juego: es un pedido de esa cara ("cara de feliz",
+        "pon triste"), que ya resolvio ordenes.interpretar() antes. Sin esto,
+        cualquier "cara feliz" arrancaba el juego de las 4 emociones en vez
+        de poner la cara. El juego se pide sin nombrar emocion: "juguemos a
+        las caras", "el juego de los gestos", "a imitar muecas"."""
+        limpio = preguntas._sin_tildes(mensaje)
+        if not any(p in limpio for p in _PIDE_EMOCIONES):
+            return False
+        # Nombra una emocion concreta -> es pedir esa cara, no el juego.
+        if any(re.search(rf"\b{e}", limpio)
+               for e in ("feliz", "alegre", "content", "triste", "enoja",
+                         "enfada", "molest", "bravo", "neutral", "normal",
+                         "seri")):
+            return False
+        return True
 
     def _jugar_emociones(self):
         """La ronda completa: las 4 emociones de SECUENCIA_EMOCIONES, una
