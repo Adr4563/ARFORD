@@ -15,6 +15,7 @@ bash modelos/instalar_modelos.sh              # los copia a donde los busca Rome
 | `ser/` | wav2vec2 MESD (emoción en voz) | [somosnlp-hackathon-2022/wav2vec2-base-finetuned-sentiment-mesd](https://huggingface.co/somosnlp-hackathon-2022/wav2vec2-base-finetuned-sentiment-mesd), exportado con `pruebas/stt-nemo/exportar_ser.py` | `~/.romeo/modelos/ser/` |
 | `asr/` | Silero VAD | [sherpa-onnx asr-models](https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models) | `~/.romeo/modelos/` |
 | `voz/` | Piper `es_MX-claude-high` | [sherpa-onnx tts-models](https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models) y [rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices/tree/main/es/es_MX/claude/high) | `~/.romeo/modelos/` y `~/piper-voces/` |
+| `voz-supertonic-m5/` | Supertonic M5, voz infantil opcional y **no predeterminada** ([README](voz-supertonic-m5/README.md)) | [sherpa-onnx tts-models](https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models) | No se instala |
 
 El FER (`emotion-ferplus-8.onnx` y YuNet) no está aquí: ya viene en
 `ros2_ws/src/romeo_drivers/romeo_drivers/data/modelos/`.
