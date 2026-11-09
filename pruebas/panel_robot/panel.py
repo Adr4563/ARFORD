@@ -108,8 +108,12 @@ def estado():
 
 
 # Traza del calculo afectivo que escribe el orquestador, una linea JSON por
-# turno (romeo_brain/traza_afectiva.py).
-TRAZA = os.path.expanduser(os.environ.get("ROMEO_TRAZA_AFECTO", "~/romeo_afecto.jsonl"))
+# turno (romeo_brain/traza_afectiva.py). El default coincide con donde la
+# escribe lanzar_romeo.sh (ROMEO_TRAZA_AFECTO=~/romeo/romeo_afecto.jsonl):
+# si el panel arranca sin esa variable en el entorno, cae a la misma ruta
+# en vez de buscar en ~/ y no encontrarla.
+TRAZA = os.path.expanduser(
+    os.environ.get("ROMEO_TRAZA_AFECTO", "~/romeo/romeo_afecto.jsonl"))
 
 
 @app.route("/traza")
