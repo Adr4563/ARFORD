@@ -189,18 +189,18 @@ def tono_trivia(p, acerto):
 #
 # El enojo arranca retrocediendo (leerle el espacio a alguien alterado) y
 # la alegria arranca avanzando (acompañar la energia del que esta contento);
-# los dos vuelven a su sitio al segundo paso. Ambos entran en L2 -- no en
-# L3 -- porque L3 es inalcanzable con la base del paper: pediria que el
-# usuario estuviera a 1.43 del animo base de Romeo, y el espacio VAD entero
-# mide ~1.7.
-#
-#   enojo/feliz L2  ->  desvio 0.38-0.57  (usuario a ~0.96 de la base)
-#   enojo/feliz L3  ->  desvio 0.57-0.77  (usuario a ~1.43: no pasa)
+# los dos vuelven a su sitio al segundo paso. Ambos se mueven desde L1 -- la
+# emocion mas leve ya dispara el gesto -- porque L3-L4 son casi inalcanzables
+# con la base del paper (pediria al usuario a ~1.43 del animo base, y el
+# espacio VAD entero mide ~1.7). Si el gesto solo entrara en L2+, casi nunca
+# se veria.
 _MOVIMIENTOS = {
-    ("felicidad", 2): ("F", "B"),    # avanza y vuelve: acercarse un instante
+    ("felicidad", 1): ("F", "B"),    # desde L1: avanza y vuelve aunque la
+    ("felicidad", 2): ("F", "B"),    # alegria sea leve (acercarse un instante)
     ("felicidad", 3): ("F", "B"),
     ("felicidad", 4): ("F", "B"),
-    ("enojo", 2): ("B", "F"),        # retrocede y vuelve: darle espacio
+    ("enojo", 1): ("B", "F"),        # desde L1: retrocede y vuelve aunque el
+    ("enojo", 2): ("B", "F"),        # enojo sea leve (darle espacio)
     ("enojo", 3): ("B", "F"),
     ("enojo", 4): ("B", "F"),
 }
