@@ -174,6 +174,10 @@ CSV_TURNOS = os.environ.get("ROMEO_CSV_TURNOS",
 PREGUNTAS_POR_TANDA = 5
 PAUSA_CAMBIO_CARA = 1       # segundos en 'content'/veredicto antes de la próxima cara
 PAUSA_ANTES_ACCION_FISICA = 1
+# Segundos que se ve cada cara de la secuencia "transformacion" (bostezo ->
+# pingpong -> transformacion) antes de pasar a la siguiente. Ajustable sin
+# recompilar para que calce con la duracion de las animaciones.
+SECUENCIA_CARA_S = float(os.environ.get("ROMEO_CARA_SECUENCIA_S", "2.5"))
 # Segundos entre pedirle la cara y capturarla. El detector ya tarda 2.5-4.6s
 # en resolver (medido en la Pi), así que esto es solo el margen para que
 # termine de oír la frase y ponga la cara.
@@ -714,6 +718,18 @@ class OrchestratorNode(Node):
         if orden["tipo"] == "cara":
             self._bridge.hablar(respuesta)
             self._bridge.mostrar_cara(orden["valor"])
+            return
+
+        if orden["tipo"] == "secuencia_caras":
+            # "Transformacion": muestra las caras una tras otra con una pausa
+            # entre cada una, y al final vuelve a reposo. La pausa da tiempo a
+            # que cada animacion se vea antes de pasar a la siguiente
+            # (ROMEO_CARA_SECUENCIA_S, por defecto 2.5 s).
+            self._bridge.hablar(respuesta)
+            for cara in orden["valor"]:
+                self._bridge.mostrar_cara(cara)
+                time.sleep(SECUENCIA_CARA_S)
+            self._mostrar_cara_reposo()
             return
 
         self._bridge.mostrar_cara("speaking")

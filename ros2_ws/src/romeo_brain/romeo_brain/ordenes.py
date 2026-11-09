@@ -54,6 +54,13 @@ _CARAS = {
 _PIDE_CARA = re.compile(
     r"\b(pon|ponte|pongas|muestra|muestrame|haz|hazme|cambia)\b", re.I)
 
+# "Transformacion": una SECUENCIA de caras, no una sola. Al oir
+# "transformacion" / "transformate" / "transforma", Romeo muestra bostezo,
+# luego pingpong y al final la transformacion. Es un numerito, no una
+# emocion, por eso va aparte de _CARAS.
+_TRANSFORMACION = re.compile(r"\btransforma", re.I)
+SECUENCIA_TRANSFORMACION = ("bostezo", "pingpong", "transformacion")
+
 # Giro completo. "360" solo ya es inequivoco; "da una vuelta" tambien.
 _VUELTA = re.compile(
     r"\b(360|trescientos sesenta|vuelta completa|vuelta entera|"
@@ -131,6 +138,11 @@ def interpretar(texto):
     # negacion anula la orden.
     if _NEGADO.search(t) and "no te muevas" not in t:
         return None
+
+    # "transformacion": secuencia de caras (bostezo -> pingpong ->
+    # transformacion). Va antes que la cara simple para que gane.
+    if _TRANSFORMACION.search(t):
+        return {"tipo": "secuencia_caras", "valor": list(SECUENCIA_TRANSFORMACION)}
 
     m = _PIDE_CARA.search(t)
     if m:
