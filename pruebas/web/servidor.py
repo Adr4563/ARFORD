@@ -47,6 +47,7 @@ Gemma esta en el Ollama de D:\ollama-models, que se levanta aparte en el
 """
 
 import functools
+import math
 import os
 import re
 import socket
@@ -157,6 +158,14 @@ def pagina():
     return send_from_directory(AQUI, "index.html")
 
 
+@stt_server.app.get("/ip_pi")
+def ip_pi():
+    """IP de la Raspberry Pi para la pestana del carrito. Sale de la variable
+    de entorno ROMEO_IP_PI; vacia si no esta puesta (la pagina usa entonces
+    el mismo host desde el que se abrio)."""
+    return jsonify({"ip_pi": os.environ.get("ROMEO_IP_PI", "")})
+
+
 @stt_server.app.get("/animo")
 def animo():
     with _lock_afecto:
@@ -181,6 +190,54 @@ def _aeb():
     """El AEB del animo actual, sin las claves que la pagina no usa."""
     comp = aeb.mapear(afecto)
     return {k: comp[k] for k in ("estado", "emocion", "nivel", "cara", "tono", "movimiento")}
+
+
+@stt_server.app.get("/niveles")
+def niveles():
+    """Para la pestana del AEB: por cada emocion, los 4 niveles L1-L4 con el
+    rango de distancia (desvio del animo base) que los dispara, el tono que
+    el AEB le pide a la IA en ese nivel y el gesto del carrito.
+
+    Es el MISMO calculo de aeb.nivel()/aeb.mapear(): reparte en 4 tramos
+    iguales el camino del borde de la zona neutra (radio) al anclaje de la
+    emocion. Asi la pagina muestra de donde salen los niveles, no numeros
+    inventados."""
+    base = afecto.animo_base
+    salida = {}
+    for emocion, cara in (("felicidad", "happy"), ("tristeza", "sad"),
+                          ("enojo", "angry")):
+        radio = estado_afectivo.radio_neutral(emocion, base)
+        ancla = estado_afectivo.ANCLAJES[emocion]
+        dist_ancla = math.sqrt(sum((ancla[i] - base[i]) ** 2 for i in range(3)))
+        recorrido = dist_ancla - radio
+        filas = []
+        for n in (1, 2, 3, 4):
+            # El borde de cada tramo (aeb.nivel: fraccion = (mag-radio)/recorrido,
+            # nivel = 1 + int(fraccion*4)). El tramo n va de desde a hasta.
+            desde = radio + recorrido * (n - 1) / 4.0 if recorrido > 0 else radio
+            hasta = radio + recorrido * n / 4.0 if recorrido > 0 else dist_ancla
+            tono = aeb._TONOS[emocion][0 if n <= 2 else 1]
+            mov = aeb._MOVIMIENTOS.get((emocion, n))
+            filas.append({
+                "nivel": n,
+                "desde": round(desde, 3),
+                "hasta": round(hasta, 3),
+                "tono": tono,
+                "movimiento": list(mov) if mov else None,
+            })
+        salida[emocion] = {
+            "cara": cara,
+            "radio_neutral": round(radio, 3),
+            "distancia_anclaje": round(dist_ancla, 3),
+            "anclaje": _vad(ancla),
+            "niveles": filas,
+        }
+    return jsonify({
+        "base": _vad(base),
+        "perfil": afecto.perfil,
+        "empatia": afecto.empatia,
+        "emociones": salida,
+    })
 
 
 # ── Trivia: el mismo flujo que orchestrator_node ───────────────────────

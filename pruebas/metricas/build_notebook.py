@@ -57,11 +57,13 @@ md("""## 2. Comparación Rocha vs IA  —  ¿coincide la respuesta?
 
 Para cada pregunta de la trivia, la respuesta **generada por el LLM** se compara con la **respuesta por defecto de Rocha** (del banco de preguntas). Un LLM juez decide si coinciden. Por categoría.""")
 
-code("""# Datos de la comparacion Coincide / No coincide (27/30 = 90%)
+code("""# Datos de la comparacion Coincide / No coincide (27/30 = 90%).
+# 'Reconocimiento musical' (0/2) es parte de 'Arte, musica y cultura' (3/3),
+# asi que se fusionan: Arte, musica y cultura = 3/5.
 cats = [
-    ("Geografía",7,7),("Razonamiento matemático",6,6),("Arte, música y cultura",3,3),
+    ("Geografía",7,7),("Razonamiento matemático",6,6),("Arte, música y cultura",3,5),
     ("Ciencia y naturaleza",2,3),("Dilema del coche autónomo",2,2),("Juego de emociones",2,2),
-    ("Reconocimiento musical",0,2),("Deporte y entretenimiento",1,1),("Juego de imitación",1,1),
+    ("Deporte y entretenimiento",1,1),("Juego de imitación",1,1),
     ("Matemática: multiplicación",1,1),("Historia",1,1),("Cultura general",1,1),
 ]
 dfc = pd.DataFrame(cats, columns=["categoria","coincide","total"])
@@ -82,62 +84,123 @@ ax.set_xlim(0, dfc["total"].max()+1)
 plt.tight_layout(); plt.show()
 print(f"Coincidencia Rocha vs IA: {co}/{to} = {100*co/to:.0f}%")""")
 
-md("""## 3. Latencia por módulo (trivia)
+md("""## 3. Datos por turno
 
-Tiempo promedio de cada etapa del turno de trivia. FER corre en el sensor IMX500 (no cronometrable como CPU): se reporta como la ventana de percepción. PULSE+ROSE+AEB se miden como un bloque (la capa afectiva es aritmética, <1 ms).""")
+Se arma una tabla con el tiempo de cada etapa en cada pregunta, cruzando los
+CSV por el **texto de la frase** (los relojes de Pi y PC están desfasados, pero
+la frase es la misma clave). Esta tabla alimenta las líneas de tiempo siguientes.""")
 
-code("""def prom(s):
-    s = pd.to_numeric(s, errors="coerce").dropna()
-    return s.mean() if len(s) else np.nan
+code("""import csv, re
+def norm(s): return s.strip().lower()[:40]
 
-mods = {
-    "STT\\n(voz→texto)": mod["t_stt_ms"],
-    "TER\\n(texto)":     mod["t_ter_ms"],
-    "SER\\n(voz)":       mod["t_ser_ms"],
-    "Afectiva\\nPULSE+ROSE+AEB": turnos["afectiva_ms"],
-    "LLM\\n(gemma3:4b)": turnos["t_llm_ms"],
-    "TTS\\n(voz)":       tts["t_tts_ms"],
-}
-cols = [VERDE,VERDE,VERDE,AZUL,NARANJA,VERDE]
-vals = [prom(s) for s in mods.values()]
+# STT/SER/TER por frase (PC)
+mod_por_frase = {}
+with open(ruta("modulos_pc.csv"), encoding="utf-8", errors="replace") as f:
+    r = csv.reader(f); next(r)
+    for row in r:
+        if len(row) > 5:
+            try:
+                mod_por_frase[norm(row[5])] = {
+                    "stt": float(row[2]) if row[2] else np.nan,
+                    "ser": float(row[3]) if row[3] else np.nan,
+                    "ter": float(row[4]) if row[4] else np.nan}
+            except ValueError: pass
 
-fig, ax = plt.subplots(figsize=(9,4.5))
-x = np.arange(len(mods))
-ax.bar(x, vals, color=cols, width=0.62, zorder=3)
-for i,v in enumerate(vals):
-    ax.text(i, v+max(vals)*0.02, f"{v:.0f}", ha="center", va="bottom", fontsize=9, color=GRIS)
-ax.set_xticks(x); ax.set_xticklabels(mods.keys(), fontsize=9)
-ax.set_ylabel("Tiempo (ms)")
-ax.set_title("Tiempo promedio por módulo")
-plt.tight_layout(); plt.show()""")
-
-md("## 4. Latencia por nodo")
-
-code("""import re
-fer = []
+# ventana FER por turno (del log, en orden de aparicion)
+fer_vent = []
 try:
     log = open(ruta("romeo_run.log"), encoding="utf-8", errors="replace").read()
-    fer = [float(m.group(1)) for m in re.finditer(r"FER: \\d+ cuadros en ([\\d.]+) s", log)]
-except FileNotFoundError:
-    pass
-fer_med = np.median(fer)*1000 if fer else np.nan
+    fer_vent = [float(m.group(1))*1000 for m in re.finditer(r"FER: \\d+ cuadros en ([\\d.]+) s", log)]
+except FileNotFoundError: pass
 
-nodos = {
-    "communication_node\\n(STT + TTS)": prom(pd.concat([mod["t_stt_ms"], tts["t_tts_ms"]])),
-    "expression_faces_node\\n(FER, ventana)": fer_med,
-    "orchestrator_node\\n(afectiva + LLM)": prom(pd.concat([turnos["afectiva_ms"], turnos["t_llm_ms"]])),
-}
-fig, ax = plt.subplots(figsize=(8,3.8))
-y = np.arange(len(nodos)); vals=list(nodos.values())
-ax.barh(y, vals, color=[AZUL,NARANJA,VERDE], height=0.55, zorder=3)
-for i,v in enumerate(vals):
-    ax.text(v+max(vals)*0.01, i, f"{v:.0f} ms", va="center", fontsize=9, color=GRIS)
-ax.set_yticks(y); ax.set_yticklabels(nodos.keys(), fontsize=9)
-ax.invert_yaxis(); ax.set_xlabel("Tiempo mediano por etapa (ms)")
-ax.set_title("Latencia agrupada por nodo")
+# TTS por turno (en orden; tts.csv no trae texto)
+tts_vals = pd.to_numeric(tts["t_tts_ms"], errors="coerce").dropna().tolist()
+
+filas = []
+with open(ruta("turnos.csv"), encoding="utf-8", errors="replace") as f:
+    next(f)
+    for i, ln in enumerate(f):
+        partes = ln.rstrip("\\n").split(",")
+        texto = partes[-1].strip()
+        nums = []
+        for x in partes:
+            try: nums.append(float(x))
+            except ValueError: pass
+        ei = next((j for j,v in enumerate(nums) if v > 1e9), None)
+        if ei is None or ei < 3: continue
+        m = mod_por_frase.get(norm(texto), {"stt":np.nan,"ser":np.nan,"ter":np.nan})
+        filas.append({
+            "pregunta": len(filas)+1,
+            "STT": m["stt"], "SER": m["ser"], "TER": m["ter"],
+            "afectiva": nums[0]*1000 if nums[0]*1000 < 3000 else np.nan,
+            "LLM": nums[ei-1],
+            "TTS": tts_vals[i] if i < len(tts_vals) else np.nan,
+            "FER": fer_vent[i] if i < len(fer_vent) else np.nan,
+        })
+dft = pd.DataFrame(filas)
+# por nodo
+dft["communication_node"] = dft[["STT","TTS"]].sum(axis=1, min_count=1)
+dft["orchestrator_node"]  = dft[["afectiva","LLM"]].sum(axis=1, min_count=1)
+dft["expression_faces_node"] = dft["FER"]
+print(f"{len(dft)} turnos."); dft.head()""")
+
+md("## 4. Línea de tiempo por nodo")
+
+code("""fig, ax = plt.subplots(figsize=(12,4.5))
+x = dft["pregunta"]
+ax.plot(x, dft["communication_node"], color=AZUL, lw=1.8, label="communication_node (STT+TTS)")
+ax.plot(x, dft["orchestrator_node"], color=VERDE, lw=1.8, label="orchestrator_node (afectiva+LLM)")
+ax.plot(x, dft["expression_faces_node"], color=NARANJA, lw=1.8, label="expression_faces_node (FER)")
+ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo del nodo (ms)")
+ax.set_title("Tiempo usado por cada nodo a lo largo de la trivia")
+ax.legend(frameon=False, fontsize=9)
+plt.tight_layout(); plt.show()
+print("moving_control_node (carrito): no interviene en la trivia.")""")
+
+md("## 5. Línea de tiempo — percepción emocional (TER, FER, SER)")
+
+code("""fig, ax = plt.subplots(figsize=(12,4.5))
+x = dft["pregunta"]
+ax.plot(x, dft["TER"], color=VERDE, lw=1.8, label="TER (texto)")
+ax.plot(x, dft["SER"], color=NARANJA, lw=1.8, label="SER (voz)")
+ax.plot(x, dft["FER"], color=AZUL, lw=1.8, label="FER (ventana cámara)")
+ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (ms)")
+ax.set_title("Percepción emocional por turno: TER, SER, FER")
+ax.legend(frameon=False, fontsize=9)
 plt.tight_layout(); plt.show()""")
 
-md("## 5. Tokens del LLM")
+md("""## 6. Línea de tiempo — capa afectiva con sus entradas
+
+La capa afectiva (PULSE+ROSE+AEB) junto con sus tres entradas de percepción
+(TER, SER, FER). Se ve que la afectiva es casi instantánea (aritmética) frente
+al tiempo que tardan los clasificadores que la alimentan.""")
+
+code("""fig, ax = plt.subplots(figsize=(12,4.8))
+x = dft["pregunta"]
+ax.plot(x, dft["TER"], color=VERDE, lw=1.5, label="TER (texto)")
+ax.plot(x, dft["SER"], color=NARANJA, lw=1.5, label="SER (voz)")
+ax.plot(x, dft["FER"], color=AZUL, lw=1.5, label="FER (cámara)")
+ax.plot(x, dft["afectiva"], color="#6a5aa0", lw=2.4, label="Capa afectiva (PULSE+ROSE+AEB)")
+ax.fill_between(x, 0, dft["afectiva"], color="#6a5aa0", alpha=0.12)
+ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (ms)")
+ax.set_title("Capa afectiva y sus entradas (TER, SER, FER) por turno")
+ax.legend(frameon=False, fontsize=9)
+plt.tight_layout(); plt.show()
+print(f"Capa afectiva: promedio {dft['afectiva'].mean():.2f} ms (es aritmética)")""")
+
+md("## 7. Línea de tiempo — STT, TTS y LLM durante la trivia")
+
+code("""fig, ax = plt.subplots(figsize=(12,4.5))
+x = dft["pregunta"]
+ax.plot(x, dft["STT"], color=VERDE, lw=1.8, label="STT (voz→texto)")
+ax.plot(x, dft["LLM"], color=NARANJA, lw=1.8, label="LLM (gemma3:4b)")
+ax.plot(x, dft["TTS"], color=AZUL, lw=1.8, label="TTS (voz)")
+ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (ms)")
+ax.set_title("STT, TTS y LLM a lo largo de la sesión de trivia")
+ax.legend(frameon=False, fontsize=9)
+plt.tight_layout(); plt.show()""")
+
+md("## 8. Tokens del LLM")
 
 code("""fig, axs = plt.subplots(1, 2, figsize=(12,4.3))
 x = turnos["tokens_salida"].values; yv = turnos["t_llm_ms"].values
@@ -157,7 +220,7 @@ axs[1].set_xlabel("Tokens de salida"); axs[1].set_ylabel("Frecuencia (turnos)")
 axs[1].set_title("Distribución de tokens por respuesta")
 plt.tight_layout(); plt.show()""")
 
-md("""## 6. Recursos de la Raspberry Pi (de inicio a fin)
+md("""## 9. Recursos de la Raspberry Pi (de inicio a fin)
 
 CPU total, proceso de cámara (FER), temperatura y RAM durante la sesión.""")
 
@@ -192,7 +255,7 @@ print(f"  CPU total:  mediana {sis['cpu_total_pct'].median():.1f}%  max {sis['cp
 print(f"  CPU camara: mediana {sis['cpu_camara_pct'].median():.1f}%  max {sis['cpu_camara_pct'].max():.1f}%")
 print(f"  RAM usada:  mediana {sis['ram_usada_mb'].median():.0f} MB  max {sis['ram_usada_mb'].max():.0f} MB")""")
 
-md("## 7. Tabla resumen (trivia)")
+md("## 10. Tabla resumen (trivia)")
 
 code("""def prom1(s):
     s = pd.to_numeric(s, errors="coerce").dropna()
