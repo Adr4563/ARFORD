@@ -357,18 +357,19 @@ def agrupar_en_cuatro(probabilidades, etiquetas):
 # (_emotion_detector.resumir) y el SER clasifica el audio de la frase de
 # una vez: las dos entregan una observacion por frase y ahi se acaba.
 #
-# El TER no. Sus observaciones se acumulan a lo largo de la conversacion
-# y PULSE recibe la mediana normalizada de las ULTIMAS N frases:
+# El TER va IGUAL: lectura directa de la frase, sin acumular. PULSE recibe
+# lo que expresa el texto de ESTA frase y nada mas, para que las tres
+# fuentes (TER, FER, SER) sean consistentes -- ninguna arrastra frases
+# anteriores. Por eso la ventana es de 1: el deque solo guarda la frase
+# actual y resumir_ter() devuelve esa misma (la "mediana" de una sola
+# lectura es ella misma).
 #
-#     mk = mediana(pk(1), ..., pk(N))      (a)
-#     pk = mk / Sum_j mj                   (b)
-#
-# N = 5 y no toda la sesion: con la sesion entera, cuantas mas frases
-# hay menos mueve cada una nueva -- a los 20 turnos el animo se queda
-# sordo. Con una ventana corta Romeo sigue lo reciente y una frase
-# suelta mal leida (ironia, un fallo del STT) no lo arrastra, porque la
-# mediana la descarta.
-VENTANA_TER = int(os.environ.get("ROMEO_VENTANA_TER", "5"))
+# Antes la ventana era de N=5 y PULSE recibia la mediana normalizada de
+# las ultimas N frases (mk = mediana(pk(1..N)); pk = mk/Sum_j mj). Eso
+# suavizaba frases sueltas mal leidas, pero acumulaba: se cambio a lectura
+# directa a pedido. ROMEO_VENTANA_TER sigue permitiendo volver a una
+# ventana (p. ej. =5) sin tocar codigo.
+VENTANA_TER = int(os.environ.get("ROMEO_VENTANA_TER", "1"))
 
 _ventana_ter = collections.deque(maxlen=VENTANA_TER)
 

@@ -1184,10 +1184,11 @@ class OrchestratorNode(Node):
                     "TER", probs_ter, etiq_ter,
                     ventana=estado_afectivo.tam_ventana_ter(),
                     frase=dict(zip(ter_nn[0], (round(float(p), 4) for p in ter_nn[1]))))
+                modo_ter = ("frase directa" if estado_afectivo.VENTANA_TER <= 1
+                            else f"ventana de {estado_afectivo.VENTANA_TER}")
                 self.get_logger().info(
                     f"[afecto] el texto expresa {emocion_txt} "
-                    f"(confianza {c_txt:.2f}, "
-                    f"RoBERTuito, ventana de {estado_afectivo.VENTANA_TER})")
+                    f"(confianza {c_txt:.2f}, RoBERTuito, {modo_ter})")
         if "FER" in self._fuentes:
             self._percibir_cara(t_inicio, t_fin)
         if "SER" in self._fuentes:
