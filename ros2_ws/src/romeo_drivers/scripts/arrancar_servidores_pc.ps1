@@ -4,10 +4,15 @@
 #   .\arrancar_servidores_pc.ps1              -> voz mexicana (vits, por defecto)
 #   .\arrancar_servidores_pc.ps1 -Voz infantil  -> voz Supertonic M5 (infantil)
 #
+# Para CAPTURAR METRICAS por modulo (t_stt/t_ser/t_ter a CSV), anadir -Medir:
+#   .\arrancar_servidores_pc.ps1 -Voz infantil -Medir
+# Escribe ~/romeo_medicion_modulos_pc.csv. Apagado por defecto.
+#
 # El chat (Ollama / gemma3:4b) se arranca aparte (ollama ya corre como servicio).
 param(
     [ValidateSet("mexicana", "vits", "infantil", "supertonic")]
-    [string]$Voz = "mexicana"
+    [string]$Voz = "mexicana",
+    [switch]$Medir
 )
 
 $ErrorActionPreference = "Stop"
@@ -31,6 +36,14 @@ foreach ($puerto in 8082, 8083) {
 Start-Sleep -Seconds 1
 
 # --- STT (reconocimiento de voz + emocion). Siempre vits-independiente. ---
+# Con -Medir, el STT escribe los tiempos por modulo (t_stt/t_ser/t_ter) en
+# ~/romeo_medicion_modulos_pc.csv. Se pasa por el entorno del proceso hijo.
+if ($Medir) {
+    $env:ROMEO_MEDIR = "1"
+    Write-Host "  (medicion ON: ~/romeo_medicion_modulos_pc.csv)" -ForegroundColor Yellow
+} else {
+    $env:ROMEO_MEDIR = ""
+}
 Start-Process python -ArgumentList "stt_server.py" -WorkingDirectory $scripts -WindowStyle Minimized
 Write-Host "  STT arrancando en 8082..."
 
