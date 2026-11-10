@@ -24,7 +24,7 @@ setup(
         (os.path.join('share', package_name, 'musica'),
             glob(os.path.join('romeo_drivers', 'data', 'musica', '*'))),
         # Modelos ONNX de ai-camera/modelos/ (YuNet + FER+) -- ver
-        # _emotion_detector.py. Se copian acá porque visualization_faces_node
+        # _emotion_detector.py. Se copian acá porque expression_faces_node
         # ya no puede importar ai-camera/ por sys.path (era un truco del
         # proyecto monolítico para reusar código entre carpetas hermanas;
         # en ROS2 cada paquete es autocontenido).
@@ -44,7 +44,7 @@ setup(
     entry_points={
         'console_scripts': [
             'communication_node = romeo_drivers.communication_node:main',
-            'visualization_faces_node = romeo_drivers.visualization_faces_node:main',
+            'expression_faces_node = romeo_drivers.expression_faces_node:main',
             'moving_control_node = romeo_drivers.moving_control_node:main',
         ],
     },

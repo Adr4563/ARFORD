@@ -143,9 +143,9 @@ def generate_launch_description():
                       'tts_servidor': LaunchConfiguration('tts_servidor')}],
     )
 
-    visualization_faces_node = LifecycleNode(
-        package='romeo_drivers', executable='visualization_faces_node',
-        name='visualization_faces_node', namespace='', output='screen',
+    expression_faces_node = LifecycleNode(
+        package='romeo_drivers', executable='expression_faces_node',
+        name='expression_faces_node', namespace='', output='screen',
         parameters=[params_file],
     )
 
@@ -166,8 +166,8 @@ def generate_launch_description():
         },
     )
 
-    acciones = list(args) + [communication_node, visualization_faces_node, moving_control_node, orchestrator_node]
-    for nodo in (communication_node, visualization_faces_node, moving_control_node):
+    acciones = list(args) + [communication_node, expression_faces_node, moving_control_node, orchestrator_node]
+    for nodo in (communication_node, expression_faces_node, moving_control_node):
         acciones.extend(_auto_configure_and_activate(nodo))
 
     return LaunchDescription(acciones)

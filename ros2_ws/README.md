@@ -33,7 +33,7 @@ ros2_ws/src/
 ├── romeo_drivers/               3 LifecycleNode de hardware (ament_python)
 │   └── romeo_drivers/
 │       ├── communication_node.py        voz, música y entrada por teclado
-│       ├── visualization_faces_node.py  cámara → emoción + cara animada
+│       ├── expression_faces_node.py  cámara → emoción + cara animada
 │       ├── moving_control_node.py       motores (Serial → ESP32-S3)
 │       ├── _voice_backends.py, _music_player.py, _stt_engine.py
 │       ├── _face_display.py, face_viewer.py, _emotion_detector.py
@@ -62,7 +62,7 @@ ros2_ws/src/
 |---|---|---|---|
 | `orchestrator_node` | `romeo_brain` | `Node` | Máquina de estados de la sesión (Trivia / Chat libre): enrutamiento, corrección, reacciones, llamadas a Ollama y memoria episódica |
 | `communication_node` | `romeo_drivers` | `LifecycleNode` | Comunicación verbal y no verbal: síntesis de voz, música, y entrada por micrófono (STT local) o teclado |
-| `visualization_faces_node` | `romeo_drivers` | `LifecycleNode` | Muestra la cara animada y detecta la emoción del usuario por cámara |
+| `expression_faces_node` | `romeo_drivers` | `LifecycleNode` | Muestra la cara animada y detecta la emoción del usuario por cámara |
 | `moving_control_node` | `romeo_drivers` | `LifecycleNode` | Traduce `MotionCommand` al protocolo Serial del ESP32-S3 |
 
 Los tres drivers son `LifecycleNode`: `on_configure` prepara los objetos **sin tocar el hardware**, y solo `on_activate` abre el Serial, precarga la voz o muestra la primera cara. El launch los configura y los activa automáticamente al arrancar, sin necesidad de un lifecycle manager externo.
@@ -78,7 +78,7 @@ La regla: el nodo habla con ROS 2 (tópicos, servicios, parámetros, lifecycle) 
 | `communication_node` | `_voice_backends.py` | Piper (síntesis de voz) |
 | | `_music_player.py` | `mpv` (reproducción de música) |
 | | `_stt_engine.py` | sherpa-onnx + VAD (transcripción) |
-| `visualization_faces_node` | `_face_display.py` | `mpv` (backend DRM) / Tkinter (backend PC) |
+| `expression_faces_node` | `_face_display.py` | `mpv` (backend DRM) / Tkinter (backend PC) |
 | | `face_viewer.py` | el visor Tkinter, **lanzado como subproceso** |
 | | `_emotion_detector.py` | ONNX (YuNet + FER+) |
 | `moving_control_node` | `_cart_serial.py` | `pyserial` y el protocolo del ESP32-S3 |
@@ -102,11 +102,11 @@ El mismo criterio decide qué se vuelve nodo: hardware o red → nodo; cálculo 
 | Nombre | Tipo | Origen → destino | Notas |
 |---|---|---|---|
 | `/romeo/user_input` | tópico `UserInput` | `communication_node` → `orchestrator_node` | Une en un solo tópico la voz transcrita y el teclado |
-| `/romeo/face_command` | tópico `FaceCommand` | `orchestrator_node` → `visualization_faces_node` | |
+| `/romeo/face_command` | tópico `FaceCommand` | `orchestrator_node` → `expression_faces_node` | |
 | `/romeo/motion_command` | tópico `MotionCommand` | `orchestrator_node` → `moving_control_node` | |
 | `/romeo/speak` | servicio `Speak` | `orchestrator_node` → `communication_node` | **Bloquea** hasta terminar de hablar |
 | `/romeo/play_music` | servicio `PlayMusic` | `orchestrator_node` → `communication_node` | Bloquea solo si `esperar=true` |
-| `/romeo/detect_emotion` | servicio `DetectEmotion` | `orchestrator_node` → `visualization_faces_node` | **Bloquea**, ~8-9 s en el peor caso |
+| `/romeo/detect_emotion` | servicio `DetectEmotion` | `orchestrator_node` → `expression_faces_node` | **Bloquea**, ~8-9 s en el peor caso |
 
 Las llamadas a Ollama **no** pasan por ROS 2: `llama_client.py` usa HTTP directo desde `romeo_brain`, porque no es hardware.
 
@@ -163,11 +163,11 @@ Los valores de `MotionCommand` son los mismos comandos de texto que ya entiende 
 | `communication_node` | `stt_motor` | `nemo` (`nemo` \| `whisper`) |
 | `communication_node` | `stt_tam` | `small` (solo con `stt_motor: whisper`) |
 | `communication_node` | `stt_hilos` | `3` |
-| `visualization_faces_node` | `fer_continuo` | `true` |
-| `visualization_faces_node` | `fer_fps` | `5.0` |
-| `visualization_faces_node` | `fer_bajo_demanda` | `true` (analiza caras solo mientras alguien habla) |
-| `visualization_faces_node` | `fer_ventana_seg` | `1.5` |
-| `visualization_faces_node` | `fer_resolucion` | `[320, 240]` |
+| `expression_faces_node` | `fer_continuo` | `true` |
+| `expression_faces_node` | `fer_fps` | `5.0` |
+| `expression_faces_node` | `fer_bajo_demanda` | `true` (analiza caras solo mientras alguien habla) |
+| `expression_faces_node` | `fer_ventana_seg` | `1.5` |
+| `expression_faces_node` | `fer_resolucion` | `[320, 240]` |
 | `moving_control_node` | `carrito_port` | `/dev/ttyACM0` |
 | `orchestrator_node` | `perfil_afectivo` | `OPTIMISTIC` (`OPTIMISTIC` \| `EMPATHETIC`) |
 
@@ -262,7 +262,7 @@ La música de fondo (`esperar=false`) **sí puede colarse**: ese servicio vuelve
 
 ```bash
 ros2 node list
-# communication_node, visualization_faces_node, moving_control_node, orchestrator_node
+# communication_node, expression_faces_node, moving_control_node, orchestrator_node
 
 ros2 lifecycle get /communication_node
 # debe decir "active" pocos segundos después de arrancar
@@ -360,8 +360,8 @@ Cada paso del cálculo se registra en `traza_afectiva.py` y se ve en vivo en la 
 | `voz_server.py` | **eliminado** — la página web y la voz por teléfono se reemplazaron por el micrófono de la placa + `_stt_engine.py` | — |
 | `Clients/Voice_Output_Client.py` | `_voice_backends.py` | `romeo_drivers` (`communication_node`) |
 | `Clients/Musica_Client.py` | `_music_player.py` | `romeo_drivers` (`communication_node`) |
-| `display.py` + `face_viewer.py` | `_face_display.py` + `face_viewer.py` | `romeo_drivers` (`visualization_faces_node`) |
-| `Clients/Camara_Client.py` + `ai-camera/reconocer_emocion.py` | `_emotion_detector.py` | `romeo_drivers` (`visualization_faces_node`) |
+| `display.py` + `face_viewer.py` | `_face_display.py` + `face_viewer.py` | `romeo_drivers` (`expression_faces_node`) |
+| `Clients/Camara_Client.py` + `ai-camera/reconocer_emocion.py` | `_emotion_detector.py` | `romeo_drivers` (`expression_faces_node`) |
 | `Clients/Carrito_Client.py` | `_cart_serial.py` | `romeo_drivers` (`moving_control_node`) |
 | `mecanum_car_esp32s3.ino` | **sin cambios** | fuera de este repositorio |
 

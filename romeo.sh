@@ -165,7 +165,7 @@ cmd_nodos() { entorno; ros2 node list; }
 
 cmd_ciclo() {
     entorno
-    for n in communication_node visualization_faces_node moving_control_node; do
+    for n in communication_node expression_faces_node moving_control_node; do
         printf '  %-28s %s\n' "$n" "$(ros2 lifecycle get "/$n" 2>/dev/null || echo 'no responde')"
     done
 }

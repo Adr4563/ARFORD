@@ -1,5 +1,5 @@
 # FER de una ventana de percepcion afectiva (tesis de Rocha et al.,
-# sec. 3.4.1.2 y fig. 14). visualization_faces_node clasifica la cara del
+# sec. 3.4.1.2 y fig. 14). expression_faces_node clasifica la cara del
 # usuario de fondo (~2 fps) y guarda las probabilidades de cada cuadro; este
 # servicio devuelve el RESUMEN de los cuadros entre t_inicio y t_fin:
 # mediana por emocion, normalizada para que sume 1 (sec. 4.1.4.1).

@@ -6,7 +6,7 @@
   <description>
     Los 3 nodos de hardware del robot Romeo, cada uno un LifecycleNode:
     communication_node (comunicación verbal y no verbal -- página
-    web+SSE, stdin, voz de salida, música), visualization_faces_node
+    web+SSE, stdin, voz de salida, música), expression_faces_node
     (cámara -> detección de emoción, display de la cara en pantalla) y
     moving_control_node (motores del carrito mecanum vía Serial al ESP32-S3).
     Portados del proyecto monolítico original en

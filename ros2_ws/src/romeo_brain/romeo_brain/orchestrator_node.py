@@ -445,7 +445,7 @@ class OrchestratorNode(Node):
         mensaje (communication_node los saca del VAD). Por teclado no hay
         ventana y no se mira la camara.
 
-        visualization_faces_node ya resumio los cuadros (media ponderada
+        expression_faces_node ya resumio los cuadros (media ponderada
         por la calidad YuNet, normalizada, sec. 4.1.4.1); aca se aplica
         PULSE: confianza por margen top-1/top-2 x fiabilidad del FER y
         CAT -> VAD con la distribucion entera (ec. 4.3). La lectura queda en _lecturas_turno para la fusion (ver

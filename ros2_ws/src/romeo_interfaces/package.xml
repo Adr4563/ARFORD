@@ -7,7 +7,7 @@
     Mensajes y servicios custom del robot Romeo: el contrato entre
     romeo_brain (orchestrator_node, el "cerebro") y los 3 nodos de hardware
     de romeo_drivers -- communication_node (comunicación verbal y no
-    verbal: texto/voz de entrada y salida), visualization_faces_node
+    verbal: texto/voz de entrada y salida), expression_faces_node
     (cámara -> emoción, display de la cara) y moving_control_node (motores del
     carrito mecanum). Paquete solo de definiciones, sin lógica -- por eso
     es ament_cmake (rosidl) y no ament_python como los demás.

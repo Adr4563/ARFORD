@@ -107,7 +107,7 @@ communication_node:
     # que es 10x mas pequeño.
     stt_hilos: 3
 
-visualization_faces_node:
+expression_faces_node:
   ros__parameters:
     # FER de la ventana de percepción afectiva (tesis de Rocha et al.): la
     # cámara queda abierta clasificando la cara del usuario de fondo, y con
@@ -169,7 +169,7 @@ orchestrator_node:
     # Fuentes de la ventana de percepción que entran a PULSE (tesis, sec.
     # 3.4.1). Se fusionan ponderando por confianza (ec. 4.4).
     #   TER  texto (palabras clave, en la Pi)
-    #   FER  cara  (cámara de fondo, en la Pi -- ver visualization_faces_node)
+    #   FER  cara  (cámara de fondo, en la Pi -- ver expression_faces_node)
     #   SER  voz   (modelo en la PC, sobre el audio de la frase -- ver
     #               romeo_drivers/_ser_engine.py y ROMEO_SER_MODELO)
     # Quitar una la desactiva, p. ej. ["TER", "FER"].

@@ -1,6 +1,6 @@
 """Controla la carita mostrada en pantalla -- portado de display.py del
 proyecto original, encapsulado en una clase `Display` (mismo motivo que
-`Voz` en _voice_backends.py: visualization_faces_node necesita poder crear
+`Voz` en _voice_backends.py: expression_faces_node necesita poder crear
 el objeto en on_configure() sin tocar mpv/Tkinter todavía, y recién abrir
 la ventana/proceso en on_activate()).
 

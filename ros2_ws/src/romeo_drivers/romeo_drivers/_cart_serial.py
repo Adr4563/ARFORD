@@ -5,7 +5,7 @@ mecanum_car_esp32s3.ino) NO SE TOCA, sigue esperando exactamente las mismas
 líneas de texto (F/B/SL/SR/RL/RR/S) a 115200 baud por USB.
 
 Encapsulado en una clase `CartSerial` (mismo motivo que Voz/Display en
-communication_node/visualization_faces_node): moving_control_node crea el objeto en
+communication_node/expression_faces_node): moving_control_node crea el objeto en
 on_configure() sin abrir el puerto todavía, y recién lo abre en
 on_activate() (abrir el puerto resetea el ESP32 vía DTR, así que no
 conviene hacerlo antes de que el nodo esté realmente activo).

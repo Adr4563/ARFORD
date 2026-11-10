@@ -15,7 +15,7 @@ modelos del robot (YuNet para encontrar la cara + FER+ para la emocion,
 ONNX en la CPU de la Pi), que dan 8 clases en vez de 7.
 
 Independiente del robot: no importa ROS ni romeo_drivers. Si el robot esta
-corriendo, visualization_faces_node tiene la camara: paralo antes.
+corriendo, expression_faces_node tiene la camara: paralo antes.
 """
 
 import argparse

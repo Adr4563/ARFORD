@@ -11,7 +11,7 @@
     personalidad y el catálogo de preguntas -- todo portado de
     Arquitecture-Agentic-RAG/deploy-raspberry-standalone/ del proyecto
     monolítico original. No tiene ninguna dependencia de hardware directa:
-    habla con communication_node/visualization_faces_node/moving_control_node
+    habla con communication_node/expression_faces_node/moving_control_node
     (paquete romeo_drivers) solo por tópicos y servicios de romeo_interfaces.
   </description>
   <maintainer email="20200812@aloe.ulima.edu.pe">Romeo Robot Team</maintainer>

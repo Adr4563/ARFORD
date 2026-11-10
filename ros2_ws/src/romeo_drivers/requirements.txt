@@ -3,7 +3,7 @@
 # separadas de lo que ya resuelve rosdep/apt (ver package.xml).
 #
 # picamera2 NO está acá: solo existe como paquete de sistema en Raspberry
-# Pi OS (viene preinstalado con el SO, no por pip) -- visualization_faces_node
+# Pi OS (viene preinstalado con el SO, no por pip) -- expression_faces_node
 # la importa perezosamente y sigue funcionando sin cámara si falta.
 pyserial
 flask

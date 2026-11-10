@@ -1,4 +1,4 @@
-"""visualization_faces_node -- nodo de VISUALIZACIÓN de Romeo: agrupa
+"""expression_faces_node -- nodo de EXPRESIÓN de Romeo: agrupa
 percepción (cámara -> emoción) y expresión (cara animada en pantalla)
 porque las dos son "lo que se ve" del robot, tal como se acordó en el
 diagrama de 4 nodos.
@@ -41,7 +41,7 @@ from ._face_display import Display
 class VisualizationFacesNode(LifecycleNode):
 
     def __init__(self):
-        super().__init__('visualization_faces_node')
+        super().__init__('expression_faces_node')
         # FER de fondo para la ventana de percepción (ver docstring).
         self.declare_parameter('fer_continuo', True)
         # Respaldo por si el nodo se lanza sin romeo_params.yaml. Mismo
@@ -67,7 +67,7 @@ class VisualizationFacesNode(LifecycleNode):
         self._grupo_camara = ReentrantCallbackGroup()
 
     def on_configure(self, state):
-        self.get_logger().info('[visualization_faces_node] configurando...')
+        self.get_logger().info('[expression_faces_node] configurando...')
         self._display = Display(logger=self.get_logger())
         self._detector = DetectorEmocion(
             logger=self.get_logger(), fps=self.get_parameter('fer_fps').value,
@@ -92,7 +92,7 @@ class VisualizationFacesNode(LifecycleNode):
             self._detector.activar(self.get_parameter('fer_ventana_seg').value)
 
     def on_activate(self, state):
-        self.get_logger().info('[visualization_faces_node] activando...')
+        self.get_logger().info('[expression_faces_node] activando...')
         self._activo = True
         self._display.mostrar_cara('content')
         if self.get_parameter('fer_continuo').value:
@@ -102,7 +102,7 @@ class VisualizationFacesNode(LifecycleNode):
         return super().on_activate(state)
 
     def on_deactivate(self, state):
-        self.get_logger().info('[visualization_faces_node] desactivando...')
+        self.get_logger().info('[expression_faces_node] desactivando...')
         self._activo = False
         self._detector.detener_continuo()
         # display.detener() -- ver la nota en Orchestrator_Management.py

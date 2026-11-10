@@ -53,7 +53,7 @@ from romeo_interfaces.srv import PlayMusic, Speak
 
 # Cada cuanto, como mucho, se avisa en /romeo/voz_detectada mientras el
 # microfono oye voz. El STT llama cada 0.1 s; con 0.3 s basta para que la
-# camara no se apague a mitad de frase (visualization_faces_node la deja
+# camara no se apague a mitad de frase (expression_faces_node la deja
 # activa fer_ventana_seg despues de cada aviso).
 PERIODO_AVISO_VOZ = 0.3
 
