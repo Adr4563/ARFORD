@@ -615,12 +615,18 @@ function render(t) {
       <div class="caja c-pulse"><p class="ct">Movimiento</p><p class="cd">carrito según nivel</p></div>
     </div></div>`;
 
-  // Detalle completo (tablas de PULSE por modalidad + niveles) en un desplegable
-  h += `<details class="ver-detalle"><summary>Ver el cálculo completo (probabilidades, entropía, tabla de niveles)</summary>
+  // La tabla de niveles L1-L4 queda SIEMPRE visible debajo del diagrama: es
+  // la que dice que hace Romeo en cada nivel, con la fila del estado actual
+  // marcada.
+  h += `<div style="width:100%;margin-top:6px">${tablaEstados(a)}</div>`;
+
+  // El cálculo por modalidad con probabilidades y entropía (mas detallado)
+  // queda a un clic, para no alargar el diagrama.
+  h += `<details class="ver-detalle"><summary>Ver el cálculo por modalidad (probabilidades y entropía)</summary>
     <div style="margin-top:12px">
     <section class="paso"><h2><span class="n">PULSE</span>Por modalidad, con probabilidades</h2>
       ${t.lecturas.length || t.fer_sin_cara != null ? `<div class="modalidades">${t.lecturas.map(modalidad).join("")}${sinCara(t)}</div>` : '<p class="vacio">—</p>'}</section>
-    ${tablaEstados(a)}</div></details>`;
+    </div></details>`;
 
   $("pasos").innerHTML = h;
   $("info").textContent = `«${t.texto}» · ${new Date(t.t * 1000).toLocaleTimeString()}`;
