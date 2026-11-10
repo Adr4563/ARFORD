@@ -171,6 +171,13 @@ _PIDE_CAPACIDADES = (
 CSV_TURNOS = os.environ.get("ROMEO_CSV_TURNOS",
                             os.path.expanduser("~/romeo_medicion_turnos.csv"))
 
+# Exactitud del veredicto afectivo: una fila por cada cara pedida en el juego
+# de emociones, con lo que se pidio, lo que vio la camara y si acerto. Con
+# ROMEO_MEDIR=1. Permite sacar aciertos/total sin leer el log a mano.
+CSV_VEREDICTO = os.environ.get(
+    "ROMEO_CSV_VEREDICTO",
+    os.path.expanduser("~/romeo_medicion_veredicto.csv"))
+
 PREGUNTAS_POR_TANDA = 5
 PAUSA_CAMBIO_CARA = 1       # segundos en 'content'/veredicto antes de la próxima cara
 PAUSA_ANTES_ACCION_FISICA = 1
@@ -686,12 +693,14 @@ class OrchestratorNode(Node):
             aviso = frases.una(frases.SIN_CARA)
             self.get_logger().info(f"[cámara] sin cara -- {aviso}")
             self._bridge.hablar(aviso)
+            self._anotar_veredicto(objetivo, None, None, None)
             return None
 
         acerto = detectada == objetivo
         self.get_logger().info(
             f"[cámara] pedido={objetivo} detectado={detectada} "
             f"(confianza {confianza:.0%}) -> {'OK' if acerto else 'MAL'}")
+        self._anotar_veredicto(objetivo, detectada, confianza, acerto)
         if acerto:
             self._bridge.hablar(random.choice(
                 ["¡Esa es!", "¡Perfecto!", "¡Muy bien!", "¡Clavado!"]))
@@ -1135,6 +1144,33 @@ class OrchestratorNode(Node):
                 print(",".join(str(v) for v in fila.values()), file=f)
         except Exception as e:  # noqa: BLE001 - medir nunca es critico
             self.get_logger().warning(f"[medicion] no se pudo anotar: {e}")
+
+    def _anotar_veredicto(self, pedido, detectado, confianza, acerto):
+        """Una fila por cara juzgada en el juego de emociones: exactitud del
+        veredicto afectivo. 'sin_cara' cuando la camara no vio a nadie (no
+        cuenta como acierto ni fallo). Nunca lanza."""
+        if not medicion_activa():
+            return
+        try:
+            if detectado is None:
+                resultado, conf = "sin_cara", ""
+            else:
+                resultado = "acierto" if acerto else "fallo"
+                conf = round(float(confianza), 3)
+            fila = {
+                "t": round(time.time(), 3),
+                "pedido": pedido,
+                "detectado": detectado if detectado is not None else "",
+                "confianza": conf,
+                "resultado": resultado,
+            }
+            nuevo = not os.path.exists(CSV_VEREDICTO)
+            with open(CSV_VEREDICTO, "a", encoding="utf-8") as f:
+                if nuevo:
+                    print(",".join(fila), file=f)
+                print(",".join(str(v) for v in fila.values()), file=f)
+        except Exception as e:  # noqa: BLE001 - medir nunca es critico
+            self.get_logger().warning(f"[medicion] veredicto no anotado: {e}")
 
     def _turno_medido(self, entrada, t_inicio, t_fin, ser, ter_nn):
 

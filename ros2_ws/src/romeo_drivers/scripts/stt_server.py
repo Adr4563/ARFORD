@@ -63,6 +63,41 @@ from romeo_drivers._stt_engine import HILOS, IDIOMA, TAM, ReconocedorVoz  # noqa
 PUERTO = int(os.environ.get("ROMEO_STT_PUERTO", "8082"))
 HOST = os.environ.get("ROMEO_STT_HOST", "0.0.0.0")
 
+# Medicion por modulo (STT, SER, TER) en la PC. Con ROMEO_MEDIR=1 cada
+# peticion anota una fila con lo que tardo cada etapa. Apagado por defecto:
+# en produccion no escribe nada. Es la contraparte en la PC del
+# ~/romeo_medicion_turnos.csv de la Pi (que mide la capa afectiva y el LLM).
+MEDIR = os.environ.get("ROMEO_MEDIR", "") not in ("", "0", "no", "false")
+CSV_MODULOS = os.environ.get(
+    "ROMEO_CSV_MODULOS",
+    os.path.join(os.path.expanduser("~"), "romeo_medicion_modulos_pc.csv"))
+_csv_lock = threading.Lock()
+
+
+def _anotar_modulos(duracion_audio, t_stt_ms, t_ser_ms, t_ter_ms, texto):
+    """Una fila por peticion con el tiempo de STT/SER/TER (ms). Nunca lanza:
+    medir no puede tumbar una transcripcion."""
+    if not MEDIR:
+        return
+    try:
+        fila = {
+            "t": round(time.time(), 3),
+            "duracion_audio_s": round(duracion_audio, 3),
+            "t_stt_ms": round(t_stt_ms, 1),
+            "t_ser_ms": round(t_ser_ms, 1) if t_ser_ms is not None else "",
+            "t_ter_ms": round(t_ter_ms, 1) if t_ter_ms is not None else "",
+            "texto": (texto or "").replace(",", " ")[:60],
+        }
+        with _csv_lock:
+            nuevo = not os.path.exists(CSV_MODULOS)
+            with open(CSV_MODULOS, "a", encoding="utf-8") as f:
+                if nuevo:
+                    print(",".join(fila), file=f)
+                print(",".join(str(v) for v in fila.values()), file=f)
+    except Exception as e:  # noqa: BLE001 - medir nunca es critico
+        print(f"[medicion] no se pudo anotar: {e}")
+
+
 app = Flask(__name__)
 reconocedor = ReconocedorVoz()
 # SER: la emocion de la voz, sobre el mismo audio (ver _ser_engine.py).
@@ -181,6 +216,13 @@ def transcribir():
         ter = clasificador_texto.clasificar(texto) if texto else None
         t_ter = time.perf_counter() - t_a
     tardanza = time.perf_counter() - t0
+
+    _anotar_modulos(
+        duracion,
+        t_stt * 1000,
+        (t_ser * 1000) if texto else None,
+        (t_ter * 1000) if texto else None,
+        texto)
 
     return jsonify(
         {
