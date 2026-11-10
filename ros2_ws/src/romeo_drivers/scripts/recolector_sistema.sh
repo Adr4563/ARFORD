@@ -51,10 +51,11 @@ while true; do
     cpu_total="0.0"
   fi
 
-  # Temperatura (vcgencmd si esta; si no, /sys/class/thermal)
-  if command -v vcgencmd >/dev/null 2>&1; then
-    temp=$(vcgencmd measure_temp 2>/dev/null | grep -oE '[0-9]+\.[0-9]+')
-  else
+  # Temperatura. vcgencmd necesita acceso a /dev/vcio (root): si falla o no
+  # devuelve numero, se cae a /sys/class/thermal, que siempre esta y no pide
+  # permisos. (Antes vcgencmd "existia" pero fallaba y dejaba la temp en 0.)
+  temp=$(vcgencmd measure_temp 2>/dev/null | grep -oE '[0-9]+\.[0-9]+')
+  if [ -z "$temp" ]; then
     t_raw=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo 0)
     temp=$(awk "BEGIN{printf \"%.1f\", $t_raw/1000}")
   fi
