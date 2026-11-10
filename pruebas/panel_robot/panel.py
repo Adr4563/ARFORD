@@ -527,107 +527,58 @@ function tablaEstados(a) {
     <tbody>${filas}</tbody></table></div></section>`;
 }
 
-const flecha = '<div class="flecha"></div>';
-function vecbar(v) {
-  if (!v) return "";
-  const c = ["cv", "ca", "cd"], k = ["V", "A", "D"];
-  return `<div class="vecbar">${v.map((x, i) => `<div class="comp ${c[i]}"><small>${k[i]}</small><b>${n2(x)}</b></div>`).join("")}</div>`;
-}
-// Una columna de fuente del diagrama: la caja del clasificador + su PULSE.
-function fuenteFlow(l) {
-  const [nombre, color] = FUENTE[l.fuente] || [l.fuente, "--suave"];
-  const chips = l.filas.filter((f) => f.p > 0.001)
-    .map((f) => `<span class="chip-emo">${esc(f.emocion)} ${f.p.toFixed(2)}</span>`).join("");
-  return `<div class="fuente-col">
-    <div class="caja c-pulse"><p class="ct"><span class="punto" style="background:var(${color})"></span>${esc(nombre)}</p>
-      <div class="chips-emo">${chips}</div></div>
-    ${flecha}
-    <div class="caja c-pulse"><p class="cd"><span class="ecref">c = 1 − H(p)</span> = <b>${l.confianza.toFixed(3)}</b></p>
-      <p class="cd"><span class="ecref">s = Σ pᵢ·vᵢ</span></p>${vecbar(l.vad)}
-      <p class="cd">Dominante: <b>${esc(l.dominante)}</b></p></div>
-  </div>`;
-}
-function fuenteSinCara(t) {
-  if (t.fer_sin_cara == null || t.lecturas.some((l) => l.fuente === "FER")) return "";
-  return `<div class="fuente-col"><div class="caja c-pulse"><p class="ct"><span class="punto" style="background:var(--fer)"></span>Cara (FER)</p>
-    <p class="cd">Sin cara en los ${t.fer_sin_cara} s de la frase (0 cuadros). No entra en la fusión.</p></div></div>`;
-}
-
 function render(t) {
   const p = t.perfil, b = p.base;
-  const d0 = t.decaer.antes, d1 = t.decaer.despues, movio = d0.some((x, i) => Math.abs(x - d1[i]) > 1e-4);
-  const fu = t.fusion, em = t.empatia, a = t.aeb;
   let h = "";
-
-  // Entrada
-  h += `<div class="caja c-entrada"><p class="ct">El usuario habla → «${esc(t.texto)}»</p>
-    <p class="cd">Silero VAD corta la frase · ventana [t_inicio, t_fin]</p></div>${flecha}`;
-
-  // ROSE · decaimiento (paso previo)
-  h += `<div class="grupo g-rose"><span class="tag">Paso previo · poner al día el ánimo (ROSE)</span>
-    <div class="caja c-rose"><p class="ct">Decaimiento por el tiempo en silencio <span class="ecref">(ec. 4.6)</span></p>
-      <p class="cd mono">s_r ← (1 − d)·s_r + d·b &nbsp; d = ${p.decaimiento}</p>
-      <p class="cd">${v3(d0)} → ${v3(d1)}${movio ? "" : " · dentro de la latencia, no decae"}</p></div></div>${flecha}`;
-
-  // PULSE por fuente (en paralelo)
-  const cols = t.lecturas.map(fuenteFlow).join("") + fuenteSinCara(t);
-  h += `<div class="grupo g-pulse"><span class="tag">PULSE · por fuente</span>
-    ${cols ? `<div class="fuentes-flow">${cols}</div>` : '<p class="vacio">Ninguna fuente dio lectura en esta frase.</p>'}</div>${flecha}`;
-
-  // PULSE · fusión (con rombo de neutral)
-  let fusionBody;
-  if (!fu) fusionBody = '<p class="vacio">Sin lecturas: no hay nada que fusionar.</p>';
-  else if (fu.todos_neutral) fusionBody = `<div class="rombo-dec"><div class="rombo-caja">¿todas las fuentes dicen neutral?</div>
-      <div class="rombo-resp">sí → <b>el ánimo no cambia</b></div></div>`;
+  // 0. Decaimiento
+  const d0 = t.decaer.antes, d1 = t.decaer.despues, movio = d0.some((x, i) => Math.abs(x - d1[i]) > 1e-4);
+  h += `<section class="paso"><h2><span class="n">Paso 0</span>ROSE · Decaimiento hacia el ánimo base</h2>
+    <p class="que">Antes de leer la frase, el ánimo de Romeo vuelve un poco a su base según el tiempo que pasó (latencia ${p.latencia} s, un paso cada ${p.paso} s).</p>
+    <div class="formula">s_r ← b + (1 − d)ⁿ · (s_r − b)      d = ${p.decaimiento}   b = ${v3(b)}
+${v3(d0)}  →  ${v3(d1)}${movio ? "" : "   (todavía dentro de la latencia: no decae)"}</div></section>`;
+  // 1. Modalidades
+  h += `<section class="paso"><h2><span class="n">Paso 1</span>PULSE · De probabilidades a VAD, por modalidad</h2>
+    <p class="que">Cada clasificador da una probabilidad por emoción (agrupadas en las cuatro del robot). El punto VAD es el promedio de los anclajes pesado por esas probabilidades, y la confianza sale de la entropía: si duda entre varias emociones, pesa menos.</p>
+    ${t.lecturas.length || t.fer_sin_cara != null ? `<div class="modalidades">${t.lecturas.map(modalidad).join("")}${sinCara(t)}</div>` : '<p class="vacio">Ninguna modalidad dio lectura en esta frase.</p>'}</section>`;
+  // 2. Fusion
+  const fu = t.fusion;
+  let cuerpo;
+  if (!fu) cuerpo = '<p class="vacio">Sin lecturas: no hay nada que fusionar.</p>';
+  else if (fu.todos_neutral) cuerpo = `<p class="resultado">Todas las modalidades vieron neutral → el ánimo de Romeo no se mueve en esta frase.</p>
+      <p class="que">Neutral es el origen (0, 0, 0). Como la base de Romeo es positiva, acercarlo al origen se vería como tristeza, así que se omite.</p>`;
   else {
     const filas = fu.entradas.map((e) => `<tr><td>${esc((FUENTE[e.fuente] || [e.fuente])[0])}</td><td class="n">${e.confianza.toFixed(3)}</td>
-        <td class="n">${v3(e.vad)}</td></tr>`).join("");
-    fusionBody = `<div class="rombo-dec"><div class="rombo-caja">¿todas las fuentes dicen neutral?</div><div class="rombo-resp">no ↓</div></div>${flecha}
-      <div class="caja c-pulse"><p class="ct">Fusión ponderada <span class="ecref">(ec. 4.4)</span></p>
-      <p class="cd mono">S_u = Σ c·S / Σ c</p>
-      <div class="tabla flow-tabla"><table><thead><tr><th>Fuente</th><th class="n">c</th><th class="n">S (v,a,d)</th></tr></thead><tbody>${filas}</tbody></table></div>
-      ${vecbar(fu.s_u)}<p class="cd">→ estado del usuario S_u</p></div>`;
+        <td class="n">${v3(e.vad)}</td><td class="n">${v3(e.vad.map((x) => x * e.confianza))}</td></tr>`).join("");
+    cuerpo = `<div class="formula">S_u = Σ c_m · S_m / Σ c_m</div>
+      <div class="tabla"><table><thead><tr><th>Fuente</th><th class="n">c</th><th class="n">S_m (v, a, d)</th><th class="n">c × S_m</th></tr></thead>
+      <tbody>${filas}<tr class="total"><td>Σ</td><td class="n">${(fu.suma_confianzas ?? 0).toFixed(3)}</td><td></td>
+      <td class="n">S_u = ${v3(fu.s_u)}</td></tr></tbody></table></div>
+      <p class="resultado">Tu emoción en esta frase: S_u = ${v3(fu.s_u)}</p>`;
   }
-  h += `<div class="grupo g-pulse"><span class="tag">PULSE · fusión</span>${fusionBody}</div>${flecha}`;
-
-  // ROSE · empatía
-  h += `<div class="grupo g-rose"><span class="tag">ROSE · reacción (empatía)</span>
-    <div class="caja c-rose"><p class="ct">Transformación empática <span class="ecref">(ec. 4.5)</span></p>
-    ${em ? `<p class="cd mono">s_r ← e·S_u + (1 − e)·s_r &nbsp; e = ${em.e}</p>${vecbar(em.despues)}
-      <p class="cd">${v3(em.antes)} → <b>${v3(em.despues)}</b> · ánimo de Romeo</p>`
-    : '<p class="vacio">No se aplicó: no hubo emoción que contagiar.</p>'}</div></div>${flecha}`;
-
-  // AEB
-  const cosOrden = Object.entries(a.cosenos || {}).sort((x, y) => y[1] - x[1]);
-  const cosChips = cosOrden.map(([e, c], i) => `<span class="chip-emo">${esc(e)} ${c.toFixed(2)}${i === 0 ? " ←" : ""}</span>`).join("");
-  h += `<div class="grupo g-aeb"><span class="tag">AEB</span>
-    <div class="caja c-aeb"><p class="ct">Del ánimo al comportamiento</p>
-      <p class="cd mono">Δ = s_r − b = ${v3(a.desviacion)} · |Δ| = ${a.magnitud.toFixed(3)}</p>
-      ${cosChips ? `<p class="cd">dirección (coseno): <span class="chips-emo">${cosChips}</span></p>` : ""}
-      ${a.emocion ? `<p class="cd mono">${a.magnitud < a.radio
-        ? `|Δ| ${a.magnitud.toFixed(3)} < radio ${a.radio.toFixed(3)} → L0`
-        : `nivel = 1 + ⌊4·(|Δ|−r)/(‖a−b‖−r)⌋ = ${a.nivel}`}</p>` : ""}
-      <p class="resultado">→ <span class="chip">${esc(a.estado.replace("_L", " · nivel "))}</span> · cara ${esc(a.cara)}${a.emocion === "tristeza" && a.cara === "content" ? " (con tristeza, cara normal)" : ""}</p>
-    </div>${flecha}
-    <div class="salidas-flow">
-      <div class="caja c-pulse"><p class="ct">Cara</p><p class="cd">${esc(a.cara)}</p></div>
-      <div class="caja c-pulse"><p class="ct">Tono del LLM</p><p class="cd">cómo responde</p></div>
-      <div class="caja c-pulse"><p class="ct">Movimiento</p><p class="cd">carrito según nivel</p></div>
-    </div></div>`;
-
-  // La tabla de niveles L1-L4 queda SIEMPRE visible debajo del diagrama: es
-  // la que dice que hace Romeo en cada nivel, con la fila del estado actual
-  // marcada.
-  h += `<div style="width:100%;margin-top:6px">${tablaEstados(a)}</div>`;
-
-  // El cálculo por modalidad con probabilidades y entropía (mas detallado)
-  // queda a un clic, para no alargar el diagrama.
-  h += `<details class="ver-detalle"><summary>Ver el cálculo por modalidad (probabilidades y entropía)</summary>
-    <div style="margin-top:12px">
-    <section class="paso"><h2><span class="n">PULSE</span>Por modalidad, con probabilidades</h2>
-      ${t.lecturas.length || t.fer_sin_cara != null ? `<div class="modalidades">${t.lecturas.map(modalidad).join("")}${sinCara(t)}</div>` : '<p class="vacio">—</p>'}</section>
-    </div></details>`;
-
+  h += `<section class="paso"><h2><span class="n">Paso 2</span>PULSE · Fusión de las modalidades</h2>
+    <p class="que">Se juntan voz, texto y cara en un solo punto, pesando cada una por su confianza.</p>${cuerpo}</section>`;
+  // 3. Empatia
+  const em = t.empatia;
+  h += `<section class="paso"><h2><span class="n">Paso 3</span>ROSE · Empatía: Romeo se mueve hacia tu emoción</h2>
+    <p class="que">Romeo toma una parte (e) de tu emoción y conserva el resto de la suya: acompaña sin hundirse.</p>
+    ${em ? `<div class="formula">s_r' = e · S_u + (1 − e) · s_r        e = ${em.e}
+${["v", "a", "d"].map((k, i) => `${k}: ${em.e} × ${n3(em.s_u[i])} + ${(1 - em.e).toFixed(1)} × ${n3(em.antes[i])} = ${n3(em.despues[i])}`).join("\n")}</div>
+      <p class="resultado">Ánimo de Romeo: ${v3(em.antes)} → ${v3(em.despues)}</p>`
+    : '<p class="vacio">No se aplicó: no hubo emoción que contagiar en esta frase.</p>'}</section>`;
+  // 4. AEB
+  const a = t.aeb;
+  const cos = Object.entries(a.cosenos || {}).sort((x, y) => y[1] - x[1])
+    .map(([e, c], i) => `<tr><td>${esc(e)}${i === 0 ? " ←" : ""}</td><td class="n">${c.toFixed(3)}</td></tr>`).join("");
+  h += `<section class="paso"><h2><span class="n">Paso 4</span>AEB · Del ánimo a una emoción con nivel</h2>
+    <p class="que">Se mide cuánto y hacia dónde se apartó Romeo de su base. La dirección se elige por el coseno con cada anclaje, y el nivel por qué tan lejos llegó, en cuatro tramos.</p>
+    <div class="formula">Δ = s_r − b = ${v3(a.vector)} − ${v3(a.base)} = ${v3(a.desviacion)}
+|Δ| = ${a.magnitud.toFixed(3)}</div>
+    ${cos ? `<div class="tabla"><table><thead><tr><th>Dirección</th><th class="n">cos(Δ, ancla)</th></tr></thead><tbody>${cos}</tbody></table></div>` : ""}
+    ${a.emocion ? `<div class="formula">radio neutro = ${a.fraccion_neutral} × |ancla(${a.emocion}) − b| = ${a.radio.toFixed(3)}
+${a.magnitud < a.radio ? `|Δ| = ${a.magnitud.toFixed(3)} < radio → zona neutra, nivel 0`
+  : `nivel = 1 + ⌊4 · (|Δ| − radio) / recorrido⌋ = 1 + ⌊4 · (${a.magnitud.toFixed(3)} − ${a.radio.toFixed(3)}) / ${a.recorrido.toFixed(3)}⌋ = ${a.nivel}`}</div>` : ""}
+    <p class="resultado">Resultado: <span class="chip">${esc(a.estado.replace("_L", " · nivel "))}</span> · cara ${esc(a.cara)}${a.emocion === "tristeza" && a.cara === "content" ? " (con tristeza Romeo mantiene la cara normal)" : ""}</p></section>`;
+  h += tablaEstados(a);
   $("pasos").innerHTML = h;
   $("info").textContent = `«${t.texto}» · ${new Date(t.t * 1000).toLocaleTimeString()}`;
 }
@@ -756,46 +707,6 @@ select { padding:7px 9px; border-radius:4px; border:1px solid var(--borde); back
 .modalidad h3 { margin:0 0 6px; font-size:.95rem; display:flex; gap:8px; align-items:center; }
 .resultado { font-weight:700; margin:10px 0 0; }
 @media (max-width:560px) { .medidor { grid-template-columns:44px minmax(0,1fr) 72px 40px; } .emo { font-size:1.45rem; } }
-/* Diagrama de flujo del calculo VAD: cajas por etapa, flechas y fuentes en paralelo. */
-#pasos { display:flex; flex-direction:column; align-items:center; gap:0; }
-.grupo { width:100%; border:2px dashed var(--eje); border-radius:14px; padding:30px 16px 18px; margin:2px 0; position:relative; display:flex; flex-direction:column; align-items:center; gap:12px; }
-.grupo > .tag { position:absolute; top:9px; left:16px; font-weight:800; font-size:.82rem; letter-spacing:.02em; }
-.grupo.g-rose { border-color:var(--punto-romeo); } .grupo.g-rose > .tag { color:var(--punto-romeo); }
-.grupo.g-pulse { border-color:var(--fusion); } .grupo.g-pulse > .tag { color:var(--fusion); }
-.grupo.g-aeb { border-color:var(--aro); } .grupo.g-aeb > .tag { color:var(--aro); }
-.caja { width:100%; max-width:600px; border:2px solid var(--borde); border-radius:12px; background:var(--tarjeta); padding:14px 16px; }
-.caja .ct { font-weight:800; font-size:1rem; margin:0 0 6px; display:flex; flex-wrap:wrap; gap:8px; align-items:baseline; }
-.caja .cd { color:var(--suave); font-size:.86rem; margin:4px 0; }
-.caja .cd.mono, .caja .mono { font-family:var(--num); }
-.caja .cd b { color:var(--texto); }
-.caja.c-rose { border-color:var(--punto-romeo); }
-.caja.c-pulse { border-color:var(--fusion); }
-.caja.c-aeb { border-color:var(--aro); }
-.caja.c-entrada { border-style:dashed; }
-.flecha { width:2px; height:24px; background:var(--tenue); position:relative; flex:none; }
-.flecha::after { content:""; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid var(--tenue); }
-.fuentes-flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; width:100%; }
-@media (max-width:620px) { .fuentes-flow { grid-template-columns:minmax(0,1fr); } }
-.fuente-col { display:flex; flex-direction:column; gap:8px; min-width:0; }
-.fuente-col .caja { max-width:none; height:100%; }
-.chips-emo { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
-.chip-emo { font-size:.78rem; border:1px solid var(--borde); border-radius:999px; padding:2px 9px; font-family:var(--num); }
-.rombo-dec { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; width:100%; }
-.rombo-caja { background:var(--tarjeta); border:2px solid var(--fusion); width:280px; max-width:85vw; aspect-ratio:2.4/1; display:flex; align-items:center; justify-content:center; text-align:center; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); padding:0 2rem; font-weight:700; font-size:.86rem; color:var(--texto); }
-.rombo-resp { font-size:.82rem; color:var(--suave); }
-.rombo-resp b { color:var(--romeo); }
-.vecbar { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 2px; }
-.vecbar .comp { border:1px solid var(--borde); border-radius:8px; padding:5px 10px; text-align:center; min-width:66px; background:var(--fondo); }
-.vecbar .comp small { display:block; font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; color:var(--suave); }
-.vecbar .comp b { font-family:var(--num); font-size:1.05rem; }
-.vecbar .comp.cv b { color:var(--val); } .vecbar .comp.ca b { color:var(--aro); } .vecbar .comp.cd b { color:var(--dom); }
-.ecref { font-size:.7rem; color:var(--suave); font-weight:600; font-family:var(--num); }
-.salidas-flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; width:100%; }
-@media (max-width:620px) { .salidas-flow { grid-template-columns:minmax(0,1fr); } }
-.salidas-flow .caja { max-width:none; text-align:center; }
-.flow-tabla { width:100%; }
-details.ver-detalle { width:100%; max-width:600px; margin-top:4px; }
-details.ver-detalle summary { text-align:left; font-size:.82rem; color:var(--suave); }
 """
 for _n in ("PAGINA", "PAGINA_CARRITO", "CALCULO"):
     globals()[_n] = globals()[_n].replace("/*TEMA*/", TEMA)
