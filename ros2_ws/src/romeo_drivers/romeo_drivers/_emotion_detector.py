@@ -40,6 +40,63 @@ ETIQUETAS = ["neutral", "felicidad", "sorpresa", "tristeza", "enojo", "asco", "m
 # Las 4 que usa el juego de caras (columna 'cara' del dataset).
 ETIQUETAS_RELEVANTES = {"felicidad": "Feliz", "tristeza": "Triste", "enojo": "Enojado", "neutral": "Neutral"}
 
+# MODELO FER. Se elige con ROMEO_FER_MODELO:
+#   "ferplus"   de serie, 8 clases, 64x64 gris (FERPlus)
+#   "deepface"  el de la tesis de Rocha: CNN FER-2013 de Serengil, 7 clases, 48x48
+#   "hsemotion" EfficientNet-B0 entrenado con AffectNet (mejor precision),
+#               8 clases, 224x224 RGB con normalizacion ImageNet
+# Asi se pueden comparar sin perder el de serie. Los .onnx extra viven en
+# pruebas/fer_deepface/modelos/.
+FER_MODELO = os.environ.get("ROMEO_FER_MODELO", "ferplus").strip().lower()
+
+# HSEmotion (AffectNet): 8 clases en este orden -> Anger, Contempt, Disgust,
+# Fear, Happiness, Neutral, Sadness, Surprise. Se reordenan a ETIQUETAS.
+_HSEMOTION_ETIQUETAS = ["enojo", "desprecio", "asco", "miedo", "felicidad",
+                        "neutral", "tristeza", "sorpresa"]
+_HSEMOTION_A_FERPLUS = [ETIQUETAS.index(e) for e in _HSEMOTION_ETIQUETAS]
+# Normalizacion ImageNet (RGB) que espera el modelo.
+_HSE_MEAN = (0.485, 0.456, 0.406)
+_HSE_STD = (0.229, 0.224, 0.225)
+_HSEMOTION_CANDIDATOS = [
+    os.path.expanduser("~/ARFORD/pruebas/fer_deepface/modelos/hsemotion_b0.onnx"),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                 "..", "..", "..", "..", "..", "pruebas", "fer_deepface",
+                 "modelos", "hsemotion_b0.onnx"),
+]
+
+# MobileFaceNet (AffectNet, multi-tarea): MISMO preproceso y orden de 8 clases
+# que HSEmotion, pero entrada 112x112 (mas rapido: ~11 fps en la Pi) y salida
+# de 10 (las 8 emociones + valence + arousal; se usan solo las 8 primeras).
+_MOBILEFACENET_CANDIDATOS = [
+    os.path.expanduser("~/ARFORD/pruebas/fer_deepface/modelos/mobilefacenet_emotion.onnx"),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                 "..", "..", "..", "..", "..", "pruebas", "fer_deepface",
+                 "modelos", "mobilefacenet_emotion.onnx"),
+]
+
+# Orden EXACTO de salida del modelo de DeepFace (FER-2013):
+# angry, disgust, fear, happy, sad, surprise, neutral.
+_DEEPFACE_ETIQUETAS = ["enojo", "asco", "miedo", "felicidad", "tristeza",
+                       "sorpresa", "neutral"]
+# Posicion de cada clase de DeepFace dentro de ETIQUETAS (8 de FER+). Asi el
+# resto de Romeo (PULSE, anclajes) no cambia: deepface no da "desprecio", que
+# queda en 0.
+_DEEPFACE_A_FERPLUS = [ETIQUETAS.index(e) for e in _DEEPFACE_ETIQUETAS]
+
+# Ruta del modelo de DeepFace (se copio a la Pi en pruebas/fer_deepface).
+_DEEPFACE_CANDIDATOS = [
+    os.path.expanduser("~/ARFORD/pruebas/fer_deepface/modelos/deepface_emotion.onnx"),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                 "..", "..", "..", "..", "..", "pruebas", "fer_deepface",
+                 "modelos", "deepface_emotion.onnx"),
+]
+
+# Si ROMEO_CARA_JPG apunta a un archivo, cada clasificacion guarda ahi el
+# ultimo cuadro con el recuadro de la cara y la emocion dibujados, para que
+# el panel (romeo_panel.py) muestre lo que vio el robot. Vacio = no guarda
+# nada (coste cero, comportamiento de siempre).
+CARA_JPG = os.environ.get("ROMEO_CARA_JPG", "").strip()
+
 # Hilos para onnxruntime y OpenCV. Ver la nota en _asegurar_modelos_cargados.
 HILOS_ONNX = int(os.environ.get("ROMEO_FER_HILOS", "2"))
 
@@ -58,10 +115,22 @@ HISTORIAL_SEG = 60.0       # cuántos segundos de cuadros se guardan
 ESPERA_JUEGO_SEG = 4.0     # cuánto espera el juego de caras a ver una cara
 CUADROS_JUEGO = 3          # con cuántos cuadros decide el juego de caras
 
-# Tamaño del cuadro que se analiza. Antes la vista previa por defecto
-# (640x480): YuNet buscaba la cara en el doble de pixeles de lo necesario
-# para una persona a 1-2 m del robot, y FER+ igual recorta a 64x64.
-RESOLUCION_POR_DEFECTO = (320, 240)
+# Tamaño del cuadro que se analiza. Para la EMOCION 320x240 basta (el modelo
+# recorta a 48/64 igual); subir la resolucion solo hace que el panel se vea
+# mas nitido, a cambio de algo mas de CPU. Se controla con
+# ROMEO_FER_RESOLUCION="ANCHOxALTO" (por defecto 640x480 para el panel).
+def _resolucion_env(defecto=(640, 480)):
+    v = os.environ.get("ROMEO_FER_RESOLUCION", "").lower().replace(" ", "")
+    if "x" in v:
+        try:
+            a, b = v.split("x", 1)
+            return (int(a), int(b))
+        except ValueError:
+            pass
+    return defecto
+
+
+RESOLUCION_POR_DEFECTO = _resolucion_env()
 # Formato de captura. Por defecto picamera2 da XBGR8888 (RGBA, 4 canales),
 # que obliga a convertir RGBA->BGR cada cuadro antes de YuNet. Pidiendo
 # "BGR888" (3 canales) la camara entrega ya el formato que usa OpenCV, y
@@ -137,7 +206,24 @@ class DetectorEmocion:
             import cv2
             import onnxruntime as ort
 
-            modelo_emocion = os.path.join(self.modelos_dir, 'emotion-ferplus-8.onnx')
+            # Modelo de emocion segun ROMEO_FER_MODELO.
+            if FER_MODELO == "deepface":
+                modelo_emocion = next(
+                    (p for p in _DEEPFACE_CANDIDATOS if os.path.exists(p)),
+                    _DEEPFACE_CANDIDATOS[0])
+                self._log(f"[cámara] FER = DeepFace (FER-2013) -> {modelo_emocion}")
+            elif FER_MODELO == "hsemotion":
+                modelo_emocion = next(
+                    (p for p in _HSEMOTION_CANDIDATOS if os.path.exists(p)),
+                    _HSEMOTION_CANDIDATOS[0])
+                self._log(f"[cámara] FER = HSEmotion (AffectNet) -> {modelo_emocion}")
+            elif FER_MODELO == "mobilefacenet":
+                modelo_emocion = next(
+                    (p for p in _MOBILEFACENET_CANDIDATOS if os.path.exists(p)),
+                    _MOBILEFACENET_CANDIDATOS[0])
+                self._log(f"[cámara] FER = MobileFaceNet (AffectNet, rapido) -> {modelo_emocion}")
+            else:
+                modelo_emocion = os.path.join(self.modelos_dir, 'emotion-ferplus-8.onnx')
             modelo_cara = os.path.join(self.modelos_dir, 'face_detection_yunet_2023mar.onnx')
             # LIMITAR LOS HILOS. Sin SessionOptions, onnxruntime abre un
             # hilo por nucleo: medido en la Pi, el nodo se iba a 347% de
@@ -207,16 +293,104 @@ class DetectorEmocion:
                 return None
             cara = max(caras, key=lambda c: c[14])
             x, y, w, h = [max(0, int(v)) for v in cara[:4]]
+        if FER_MODELO in ("hsemotion", "mobilefacenet"):
+            # Familia AffectNet (HSEmotion / MobileFaceNet): cara en COLOR,
+            # /255, norm ImageNet, RGB, (1,3,N,N). HSEmotion N=224; MobileFaceNet
+            # N=112 y salida de 10 (se usan solo las 8 primeras emociones).
+            lado = 112 if FER_MODELO == "mobilefacenet" else 224
+            recorte_bgr = frame_bgr[y:y + h, x:x + w]
+            if recorte_bgr.size == 0:
+                return None
+            cara = cv2.resize(recorte_bgr, (lado, lado)).astype(np.float32) / 255.0
+            cara = cara[:, :, ::-1]  # BGR -> RGB
+            cara = (cara - np.array(_HSE_MEAN, np.float32)) / np.array(_HSE_STD, np.float32)
+            ent = cara.transpose(2, 0, 1)[np.newaxis, ...].astype(np.float32)
+            salida = self._sess_emocion.run(None, {self._input_name: ent})[0][0]
+            p8 = self._softmax(salida[:8])  # ignora valence/arousal si los hay
+            probs = [0.0] * len(ETIQUETAS)
+            for i, pos in enumerate(_HSEMOTION_A_FERPLUS):
+                probs[pos] = float(p8[i])
+            self.ultimas_probabilidades = probs
+            if CARA_JPG:
+                self._guardar_cara(frame_bgr, (x, y, w, h), probs)
+            return probs
+
         gris = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
         recorte = gris[y:y + h, x:x + w]
         if recorte.size == 0:
             return None
-        recorte = cv2.resize(recorte, (64, 64)).astype(np.float32)
-        salida = self._sess_emocion.run(
-            None, {self._input_name: recorte.reshape(1, 1, 64, 64)})[0][0]
-        probs = [float(p) for p in self._softmax(salida)]
+
+        if FER_MODELO == "deepface":
+            # DeepFace (FER-2013): 48x48, /255, canal al final (1,48,48,1),
+            # 7 clases. Se reordenan a las 8 posiciones de ETIQUETAS para que
+            # PULSE y los anclajes no cambien ("desprecio" queda en 0).
+            cara48 = cv2.resize(recorte, (48, 48)).astype(np.float32) / 255.0
+            salida = self._sess_emocion.run(
+                None, {self._input_name: cara48.reshape(1, 48, 48, 1)})[0][0]
+            p7 = self._softmax(salida)
+            probs = [0.0] * len(ETIQUETAS)
+            for i, pos in enumerate(_DEEPFACE_A_FERPLUS):
+                probs[pos] = float(p7[i])
+        else:
+            # FER+ de serie: 64x64 crudo (sin /255), canal primero, 8 clases.
+            cara64 = cv2.resize(recorte, (64, 64)).astype(np.float32)
+            salida = self._sess_emocion.run(
+                None, {self._input_name: cara64.reshape(1, 1, 64, 64)})[0][0]
+            probs = [float(p) for p in self._softmax(salida)]
+
         self.ultimas_probabilidades = probs
+        if CARA_JPG:
+            self._guardar_cara(frame_bgr, (x, y, w, h), probs)
         return probs
+
+    def _guardar_cara(self, frame_bgr, caja, probs):
+        """Guarda el cuadro con el recuadro de la cara y la emocion ganadora
+        en CARA_JPG, para que el panel muestre lo que vio el robot. Nunca
+        lanza: es solo visualizacion."""
+        try:
+            import cv2
+            x, y, w, h = caja
+            idx = max(range(len(probs)), key=probs.__getitem__)
+            etiqueta, conf = ETIQUETAS[idx], probs[idx]
+            img = frame_bgr.copy()
+            col = (0, 200, 0) if etiqueta in ("felicidad", "neutral") else (0, 120, 255)
+            cv2.rectangle(img, (x, y), (x + w, y + h), col, 2)
+            cv2.putText(img, f"{etiqueta} {conf*100:.0f}%", (x, max(20, y - 8)),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, col, 2)
+            cv2.putText(img, f"FER: {FER_MODELO}", (8, 22),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (230, 230, 230), 2)
+            # imencode y no imwrite: el OpenCV headless de la Pi no trae
+            # escritor de archivos de imagen (imwrite da "could not find a
+            # writer"), pero imencode a memoria si funciona.
+            ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 70])
+            if not ok:
+                return
+            tmp = CARA_JPG + ".tmp"
+            with open(tmp, "wb") as f:
+                f.write(buf.tobytes())
+            os.replace(tmp, CARA_JPG)  # atomico: el panel nunca lee a medias
+        except Exception:  # noqa: BLE001 - visualizar nunca es critico
+            pass
+
+    def _guardar_frame_crudo(self, frame_bgr):
+        """Guarda el cuadro SIN clasificar (reposo), para que el panel muestre
+        al usuario aunque no haya voz. Dibuja el recuadro de la cara si el
+        sensor/CPU la encuentra rapido, pero no corre el modelo de emocion.
+        Nunca lanza."""
+        try:
+            import cv2
+            img = frame_bgr.copy()
+            cv2.putText(img, f"FER: {FER_MODELO} (en reposo)", (8, 22),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 2)
+            ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 70])
+            if not ok:
+                return
+            tmp = CARA_JPG + ".tmp"
+            with open(tmp, "wb") as f:
+                f.write(buf.tobytes())
+            os.replace(tmp, CARA_JPG)
+        except Exception:  # noqa: BLE001 - visualizar nunca es critico
+            pass
 
     def _detectar_en_frame(self, frame_bgr):
         """(etiqueta, probabilidad) de la emoción ganadora, o (None, None)."""
@@ -293,6 +467,7 @@ class DetectorEmocion:
                 # Cuadros clasificados en la ventana activa en curso: al
                 # cerrarse se loguean los fps REALES, para comparar.
                 ventana_inicio, ventana_cuadros = None, 0
+                ultimo_crudo = 0.0
                 while self._continuo:
                     if not self._toca_clasificar():
                         if ventana_inicio is not None:
@@ -300,6 +475,24 @@ class DetectorEmocion:
                             self._log(f"[cámara] FER: {ventana_cuadros} cuadros en "
                                       f"{dur:.1f} s ({ventana_cuadros / max(dur, 0.1):.1f} fps reales)")
                             ventana_inicio, ventana_cuadros = None, 0
+                        # En reposo NO se clasifica (ahorra CPU), pero si
+                        # CARA_JPG esta activo se guarda el cuadro crudo cada
+                        # ~0.5 s para que el panel muestre al usuario en vivo
+                        # aunque no haya voz.
+                        if CARA_JPG and (time.time() - ultimo_crudo) >= 0.5:
+                            try:
+                                if sensor is not None:
+                                    pedido = picam2.capture_request()
+                                    try:
+                                        crudo = pedido.make_array("main")
+                                    finally:
+                                        pedido.release()
+                                else:
+                                    crudo = picam2.capture_array("main")
+                                self._guardar_frame_crudo(self._a_bgr(crudo))
+                                ultimo_crudo = time.time()
+                            except Exception:  # noqa: BLE001
+                                pass
                         time.sleep(PAUSA_REPOSO)
                         continue
                     inicio = time.time()

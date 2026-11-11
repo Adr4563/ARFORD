@@ -108,6 +108,21 @@ _CARA_A_EMOCION = {"happy": "felicidad", "sad": "tristeza",
 
 _FRACCION_NEUTRAL = float(os.environ.get("ROMEO_FRACCION_NEUTRAL", "0.20"))
 
+# Desde donde se mide el animo de Romeo. Por defecto desde su BASE (reposo =
+# content, no sonrie permanente). Con ROMEO_ANIMO_DESDE_ORIGEN=1 se mide desde
+# el ORIGEN (0,0,0) como Rocha: la base optimista (0.4,0.3,0.2) ya es
+# Happiness L2, asi que Romeo se ve y dice feliz en reposo.
+ANIMO_DESDE_ORIGEN = os.environ.get(
+    "ROMEO_ANIMO_DESDE_ORIGEN", "0") in ("1", "true", "True")
+
+# Metodo de mapeo del AEB. Con ROMEO_METODO_ROCHA=1 se usa el metodo EXACTO de
+# la tesis de Rocha (sec. 4.1.3): distancia euclidiana del vector a los
+# anclajes Y a sus puntos de intensidad L1-L4 (repartidos del origen al
+# anclaje); el punto mas cercano da emocion y nivel. Reproduce sus resultados
+# (base optimista 0.4/0.3/0.2 -> Happiness L2). Implica medir desde el origen.
+METODO_ROCHA = os.environ.get(
+    "ROMEO_METODO_ROCHA", "0") in ("1", "true", "True")
+
 
 def radio_neutral(emocion, animo_base):
     """Borde de la zona neutra en la direccion de `emocion`.
@@ -214,7 +229,7 @@ PERFILES = {
     "EMPATHETIC":  {"empatia": 1.0, "animo_base": (0.20, 0.10, 0.00),
                     "decaimiento": 0.3, "latencia": 3.0},
 }
-PERFIL_POR_DEFECTO = "OPTIMISTIC"
+PERFIL_POR_DEFECTO = "EMPATHETIC"
 
 
 def parametros_de_perfil(nombre=None):
@@ -628,10 +643,35 @@ class EstadoAfectivo:
         saldria casi por azar y la cara parpadearia entre dos sin motivo."""
         direccion, magnitud = self.desviacion()
         # El borde depende de HACIA DONDE se movio: ver radio_neutral().
+        # La referencia es la misma que usa desviacion() (base u origen).
+        ref = (0.0, 0.0, 0.0) if ANIMO_DESDE_ORIGEN else self.animo_base
         emocion = _CARA_A_EMOCION.get(direccion)
         return ("content"
-                if magnitud < radio_neutral(emocion, self.animo_base)
+                if magnitud < radio_neutral(emocion, ref)
                 else direccion)
+
+    def _emocion_rocha(self):
+        """Metodo EXACTO de Rocha (tesis sec. 4.1.3): el punto mas cercano
+        entre {neutral, y cada anclaje con sus puntos de intensidad L1-L4}.
+        Devuelve (cara, nivel). Mide en coordenadas absolutas desde el origen.
+
+        Reproduce los resultados de la tesis: base optimista (0.4,0.3,0.2) ->
+        felicidad L2, base empatica (0.2,0.1,0.0) -> felicidad L1."""
+        v = self.vector
+        # El punto neutral (origen) es un candidato mas.
+        mejor_cara, mejor_nivel, mejor_dist = "content", 0, \
+            math.sqrt(sum(x * x for x in v))
+        for cara, nombre in _CARA_A_EMOCION.items():
+            ancla = ANCLAJES.get(nombre)
+            if not ancla:
+                continue
+            for L in range(1, 5):
+                f = L / 4.0
+                p = tuple(f * ancla[i] for i in range(3))  # origen -> ancla
+                dist = math.sqrt(sum((v[i] - p[i]) ** 2 for i in range(3)))
+                if dist < mejor_dist:
+                    mejor_cara, mejor_nivel, mejor_dist = cara, L, dist
+        return mejor_cara, mejor_nivel
 
     def desviacion(self):
         """Hacia donde y cuanto se aparto el animo de su base.
@@ -642,8 +682,27 @@ class EstadoAfectivo:
         exactamente en la base devuelve ("content", 0.0).
 
         Lo usan cara() y el AEB (aeb.py), que necesita ademas la magnitud
-        para decidir la intensidad (L1-L4)."""
-        dv = tuple(self.vector[i] - self.animo_base[i] for i in range(3))
+        para decidir la intensidad (L1-L4).
+
+        REFERENCIA: por defecto se mide desde el ANIMO BASE (reposo = content).
+        Con ROMEO_ANIMO_DESDE_ORIGEN=1 se mide desde el ORIGEN (0,0,0), como
+        Rocha: entonces la base optimista (0.4,0.3,0.2) ya es 'happy' (L2) y
+        Romeo se ve/dice feliz en reposo."""
+        # METODO DE ROCHA (sec. 4.1.3): punto mas cercano entre anclajes y sus
+        # puntos de intensidad L1-L4, medido desde el ORIGEN. Devuelve la cara
+        # y una magnitud equivalente para que nivel() saque el mismo L.
+        if METODO_ROCHA:
+            cara, nivel_r = self._emocion_rocha()
+            if cara == "content":
+                return "content", 0.0
+            # magnitud tal que aeb.nivel() reproduzca nivel_r: el centro del
+            # tramo L correspondiente. Mas simple: devolver la magnitud real
+            # al origen; nivel() ya reparte en tramos iguales igual que Rocha.
+            dv = tuple(self.vector[i] for i in range(3))
+            return cara, math.sqrt(sum(x * x for x in dv))
+
+        ref = (0.0, 0.0, 0.0) if ANIMO_DESDE_ORIGEN else self.animo_base
+        dv = tuple(self.vector[i] - ref[i] for i in range(3))
         magnitud = math.sqrt(sum(x * x for x in dv))
         if magnitud == 0.0:
             return "content", 0.0

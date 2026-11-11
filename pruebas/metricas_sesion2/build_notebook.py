@@ -30,7 +30,21 @@ def ruta(n): return BASE / n""")
 
 md("## 1. Cargar los datos")
 
-code("""# turnos (Pi): afectiva + LLM + tokens
+code('''# La trivia empieza en la PRIMERA pregunta que hace Romeo (Asistente [emo]: ...?).
+# Antes van el saludo y "quiero jugar", que NO son preguntas: se descartan.
+import re
+INICIO_TRIVIA = 0.0
+try:
+    log = open(ruta("romeo_run.log"), encoding="utf-8", errors="replace").read()
+    # primero intenta "Vamos con una trivia"; si no, la primera pregunta
+    m = re.search(r"\\[(\\d+\\.\\d+)\\].*Vamos con una trivia", log)
+    if not m:
+        m = re.search(r"\\[(\\d+\\.\\d+)\\].*Asistente \\[[^\\]]+\\]: [^\\n]*\\?", log)
+    if m: INICIO_TRIVIA = float(m.group(1))
+except OSError: pass
+print("La trivia empieza en t =", INICIO_TRIVIA)''')
+
+code("""# turnos (Pi): afectiva + LLM + tokens, SOLO desde que inicia la trivia
 filas = []
 with open(ruta("turnos.csv"), encoding="utf-8", errors="replace") as f:
     next(f)
@@ -42,11 +56,14 @@ with open(ruta("turnos.csv"), encoding="utf-8", errors="replace") as f:
         if len(nums) < 4: continue
         ei = next((i for i,v in enumerate(nums) if v > 1e9), None)
         if ei is None or ei < 3: continue
+        t_fin = nums[ei]
+        if t_fin < INICIO_TRIVIA: continue   # descarta saludo + pedir jugar
         t_llm=nums[ei-1]; tok=nums[ei-3]; afect=nums[0]*1000
         if 50 <= t_llm <= 5000 and 1 <= tok <= 200:
             filas.append({"t_llm_ms":t_llm,"tokens_salida":tok,
                           "afectiva_ms": afect if afect < 3000 else np.nan})
-turnos = pd.DataFrame(filas)
+N_PREGUNTAS = 33   # la sesion de trivia: primeras 33 preguntas
+turnos = pd.DataFrame(filas[:N_PREGUNTAS])
 mod = pd.read_csv(ruta("modulos_pc.csv"))
 tts = pd.read_csv(ruta("tts.csv"))
 sis = pd.read_csv(ruta("sistema.csv"))
@@ -93,18 +110,26 @@ la frase es la misma clave). Esta tabla alimenta las líneas de tiempo siguiente
 code("""import csv, re
 def norm(s): return s.strip().lower()[:40]
 
-# STT/SER/TER por frase (PC)
-mod_por_frase = {}
+# STT/SER/TER por frase (PC). El reloj del PC esta desfasado del de la Pi y
+# las transcripciones difieren un poco, asi que NO se cruza por texto ni por
+# tiempo: se emparejan por ORDEN. El modulos_pc.csv acumula varias sesiones,
+# asi que se toman las ULTIMAS frases (las de esta sesion de trivia).
+mod_lista = []
 with open(ruta("modulos_pc.csv"), encoding="utf-8", errors="replace") as f:
     r = csv.reader(f); next(r)
     for row in r:
         if len(row) > 5:
             try:
-                mod_por_frase[norm(row[5])] = {
+                mod_lista.append({
                     "stt": float(row[2]) if row[2] else np.nan,
                     "ser": float(row[3]) if row[3] else np.nan,
-                    "ter": float(row[4]) if row[4] else np.nan}
+                    "ter": float(row[4]) if row[4] else np.nan})
             except ValueError: pass
+# Esta sesion tiene N_turnos respuestas; se toman las ultimas N del PC.
+_n_turnos_pc = 34   # respuestas de esta sesion (saludo + 33 trivia aprox)
+mod_sesion = mod_lista[-_n_turnos_pc:] if len(mod_lista) >= _n_turnos_pc else mod_lista
+# diccionario por texto queda como respaldo, pero el match principal es por orden
+mod_por_frase = {}
 
 # ventana FER por turno (del log, en orden de aparicion)
 fer_vent = []
@@ -128,7 +153,12 @@ with open(ruta("turnos.csv"), encoding="utf-8", errors="replace") as f:
             except ValueError: pass
         ei = next((j for j,v in enumerate(nums) if v > 1e9), None)
         if ei is None or ei < 3: continue
-        m = mod_por_frase.get(norm(texto), {"stt":np.nan,"ser":np.nan,"ter":np.nan})
+        if nums[ei] < INICIO_TRIVIA: continue   # solo desde que inicia la trivia
+        if len(filas) >= N_PREGUNTAS: break      # primeras 33 preguntas
+        # STT/SER/TER por ORDEN: la pregunta k usa la frase k de esta sesion (PC).
+        # Se salta la primera del PC (saludo) para alinear con la 1a pregunta.
+        idx_pc = len(filas) + (len(mod_sesion) - N_PREGUNTAS if len(mod_sesion) > N_PREGUNTAS else 0)
+        m = mod_sesion[idx_pc] if 0 <= idx_pc < len(mod_sesion) else {"stt":np.nan,"ser":np.nan,"ter":np.nan}
         filas.append({
             "pregunta": len(filas)+1,
             "STT": m["stt"], "SER": m["ser"], "TER": m["ter"],
@@ -157,36 +187,63 @@ ax.legend(frameon=False, fontsize=9)
 plt.tight_layout(); plt.show()
 print("moving_control_node (carrito): no interviene en la trivia.")""")
 
-md("## 5. Línea de tiempo — percepción emocional (TER, FER, SER)")
+md("""## 5. Latencia de respuesta por interacción (medida en la Raspberry)
+
+Tiempo desde que el usuario termina de hablar hasta que Romeo responde, por
+cada pregunta de la trivia. Se mide en la Pi con los instantes del log
+(fin de la transcripción → inicio de la respuesta del asistente), de inicio
+a fin, sin depender del PC.""")
+
+code('''import re
+# latencia por interaccion: del fin de la transcripcion al inicio de la respuesta
+log = open(ruta("romeo_run.log"), encoding="utf-8", errors="replace").read()
+lineas = log.splitlines()
+latencias = []
+t_mic = None
+for ln in lineas:
+    m = re.search(r"\\[(\\d+\\.\\d+)\\]", ln)
+    if not m: continue
+    ts = float(m.group(1))
+    if "[mic] transcrito:" in ln:
+        t_mic = ts
+    elif "Asistente:" in ln and t_mic is not None and ts >= INICIO_TRIVIA:
+        lat = (ts - t_mic) * 1000
+        if 0 < lat < 30000:
+            latencias.append(lat)
+        t_mic = None
+latencias = latencias[:N_PREGUNTAS]
+
+fig, ax = plt.subplots(figsize=(12,4.5))
+xx = range(1, len(latencias) + 1)
+ax.plot(xx, latencias, color="#2a78d6", lw=2, marker="o", ms=4,
+        label="Latencia de respuesta (ms)")
+ax.axhline(np.mean(latencias), color=NARANJA, ls="--", lw=1.4,
+           label=f"promedio {np.mean(latencias):.0f} ms")
+ax.fill_between(xx, 0, latencias, color="#2a78d6", alpha=0.10)
+ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Latencia (ms)")
+ax.set_xlim(1, len(latencias))
+ax.set_title("Latencia de respuesta por interacción (inicio a fin, en la Raspberry)")
+ax.legend(frameon=False, fontsize=9)
+plt.tight_layout(); plt.show()
+print(f"Latencia: promedio {np.mean(latencias):.0f} ms, min {min(latencias):.0f}, max {max(latencias):.0f} ms")''')
+
+md("""## 6. Tiempo de la capa afectiva (PULSE + ROSE + AEB)
+
+Latencia de la capa afectiva por turno. Es puramente aritmética (fusión VAD,
+empatía y mapeo), así que su costo es de pocos milisegundos: despreciable
+frente al LLM o la síntesis de voz.""")
 
 code("""fig, ax = plt.subplots(figsize=(12,4.5))
 x = dft["pregunta"]
-ax.plot(x, dft["TER"], color=VERDE, lw=1.8, label="TER (texto)")
-ax.plot(x, dft["SER"], color=NARANJA, lw=1.8, label="SER (voz)")
-ax.plot(x, dft["FER"], color=AZUL, lw=1.8, label="FER (ventana cámara)")
+ax.plot(x, dft["afectiva"], color="#6a5aa0", lw=2.2, marker="o", ms=3,
+        label="Capa afectiva (PULSE+ROSE+AEB)")
+ax.fill_between(x, 0, dft["afectiva"], color="#6a5aa0", alpha=0.15)
 ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (ms)")
-ax.set_title("Percepción emocional por turno: TER, SER, FER")
-ax.legend(frameon=False, fontsize=9)
-plt.tight_layout(); plt.show()""")
-
-md("""## 6. Línea de tiempo — capa afectiva con sus entradas
-
-La capa afectiva (PULSE+ROSE+AEB) junto con sus tres entradas de percepción
-(TER, SER, FER). Se ve que la afectiva es casi instantánea (aritmética) frente
-al tiempo que tardan los clasificadores que la alimentan.""")
-
-code("""fig, ax = plt.subplots(figsize=(12,4.8))
-x = dft["pregunta"]
-ax.plot(x, dft["TER"], color=VERDE, lw=1.5, label="TER (texto)")
-ax.plot(x, dft["SER"], color=NARANJA, lw=1.5, label="SER (voz)")
-ax.plot(x, dft["FER"], color=AZUL, lw=1.5, label="FER (cámara)")
-ax.plot(x, dft["afectiva"], color="#6a5aa0", lw=2.4, label="Capa afectiva (PULSE+ROSE+AEB)")
-ax.fill_between(x, 0, dft["afectiva"], color="#6a5aa0", alpha=0.12)
-ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (ms)")
-ax.set_title("Capa afectiva y sus entradas (TER, SER, FER) por turno")
+ax.set_xlim(1, len(dft))
+ax.set_title("Tiempo de la capa afectiva por turno")
 ax.legend(frameon=False, fontsize=9)
 plt.tight_layout(); plt.show()
-print(f"Capa afectiva: promedio {dft['afectiva'].mean():.2f} ms (es aritmética)")""")
+print(f"Capa afectiva: promedio {dft['afectiva'].mean():.2f} ms, máx {dft['afectiva'].max():.1f} ms (es aritmética)")""")
 
 md("## 7. Línea de tiempo — STT, TTS y LLM durante la trivia")
 
@@ -280,7 +337,9 @@ print("Coincidencia Rocha vs IA: 27/30 = 90%\\n")
 df""")
 
 nb["cells"] = cells
-out = r"C:\Users\Adrian\AppData\Local\Temp\claude\a962a074445c657d\fe43f463-0b50-4410-acfb-ddfb7c2c1547\scratchpad\metricas\metricas_trivia_romeo.ipynb"
+import os as _os
+out = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                    "metricas_trivia_romeo.ipynb")
 with open(out, "w", encoding="utf-8") as f:
     nbf.write(nb, f)
 print("notebook creado:", out, "| celdas:", len(cells))

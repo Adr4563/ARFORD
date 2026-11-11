@@ -411,9 +411,10 @@ class OrchestratorNode(Node):
                              for f, v, c, d in lecturas],
                 "todos_neutral": all(d == "neutral" for _f, _v, _c, d in lecturas),
             }
-        if all(dom == "neutral" for _f, _v, _c, dom in lecturas):
-            self._lecturas_turno = []
-            return
+        # La capa afectiva SIEMPRE se ejecuta, aunque las tres fuentes vean
+        # neutral: con el metodo de Rocha desde el origen, un vector neutral
+        # (cerca de 0,0,0) se clasifica como neutral/felicidad leve, no como
+        # tristeza, asi que ya no hay que saltarse la fusion.
         self._lecturas_turno = [(v, c) for _f, v, c, _d in lecturas]
         vector = estado_afectivo.fusionar(self._lecturas_turno)
         if traza is not None and vector is not None:
@@ -1136,6 +1137,16 @@ class OrchestratorNode(Node):
         try:
             fila = tiempos()
             fila["t_fin"] = round(t_fin, 6)
+            # Emocion y movimiento de Romeo en este turno (AEB), para la
+            # captura de metricas: que emocion expreso y si se desplazo.
+            try:
+                comp = self._comportamiento()
+                fila["emocion_romeo"] = comp.get("estado", "")
+                mov = comp.get("movimiento")
+                fila["movimiento"] = "-".join(mov) if mov else "ninguno"
+            except Exception:  # noqa: BLE001
+                fila["emocion_romeo"] = ""
+                fila["movimiento"] = ""
             fila["texto"] = (entrada or "").replace(",", " ")[:60]
             nuevo = not os.path.exists(CSV_TURNOS)
             with open(CSV_TURNOS, "a", encoding="utf-8") as f:

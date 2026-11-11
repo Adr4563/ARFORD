@@ -195,14 +195,12 @@ def tono_trivia(p, acerto):
 # espacio VAD entero mide ~1.7). Si el gesto solo entrara en L2+, casi nunca
 # se veria.
 _MOVIMIENTOS = {
-    ("felicidad", 1): ("F", "B"),    # desde L1: avanza y vuelve aunque la
-    ("felicidad", 2): ("F", "B"),    # alegria sea leve (acercarse un instante)
-    ("felicidad", 3): ("F", "B"),
+    # Solo se mueve en L3-L4 (emocion fuerte); en L1-L2 se queda quieto.
+    # La base optimista es felicidad L2, asi que en reposo NO debe avanzar.
+    ("felicidad", 3): ("F", "B"),    # avanza y vuelve: acompaña la buena energia
     ("felicidad", 4): ("F", "B"),
-    ("enojo", 1): ("B", "F"),        # desde L1: retrocede y vuelve aunque el
-    ("enojo", 2): ("B", "F"),        # enojo sea leve (darle espacio)
-    ("enojo", 3): ("B", "F"),
-    ("enojo", 4): ("B", "F"),
+    ("enojo", 3): ("B", "F"),        # retrocede y vuelve: le da espacio al
+    ("enojo", 4): ("B", "F"),        # usuario muy alterado
 }
 
 
@@ -236,7 +234,10 @@ def mapear(estado):
     comportamiento (ver el docstring del modulo para el formato)."""
     direccion, magnitud = estado.desviacion()
     emocion = _EMOCION_DE_CARA.get(direccion)
-    n = nivel(emocion, magnitud, estado.animo_base) if emocion else 0
+    # La referencia del nivel es la misma que usa desviacion(): base por
+    # defecto, u origen con ROMEO_ANIMO_DESDE_ORIGEN=1 (ver estado_afectivo).
+    ref = (0.0, 0.0, 0.0) if estado_afectivo.ANIMO_DESDE_ORIGEN else estado.animo_base
+    n = nivel(emocion, magnitud, ref) if emocion else 0
 
     if n == 0:
         return {"estado": "neutral_L0", "emocion": "neutral", "nivel": 0,

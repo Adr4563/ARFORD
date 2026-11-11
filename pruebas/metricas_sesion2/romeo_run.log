@@ -1,0 +1,460 @@
+[INFO] [launch]: All log files can be found below /home/pi/.ros/log/2026-11-09-03-14-25-721995-raspberrypi-728682
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [communication_node-1]: process started with pid [728724]
+[INFO] [expression_faces_node-2]: process started with pid [728725]
+[INFO] [moving_control_node-3]: process started with pid [728726]
+[INFO] [orchestrator_node-4]: process started with pid [728727]
+[moving_control_node-3] [INFO] [1794212069.678443623] [moving_control_node]: [moving_control_node] configurando...
+[moving_control_node-3] [INFO] [1794212069.697061295] [moving_control_node]: [moving_control_node] activando...
+[moving_control_node-3] [INFO] [1794212070.231232556] [moving_control_node]: [control] página de control en http://0.0.0.0:8080/
+[moving_control_node-3]  * Serving Flask app 'romeo_drivers._control_web'
+[moving_control_node-3]  * Debug mode: off
+[orchestrator_node-4] [INFO] [1794212070.345535729] [orchestrator_node]: [afecto] perfil OPTIMISTIC: empatia 0.4, base (0.4, 0.3, 0.2), decaimiento 0.3, latencia 3.0s
+[communication_node-1] [INFO] [1794212070.423717665] [communication_node]: [communication_node] configurando...
+[expression_faces_node-2] [INFO] [1794212070.433978368] [expression_faces_node]: [expression_faces_node] configurando...
+[communication_node-1] [INFO] [1794212070.519794330] [communication_node]: [communication_node] activando...
+[communication_node-1] [INFO] [1794212070.524394462] [communication_node]: [voz] TTS en http://10.143.105.48:8083 (sin modelo local en la Pi)
+[expression_faces_node-2] [INFO] [1794212070.530666716] [expression_faces_node]: [expression_faces_node] activando...
+[communication_node-1] [INFO] [1794212070.530728531] [communication_node]: [mic] escuchando (dispositivo=Board: USB Audio, servidor http://10.143.105.48:8082)
+[communication_node-1] [INFO] [1794212070.533703576] [communication_node]: [communication_node] hablale al micrófono, o escribí acá y Enter
+[expression_faces_node-2] [WARN] [1794212072.321153959] [expression_faces_node]: [cámara] FER = HSEmotion (AffectNet) -> /home/pi/ARFORD/pruebas/fer_deepface/modelos/hsemotion_b0.onnx
+[orchestrator_node-4] [INFO] [1794212072.368039879] [orchestrator_node]: Asistente: Buenas, soy Romeo. ¿Y tú, cómo te llamas?
+[expression_faces_node-2] [2:14:43.992951325] [728954]  INFO Camera camera_manager.cpp:340 libcamera v0.7.0
+[expression_faces_node-2] [2:14:44.045249800] [728990]  INFO IPAProxy ipa_proxy.cpp:180 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx500.json
+[expression_faces_node-2] [2:14:44.049141304] [728990]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx500@1a' for pipeline handler rpi/vc4
+[expression_faces_node-2] [2:14:44.049199767] [728990]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx500@1a to Unicam device /dev/media0 and ISP device /dev/media3
+[expression_faces_node-2] [2:14:44.049234452] [728990]  INFO RPI pipeline_base.cpp:1117 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[expression_faces_node-2] 
+[expression_faces_node-2] ------------------------------------------------------------------------------------------------------------------
+[expression_faces_node-2] NOTE: Loading network firmware onto the IMX500 can take several minutes, please do not close down the application.
+[expression_faces_node-2] ------------------------------------------------------------------------------------------------------------------
+[expression_faces_node-2] 
+[expression_faces_node-2] [WARN] [1794212073.627100517] [expression_faces_node]: [cámara] YuNet en el sensor (/usr/share/imx500-models/imx500_network_yunet.rpk)
+[expression_faces_node-2] [2:14:44.067067498] [728954]  INFO Camera camera.cpp:1215 configuring streams: (0) 320x240-BGR888/sRGB (1) 2028x1520-SRGGB10_CSI2P/RAW
+[expression_faces_node-2] [2:14:44.067571181] [728990]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx500@1a - Selected sensor format: 2028x1520-SRGGB10_1X10/RAW - Selected unicam format: 2028x1520-pRAA/RAW
+[expression_faces_node-2] [WARN] [1794212075.689195410] [expression_faces_node]: [cámara] FER a 4 fps, solo con voz, 320x240 (cara: sensor)
+[orchestrator_node-4] [INFO] [1794212078.184798564] [orchestrator_node]: [llm] gemma3:4b precargado en 7.8 s
+[orchestrator_node-4] [INFO] [1794212078.643461399] [orchestrator_node]: [aeb] v=+0.40 a=+0.30 d=+0.20 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212080.872710753] [communication_node]: [mic] transcrito: 'Media madre.'
+[orchestrator_node-4] [INFO] [1794212080.878427139] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.48, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212080.901154908] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.20, 6 cuadros en 2.0 s)
+[orchestrator_node-4] [INFO] [1794212080.902736384] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.69)
+[orchestrator_node-4] [INFO] [1794212081.154203646] [orchestrator_node]: Asistente: Interesante... ¿Te refieres a tu madre y tu padre?
+[expression_faces_node-2] [WARN] [1794212082.549479598] [expression_faces_node]: [cámara] FER: 19 cuadros en 4.8 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212087.431285956] [orchestrator_node]: [aeb] v=+0.40 a=+0.30 d=+0.20 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212087.432744580] [orchestrator_node]: [aeb] v=+0.40 a=+0.30 d=+0.20 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212261.159573124] [communication_node]: [mic] transcrito: 'Quiero jugar tribia.'
+[orchestrator_node-4] [INFO] [1794212261.163678424] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.52, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212261.176698228] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.16, 1 cuadros en 1.8 s)
+[orchestrator_node-4] [INFO] [1794212261.178735831] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.90)
+[orchestrator_node-4] [INFO] [1794212261.180642806] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.03 a=+0.06 d=+0.03
+[orchestrator_node-4] [INFO] [1794212261.182476040] [orchestrator_node]: [afecto] v +0.40->+0.25  a +0.30->+0.21  d +0.20->+0.13
+[orchestrator_node-4] [INFO] [1794212261.185486640] [orchestrator_node]: Asistente: ¡Trivia entonces! Preguntas de cualquier tema. Me dices cuando quieras dejarlo.
+[expression_faces_node-2] [WARN] [1794212262.271759893] [expression_faces_node]: [cámara] FER: 694 cuadros en 174.7 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794212271.079995764] [orchestrator_node]: Asistente [Neutral]: Un jugador compró 6 blusas que cuestan 4 reales cada una. ¿Cuánto gastó en blusas?
+[orchestrator_node-4] [INFO] [1794212282.788327952] [orchestrator_node]: [aeb] v=+0.25 a=+0.21 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212286.411698447] [communication_node]: [mic] transcrito: '¿doce? ¿doce, doce?'
+[orchestrator_node-4] [INFO] [1794212286.417124575] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.74, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212286.429128124] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.16, 5 cuadros en 2.7 s)
+[orchestrator_node-4] [INFO] [1794212286.430608267] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.89)
+[orchestrator_node-4] [INFO] [1794212286.432581685] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.03 a=+0.06 d=+0.04
+[orchestrator_node-4] [INFO] [1794212286.434506845] [orchestrator_node]: [afecto] v +0.33->+0.21  a +0.25->+0.18  d +0.17->+0.12
+[orchestrator_node-4] [INFO] [1794212286.437933888] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212287.045899545] [orchestrator_node]: Asistente: ¡Uy, casi! ¡No, no, no! La respuesta correcta es 24, recuerda que seis blusas a cuatro reales cada una dan un total de doce por dos grupos de seis. ¡Vamos a ver si te acuerdas para la siguiente pregunta! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212288.484794819] [expression_faces_node]: [cámara] FER: 26 cuadros en 6.6 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794212311.400495496] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212311.414314575] [orchestrator_node]: Asistente [Neutral]: ¿En qué país se encuentra la Universidad de Cambridge?
+[expression_faces_node-2] [WARN] [1794212312.753710381] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212318.085882419] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212324.549600729] [communication_node]: [mic] transcrito: 'La Universidad de Cambridge se encuentra en Europa.'
+[orchestrator_node-4] [INFO] [1794212324.564751210] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.95, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212324.603342717] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.19, 11 cuadros en 4.5 s)
+[orchestrator_node-4] [INFO] [1794212324.609154547] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.78)
+[orchestrator_node-4] [INFO] [1794212324.618445643] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.00 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794212324.623142903] [orchestrator_node]: [afecto] v +0.31->+0.18  a +0.24->+0.16  d +0.16->+0.10
+[orchestrator_node-4] [INFO] [1794212324.635602265] [orchestrator_node]: [aeb] v=+0.18 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212325.298280221] [orchestrator_node]: Asistente: ¡Eso es! ¡Te has puesto a prueba y has acertado! ¡Qué bien, qué bien! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212326.602668433] [expression_faces_node]: [cámara] FER: 36 cuadros en 9.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212337.783737501] [orchestrator_node]: [aeb] v=+0.18 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212337.793055874] [orchestrator_node]: Asistente [Neutral]: ¿Cuánto es 3 por 5?
+[expression_faces_node-2] [WARN] [1794212339.187218905] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212342.553986398] [orchestrator_node]: [aeb] v=+0.18 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212349.075161089] [communication_node]: [mic] transcrito: 'tres por cinco es quince.'
+[orchestrator_node-4] [INFO] [1794212349.079512962] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.94, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212349.091437437] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.02, 2 cuadros en 2.2 s)
+[orchestrator_node-4] [INFO] [1794212349.092875710] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.95)
+[orchestrator_node-4] [INFO] [1794212349.094571629] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.01 a=+0.01 d=+0.00
+[orchestrator_node-4] [INFO] [1794212349.096273179] [orchestrator_node]: [afecto] v +0.29->+0.18  a +0.23->+0.14  d +0.15->+0.09
+[orchestrator_node-4] [INFO] [1794212349.099059483] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212349.689224502] [orchestrator_node]: Asistente: ¡Bien hecho! ¡Esa es la respuesta correcta! Qué suerte tenemos de acertar. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212351.102538481] [expression_faces_node]: [cámara] FER: 37 cuadros en 9.5 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212362.050464219] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212362.052898155] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se llama el nuevo presidente de los Estados Unidos?
+[expression_faces_node-2] [WARN] [1794212363.394626044] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794212369.091263892] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212408.992546960] [communication_node]: [mic] transcrito: 'presidente de los Estados Unidos es Donald Trump.'
+[orchestrator_node-4] [INFO] [1794212409.001797593] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.93, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212409.020522857] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.11, 10 cuadros en 3.7 s)
+[orchestrator_node-4] [INFO] [1794212409.031350595] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.59)
+[orchestrator_node-4] [INFO] [1794212409.052649610] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212409.454966707] [orchestrator_node]: Asistente: ¡Sí! ¡Exacto! ¡Qué bien has respondido, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212410.787011947] [expression_faces_node]: [cámara] FER: 168 cuadros en 42.6 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212419.730459062] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212419.736907964] [orchestrator_node]: Asistente [Neutral]: João compró 2 brigadeiros. Cada brigadeiro cuesta 8 reales. ¿Cuánto pagó João por los brigadeiros?
+[expression_faces_node-2] [WARN] [1794212421.222937842] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212432.361753121] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212437.083752917] [communication_node]: [mic] transcrito: 'seis, dieciséis.'
+[orchestrator_node-4] [INFO] [1794212437.087791032] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.80, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212437.099667247] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.18, 4 cuadros en 2.2 s)
+[orchestrator_node-4] [INFO] [1794212437.101185168] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.68)
+[orchestrator_node-4] [INFO] [1794212437.103000717] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.05 a=+0.06 d=+0.02
+[orchestrator_node-4] [INFO] [1794212437.104664896] [orchestrator_node]: [afecto] v +0.36->+0.20  a +0.27->+0.19  d +0.18->+0.12
+[orchestrator_node-4] [INFO] [1794212437.107750958] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212437.658001105] [orchestrator_node]: Asistente: ¡Qué bien! ¡Exacto! ¡Me alegro muchísimo de que lo acertaras! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212439.299110581] [expression_faces_node]: [cámara] FER: 31 cuadros en 7.8 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794212449.189516072] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212449.227370673] [orchestrator_node]: Asistente [Feliz]: Un cajón tiene 8 manzanas. ¿Cuántas manzanas habrá en 2 cajones?
+[expression_faces_node-2] [WARN] [1794212450.749140273] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.5 s (3.6 fps reales)
+[orchestrator_node-4] [INFO] [1794212458.174048221] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212465.110131112] [communication_node]: [mic] transcrito: 'dicéis manzanas, de dicéis manzanas.'
+[orchestrator_node-4] [INFO] [1794212465.144012950] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.73, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212465.167784104] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.16, 8 cuadros en 3.5 s)
+[orchestrator_node-4] [INFO] [1794212465.176902367] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.62)
+[orchestrator_node-4] [INFO] [1794212465.196162444] [orchestrator_node]: [aeb] v=+0.30 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212465.849915952] [orchestrator_node]: Asistente: ¡Justo! ¡Qué bien que acertaste, genial! ¡Esto va viento en popa! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212467.216485547] [expression_faces_node]: [cámara] FER: 39 cuadros en 10.0 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212477.676373391] [orchestrator_node]: [aeb] v=+0.30 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212477.678497198] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el río más largo del mundo?
+[expression_faces_node-2] [WARN] [1794212479.128535968] [expression_faces_node]: [cámara] FER: 8 cuadros en 2.3 s (3.5 fps reales)
+[orchestrator_node-4] [INFO] [1794212483.089295892] [orchestrator_node]: [aeb] v=+0.30 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212488.996754022] [communication_node]: [mic] transcrito: 'El río Amazonas, el río Amazonas.'
+[orchestrator_node-4] [INFO] [1794212489.002158705] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.77, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212489.018827515] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.57, 8 cuadros en 2.8 s)
+[orchestrator_node-4] [INFO] [1794212489.020567230] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.29)
+[orchestrator_node-4] [INFO] [1794212489.022760074] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.23 a=+0.23 d=+0.15
+[orchestrator_node-4] [INFO] [1794212489.025687489] [orchestrator_node]: [afecto] v +0.33->+0.29  a +0.26->+0.25  d +0.17->+0.16
+[orchestrator_node-4] [INFO] [1794212489.034811697] [orchestrator_node]: [aeb] v=+0.29 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212489.681218028] [orchestrator_node]: Asistente: ¡Eso es! ¡Acertaste, genial! ¡Qué buen ojo tienes para la trivia! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212491.125172783] [expression_faces_node]: [cámara] FER: 35 cuadros en 9.0 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212501.983670775] [orchestrator_node]: [aeb] v=+0.29 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212501.989635235] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el primero de la lista de los números primos?
+[expression_faces_node-2] [WARN] [1794212503.459772542] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794212508.895173423] [orchestrator_node]: [aeb] v=+0.29 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212524.319531081] [communication_node]: [mic] transcrito: 'El número primero es uno, número uno, el número uno.'
+[orchestrator_node-4] [INFO] [1794212524.324920487] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.95, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212524.336795870] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.11, 9 cuadros en 3.8 s)
+[orchestrator_node-4] [INFO] [1794212524.338230031] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.48)
+[orchestrator_node-4] [INFO] [1794212524.341421927] [orchestrator_node]: [aeb] v=+0.35 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212524.885783002] [orchestrator_node]: Asistente: ¡Uy, pero no! El uno no es primo, ¡es un número especial por sí solo! El primer número primo de la lista es el dos, y tú casi le das un giro a la cosa. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212526.506131629] [expression_faces_node]: [cámara] FER: 73 cuadros en 18.6 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212543.273049303] [orchestrator_node]: [aeb] v=+0.35 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212543.291195033] [orchestrator_node]: Asistente [Neutral]: ¿En qué año apareció en el mercado el primer videojuego protagonizado por Super Mario?
+[expression_faces_node-2] [WARN] [1794212544.741753412] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212553.302951763] [orchestrator_node]: [aeb] v=+0.35 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212574.915345725] [communication_node]: [mic] transcrito: 'en mil novecientos ochenta y uno.'
+[orchestrator_node-4] [INFO] [1794212574.923487621] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.71, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212574.939951505] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.51, 8 cuadros en 2.7 s)
+[orchestrator_node-4] [INFO] [1794212574.941753091] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.76)
+[orchestrator_node-4] [INFO] [1794212574.943839083] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.14 a=+0.15 d=+0.09
+[orchestrator_node-4] [INFO] [1794212574.945662688] [orchestrator_node]: [afecto] v +0.38->+0.29  a +0.29->+0.23  d +0.19->+0.15
+[orchestrator_node-4] [INFO] [1794212574.948715843] [orchestrator_node]: [aeb] v=+0.29 a=+0.23 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212575.297575248] [orchestrator_node]: Asistente: ¡Epa! ¡Eso es! ¡Qué bien has acertado, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212576.793895514] [expression_faces_node]: [cámara] FER: 96 cuadros en 24.4 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212585.509638039] [orchestrator_node]: [aeb] v=+0.29 a=+0.23 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212585.512745731] [orchestrator_node]: Asistente [Neutral]: ¿Existen animales inmortales?
+[expression_faces_node-2] [WARN] [1794212586.828226051] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794212590.265053990] [orchestrator_node]: [aeb] v=+0.29 a=+0.23 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212596.934228157] [communication_node]: [mic] transcrito: 'sí, sí existen, existen animales inmortales.'
+[orchestrator_node-4] [INFO] [1794212596.946245372] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.88, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212596.966423298] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.09, 13 cuadros en 4.1 s)
+[orchestrator_node-4] [INFO] [1794212596.981573965] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.46)
+[orchestrator_node-4] [INFO] [1794212596.995884431] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212597.406470202] [orchestrator_node]: Asistente: ¡Qué bien! ¡Exacto! Me alegro mucho de que hayas acertado, ¡has demostrado ser un crack! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212598.774788679] [expression_faces_node]: [cámara] FER: 37 cuadros en 9.4 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212610.910698742] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212610.935095670] [orchestrator_node]: Asistente [Neutral]: ¿En qué país se usó la primera bomba atómica en combate?
+[expression_faces_node-2] [WARN] [1794212612.383606576] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212618.239951837] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212621.916261676] [communication_node]: [mic] transcrito: 'Estados Unidos.'
+[orchestrator_node-4] [INFO] [1794212621.920466568] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.76, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212621.932453579] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.17, 5 cuadros en 1.4 s)
+[orchestrator_node-4] [INFO] [1794212621.934077870] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.51)
+[orchestrator_node-4] [INFO] [1794212621.937260821] [orchestrator_node]: [aeb] v=+0.36 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212622.693428545] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Casi lo tienes! La respuesta correcta es Hiroshima, no Estados Unidos. ¡Vamos, vamos, no te desanimes! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212624.016880168] [expression_faces_node]: [cámara] FER: 26 cuadros en 6.8 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212639.661190149] [orchestrator_node]: [aeb] v=+0.36 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212639.663240549] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se le llama a una colección de revistas, diarios y publicaciones periódicas?
+[expression_faces_node-2] [WARN] [1794212641.213967634] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212649.182551661] [orchestrator_node]: [aeb] v=+0.36 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212660.723915017] [communication_node]: [mic] transcrito: 'Periódico Periódicos Periódicos'
+[orchestrator_node-4] [INFO] [1794212660.737449375] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.92, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212660.769327888] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.10, 10 cuadros en 3.7 s)
+[orchestrator_node-4] [INFO] [1794212660.774461387] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.72)
+[orchestrator_node-4] [INFO] [1794212660.780207366] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.02 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794212660.788029634] [orchestrator_node]: [afecto] v +0.38->+0.24  a +0.29->+0.19  d +0.19->+0.13
+[orchestrator_node-4] [INFO] [1794212660.804379407] [orchestrator_node]: [aeb] v=+0.24 a=+0.19 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212661.197502186] [orchestrator_node]: Asistente: ¡Eso ha sido genial! ¡Acertaste! Qué bueno que tienes buena memoria, me alegro mucho. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212662.521803510] [expression_faces_node]: [cámara] FER: 56 cuadros en 14.2 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212674.088268570] [orchestrator_node]: [aeb] v=+0.24 a=+0.19 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212674.094299252] [orchestrator_node]: Asistente [Neutral]: Ana tiene 8 cajas de bolígrafos. Cada caja contiene 2 bolígrafos. ¿Cuántos bolígrafos tiene Ana en total?
+[expression_faces_node-2] [WARN] [1794212675.452566525] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212687.212060896] [orchestrator_node]: [aeb] v=+0.24 a=+0.19 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212693.004071209] [communication_node]: [mic] transcrito: 'Libre voz.'
+[orchestrator_node-4] [INFO] [1794212693.014266134] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.53, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212693.034840633] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.12, 5 cuadros en 1.5 s)
+[orchestrator_node-4] [INFO] [1794212693.039657096] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.65)
+[orchestrator_node-4] [INFO] [1794212693.045524427] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212693.763353551] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Casi, casi lo tienes! La respuesta correcta es 16, ¡simplemente multiplicas 8 por 2! No te desanimes, ¡sigue intentándolo y verás cómo te sale genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212695.272878917] [expression_faces_node]: [cámara] FER: 35 cuadros en 9.0 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212716.356149710] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212716.368176055] [orchestrator_node]: Asistente [Neutral]: En el escritorio de la profesora hay 5 cajones con 2 libros cada uno. ¿Cuántos libros hay en el escritorio de la profesora?
+[expression_faces_node-2] [WARN] [1794212717.723978819] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212730.554457517] [orchestrator_node]: [aeb] v=+0.32 a=+0.25 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212760.344785922] [communication_node]: [mic] transcrito: 'diez, diez libros. Tienen diez libros, diez libros.'
+[orchestrator_node-4] [INFO] [1794212760.354343757] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.90, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212760.376251455] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.26, 13 cuadros en 4.5 s)
+[orchestrator_node-4] [INFO] [1794212760.380625902] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.40)
+[orchestrator_node-4] [INFO] [1794212760.384173129] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.06 a=+0.15 d=+0.07
+[orchestrator_node-4] [INFO] [1794212760.388014578] [orchestrator_node]: [afecto] v +0.37->+0.20  a +0.28->+0.23  d +0.19->+0.14
+[orchestrator_node-4] [INFO] [1794212760.399922849] [orchestrator_node]: [aeb] v=+0.20 a=+0.23 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212760.981012772] [orchestrator_node]: Asistente: ¡Perfecto! ¡Esa es la respuesta correcta, genial! Me alegro muchísimo de que lo hayas acertado, ¡es una pasada! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212762.486864651] [expression_faces_node]: [cámara] FER: 129 cuadros en 32.8 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212776.704687590] [orchestrator_node]: [aeb] v=+0.20 a=+0.23 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212776.712362173] [orchestrator_node]: Asistente [Neutral]: ¿En que fecha ocurrió la masacre de Tlatelolco?
+[expression_faces_node-2] [WARN] [1794212778.246227876] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212782.867521746] [orchestrator_node]: [aeb] v=+0.20 a=+0.23 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212791.008430010] [communication_node]: [mic] transcrito: 'creo, yo creo, yo creo, yo creo.'
+[orchestrator_node-4] [INFO] [1794212791.016813146] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.54, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212791.031828924] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.17, 13 cuadros en 5.0 s)
+[orchestrator_node-4] [INFO] [1794212791.035801002] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.48)
+[orchestrator_node-4] [INFO] [1794212791.037936254] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.22 a=+0.20 d=+0.13
+[orchestrator_node-4] [INFO] [1794212791.039791080] [orchestrator_node]: [afecto] v +0.30->+0.27  a +0.27->+0.24  d +0.17->+0.15
+[orchestrator_node-4] [INFO] [1794212791.042943235] [orchestrator_node]: [aeb] v=+0.27 a=+0.24 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212791.772169910] [orchestrator_node]: Asistente: ¡Uy, qué nervios! ¡Casi lo tienes! La fecha correcta es el 2 de octubre de 1968, ¡y no "yo creo"! ¡Vamos a ver si te pones las pilas y la tienes la próxima! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212793.212177736] [expression_faces_node]: [cámara] FER: 44 cuadros en 11.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212813.388255433] [orchestrator_node]: [aeb] v=+0.27 a=+0.24 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212813.405131685] [orchestrator_node]: Asistente [Feliz]: ¿Cuál es el resultado de tres por seis?
+[expression_faces_node-2] [WARN] [1794212814.802265575] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212819.065379278] [orchestrator_node]: [aeb] v=+0.27 a=+0.24 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212825.388692252] [communication_node]: [mic] transcrito: 'dieciocho, dieciocho, dieciocho, dieciocho.'
+[orchestrator_node-4] [INFO] [1794212825.416101651] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.64, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212825.444753416] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.11, 11 cuadros en 3.4 s)
+[orchestrator_node-4] [INFO] [1794212825.447482499] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.65)
+[orchestrator_node-4] [INFO] [1794212825.450664321] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.00 a=+0.07 d=+0.03
+[orchestrator_node-4] [INFO] [1794212825.460939431] [orchestrator_node]: [afecto] v +0.33->+0.20  a +0.27->+0.19  d +0.18->+0.12
+[orchestrator_node-4] [INFO] [1794212825.468812310] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212825.969192491] [orchestrator_node]: Asistente: ¡Perfecto! ¡Dieciocho es la respuesta correcta! ¡Qué bien has acertado! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212827.434181040] [expression_faces_node]: [cámara] FER: 34 cuadros en 9.3 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794212839.057601854] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212839.064491143] [orchestrator_node]: Asistente [Neutral]: ¿En qué lugar del cuerpo se produce la insulina?
+[expression_faces_node-2] [WARN] [1794212840.560993946] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794212845.385198201] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212858.993318193] [communication_node]: [mic] transcrito: 'pecho, ya está.'
+[orchestrator_node-4] [INFO] [1794212859.016933384] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.80, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212859.049541931] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.31, 5 cuadros en 1.4 s)
+[orchestrator_node-4] [INFO] [1794212859.056139351] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.39)
+[orchestrator_node-4] [INFO] [1794212859.062356828] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.20 a=+0.19 d=+0.12
+[orchestrator_node-4] [INFO] [1794212859.067777919] [orchestrator_node]: [afecto] v +0.30->+0.26  a +0.25->+0.22  d +0.16->+0.15
+[orchestrator_node-4] [INFO] [1794212859.075983148] [orchestrator_node]: [aeb] v=+0.26 a=+0.22 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212859.742658035] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Casi, casi! La insulina se produce en el páncreas, no en el pecho. ¡Vamos a ver si te acuerdas de dónde está tu barriguita! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212861.072590579] [expression_faces_node]: [cámara] FER: 64 cuadros en 16.6 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212878.648761986] [orchestrator_node]: [aeb] v=+0.26 a=+0.22 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212878.654595687] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se llama el fundador de Facebook?
+[expression_faces_node-2] [WARN] [1794212880.056654096] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212884.794834740] [orchestrator_node]: [aeb] v=+0.26 a=+0.22 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212894.299636813] [communication_node]: [mic] transcrito: 'El fundador se de su es Mark Sockborg, Mark Mark Mark Mark.'
+[orchestrator_node-4] [INFO] [1794212894.303797853] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.97, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212894.315811513] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.02, 7 cuadros en 7.0 s)
+[orchestrator_node-4] [INFO] [1794212894.318065856] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.73)
+[orchestrator_node-4] [INFO] [1794212894.321326770] [orchestrator_node]: [aeb] v=+0.33 a=+0.26 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212894.911897806] [orchestrator_node]: Asistente: ¡Uy, qué pasada! ¡Casi! La respuesta correcta es Mark Zuckerberg, no Mark Sockborg. ¡Vamos a ver si la próxima la aciertas, campeón! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212896.348618588] [expression_faces_node]: [cámara] FER: 48 cuadros en 12.4 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212913.513969336] [orchestrator_node]: [aeb] v=+0.33 a=+0.26 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212913.521417124] [orchestrator_node]: Asistente [Neutral]: ¿Quién era el general de los nazis en la Segunda Guerra Mundial?
+[expression_faces_node-2] [WARN] [1794212914.938246516] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212921.415642275] [orchestrator_node]: [aeb] v=+0.33 a=+0.26 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212933.182959691] [communication_node]: [mic] transcrito: 'Hitler, voy a eliminar esa pregunta por ser caso.'
+[orchestrator_node-4] [INFO] [1794212933.187536952] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.96, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212933.199505630] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.76, 18 cuadros en 7.0 s)
+[orchestrator_node-4] [INFO] [1794212933.200956699] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.63)
+[orchestrator_node-4] [INFO] [1794212933.202677211] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.25 a=+0.18 d=+0.13
+[orchestrator_node-4] [INFO] [1794212933.204434946] [orchestrator_node]: [afecto] v +0.37->+0.32  a +0.28->+0.24  d +0.19->+0.16
+[orchestrator_node-4] [INFO] [1794212933.207520953] [orchestrator_node]: [aeb] v=+0.32 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212933.728889206] [orchestrator_node]: Asistente: ¡Genial! ¡Acertaste, eso es fantástico! Qué bueno que te salió bien, ¡estás en un gran nivel! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212935.471883215] [expression_faces_node]: [cámara] FER: 59 cuadros en 15.0 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212948.327811449] [orchestrator_node]: [aeb] v=+0.32 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212948.332675487] [orchestrator_node]: Asistente [Neutral]: ¿Qué instrumento óptico permite ver los astros de cerca?
+[expression_faces_node-2] [WARN] [1794212949.858467034] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794212955.895016820] [orchestrator_node]: [aeb] v=+0.32 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212960.558749682] [communication_node]: [mic] transcrito: 'el telescopio, el telescopio.'
+[orchestrator_node-4] [INFO] [1794212960.568608312] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.86, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212960.607271652] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.18, 7 cuadros en 2.6 s)
+[orchestrator_node-4] [INFO] [1794212960.613587999] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.86)
+[orchestrator_node-4] [INFO] [1794212960.620284715] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.01 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794212960.624682051] [orchestrator_node]: [afecto] v +0.36->+0.21  a +0.27->+0.18  d +0.18->+0.12
+[orchestrator_node-4] [INFO] [1794212960.636519156] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212961.100278305] [orchestrator_node]: Asistente: ¡Qué bien! ¡Lo pillaste! Me alegra muchísimo que acertaras, es genial. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212962.701215669] [expression_faces_node]: [cámara] FER: 30 cuadros en 7.8 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794212973.221043905] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212973.243193120] [orchestrator_node]: Asistente [Neutral]: ¿Cuánto es cuatro por cinco?
+[expression_faces_node-2] [WARN] [1794212974.788453947] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.5 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794212978.260665479] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794212985.105638612] [communication_node]: [mic] transcrito: 'veinte, veinte, veinte, veinte.'
+[orchestrator_node-4] [INFO] [1794212985.110670057] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.86, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794212985.123486954] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.16, 10 cuadros en 3.4 s)
+[orchestrator_node-4] [INFO] [1794212985.124971245] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.90)
+[orchestrator_node-4] [INFO] [1794212985.128933360] [orchestrator_node]: [aeb] v=+0.31 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794212985.657734530] [orchestrator_node]: Asistente: ¡Magnífico! ¡Esa es la respuesta correcta, genial! ¡Qué acierto, me alegra mucho que lo acertaras! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794212987.226882937] [expression_faces_node]: [cámara] FER: 39 cuadros en 9.9 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794213001.186654082] [orchestrator_node]: [aeb] v=+0.31 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213001.208666668] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el disco más vendido de la historia?
+[expression_faces_node-2] [WARN] [1794213002.467756305] [expression_faces_node]: [cámara] FER: 8 cuadros en 2.2 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794213007.349637829] [orchestrator_node]: [aeb] v=+0.31 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213018.151429715] [communication_node]: [mic] transcrito: 'El disco más vende de la historia es el de Michael Michael Jackson.'
+[orchestrator_node-4] [INFO] [1794213018.156360993] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.93, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213018.168274727] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.16, 15 cuadros en 5.7 s)
+[orchestrator_node-4] [INFO] [1794213018.169698037] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.88)
+[orchestrator_node-4] [INFO] [1794213018.171417031] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.02 a=+0.03 d=+0.01
+[orchestrator_node-4] [INFO] [1794213018.173112080] [orchestrator_node]: [afecto] v +0.34->+0.19  a +0.26->+0.17  d +0.17->+0.11
+[orchestrator_node-4] [INFO] [1794213018.176117106] [orchestrator_node]: [aeb] v=+0.19 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213018.634736848] [orchestrator_node]: Asistente: ¡Correctísimo! ¡Qué acierto, genial! ¡Me alegro muchísimo de que lo acertaras! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213019.977682585] [expression_faces_node]: [cámara] FER: 53 cuadros en 13.6 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794213032.240642626] [orchestrator_node]: [aeb] v=+0.19 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213032.243724856] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la capital de Canadá?
+[expression_faces_node-2] [WARN] [1794213033.717328465] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.4 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794213037.386936402] [orchestrator_node]: [aeb] v=+0.19 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213048.457980540] [communication_node]: [mic] transcrito: 'Canadá. Ay. No sé, se me olvidó cuál es, yo no sé, no sé, no sé no sé todo.'
+[orchestrator_node-4] [INFO] [1794213048.491290844] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.94, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213048.523785002] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.24, 19 cuadros en 7.7 s)
+[orchestrator_node-4] [INFO] [1794213048.530354960] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.50)
+[orchestrator_node-4] [INFO] [1794213048.534688721] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.19 a=+0.14 d=+0.10
+[orchestrator_node-4] [INFO] [1794213048.539387871] [orchestrator_node]: [afecto] v +0.30->+0.25  a +0.23->+0.20  d +0.15->+0.13
+[orchestrator_node-4] [INFO] [1794213048.548194450] [orchestrator_node]: [aeb] v=+0.25 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213049.072583673] [orchestrator_node]: Asistente: ¡Qué bien! ¡Lo petaste, genial! ¡Me alegro muchísimo de que acertaras, esto es muy divertido! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213050.709660978] [expression_faces_node]: [cámara] FER: 56 cuadros en 14.2 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213063.810279926] [orchestrator_node]: [aeb] v=+0.25 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213063.822340159] [orchestrator_node]: Asistente [Neutral]: ¿Quién es Justin Timberlake?
+[expression_faces_node-2] [WARN] [1794213065.126177447] [expression_faces_node]: [cámara] FER: 8 cuadros en 2.1 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794213068.627520668] [orchestrator_node]: [aeb] v=+0.25 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213089.730132539] [communication_node]: [mic] transcrito: 'de'
+[orchestrator_node-4] [INFO] [1794213089.737985565] [orchestrator_node]: [afecto] el texto expresa felicidad (confianza 0.23, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213089.754215913] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.41, 4 cuadros en 1.0 s)
+[orchestrator_node-4] [INFO] [1794213089.761093888] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.87)
+[orchestrator_node-4] [INFO] [1794213089.763282269] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.00 a=+0.06 d=+0.03
+[orchestrator_node-4] [INFO] [1794213089.767008662] [orchestrator_node]: [afecto] v +0.33->+0.20  a +0.25->+0.17  d +0.17->+0.11
+[orchestrator_node-4] [INFO] [1794213089.770450279] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213090.381359963] [orchestrator_node]: Asistente: ¡Excelente! ¡Esa respuesta estaba perfecta! Qué bien que tienes buena memoria. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213091.779780774] [expression_faces_node]: [cámara] FER: 95 cuadros en 24.0 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213103.138280524] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213103.142267694] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el ave voladora más grande del mundo en la actualidad?
+[expression_faces_node-2] [WARN] [1794213104.443096141] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213110.557574530] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213131.743147984] [communication_node]: [mic] transcrito: 'el águila'
+[orchestrator_node-4] [INFO] [1794213131.747703708] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.51, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213131.771209789] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.08, 4 cuadros en 1.5 s)
+[orchestrator_node-4] [INFO] [1794213131.773127689] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.47)
+[orchestrator_node-4] [INFO] [1794213131.775679606] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.31 a=+0.23 d=+0.16
+[orchestrator_node-4] [INFO] [1794213131.780709587] [orchestrator_node]: [afecto] v +0.30->+0.30  a +0.24->+0.24  d +0.16->+0.16
+[orchestrator_node-4] [INFO] [1794213131.787496673] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213132.522184013] [orchestrator_node]: Asistente: ¡Uy, qué susto! ¡Esa no era la respuesta correcta, vaya error! El ave volador más grande del mundo es el cóndor andino. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213133.779253806] [expression_faces_node]: [cámara] FER: 96 cuadros en 24.2 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213149.064941640] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213149.073701608] [orchestrator_node]: Asistente [Neutral]: ¿Dónde originaron los juegos olímpicos?
+[expression_faces_node-2] [WARN] [1794213150.393498893] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213154.683523627] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213163.697967388] [communication_node]: [mic] transcrito: 'en Roma, en Roma, en Roma.'
+[orchestrator_node-4] [INFO] [1794213163.702181040] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.80, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213163.714157181] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.18, 7 cuadros en 3.2 s)
+[orchestrator_node-4] [INFO] [1794213163.715708231] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.92)
+[orchestrator_node-4] [INFO] [1794213163.717806556] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.04 a=+0.02 d=+0.00
+[orchestrator_node-4] [INFO] [1794213163.720425750] [orchestrator_node]: [afecto] v +0.35->+0.20  a +0.27->+0.17  d +0.18->+0.11
+[orchestrator_node-4] [INFO] [1794213163.723710664] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213164.278890126] [orchestrator_node]: Asistente: ¡Uy, qué buen intento! Roma es una ciudad fantástica, pero los Juegos Olímpicos comenzaron en Grecia, ¡esa es la clave! Sigue así y verás cómo te conviertes en un experto en trivia, ¡vamos con la siguiente!
+[expression_faces_node-2] [WARN] [1794213165.766184056] [expression_faces_node]: [cámara] FER: 47 cuadros en 11.9 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794213185.103164111] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213185.105739046] [orchestrator_node]: Asistente [Neutral]: ¿Con qué se fabricaba el pergamino?
+[expression_faces_node-2] [WARN] [1794213186.388780132] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213190.026995666] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213199.367231491] [communication_node]: [mic] transcrito: 'Con lana, con lana se fabrica con lana, no se siente lana o un papel.'
+[orchestrator_node-4] [INFO] [1794213199.381210903] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.96, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213199.410143037] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.15, 14 cuadros en 6.6 s)
+[orchestrator_node-4] [INFO] [1794213199.419491040] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.78)
+[orchestrator_node-4] [INFO] [1794213199.436546366] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213199.937213510] [orchestrator_node]: Asistente: ¡Uy, casi! La respuesta correcta era piel de animales, ¡no lana! Sigue intentándolo, el conocimiento es una aventura emocionante. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213201.474171905] [expression_faces_node]: [cámara] FER: 48 cuadros en 12.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794213216.667563077] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213216.669572329] [orchestrator_node]: Asistente [Neutral]: ¿Qué grasas hacen tan saludable el aceite de oliva?
+[expression_faces_node-2] [WARN] [1794213217.976087237] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213223.168932120] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213227.016945494] [communication_node]: [mic] transcrito: 'ay, no sé, papiro, no sé.'
+[orchestrator_node-4] [INFO] [1794213227.024064709] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.89, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213227.054150710] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.25, 7 cuadros en 2.5 s)
+[orchestrator_node-4] [INFO] [1794213227.070704204] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.72)
+[orchestrator_node-4] [INFO] [1794213227.094741616] [orchestrator_node]: [aeb] v=+0.35 a=+0.27 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213227.859339254] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué acierto, genial! Me alegro muchísimo de que acertaras, es un resultado fantástico. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213229.279151320] [expression_faces_node]: [cámara] FER: 28 cuadros en 7.0 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213241.670514852] [orchestrator_node]: [aeb] v=+0.35 a=+0.27 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213241.672266383] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la capital de EU?
+[expression_faces_node-2] [WARN] [1794213243.095468899] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794213246.485765010] [orchestrator_node]: [aeb] v=+0.35 a=+0.27 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213265.940441225] [communication_node]: [mic] transcrito: 'La capital de Estados Unidos es Washington D. C.'
+[orchestrator_node-4] [INFO] [1794213265.963389697] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.97, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213265.993344198] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.20, 12 cuadros en 5.7 s)
+[orchestrator_node-4] [INFO] [1794213266.003312458] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.97)
+[orchestrator_node-4] [INFO] [1794213266.015212932] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.02 a=+0.02 d=+0.01
+[orchestrator_node-4] [INFO] [1794213266.022035741] [orchestrator_node]: [afecto] v +0.37->+0.21  a +0.28->+0.18  d +0.18->+0.11
+[orchestrator_node-4] [INFO] [1794213266.033551606] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213266.374971241] [orchestrator_node]: Asistente: ¡Qué guay! ¡Lo has clavado, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213267.657036628] [expression_faces_node]: [cámara] FER: 87 cuadros en 22.0 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794213274.803367265] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213274.815006778] [orchestrator_node]: Asistente [Neutral]: ¿Qué producto cultiva más Guatemala?
+[expression_faces_node-2] [WARN] [1794213276.178499884] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213280.419139244] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213318.796054018] [communication_node]: [mic] transcrito: 'eh'
+[orchestrator_node-4] [INFO] [1794213318.800109762] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.31, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213318.812335699] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.09, 6 cuadros en 0.9 s)
+[orchestrator_node-4] [INFO] [1794213318.813941526] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.88)
+[orchestrator_node-4] [INFO] [1794213318.817006348] [orchestrator_node]: [aeb] v=+0.33 a=+0.26 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213319.395181985] [orchestrator_node]: Asistente: ¡Qué bien! ¡Lo acertaste! ¡Me encanta ver que tienes un buen ojo para estas preguntas! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213320.953483061] [expression_faces_node]: [cámara] FER: 164 cuadros en 41.4 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213333.163788981] [orchestrator_node]: [aeb] v=+0.33 a=+0.26 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213333.169591645] [orchestrator_node]: Asistente [Neutral]: ¿Qué tipo de animal es la ballena?
+[expression_faces_node-2] [WARN] [1794213334.534423653] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213338.278439391] [orchestrator_node]: [aeb] v=+0.33 a=+0.26 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213387.312971544] [communication_node]: [mic] transcrito: 'el tipo de bañena es mamífero, el mamífero.'
+[orchestrator_node-4] [INFO] [1794213387.325279202] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.96, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213387.354328392] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.22, 12 cuadros en 5.4 s)
+[orchestrator_node-4] [INFO] [1794213387.361819846] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.40)
+[orchestrator_node-4] [INFO] [1794213387.376357015] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.05 a=+0.05 d=+0.01
+[orchestrator_node-4] [INFO] [1794213387.384938983] [orchestrator_node]: [afecto] v +0.38->+0.21  a +0.29->+0.19  d +0.19->+0.12
+[orchestrator_node-4] [INFO] [1794213387.404273394] [orchestrator_node]: [aeb] v=+0.21 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213387.823482540] [orchestrator_node]: Asistente: ¡Qué bien! ¡Lo acertaste! Me alegro mucho de que hayas respondido correctamente. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213389.264466139] [expression_faces_node]: [cámara] FER: 206 cuadros en 51.9 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213400.152301228] [orchestrator_node]: [aeb] v=+0.21 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213400.155565735] [orchestrator_node]: Asistente [Feliz]: Bruna compró 7 cajas de fresas para vender; en cada caja hay 2 fresas. ¿Cuántas fresas compró?
+[expression_faces_node-2] [WARN] [1794213401.526613942] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213411.428804483] [orchestrator_node]: [aeb] v=+0.21 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213417.895670633] [communication_node]: [mic] transcrito: 'catorce fresas? Yo creo que catorce fresas sería lo ideal.'
+[orchestrator_node-4] [INFO] [1794213417.930564634] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.76, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213417.958291459] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.16, 13 cuadros en 4.9 s)
+[orchestrator_node-4] [INFO] [1794213417.962810053] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.71)
+[orchestrator_node-4] [INFO] [1794213417.968828975] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.04 a=+0.07 d=+0.04
+[orchestrator_node-4] [INFO] [1794213417.974586899] [orchestrator_node]: [afecto] v +0.31->+0.20  a +0.25->+0.18  d +0.16->+0.11
+[orchestrator_node-4] [INFO] [1794213417.980252304] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213418.401172351] [orchestrator_node]: Asistente: ¡Qué bien! ¡Lo acerté, es genial! ¡Me alegro muchísimo de que estuvieras al día conmigo! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213420.081029092] [expression_faces_node]: [cámara] FER: 38 cuadros en 9.6 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213432.458189066] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213432.460626538] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el libro sagrado del Islam?
+[expression_faces_node-2] [WARN] [1794213433.844769661] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213437.745626731] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794213443.736255296] [communication_node]: [mic] transcrito: 'El libro sagrado del Islam es el Corán.'
+[orchestrator_node-4] [INFO] [1794213443.740533391] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.96, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794213443.752418255] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.17, 12 cuadros en 4.2 s)
+[orchestrator_node-4] [INFO] [1794213443.753798491] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.86)
+[orchestrator_node-4] [INFO] [1794213443.756945424] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213444.330777077] [orchestrator_node]: Asistente: ¡Exacto! ¡Me alegro muchísimo de que lo acertaras, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794213445.941158961] [expression_faces_node]: [cámara] FER: 36 cuadros en 9.1 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213454.810899532] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794213454.812621100] [orchestrator_node]: Asistente [Neutral]: ¿Cuáles son los cinco tipos de sabores primarios?
+[expression_faces_node-2] [WARN] [1794213456.194418750] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.3 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794213461.166692220] [orchestrator_node]: [aeb] v=+0.30 a=+0.24 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
