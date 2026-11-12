@@ -232,7 +232,8 @@ class OrchestratorNode(Node):
         # base, decaimiento y latencia de ROSE. Se elige en
         # romeo_params.yaml; las variables ROMEO_EMPATIA etc. lo afinan.
         self.declare_parameter('perfil_afectivo', estado_afectivo.PERFIL_POR_DEFECTO)
-        perfil = self.get_parameter('perfil_afectivo').value
+        # Perfil fijado DIRECTO en el codigo (ignora el yaml y el parametro ROS).
+        perfil = "OPTIMISTIC"
         # Que fuentes de la ventana de percepcion entran a PULSE. Quitar una
         # de la lista la desactiva sin tocar codigo (p. ej. ["TER"] para
         # probar solo con texto).
@@ -601,7 +602,9 @@ class OrchestratorNode(Node):
         paralelo entre sí (publish/servicio no bloqueante, salvo el sleep
         final que es solo para que la cara alcance a verse antes del
         próximo cambio, no para "esperar" a música/motores)."""
-        self._bridge.mostrar_cara(cara)
+        # NO se muestra la cara del dataset de trivia (acertó/falló): la cara
+        # debe reflejar el ESTADO EMOCIONAL del robot (el AEB), que se muestra
+        # justo despues con _mostrar_cara_reposo(). `cara` queda sin usar.
         if not musica_ya_sonada:
             agente_trivia.expresar_musica(pregunta, self._bridge, logger=self.get_logger())
         # El movimiento de la trivia (columna 'desplazamiento' del dataset)

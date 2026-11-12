@@ -249,17 +249,22 @@ ax.legend(frameon=False, fontsize=9)
 plt.tight_layout(); plt.show()
 print(f"FER ventana: promedio {fer_s.mean():.1f} s | Percepción+afectiva: promedio {afe_s.mean():.1f} s")""")
 
-md("## 7. Línea de tiempo — STT, TTS y LLM durante la trivia")
+md("""## 7. Línea de tiempo — LLM y TTS durante la trivia
+
+Tiempo del modelo de lenguaje (LLM) y de la síntesis de voz (TTS) por turno.
+El STT no aparece: su tiempo lo mide el servidor de voz (en esta sesión solo
+se midió en la Pi el viaje de ida y vuelta, no el STT por separado).""")
 
 code("""fig, ax = plt.subplots(figsize=(12,4.5))
 x = dft["pregunta"]
-ax.plot(x, dft["STT"], color=VERDE, lw=1.8, label="STT (voz→texto)")
-ax.plot(x, dft["LLM"], color=NARANJA, lw=1.8, label="LLM (gemma3:4b)")
-ax.plot(x, dft["TTS"], color=AZUL, lw=1.8, label="TTS (voz)")
+ax.plot(x, dft["LLM"], color=NARANJA, lw=1.8, marker="o", ms=3, label="LLM (gemma3:4b)")
+ax.plot(x, dft["TTS"], color=AZUL, lw=1.8, marker="o", ms=3, label="TTS (voz)")
 ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (ms)")
-ax.set_title("STT, TTS y LLM a lo largo de la sesión de trivia")
+ax.set_xlim(1, len(dft))
+ax.set_title("LLM y TTS a lo largo de la sesión de trivia")
 ax.legend(frameon=False, fontsize=9)
-plt.tight_layout(); plt.show()""")
+plt.tight_layout(); plt.show()
+print(f"LLM: promedio {dft['LLM'].mean():.0f} ms | TTS: promedio {dft['TTS'].mean():.0f} ms")""")
 
 md("## 8. Tokens del LLM")
 

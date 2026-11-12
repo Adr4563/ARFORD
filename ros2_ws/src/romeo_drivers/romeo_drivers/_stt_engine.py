@@ -343,6 +343,38 @@ class ReconocedorVoz:
             print(f"[STT] no se pudo normalizar: {e}")
             return samples
 
+    def _anotar_percepcion(self, respuesta):
+        """Guarda en la PI, por turno: los tiempos SEPARADOS de STT, SER y
+        TER (los calcula el servidor y los manda en la respuesta) y el tiempo
+        de ida y vuelta total que cronometra la propia Pi. Con ROMEO_MEDIR=1.
+        Nunca lanza."""
+        import os as _os
+        if _os.environ.get("ROMEO_MEDIR", "0") not in ("1", "true", "True"):
+            return
+        try:
+            import csv as _csv
+            import time as _time
+            carpeta = _os.path.expanduser("~/romeo/mediciones")
+            _os.makedirs(carpeta, exist_ok=True)
+            if not getattr(self, "_csv_percep", None):
+                ses = _time.strftime("%Y%m%d_%H%M%S")
+                self._csv_percep = _os.path.join(carpeta, f"percepcion_{ses}.csv")
+                with open(self._csv_percep, "w", encoding="utf-8", newline="") as f:
+                    _csv.writer(f).writerow(
+                        ["t", "t_stt_ms", "t_ser_ms", "t_ter_ms",
+                         "ida_vuelta_ms", "texto"])
+            ida_vuelta = getattr(self, "ultima_percepcion_ms", "")
+            with open(self._csv_percep, "a", encoding="utf-8", newline="") as f:
+                _csv.writer(f).writerow([
+                    round(_time.time(), 3),
+                    respuesta.get("t_stt_ms", ""),
+                    respuesta.get("t_ser_ms", ""),
+                    respuesta.get("t_ter_ms", ""),
+                    round(ida_vuelta, 1) if ida_vuelta != "" else "",
+                    (respuesta.get("texto", "") or "").replace(",", " ")[:50]])
+        except Exception:  # noqa: BLE001 - medir nunca es critico
+            pass
+
     def _transcribir_remoto(self, samples, sample_rate):
         """Manda el audio a un stt_server.py de otra maquina y devuelve su
         texto, o None si no contesta. NO hay respaldo local: en el robot el
@@ -368,8 +400,14 @@ class ReconocedorVoz:
             req = urllib.request.Request(
                 f"{self.servidor}/transcribir", data=buf.getvalue(),
                 headers={"Content-Type": "audio/wav"})
+            # IDA Y VUELTA medido EN LA PI: desde que manda el audio hasta
+            # que recibe la respuesta. Incluye red + STT + SER + TER del
+            # servidor. Es el tiempo real que la percepcion le cuesta al robot.
+            import time as _time
+            _t_ida = _time.perf_counter()
             with urllib.request.urlopen(req, timeout=TIMEOUT_REMOTO) as r:
                 respuesta = json.loads(r.read())
+            self.ultima_percepcion_ms = (_time.perf_counter() - _t_ida) * 1000
             ser = respuesta.get("ser") or {}
             if ser.get("etiquetas") and ser.get("probabilidades"):
                 self.ultima_ser = (list(ser["etiquetas"]),
@@ -380,6 +418,8 @@ class ReconocedorVoz:
             if ter.get("etiquetas") and ter.get("probabilidades"):
                 self.ultima_ter = (list(ter["etiquetas"]),
                                    [float(p) for p in ter["probabilidades"]])
+            # La PI guarda los tiempos de STT/SER/TER (separados) + ida y vuelta.
+            self._anotar_percepcion(respuesta)
             return respuesta.get("texto", "")
         except Exception as e:  # noqa: BLE001 - sin respaldo, se pierde la frase
             print(f"[STT] el servidor {self.servidor} no contesta ({e}); "
