@@ -204,14 +204,16 @@ def transcribir():
         texto = reconocedor.transcribir(samples, sr)
         t_stt = time.perf_counter() - t_a
 
-        # SER sobre el mismo audio. Solo si hubo texto: sin palabras no hay
-        # frase del usuario que juzgar.
+        # SER sobre el audio. SIEMPRE se corre: hay voz que clasificar aunque
+        # el STT no haya sacado palabras, asi que el tiempo de SER se mide y
+        # se devuelve en todos los turnos (nunca null).
         t_a = time.perf_counter()
-        ser = clasificador_voz.clasificar(samples, sr) if texto else None
+        ser = clasificador_voz.clasificar(samples, sr)
         t_ser = time.perf_counter() - t_a
 
         # TER sobre el texto recien transcrito, dentro del mismo lock: la
         # PC tambien tiene un numero limitado de nucleos y esto es corto.
+        # Solo si hubo texto: sin palabras no hay nada que clasificar.
         t_a = time.perf_counter()
         ter = clasificador_texto.clasificar(texto) if texto else None
         t_ter = time.perf_counter() - t_a
@@ -220,7 +222,7 @@ def transcribir():
     _anotar_modulos(
         duracion,
         t_stt * 1000,
-        (t_ser * 1000) if texto else None,
+        t_ser * 1000,
         (t_ter * 1000) if texto else None,
         texto)
 
@@ -238,12 +240,12 @@ def transcribir():
             "duracion_audio": round(duracion, 2),
             "segundos_proceso": round(tardanza, 2),
             "rtf": round(tardanza / duracion, 2) if duracion else None,
-            # Milisegundos de cada etapa. ser y ter van a null -- no a 0 --
-            # cuando el STT no transcribio nada: no es que tardaran cero,
-            # es que no llegaron a correr, y promediar ceros falsearia la
-            # media.
+            # Milisegundos de cada etapa. El SER SIEMPRE se devuelve (siempre
+            # corre sobre el audio). El TER va a null -- no a 0 -- cuando el
+            # STT no transcribio nada: no es que tardara cero, es que no habia
+            # texto que clasificar, y promediar ceros falsearia su media.
             "t_stt_ms": round(t_stt * 1000, 1),
-            "t_ser_ms": round(t_ser * 1000, 1) if texto else None,
+            "t_ser_ms": round(t_ser * 1000, 1),
             "t_ter_ms": round(t_ter * 1000, 1) if texto else None,
         }
     )

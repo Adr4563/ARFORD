@@ -70,7 +70,11 @@ with open(ruta("turnos.csv"), encoding="utf-8", errors="replace") as f:
         emocion = partes[-3].strip() if len(partes) >= 3 else ""
         movimiento = partes[-2].strip() if len(partes) >= 2 else ""
         if 50 <= t_llm <= 6000 and 1 <= tok <= 300:
-            filas.append({"afectiva_ms": afect if afect < 8000 else np.nan,
+            # La capa afectiva SIEMPRE se calcula (se quito la regla de saltarla
+            # con todo neutral). Se muestran los 33 turnos sin recorte; el tiempo
+            # incluye la espera de la ventana de camara antes de fusionar, por eso
+            # algunos turnos son altos.
+            filas.append({"afectiva_ms": afect,
                           "t_llm_ms": t_llm, "tokens_salida": tok,
                           "emocion": emocion, "movimiento": movimiento})
 turnos = pd.DataFrame(filas[:N_PREGUNTAS])
@@ -223,8 +227,12 @@ print(f"Latencia: promedio {np.mean(latencias):.0f} ms, min {min(latencias):.0f}
 md("""## 7. FER y capa afectiva por turno (medidos en la Raspberry)
 
 La **ventana del FER** (duración de la percepción facial mientras el usuario
-habla) y el bloque **percepción + capa afectiva** (PULSE+ROSE+AEB, que incluye
-la espera de la ventana de cámara antes de fusionar).""")
+habla) y el bloque **percepción + capa afectiva** (PULSE+ROSE+AEB).
+
+**La capa afectiva se calcula en los 33 turnos** (se quitó la regla que la
+saltaba cuando las tres fuentes eran neutrales). Se muestran todos sin recorte:
+el tiempo incluye la **espera de la ventana de cámara** antes de fusionar, por
+eso los turnos donde el usuario tardó más en responder aparecen más altos.""")
 
 code("""fig, ax = plt.subplots(figsize=(12,4.6))
 x = dft["pregunta"]
