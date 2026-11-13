@@ -135,8 +135,31 @@ separado). El resto (afectiva, LLM, tokens, emoción, movimiento) viene de
 `turnos.csv`; TTS de `tts.csv`; la ventana FER se lee del log.""")
 
 code('''import re
-# ventana FER por turno (del log, en orden de aparicion)
-fer_vent = [float(m.group(1))*1000 for m in re.finditer(r"FER: \\d+ cuadros en ([\\d.]+) s", log)]
+# Ventana FER por turno, EMPAREJADA POR TIEMPO. El log tiene mas lineas "FER:"
+# que preguntas (la camara cierra varias ventanas por turno), asi que NO sirve
+# el orden ciego. El patron real de cada turno es:
+#   [mic] transcrito  ->  Asistente: (respuesta)  ->  FER: X cuadros en Y s
+# Se toma la ventana FER que aparece justo DESPUES de cada transcripcion del
+# usuario (la que corresponde a mientras el usuario hablaba ese turno).
+eventos = []
+for ln in log.splitlines():
+    m = re.search(r"\\[(\\d+\\.\\d+)\\]", ln)
+    if not m: continue
+    t = float(m.group(1))
+    if "[mic] transcrito:" in ln:
+        mm = re.search(r"transcrito: '(.*)'", ln)
+        txt = (mm.group(1) if mm else "").strip()
+        if txt:                       # solo turnos reales (con texto)
+            eventos.append((t, "MIC"))
+    elif "FER:" in ln:
+        mm = re.search(r"FER: \\d+ cuadros en ([\\d.]+) s", ln)
+        if mm: eventos.append((t, "FER", float(mm.group(1))*1000))
+# para cada MIC, la primera ventana FER que viene despues
+fer_vent = []
+for i, ev in enumerate(eventos):
+    if ev[1] != "MIC": continue
+    sig = next((e for e in eventos[i+1:] if e[1] == "FER"), None)
+    if sig: fer_vent.append(sig[2])
 # TTS por turno (en orden; tts.csv no trae texto)
 tts_vals = pd.to_numeric(tts["t_tts_ms"], errors="coerce").dropna().tolist()
 
@@ -280,38 +303,55 @@ ax.legend(frameon=False, fontsize=9)
 plt.tight_layout(); plt.show()
 print(f"Latencia: promedio {np.mean(latencias):.0f} ms, min {min(latencias):.0f}, max {max(latencias):.0f} ms")''')
 
-md("""## 7. FER y capa afectiva por turno (medidos en la Raspberry)
+md("""## 7. Los tres modelos de percepción emocional: FER, SER y TER
 
-La **ventana del FER** (duración de la percepción facial mientras el usuario
-habla) y el bloque **percepción + capa afectiva** (PULSE+ROSE+AEB).
+Las tres fuentes que alimentan la capa afectiva, por turno:
+- **FER** (emoción por la cara) — es la **ventana de la cámara**, en segundos;
+  crece cuando el usuario tarda en responder.
+- **SER** (emoción por la voz) y **TER** (emoción por el texto) — en milisegundos.
 
-**La capa afectiva se calcula en los 33 turnos** (se quitó la regla que la
-saltaba cuando las tres fuentes eran neutrales). El tiempo de la ventana FER
-depende de cuánto tardó el usuario en responder; los turnos con pausas largas
-(decenas de segundos) aplastarían el resto, así que el eje se **recorta a 60 s**
-y esos picos se **anotan con su valor real**.""")
+Como FER está en segundos y SER/TER en milisegundos, van en **paneles separados,
+cada uno con su escala**. En el FER el eje se recorta a 60 s y las pausas largas
+del usuario se anotan con su valor real.""")
 
-code("""fig, ax = plt.subplots(figsize=(12,4.6))
+code("""fig, axs = plt.subplots(3, 1, figsize=(12,8), sharex=True)
 x = dft["pregunta"]
 fer_s = dft["FER"] / 1000.0
-afe_s = dft["afectiva"] / 1000.0
-ax.plot(x, fer_s, color=AZUL, lw=2, marker="o", ms=3, label="FER (ventana de percepción)")
-ax.plot(x, afe_s, color=MORADO, lw=2, marker="s", ms=3, label="Percepción + capa afectiva")
-ax.fill_between(x, 0, fer_s, color=AZUL, alpha=0.08)
-TOPE = 60  # segundos
-ax.set_ylim(0, TOPE)
+
+# (1) FER en segundos, recortado a 60s
+TOPE = 60
+axs[0].plot(x, fer_s, color=AZUL, lw=2, marker="o", ms=4, label="FER (emoción cara · ventana)")
+axs[0].fill_between(x, 0, fer_s, color=AZUL, alpha=0.08)
+axs[0].set_ylim(0, TOPE); axs[0].set_ylabel("FER (s)")
+axs[0].axhline(fer_s[fer_s<=TOPE].mean(), color=GRIS, ls="--", lw=1, alpha=0.7)
 for xi, v in zip(x, fer_s):
     if v > TOPE:
-        ax.annotate(f"{v:.0f} s", xy=(xi, TOPE), xytext=(xi, TOPE*0.9),
-                    ha="center", fontsize=8, color=AZUL,
-                    arrowprops=dict(arrowstyle="->", color=AZUL, lw=1))
-ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (s)")
-ax.set_xlim(1, len(dft))
-ax.set_title("FER y capa afectiva por turno (eje recortado a 60 s)")
-ax.legend(frameon=False, fontsize=9)
+        axs[0].annotate(f"{v:.0f} s", xy=(xi, TOPE), xytext=(xi, TOPE*0.88),
+                        ha="center", fontsize=8, color=AZUL,
+                        arrowprops=dict(arrowstyle="->", color=AZUL, lw=1))
+axs[0].legend(loc="upper right", frameon=False, fontsize=10)
+
+# (2) SER en ms
+axs[1].plot(x, dft["SER"], color=NARANJA, lw=2, marker="s", ms=4, label="SER (emoción voz)")
+axs[1].fill_between(x, 0, dft["SER"], color=NARANJA, alpha=0.08)
+axs[1].axhline(dft["SER"].mean(), color=GRIS, ls="--", lw=1, alpha=0.7)
+axs[1].text(len(dft), dft["SER"].mean(), f" prom {dft['SER'].mean():.0f} ms", va="center", fontsize=9, color=GRIS)
+axs[1].set_ylabel("SER (ms)")
+axs[1].legend(loc="upper right", frameon=False, fontsize=10)
+
+# (3) TER en ms
+axs[2].plot(x, dft["TER"], color=VERDE, lw=2, marker="^", ms=4, label="TER (emoción texto)")
+axs[2].fill_between(x, 0, dft["TER"], color=VERDE, alpha=0.08)
+axs[2].axhline(dft["TER"].mean(), color=GRIS, ls="--", lw=1, alpha=0.7)
+axs[2].text(len(dft), dft["TER"].mean(), f" prom {dft['TER'].mean():.0f} ms", va="center", fontsize=9, color=GRIS)
+axs[2].set_ylabel("TER (ms)"); axs[2].set_xlabel("Pregunta (turno)")
+axs[2].legend(loc="upper right", frameon=False, fontsize=10)
+axs[2].set_xlim(1, len(dft))
+
+axs[0].set_title("FER, SER y TER por turno — cada uno con su escala (Raspberry)")
 plt.tight_layout(); plt.show()
-print(f"FER ventana: promedio {fer_s.mean():.1f} s (max {fer_s.max():.0f} s) | "
-      f"Percepción+afectiva: promedio {afe_s.mean():.1f} s")
+print(f"FER: promedio {fer_s.mean():.1f} s (max {fer_s.max():.0f} s) | "
+      f"SER: {dft['SER'].mean():.0f} ms | TER: {dft['TER'].mean():.0f} ms")
 picos = [(int(xi), float(v)) for xi, v in zip(x, fer_s) if v > TOPE]
 print("Picos FER (pausas largas del usuario):",
       ", ".join(f"preg {p}: {s:.0f}s" for p, s in picos))""")
