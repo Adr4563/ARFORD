@@ -36,6 +36,97 @@ BASE = Path(r".")   # misma carpeta del notebook
 def ruta(n): return BASE / n
 N_PREGUNTAS = 33   # la sesion de trivia: primeras 33 preguntas""")
 
+md("""## 0. Reconstrucción del flujo completo desde el log (desde cero)
+
+Antes de nada, se **reconstruye cada turno leyendo el `romeo_run.log` de inicio
+a fin**, siguiendo el flujo real desde que el micro captura hasta que la IA
+responde, y midiendo cada etapa con los **timestamps del propio log**:
+
+```
+[mic] transcrito → STT → TER + FER + SER → fusión (PULSE) → ROSE → AEB → Asistente responde
+```
+
+El tiempo del **STT** no está en el log (solo "[mic] transcrito"), pero sí en
+`percepcion.csv` (medido en la Pi); se empareja por el texto de la frase, y por
+orden si el texto difiere. Así cada métrica queda alineada a su turno real.""")
+
+code('''import re, csv as _csv
+def reconstruir(log_txt, percep_path):
+    """Devuelve una lista de turnos con sus tiempos por etapa, desde el log."""
+    TS = re.compile(r"\\[(\\d+\\.\\d+)\\]")
+    def ts(l):
+        m = TS.search(l); return float(m.group(1)) if m else None
+    # percepcion.csv: STT/SER/TER por texto + en orden
+    percep, percep_orden = {}, []
+    with open(percep_path, encoding="utf-8", errors="replace") as f:
+        for row in _csv.DictReader(f):
+            txt = (row.get("texto") or "").strip().lower()[:30]
+            if txt:
+                percep[txt] = row; percep_orden.append(row)
+    turnos = []; cur = None
+    for ln in log_txt.splitlines():
+        t = ts(ln)
+        if t is None: continue
+        if "[mic] transcrito:" in ln:
+            m = re.search(r"transcrito: \\'(.*)\\'", ln)
+            texto = (m.group(1) if m else "").strip()
+            if not texto: cur = None; continue
+            cur = {"t_mic": t, "texto": texto}; turnos.append(cur)
+        elif cur is None: continue
+        elif "[afecto] el texto expresa" in ln: cur["t_ter"] = t
+        elif "[afecto] la camara vio" in ln:
+            cur["t_fer"] = t
+            mm = re.search(r"(\\d+) cuadros en ([\\d.]+) s", ln)
+            if mm: cur["fer_ventana_s"] = float(mm.group(2))
+        elif "[afecto] la voz suena" in ln: cur["t_ser"] = t
+        elif "[afecto] usuario (fusion" in ln: cur["t_pulse"] = t
+        elif re.search(r"\\[afecto\\] v .*->.*", ln): cur["t_rose"] = t
+        elif "[aeb]" in ln and "t_aeb" not in cur:
+            cur["t_aeb"] = t
+            mm = re.search(r"-> (\\w+_L\\d|\\w+) \\(cara (\\w+), movimiento (\\w+)", ln)
+            if mm:
+                cur["emocion"], cur["cara"], cur["movimiento"] = mm.group(1), mm.group(2), mm.group(3)
+        elif "Asistente:" in ln and "Asistente [" not in ln:
+            cur["t_resp"] = t; cur = None
+    # tiempos por etapa
+    def num(v):
+        try: return float(v)
+        except (TypeError, ValueError): return np.nan
+    out = []
+    for i, tu in enumerate(turnos, 1):
+        p = percep.get(tu["texto"].strip().lower()[:30])
+        if p is None: p = percep_orden[i-1] if i-1 < len(percep_orden) else {}
+        capa = (tu["t_aeb"]-tu["t_ter"])*1000 if "t_ter" in tu and "t_aeb" in tu else np.nan
+        lat  = (tu["t_resp"]-tu["t_mic"])*1000 if "t_resp" in tu else np.nan
+        out.append({"turno": i, "texto": tu["texto"][:40],
+                    "stt_ms": num(p.get("t_stt_ms")), "ser_ms": num(p.get("t_ser_ms")),
+                    "ter_ms": num(p.get("t_ter_ms")),
+                    "capa_afectiva_ms": round(capa,1) if capa==capa else np.nan,
+                    "fer_ventana_s": tu.get("fer_ventana_s", np.nan),
+                    "latencia_ms": round(lat,1) if lat==lat else np.nan,
+                    "emocion": tu.get("emocion",""), "cara": tu.get("cara",""),
+                    "movimiento": tu.get("movimiento","")})
+    return pd.DataFrame(out)
+
+log = open(ruta("romeo_run.log"), encoding="utf-8", errors="replace").read()
+rec = reconstruir(log, ruta("percepcion.csv"))
+rec.to_csv(ruta("turnos_reconstruidos.csv"), index=False)
+print(f"Turnos reconstruidos desde el log: {len(rec)}")
+print(rec[["turno","stt_ms","ser_ms","ter_ms","capa_afectiva_ms","fer_ventana_s","latencia_ms","emocion"]].head(10).to_string(index=False))''')
+
+code('''# Resumen del flujo completo reconstruido (promedios por etapa).
+resumen = pd.DataFrame([
+    ("STT (voz→texto)",        rec["stt_ms"].mean(),           "ms"),
+    ("SER (emoción voz)",      rec["ser_ms"].mean(),           "ms"),
+    ("TER (emoción texto)",    rec["ter_ms"].mean(),           "ms"),
+    ("Capa afectiva (PULSE+ROSE+AEB)", rec["capa_afectiva_ms"].mean(), "ms"),
+    ("Ventana FER (cámara)",   rec["fer_ventana_s"].mean(),    "s"),
+    ("Latencia total (mic→IA)",rec["latencia_ms"].mean(),      "ms"),
+], columns=["Etapa del flujo", "Promedio", "Unidad"])
+resumen["Promedio"] = resumen["Promedio"].round(1)
+print("Flujo completo del turno, medido desde el log:")
+resumen''')
+
 md("## 1. Cargar los datos")
 
 code('''# La trivia empieza en la PRIMERA pregunta que hace Romeo (Asistente [emo]: ...?).
