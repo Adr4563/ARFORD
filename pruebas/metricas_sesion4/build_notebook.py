@@ -161,9 +161,39 @@ md("""## 4. STT, SER y TER por turno — medidos en la Raspberry
 
 Los tres tiempos de percepción del lenguaje/voz, capturados **por separado en la
 propia Pi** (lo que pediste): **STT** (voz→texto), **SER** (emoción de la voz) y
-**TER** (emoción del texto), más el **viaje ida-vuelta** total al servidor.""")
+**TER** (emoción del texto).
 
-code("""fig, ax = plt.subplots(figsize=(12,4.6))
+Como los tres tienen **escalas muy distintas** (el TER es ~15-25 ms, el SER
+~200 ms y el STT ~80 ms), se grafican en **paneles separados, cada uno con su
+propia escala**, para poder ver el procesamiento real de cada uno por pregunta.
+Abajo va además la vista combinada con el viaje de ida y vuelta.""")
+
+code("""# Tres paneles, cada uno con su escala, para ver el detalle de cada etapa.
+fig, axs = plt.subplots(3, 1, figsize=(12,8), sharex=True)
+x = dft["pregunta"]
+for ax, col, color, mk, nombre in [
+    (axs[0], "STT", AZUL,    "o", "STT (voz→texto)"),
+    (axs[1], "SER", NARANJA, "s", "SER (emoción voz)"),
+    (axs[2], "TER", VERDE,   "^", "TER (emoción texto)"),
+]:
+    serie = dft[col]
+    ax.plot(x, serie, color=color, lw=1.8, marker=mk, ms=4, label=nombre)
+    prom = serie.mean()
+    ax.axhline(prom, color=GRIS, ls="--", lw=1, alpha=0.7)
+    ax.text(len(dft), prom, f" prom {prom:.0f} ms", va="center", fontsize=9, color=GRIS)
+    ax.fill_between(x, 0, serie, color=color, alpha=0.08)
+    ax.set_ylabel("Tiempo (ms)")
+    ax.legend(loc="upper left", frameon=False, fontsize=10)
+    ax.set_xlim(1, len(dft))
+axs[2].set_xlabel("Pregunta (turno)")
+axs[0].set_title("STT, SER y TER por turno — cada uno con su escala (Raspberry)")
+plt.tight_layout(); plt.show()
+print(f"STT: {dft['STT'].mean():.0f} ms (min {dft['STT'].min():.0f}, max {dft['STT'].max():.0f}) | "
+      f"SER: {dft['SER'].mean():.0f} ms (min {dft['SER'].min():.0f}, max {dft['SER'].max():.0f}) | "
+      f"TER: {dft['TER'].mean():.0f} ms (min {dft['TER'].min():.0f}, max {dft['TER'].max():.0f})")""")
+
+code("""# Vista combinada (misma escala) + viaje de ida y vuelta.
+fig, ax = plt.subplots(figsize=(12,4.6))
 x = dft["pregunta"]
 ax.plot(x, dft["STT"], color=AZUL,    lw=1.8, marker="o", ms=3, label="STT (voz→texto)")
 ax.plot(x, dft["SER"], color=NARANJA, lw=1.8, marker="s", ms=3, label="SER (emoción voz)")
@@ -171,7 +201,7 @@ ax.plot(x, dft["TER"], color=VERDE,   lw=1.8, marker="^", ms=3, label="TER (emoc
 ax.plot(x, dft["ida_vuelta"], color=GRIS, lw=1.2, ls="--", label="Ida y vuelta (total)")
 ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (ms)")
 ax.set_xlim(1, len(dft))
-ax.set_title("STT, SER y TER por turno (medidos en la Raspberry)")
+ax.set_title("STT, SER y TER por turno (vista combinada)")
 ax.legend(frameon=False, fontsize=9, ncol=2)
 plt.tight_layout(); plt.show()
 print(f"STT: {dft['STT'].mean():.0f} ms | SER: {dft['SER'].mean():.0f} ms | "
