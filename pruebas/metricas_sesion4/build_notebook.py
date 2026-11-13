@@ -214,18 +214,37 @@ plt.tight_layout(); plt.show()
 print(f"STT: {dft['STT'].mean():.0f} ms | SER: {dft['SER'].mean():.0f} ms | "
       f"TER: {dft['TER'].mean():.0f} ms | Ida-vuelta: {dft['ida_vuelta'].mean():.0f} ms (promedios)")""")
 
-md("## 5. Línea de tiempo por nodo")
+md("""## 5. Línea de tiempo por nodo
+
+El tiempo de `expression_faces_node` es la **ventana de la cámara**: crece cuando
+el usuario tarda en responder. Unos pocos turnos con pausas largas disparan ese
+tiempo a decenas de segundos y aplastarían el resto, así que el eje se **recorta
+a 60 s** y esos picos se **anotan con su valor real** (son pausas del usuario, no
+lentitud del sistema).""")
 
 code("""fig, ax = plt.subplots(figsize=(12,4.5))
 x = dft["pregunta"]
-ax.plot(x, dft["communication_node"], color=AZUL, lw=1.8, label="communication_node (STT+TTS)")
-ax.plot(x, dft["orchestrator_node"], color=VERDE, lw=1.8, label="orchestrator_node (afectiva+LLM)")
-ax.plot(x, dft["expression_faces_node"], color=NARANJA, lw=1.8, label="expression_faces_node (FER)")
-ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo del nodo (ms)")
-ax.set_title("Tiempo usado por cada nodo a lo largo de la trivia")
+ax.plot(x, dft["communication_node"]/1000, color=AZUL, lw=1.8, label="communication_node (STT+TTS)")
+ax.plot(x, dft["orchestrator_node"]/1000, color=VERDE, lw=1.8, label="orchestrator_node (afectiva+LLM)")
+ax.plot(x, dft["expression_faces_node"]/1000, color=NARANJA, lw=1.8, label="expression_faces_node (FER)")
+TOPE = 60  # segundos
+ax.set_ylim(0, TOPE)
+# anotar los picos que se salen del tope (pausas largas del usuario)
+fer_s = dft["expression_faces_node"]/1000
+for xi, v in zip(x, fer_s):
+    if v > TOPE:
+        ax.annotate(f"{v:.0f} s", xy=(xi, TOPE), xytext=(xi, TOPE*0.9),
+                    ha="center", fontsize=8, color=NARANJA,
+                    arrowprops=dict(arrowstyle="->", color=NARANJA, lw=1))
+ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo del nodo (s)")
+ax.set_xlim(1, len(dft))
+ax.set_title("Tiempo usado por cada nodo a lo largo de la trivia (eje recortado a 60 s)")
 ax.legend(frameon=False, fontsize=9)
 plt.tight_layout(); plt.show()
-print("moving_control_node (carrito): no interviene en la trivia.")""")
+print("moving_control_node (carrito): no interviene en la trivia.")
+picos = [(int(xi), float(v)) for xi, v in zip(x, fer_s) if v > TOPE]
+print("Picos de ventana FER (pausas largas del usuario):",
+      ", ".join(f"preg {p}: {s:.0f}s" for p, s in picos))""")
 
 md("""## 6. Latencia de respuesta por interacción (medida en la Raspberry)
 
@@ -267,9 +286,10 @@ La **ventana del FER** (duración de la percepción facial mientras el usuario
 habla) y el bloque **percepción + capa afectiva** (PULSE+ROSE+AEB).
 
 **La capa afectiva se calcula en los 33 turnos** (se quitó la regla que la
-saltaba cuando las tres fuentes eran neutrales). Se muestran todos sin recorte:
-el tiempo incluye la **espera de la ventana de cámara** antes de fusionar, por
-eso los turnos donde el usuario tardó más en responder aparecen más altos.""")
+saltaba cuando las tres fuentes eran neutrales). El tiempo de la ventana FER
+depende de cuánto tardó el usuario en responder; los turnos con pausas largas
+(decenas de segundos) aplastarían el resto, así que el eje se **recorta a 60 s**
+y esos picos se **anotan con su valor real**.""")
 
 code("""fig, ax = plt.subplots(figsize=(12,4.6))
 x = dft["pregunta"]
@@ -278,12 +298,23 @@ afe_s = dft["afectiva"] / 1000.0
 ax.plot(x, fer_s, color=AZUL, lw=2, marker="o", ms=3, label="FER (ventana de percepción)")
 ax.plot(x, afe_s, color=MORADO, lw=2, marker="s", ms=3, label="Percepción + capa afectiva")
 ax.fill_between(x, 0, fer_s, color=AZUL, alpha=0.08)
+TOPE = 60  # segundos
+ax.set_ylim(0, TOPE)
+for xi, v in zip(x, fer_s):
+    if v > TOPE:
+        ax.annotate(f"{v:.0f} s", xy=(xi, TOPE), xytext=(xi, TOPE*0.9),
+                    ha="center", fontsize=8, color=AZUL,
+                    arrowprops=dict(arrowstyle="->", color=AZUL, lw=1))
 ax.set_xlabel("Pregunta (turno)"); ax.set_ylabel("Tiempo (s)")
 ax.set_xlim(1, len(dft))
-ax.set_title("FER y capa afectiva por turno (medidos en la Raspberry)")
+ax.set_title("FER y capa afectiva por turno (eje recortado a 60 s)")
 ax.legend(frameon=False, fontsize=9)
 plt.tight_layout(); plt.show()
-print(f"FER ventana: promedio {fer_s.mean():.1f} s | Percepción+afectiva: promedio {afe_s.mean():.1f} s")""")
+print(f"FER ventana: promedio {fer_s.mean():.1f} s (max {fer_s.max():.0f} s) | "
+      f"Percepción+afectiva: promedio {afe_s.mean():.1f} s")
+picos = [(int(xi), float(v)) for xi, v in zip(x, fer_s) if v > TOPE]
+print("Picos FER (pausas largas del usuario):",
+      ", ".join(f"preg {p}: {s:.0f}s" for p, s in picos))""")
 
 md("""## 8. Línea de tiempo — LLM y TTS durante la trivia
 
