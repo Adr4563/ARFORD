@@ -351,6 +351,12 @@ class ReconocedorVoz:
         import os as _os
         if _os.environ.get("ROMEO_MEDIR", "0") not in ("1", "true", "True"):
             return
+        # Solo interesa la respuesta del usuario CUANDO HABLA. Si el STT no
+        # transcribio nada (el micro se activo por ruido o silencio), no es un
+        # turno real: no se guarda, para no ensuciar las metricas con filas
+        # vacias sin SER/TER.
+        if not (respuesta.get("texto") or "").strip():
+            return
         try:
             import csv as _csv
             import time as _time

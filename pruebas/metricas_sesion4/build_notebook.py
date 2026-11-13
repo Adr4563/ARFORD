@@ -79,9 +79,12 @@ with open(ruta("turnos.csv"), encoding="utf-8", errors="replace") as f:
                           "emocion": emocion, "movimiento": movimiento})
 turnos = pd.DataFrame(filas[:N_PREGUNTAS])
 
-# percepcion (Pi): STT / SER / TER por separado + ida_vuelta
+# percepcion (Pi): STT / SER / TER por separado + ida_vuelta.
+# Solo cuentan los turnos donde el usuario REALMENTE habla: se descartan las
+# filas sin texto (micro activado por ruido/silencio, sin SER/TER). Asi cada
+# punto es una respuesta real del usuario y no quedan huecos.
 per = pd.read_csv(ruta("percepcion.csv"))
-# nos quedamos con las de la trivia (desde INICIO_TRIVIA) y las primeras 33
+per = per[per["texto"].notna() & (per["texto"].astype(str).str.strip() != "")]
 per_triv = per[per["t"] >= INICIO_TRIVIA].head(N_PREGUNTAS).reset_index(drop=True)
 
 tts = pd.read_csv(ruta("tts.csv"))
@@ -166,7 +169,11 @@ propia Pi** (lo que pediste): **STT** (voz→texto), **SER** (emoción de la voz
 Como los tres tienen **escalas muy distintas** (el TER es ~15-25 ms, el SER
 ~200 ms y el STT ~80 ms), se grafican en **paneles separados, cada uno con su
 propia escala**, para poder ver el procesamiento real de cada uno por pregunta.
-Abajo va además la vista combinada con el viaje de ida y vuelta.""")
+Abajo va además la vista combinada con el viaje de ida y vuelta.
+
+Solo se cuentan los turnos donde **el usuario realmente habla** (con texto
+transcrito): las activaciones del micro sin habla se descartan, por eso no hay
+huecos.""")
 
 code("""# Tres paneles, cada uno con su escala, para ver el detalle de cada etapa.
 fig, axs = plt.subplots(3, 1, figsize=(12,8), sharex=True)
