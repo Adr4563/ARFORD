@@ -36,11 +36,13 @@ BASE = Path(r".")   # misma carpeta del notebook
 def ruta(n): return BASE / n
 N_PREGUNTAS = 33   # la sesion de trivia: primeras 33 preguntas""")
 
-md("""## 0. Reconstrucción del flujo completo desde el log (desde cero)
+md("""## 0. Reconstrucción del flujo completo desde el log (robot OPTIMISTA)
 
-Antes de nada, se **reconstruye cada turno leyendo el `romeo_run.log` de inicio
-a fin**, siguiendo el flujo real desde que el micro captura hasta que la IA
-responde, y midiendo cada etapa con los **timestamps del propio log**:
+Se **reconstruye cada pregunta de la trivia leyendo el `romeo_run.log`**,
+siguiendo el flujo real desde que el micro captura hasta que la IA responde, y
+midiendo cada etapa con los **timestamps del propio log**. Solo se miden las
+**33 preguntas de la trivia** (se descarta la charla previa). Perfil
+**OPTIMISTA** (empatía 0.4, base (0.40, 0.30, 0.20)).
 
 ```
 [mic] transcrito → STT → TER + FER + SER → fusión (PULSE) → ROSE → AEB → Asistente responde
@@ -63,6 +65,12 @@ def reconstruir(log_txt, percep_path):
             txt = (row.get("texto") or "").strip().lower()[:30]
             if txt:
                 percep[txt] = row; percep_orden.append(row)
+    # Inicio de la TRIVIA: solo interesan las preguntas de la trivia, no la
+    # charla previa (saludo, "quiero jugar"...). Se mide desde la 1a pregunta.
+    mi = re.search(r"\\[(\\d+\\.\\d+)\\].*Vamos con una trivia", log_txt)
+    if not mi:
+        mi = re.search(r"\\[(\\d+\\.\\d+)\\].*Asistente \\[[^\\]]+\\]: [^\\n]*\\?", log_txt)
+    inicio_trivia = float(mi.group(1)) if mi else 0.0
     turnos = []; cur = None
     for ln in log_txt.splitlines():
         t = ts(ln)
@@ -71,6 +79,7 @@ def reconstruir(log_txt, percep_path):
             m = re.search(r"transcrito: \\'(.*)\\'", ln)
             texto = (m.group(1) if m else "").strip()
             if not texto: cur = None; continue
+            if t < inicio_trivia: cur = None; continue   # descarta charla previa
             cur = {"t_mic": t, "texto": texto}; turnos.append(cur)
         elif cur is None: continue
         elif "[afecto] el texto expresa" in ln: cur["t_ter"] = t
@@ -110,8 +119,10 @@ def reconstruir(log_txt, percep_path):
 
 log = open(ruta("romeo_run.log"), encoding="utf-8", errors="replace").read()
 rec = reconstruir(log, ruta("percepcion.csv"))
+rec = rec.head(N_PREGUNTAS).reset_index(drop=True)   # solo las 33 de la trivia
+rec["turno"] = range(1, len(rec)+1)
 rec.to_csv(ruta("turnos_reconstruidos.csv"), index=False)
-print(f"Turnos reconstruidos desde el log: {len(rec)}")
+print(f"Preguntas de trivia reconstruidas desde el log: {len(rec)}")
 print(rec[["turno","stt_ms","ser_ms","ter_ms","capa_afectiva_ms","fer_ventana_s","latencia_ms","emocion"]].head(10).to_string(index=False))''')
 
 code('''# Resumen del flujo completo reconstruido (promedios por etapa).
@@ -124,7 +135,7 @@ resumen = pd.DataFrame([
     ("Latencia total (mic→IA)",rec["latencia_ms"].mean(),      "ms"),
 ], columns=["Etapa del flujo", "Promedio", "Unidad"])
 resumen["Promedio"] = resumen["Promedio"].round(1)
-print("Flujo completo del turno, medido desde el log:")
+print("Flujo de una pregunta de trivia (robot OPTIMISTA), medido desde el log:")
 resumen''')
 
 md("## 1. Cargar los datos")
