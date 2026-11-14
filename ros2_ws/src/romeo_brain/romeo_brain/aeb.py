@@ -245,6 +245,11 @@ def mapear(estado):
                 "musica": None}
 
     movimiento = _MOVIMIENTOS.get((emocion, n)) if MOVIMIENTO_ACTIVO else None
+    # L1 y L2 de felicidad y enojo NO mueven el robot, pase lo que pase:
+    # en reposo (base optimista = felicidad L2) tiene que quedarse quieto.
+    # Solo L3-L4 disparan el gesto fisico.
+    if n <= 2:
+        movimiento = None
     # La tristeza no pone cara triste: se muestra la cara normal (content),
     # aunque el tono del LLM y el log sigan reflejando que Romeo esta triste.
     cara = "content" if (emocion == "tristeza" and OCULTAR_CARA_TRISTE) else direccion

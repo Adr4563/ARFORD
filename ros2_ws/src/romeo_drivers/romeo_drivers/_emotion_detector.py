@@ -104,6 +104,12 @@ HILOS_ONNX = int(os.environ.get("ROMEO_FER_HILOS", "2"))
 # ROMEO_YUNET_CAMARA=0 lo desactiva y todo vuelve a la CPU.
 YUNET_EN_CAMARA = os.environ.get("ROMEO_YUNET_CAMARA", "1") != "0"
 
+# SIN YuNet: no se detecta cara, se manda el FRAME COMPLETO al modelo FER.
+# El FER (HSEmotion) siempre devuelve una emocion, nunca "no vio cara". Menos
+# preciso (ve toda la escena, no solo el rostro recortado), pero no depende de
+# que YuNet enganche la cara. ROMEO_FER_SIN_YUNET=1 lo activa.
+FER_SIN_YUNET = os.environ.get("ROMEO_FER_SIN_YUNET", "0") == "1"
+
 from ._yunet_camara import YunetCamara  # noqa: E402
 
 _MAX_INTENTOS = 15
@@ -283,10 +289,13 @@ class DetectorEmocion:
         import cv2
         import numpy as np
 
-        if caja is not None:
+        alto, ancho = frame_bgr.shape[:2]
+        if FER_SIN_YUNET:
+            # Sin YuNet: el frame ENTERO va al modelo (siempre hay emocion).
+            x, y, w, h = 0, 0, ancho, alto
+        elif caja is not None:
             x, y, w, h = (max(0, int(v)) for v in caja)
         else:
-            alto, ancho = frame_bgr.shape[:2]
             self._detector_cara.setInputSize((ancho, alto))
             _, caras = self._detector_cara.detect(frame_bgr)
             if caras is None or len(caras) == 0:
@@ -509,8 +518,13 @@ class DetectorEmocion:
                             caja = sensor.cara(pedido.get_metadata(), ancho, alto)
                         finally:
                             pedido.release()
-                        probs = (self._clasificar(self._a_bgr(cuadro), caja)
-                                 if caja is not None else None)
+                        # Sin YuNet: clasificar SIEMPRE el frame completo, aunque
+                        # el sensor no haya encontrado cara.
+                        if FER_SIN_YUNET:
+                            probs = self._clasificar(self._a_bgr(cuadro))
+                        else:
+                            probs = (self._clasificar(self._a_bgr(cuadro), caja)
+                                     if caja is not None else None)
                     else:
                         probs = self._clasificar(self._a_bgr(picam2.capture_array("main")))
                     if probs is not None:

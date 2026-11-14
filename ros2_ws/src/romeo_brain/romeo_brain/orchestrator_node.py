@@ -233,7 +233,7 @@ class OrchestratorNode(Node):
         # romeo_params.yaml; las variables ROMEO_EMPATIA etc. lo afinan.
         self.declare_parameter('perfil_afectivo', estado_afectivo.PERFIL_POR_DEFECTO)
         # Perfil fijado DIRECTO en el codigo (ignora el yaml y el parametro ROS).
-        perfil = "OPTIMISTIC"
+        perfil = "EMPATHETIC"
         # Que fuentes de la ventana de percepcion entran a PULSE. Quitar una
         # de la lista la desactiva sin tocar codigo (p. ej. ["TER"] para
         # probar solo con texto).
@@ -461,6 +461,9 @@ class OrchestratorNode(Node):
         _aplicar_afecto, que tambien decide que hacer si todo es neutral)."""
         if not t_fin:
             return
+        # Sin espera: en tiempo real. La camara resume los cuadros que ya
+        # capturo (la ventana [t_inicio, t_fin] con fer_post_seg=0, o
+        # [t_fin, t_fin+post] si ya hay cuadros ahi). No se bloquea el turno.
         etiquetas, probs, cuadros = self._bridge.percibir_cara(t_inicio, t_fin)
         if cuadros <= 0:
             self.get_logger().info(
@@ -1313,9 +1316,9 @@ class OrchestratorNode(Node):
                 # lo digan al cerrar: ahora las preguntas se encadenan hasta
                 # que el usuario pide salir, y este es el unico momento en
                 # que sabe como le fue.
-                if estado["total"]:
-                    marcador = (f"Acertaste {estado['aciertos']} "
-                                f"de {estado['total']}.")
+                if self.estado["total"]:
+                    marcador = (f"Acertaste {self.estado['aciertos']} "
+                                f"de {self.estado['total']}.")
                     self.get_logger().info(f"Asistente: {marcador}")
                     self._bridge.hablar(marcador)
                 # El mensaje con el que pide salir se atiende EN ESTE MISMO

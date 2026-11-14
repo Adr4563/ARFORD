@@ -55,6 +55,11 @@ class VisualizationFacesNode(LifecycleNode):
         # del ultimo aviso. false = clasificar siempre, como antes.
         self.declare_parameter('fer_bajo_demanda', True)
         self.declare_parameter('fer_ventana_seg', 1.5)
+        # FER DESPUES de la frase: en vez de medir la cara MIENTRAS el usuario
+        # habla (cara deformada al articular), se mide su REACCION justo
+        # despues de terminar. Si >0, la ventana de resumen pasa a ser
+        # [t_fin, t_fin + fer_post_seg] en lugar de [t_inicio, t_fin].
+        self.declare_parameter('fer_post_seg', 2.0)
         self.declare_parameter('fer_resolucion', [320, 240])
         self._activo = False
         self._display = None
@@ -89,7 +94,12 @@ class VisualizationFacesNode(LifecycleNode):
 
     def _cb_voz_detectada(self, _msg):
         if self._activo and self._detector is not None:
-            self._detector.activar(self.get_parameter('fer_ventana_seg').value)
+            # La camara se mantiene activa fer_ventana_seg tras el ultimo aviso
+            # de voz; si medimos DESPUES de la frase (fer_post_seg), hay que
+            # extenderla para que haya cuadros en esa ventana posterior.
+            ventana = self.get_parameter('fer_ventana_seg').value
+            post = float(self.get_parameter('fer_post_seg').value)
+            self._detector.activar(ventana + max(0.0, post))
 
     def on_activate(self, state):
         self.get_logger().info('[expression_faces_node] activando...')
@@ -152,8 +162,15 @@ class VisualizationFacesNode(LifecycleNode):
         if not self._activo or self._detector is None:
             return response
         margen = float(self.get_parameter('fer_margen_seg').value)
-        probs, n = self._detector.resumen(
-            request.t_inicio - margen, request.t_fin + margen)
+        post = float(self.get_parameter('fer_post_seg').value)
+        if post > 0.0:
+            # Ventana DESPUES de la frase: la reaccion del usuario al terminar
+            # de hablar, no su cara mientras articula.
+            probs, n = self._detector.resumen(
+                request.t_fin, request.t_fin + post)
+        else:
+            probs, n = self._detector.resumen(
+                request.t_inicio - margen, request.t_fin + margen)
         if probs is not None:
             response.probabilidades = [float(p) for p in probs]
             response.cuadros = int(n)

@@ -1,0 +1,1173 @@
+[INFO] [launch]: All log files can be found below /home/pi/.ros/log/2026-11-13-18-28-05-010534-raspberrypi-853961
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [communication_node-1]: process started with pid [853988]
+[INFO] [expression_faces_node-2]: process started with pid [853989]
+[INFO] [moving_control_node-3]: process started with pid [853990]
+[INFO] [orchestrator_node-4]: process started with pid [853991]
+[moving_control_node-3] [INFO] [1794612488.388634558] [moving_control_node]: [moving_control_node] configurando...
+[moving_control_node-3] [INFO] [1794612488.432021984] [moving_control_node]: [moving_control_node] activando...
+[expression_faces_node-2] [INFO] [1794612488.870511151] [expression_faces_node]: [expression_faces_node] configurando...
+[orchestrator_node-4] [INFO] [1794612488.926160530] [orchestrator_node]: [afecto] perfil OPTIMISTIC: empatia 0.4, base (0.4, 0.3, 0.2), decaimiento 0.3, latencia 3.0s
+[expression_faces_node-2] [INFO] [1794612488.929492017] [expression_faces_node]: [expression_faces_node] activando...
+[expression_faces_node-2] [WARN] [1794612488.934563757] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[moving_control_node-3] [INFO] [1794612489.089484977] [moving_control_node]: [control] página de control en http://0.0.0.0:8080/
+[moving_control_node-3]  * Serving Flask app 'romeo_drivers._control_web'
+[moving_control_node-3]  * Debug mode: off
+[orchestrator_node-4] [INFO] [1794612489.285728408] [orchestrator_node]: [llm] gemma3:4b precargado en 0.4 s
+[communication_node-1] [INFO] [1794612489.475713623] [communication_node]: [communication_node] configurando...
+[communication_node-1] [INFO] [1794612489.527108185] [communication_node]: [communication_node] activando...
+[communication_node-1] [INFO] [1794612489.529998896] [communication_node]: [voz] TTS en http://10.143.193.41:8083 (sin modelo local en la Pi)
+[communication_node-1] [INFO] [1794612489.537646163] [communication_node]: [communication_node] hablale al micrófono, o escribí acá y Enter
+[communication_node-1] [INFO] [1794612489.541161149] [communication_node]: [mic] escuchando (dispositivo=Board: USB Audio, servidor http://10.143.193.41:8082)
+[expression_faces_node-2] [WARN] [1794612490.223553694] [expression_faces_node]: [cámara] FER = HSEmotion (AffectNet) -> /home/pi/ARFORD/pruebas/fer_deepface/modelos/hsemotion_b0.onnx
+[expression_faces_node-2] [WARN] [1794612490.549385276] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612490.971619876] [orchestrator_node]: Asistente: ¡Hola! Romeo, a tus órdenes. Dime tu nombre y empezamos.
+[expression_faces_node-2] [WARN] [1794612491.087302284] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [1:43:21.429055335] [854165]  INFO Camera camera_manager.cpp:340 libcamera v0.7.0
+[expression_faces_node-2] [1:43:21.488079682] [854260]  INFO IPAProxy ipa_proxy.cpp:180 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx500.json
+[expression_faces_node-2] [1:43:21.492663035] [854260]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx500@1a' for pipeline handler rpi/vc4
+[expression_faces_node-2] [1:43:21.492720776] [854260]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx500@1a to Unicam device /dev/media0 and ISP device /dev/media2
+[expression_faces_node-2] [1:43:21.492770461] [854260]  INFO RPI pipeline_base.cpp:1117 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[expression_faces_node-2] 
+[expression_faces_node-2] ------------------------------------------------------------------------------------------------------------------
+[expression_faces_node-2] NOTE: Loading network firmware onto the IMX500 can take several minutes, please do not close down the application.
+[expression_faces_node-2] ------------------------------------------------------------------------------------------------------------------
+[expression_faces_node-2] 
+[expression_faces_node-2] [WARN] [1794612491.706840682] [expression_faces_node]: [cámara] YuNet en el sensor (/usr/share/imx500-models/imx500_network_yunet.rpk)
+[expression_faces_node-2] [1:43:21.509283897] [854165]  INFO Camera camera.cpp:1215 configuring streams: (0) 320x240-BGR888/sRGB (1) 2028x1520-SRGGB10_CSI2P/RAW
+[expression_faces_node-2] [1:43:21.509783247] [854260]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx500@1a - Selected sensor format: 2028x1520-SRGGB10_1X10/RAW - Selected unicam format: 2028x1520-pRAA/RAW
+[expression_faces_node-2] [WARN] [1794612493.762069787] [expression_faces_node]: [cámara] FER a 5 fps, solo con voz, 320x240 (cara: sensor)
+[orchestrator_node-4] [INFO] [1794612497.203621844] [orchestrator_node]: [aeb] v=+0.40 a=+0.30 d=+0.20 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612497.230484555] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612597.171528472] [communication_node]: [mic] transcrito: 'tribia, tribia, tribia.'
+[orchestrator_node-4] [INFO] [1794612597.187718928] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.94, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612597.250874815] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.12, 1 cuadros en 2.9 s)
+[orchestrator_node-4] [INFO] [1794612597.257135921] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.50)
+[orchestrator_node-4] [INFO] [1794612597.262611529] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.09 a=+0.08 d=+0.05
+[orchestrator_node-4] [INFO] [1794612597.271623661] [orchestrator_node]: [afecto] v +0.40->+0.28  a +0.30->+0.21  d +0.20->+0.14
+[orchestrator_node-4] [INFO] [1794612597.697902153] [orchestrator_node]: Asistente: ¿Tribia? ¿Qué te trae por aquí?
+[expression_faces_node-2] [WARN] [1794612598.469630596] [expression_faces_node]: [cámara] FER: 502 cuadros en 102.2 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794612600.757306531] [orchestrator_node]: [aeb] v=+0.28 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612600.765314833] [orchestrator_node]: [aeb] v=+0.28 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612600.782201139] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612600.806711970] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612602.021861043] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612623.555865618] [communication_node]: [mic] transcrito: 'Quiero jugar, jugar tribia, jugar tribier.'
+[orchestrator_node-4] [INFO] [1794612623.560568618] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.47, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612623.572673887] [orchestrator_node]: [afecto] la camara no vio cara en la frase (3.5 s)
+[orchestrator_node-4] [INFO] [1794612623.574204159] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.65)
+[orchestrator_node-4] [INFO] [1794612623.578425698] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.10 a=+0.10 d=+0.07
+[orchestrator_node-4] [INFO] [1794612623.582296591] [orchestrator_node]: [afecto] v +0.34->+0.24  a +0.26->+0.19  d +0.17->+0.13
+[orchestrator_node-4] [INFO] [1794612623.586621574] [orchestrator_node]: Asistente: ¡Allá vamos! Te pregunto de todo un poco. Cuando te canses, dime que paramos.
+[expression_faces_node-2] [WARN] [1794612623.593374326] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612624.419706670] [expression_faces_node]: [cámara] FER: 115 cuadros en 23.6 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794612629.360577264] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el país más grande del mundo?
+[orchestrator_node-4] [INFO] [1794612633.249757935] [orchestrator_node]: [aeb] v=+0.24 a=+0.19 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612633.251590854] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612673.541525861] [communication_node]: [mic] transcrito: 'Brasil. Brasil es el país más grande del mundo.'
+[orchestrator_node-4] [INFO] [1794612673.555244438] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.50, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612673.573372275] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.19, 6 cuadros en 3.6 s)
+[orchestrator_node-4] [INFO] [1794612673.582281408] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.93)
+[orchestrator_node-4] [INFO] [1794612673.587518684] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.06 a=+0.08 d=+0.05
+[orchestrator_node-4] [INFO] [1794612673.592702201] [orchestrator_node]: [afecto] v +0.35->+0.23  a +0.26->+0.19  d +0.18->+0.12
+[orchestrator_node-4] [INFO] [1794612673.604342842] [orchestrator_node]: [aeb] v=+0.23 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612673.611275519] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612674.825972908] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Brasil es un gran país, de verdad! Pero la respuesta correcta es Rusia, ¡y no te preocupes, a todos nos equivoca a veces! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612675.909234099] [expression_faces_node]: [cámara] FER: 200 cuadros en 43.6 s (4.6 fps reales)
+[orchestrator_node-4] [INFO] [1794612686.696345161] [orchestrator_node]: [aeb] v=+0.23 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612686.702573840] [orchestrator_node]: Asistente [Neutral]: ¿Dónde está la Casa Blanca?
+[expression_faces_node-2] [WARN] [1794612686.702950080] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612686.716365417] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612687.493276433] [expression_faces_node]: [cámara] FER: 8 cuadros en 1.7 s (4.7 fps reales)
+[orchestrator_node-4] [INFO] [1794612689.990088841] [orchestrator_node]: [aeb] v=+0.23 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612690.002607460] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612702.498721309] [communication_node]: [mic] transcrito: 'Casa Blanca está en Washington D. C.'
+[orchestrator_node-4] [INFO] [1794612702.519066638] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.97, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612702.541003554] [orchestrator_node]: [afecto] la camara no vio cara en la frase (4.8 s)
+[orchestrator_node-4] [INFO] [1794612702.562922803] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.51)
+[orchestrator_node-4] [INFO] [1794612702.571682473] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.09 a=+0.06 d=+0.04
+[orchestrator_node-4] [INFO] [1794612702.592259783] [orchestrator_node]: [afecto] v +0.32->+0.23  a +0.25->+0.17  d +0.16->+0.12
+[orchestrator_node-4] [INFO] [1794612702.620559785] [orchestrator_node]: [aeb] v=+0.23 a=+0.17 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612702.632568183] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612703.490225055] [orchestrator_node]: Asistente: ¡Qué bien! ¡Lo acertaste! Me alegro mucho de que hayas respondido correctamente. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612704.802328089] [expression_faces_node]: [cámara] FER: 62 cuadros en 15.7 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794612712.395730716] [orchestrator_node]: [aeb] v=+0.23 a=+0.17 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612712.398553149] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612712.398824945] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se llama el estadio del F.C. Barcelona?
+[expression_faces_node-2] [WARN] [1794612712.413878109] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612713.081433934] [expression_faces_node]: [cámara] FER: 8 cuadros en 1.6 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794612717.226913694] [orchestrator_node]: [aeb] v=+0.23 a=+0.17 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612717.229025612] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612728.538890962] [communication_node]: [mic] transcrito: 'no, eh, no'
+[orchestrator_node-4] [INFO] [1794612728.558116499] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.71, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612728.584834193] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.22, 2 cuadros en 2.3 s)
+[orchestrator_node-4] [INFO] [1794612728.593602863] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.37)
+[orchestrator_node-4] [INFO] [1794612728.607850475] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.03 a=+0.09 d=+0.04
+[orchestrator_node-4] [INFO] [1794612728.613076955] [orchestrator_node]: [afecto] v +0.32->+0.20  a +0.24->+0.18  d +0.16->+0.11
+[orchestrator_node-4] [INFO] [1794612728.627439992] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612728.627439752] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612729.827021329] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Ni ná, no era el estadio correcto, campeón! El nombre es Camp Nou, y seguro que te sale al primer intento, ¿verdad? Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612730.473018236] [expression_faces_node]: [cámara] FER: 68 cuadros en 14.2 s (4.8 fps reales)
+[orchestrator_node-4] [INFO] [1794612741.855453122] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612741.859401200] [orchestrator_node]: Asistente [Neutral]: ¿Con qué se fabricaba el pergamino?
+[expression_faces_node-2] [WARN] [1794612741.861709746] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612741.874907659] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612742.713676289] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794612745.927489110] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612745.948856194] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612755.486547741] [communication_node]: [mic] transcrito: 'Piel de animales, piel de animales.'
+[orchestrator_node-4] [INFO] [1794612755.504040563] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.35, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612755.535974718] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.30, 2 cuadros en 4.1 s)
+[orchestrator_node-4] [INFO] [1794612755.544713758] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.93)
+[orchestrator_node-4] [INFO] [1794612755.557395654] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.05 a=+0.05 d=+0.01
+[orchestrator_node-4] [INFO] [1794612755.567233338] [orchestrator_node]: [afecto] v +0.30->+0.16  a +0.24->+0.16  d +0.16->+0.10
+[orchestrator_node-4] [INFO] [1794612755.585552564] [orchestrator_node]: [aeb] v=+0.16 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612755.596631911] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612756.597228882] [orchestrator_node]: Asistente: ¡Perfecto! ¡Esa es la respuesta correcta! Me alegra muchísimo que lo acertaras, ¡qué buen juego! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612757.805747924] [expression_faces_node]: [cámara] FER: 44 cuadros en 12.8 s (3.4 fps reales)
+[orchestrator_node-4] [INFO] [1794612766.531638460] [orchestrator_node]: [aeb] v=+0.16 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612766.536507701] [orchestrator_node]: Asistente [Feliz]: Ana tiene 9 cajas de huevos y cada caja tiene 9 huevos. ¿Cuántos huevos tiene en total?
+[expression_faces_node-2] [WARN] [1794612766.536740274] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612766.547909583] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612767.495076166] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794612774.576315964] [orchestrator_node]: [aeb] v=+0.16 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612774.577372553] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612789.238477067] [communication_node]: [mic] transcrito: 'ochenta y uno, ochenta y uno.'
+[orchestrator_node-4] [INFO] [1794612789.245267244] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.75, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612789.257128550] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.7 s)
+[orchestrator_node-4] [INFO] [1794612789.259197487] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.54)
+[orchestrator_node-4] [INFO] [1794612789.262483104] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.00 a=+0.07 d=+0.04
+[orchestrator_node-4] [INFO] [1794612789.265599629] [orchestrator_node]: [afecto] v +0.28->+0.17  a +0.23->+0.17  d +0.15->+0.11
+[orchestrator_node-4] [INFO] [1794612789.272241844] [orchestrator_node]: [aeb] v=+0.17 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612789.274239188] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612790.318145030] [orchestrator_node]: Asistente: ¡Excelente! ¡Esa es la respuesta correcta, genial! Me alegra mucho que hayas acertado, sigues teniendo un ritmo impresionante. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612791.351465450] [expression_faces_node]: [cámara] FER: 82 cuadros en 17.6 s (4.6 fps reales)
+[orchestrator_node-4] [INFO] [1794612802.520652914] [orchestrator_node]: [aeb] v=+0.17 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612802.529030067] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612802.529697342] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es tercer planeta en el sistema solar?
+[expression_faces_node-2] [WARN] [1794612802.540166191] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612803.399663315] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794612806.989294211] [orchestrator_node]: [aeb] v=+0.17 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612806.991313444] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612822.067471864] [communication_node]: [mic] transcrito: 'Venos, Venus, Venus, es Venus.'
+[orchestrator_node-4] [INFO] [1794612822.077448714] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.84, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612822.093978262] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.26, 4 cuadros en 3.1 s)
+[orchestrator_node-4] [INFO] [1794612822.101389678] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.74)
+[orchestrator_node-4] [INFO] [1794612822.111091955] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.00 a=+0.03 d=+0.02
+[orchestrator_node-4] [INFO] [1794612822.120298087] [orchestrator_node]: [afecto] v +0.29->+0.17  a +0.24->+0.15  d +0.15->+0.10
+[orchestrator_node-4] [INFO] [1794612822.131581858] [orchestrator_node]: [aeb] v=+0.17 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612822.134229089] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612823.215201436] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Venus es un planeta muy brillante, pero no era el tercero! La respuesta correcta es Tierra, ¡ya lo ves! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612824.171196412] [expression_faces_node]: [cámara] FER: 79 cuadros en 18.1 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794612834.536911667] [orchestrator_node]: [aeb] v=+0.17 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612834.539990062] [orchestrator_node]: Asistente [Neutral]: ¿Quién traicionó a Jesús?
+[expression_faces_node-2] [WARN] [1794612834.544639507] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612834.555897168] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612835.809745444] [expression_faces_node]: [cámara] FER: 7 cuadros en 2.1 s (3.3 fps reales)
+[orchestrator_node-4] [INFO] [1794612838.228399097] [orchestrator_node]: [aeb] v=+0.17 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612838.230688088] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612844.927179920] [communication_node]: [mic] transcrito: 'Pedro, Pedro, Pedro.'
+[orchestrator_node-4] [INFO] [1794612844.954319371] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.88, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612844.973673130] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.21, 3 cuadros en 3.5 s)
+[orchestrator_node-4] [INFO] [1794612844.979229849] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.95)
+[orchestrator_node-4] [INFO] [1794612844.990434584] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.01 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794612844.996925744] [orchestrator_node]: [afecto] v +0.24->+0.14  a +0.20->+0.14  d +0.13->+0.09
+[orchestrator_node-4] [INFO] [1794612845.006058172] [orchestrator_node]: [aeb] v=+0.14 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612845.014409640] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612846.395005948] [orchestrator_node]: Asistente: ¡Uy, qué susto! Pedro es un gran nombre, pero la respuesta correcta fue Judas. ¡Vamos a intentar ser un poquito más atinados, eh? No te preocupes, ¡estamos aquí para divertirnos y aprender! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612847.169430751] [expression_faces_node]: [cámara] FER: 45 cuadros en 9.8 s (4.6 fps reales)
+[orchestrator_node-4] [INFO] [1794612862.307672543] [orchestrator_node]: [aeb] v=+0.14 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612862.324506311] [orchestrator_node]: Asistente [Neutral]: ¿Cuánto es seis por siete?
+[expression_faces_node-2] [WARN] [1794612862.336281877] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612862.363469013] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612863.303411921] [expression_faces_node]: [cámara] FER: 5 cuadros en 1.9 s (2.7 fps reales)
+[orchestrator_node-4] [INFO] [1794612865.973236517] [orchestrator_node]: [aeb] v=+0.14 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612865.975136732] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612870.712423793] [communication_node]: [mic] transcrito: 'cuarenta y dos.'
+[orchestrator_node-4] [INFO] [1794612870.717538496] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.70, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612870.730513242] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.90, 1 cuadros en 1.9 s)
+[orchestrator_node-4] [INFO] [1794612870.734591560] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.64)
+[orchestrator_node-4] [INFO] [1794612870.737573974] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.31 a=+0.23 d=+0.16
+[orchestrator_node-4] [INFO] [1794612870.740571593] [orchestrator_node]: [afecto] v +0.27->+0.29  a +0.22->+0.22  d +0.14->+0.15
+[orchestrator_node-4] [INFO] [1794612870.745703258] [orchestrator_node]: [aeb] v=+0.29 a=+0.22 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612870.747201030] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612871.571688622] [orchestrator_node]: Asistente: ¡Perfecto! ¡Esa es la respuesta correcta! ¡Qué bien has acertado! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612872.412285671] [expression_faces_node]: [cámara] FER: 36 cuadros en 7.3 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794612879.742432938] [orchestrator_node]: [aeb] v=+0.29 a=+0.22 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612879.745188594] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612879.745171224] [orchestrator_node]: Asistente [Neutral]: ¿A quién le crecía la nariz cuando mentía?
+[expression_faces_node-2] [WARN] [1794612879.755731665] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612880.740665863] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794612884.342591934] [orchestrator_node]: [aeb] v=+0.29 a=+0.22 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612884.352587877] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612887.675383779] [communication_node]: [mic] transcrito: 'pinocho.'
+[orchestrator_node-4] [INFO] [1794612887.702493508] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.52, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612887.740036086] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.91, 2 cuadros en 1.1 s)
+[orchestrator_node-4] [INFO] [1794612887.759488660] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.51)
+[orchestrator_node-4] [INFO] [1794612887.775458210] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.35 a=+0.27 d=+0.18
+[orchestrator_node-4] [INFO] [1794612887.792021053] [orchestrator_node]: [afecto] v +0.32->+0.33  a +0.25->+0.25  d +0.17->+0.17
+[orchestrator_node-4] [INFO] [1794612887.811730441] [orchestrator_node]: [aeb] v=+0.33 a=+0.25 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612887.826619828] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612888.757260160] [orchestrator_node]: Asistente: ¡Qué bien! ¡Lo has clavado, genial! Me encanta que estés acertando, ¡sigamos adelante! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612890.129540426] [expression_faces_node]: [cámara] FER: 22 cuadros en 6.7 s (3.3 fps reales)
+[orchestrator_node-4] [INFO] [1794612898.347841967] [orchestrator_node]: [aeb] v=+0.33 a=+0.25 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612898.351299639] [orchestrator_node]: Asistente [Neutral]: ¿Qué es un mitómano?
+[expression_faces_node-2] [WARN] [1794612898.353928518] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612898.366200730] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612899.596601336] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.2 s (4.1 fps reales)
+[orchestrator_node-4] [INFO] [1794612901.679950852] [orchestrator_node]: [aeb] v=+0.33 a=+0.25 d=+0.17 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612901.692663451] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612910.123674897] [communication_node]: [mic] transcrito: 'una persona que tiene la capacidad de ser alguien.'
+[orchestrator_node-4] [INFO] [1794612910.141752161] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.94, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612910.182526449] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.79, 5 cuadros en 4.6 s)
+[orchestrator_node-4] [INFO] [1794612910.197658761] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.93)
+[orchestrator_node-4] [INFO] [1794612910.205735971] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.20 a=+0.15 d=+0.11
+[orchestrator_node-4] [INFO] [1794612910.211508708] [orchestrator_node]: [afecto] v +0.35->+0.29  a +0.27->+0.22  d +0.18->+0.15
+[orchestrator_node-4] [INFO] [1794612910.236824222] [orchestrator_node]: [aeb] v=+0.29 a=+0.22 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612910.242734699] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612911.574500676] [orchestrator_node]: Asistente: ¡Uy, qué buena idea! Pero no, eso no es un mitómano, ¡es un mentiroso! La respuesta correcta era precisamente eso, y te recomiendo que prestes más atención a las preguntas. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612912.627704797] [expression_faces_node]: [cámara] FER: 45 cuadros en 11.9 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794612926.286825660] [orchestrator_node]: [aeb] v=+0.29 a=+0.22 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612926.291826400] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612926.301116086] [orchestrator_node]: Asistente [Neutral]: Joana necesita llenar 7 vasos de 3 ml con gaseosa. ¿Qué cantidad total de gaseosa necesitará?
+[expression_faces_node-2] [WARN] [1794612926.307805394] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612927.169675805] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794612935.287720954] [orchestrator_node]: [aeb] v=+0.29 a=+0.22 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612935.289640076] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612939.554681266] [communication_node]: [mic] transcrito: 'veintiuno, veintiuno. es veintiuno.'
+[orchestrator_node-4] [INFO] [1794612939.561700165] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.87, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612939.585024946] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.29, 4 cuadros en 3.4 s)
+[orchestrator_node-4] [INFO] [1794612939.592108770] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.83)
+[orchestrator_node-4] [INFO] [1794612939.598368617] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.02 a=+0.08 d=+0.04
+[orchestrator_node-4] [INFO] [1794612939.603143432] [orchestrator_node]: [afecto] v +0.35->+0.20  a +0.26->+0.19  d +0.18->+0.12
+[orchestrator_node-4] [INFO] [1794612939.624737053] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612939.655321102] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612940.713660499] [orchestrator_node]: Asistente: ¡Eso es! ¡Qué bien has resuelto el problema, Joana! ¡Me alegro mucho de haber acertado, es fantástico! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612941.481880456] [expression_faces_node]: [cámara] FER: 28 cuadros en 7.1 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794612951.093019016] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794612951.097436574] [orchestrator_node]: Asistente [Feliz]: En la escuela de Alice hay 5 aulas y en cada una hay 3 sillas. ¿Cuántas sillas hay en la escuela de Alice?
+[expression_faces_node-2] [WARN] [1794612951.100864320] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612951.111919388] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612951.999669237] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794612960.275988593] [orchestrator_node]: [aeb] v=+0.20 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612960.287836510] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612968.540989528] [communication_node]: [mic] transcrito: 'quince sillas. quince sillas. quince sillas. U'
+[orchestrator_node-4] [INFO] [1794612968.547864632] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.95, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612968.560122640] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.12, 2 cuadros en 4.3 s)
+[orchestrator_node-4] [INFO] [1794612968.562201576] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.77)
+[orchestrator_node-4] [INFO] [1794612968.565219824] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.29 a=+0.20 d=+0.14
+[orchestrator_node-4] [INFO] [1794612968.567551630] [orchestrator_node]: [afecto] v +0.30->+0.30  a +0.24->+0.23  d +0.16->+0.15
+[orchestrator_node-4] [INFO] [1794612968.571337430] [orchestrator_node]: [aeb] v=+0.30 a=+0.23 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612968.576493244] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612969.396882629] [orchestrator_node]: Asistente: ¡Excelente! ¡Eso es! Qué bien que acertaste, ¡estás genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612970.462283370] [expression_faces_node]: [cámara] FER: 50 cuadros en 11.0 s (4.5 fps reales)
+[orchestrator_node-4] [INFO] [1794612977.397091434] [orchestrator_node]: [aeb] v=+0.30 a=+0.23 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612977.402340062] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612977.403067244] [orchestrator_node]: Asistente [Neutral]: ¿Quién es el presidente de España?
+[expression_faces_node-2] [WARN] [1794612977.421154897] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794612978.425661724] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.9 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794612981.540673517] [orchestrator_node]: [aeb] v=+0.30 a=+0.23 d=+0.15 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612981.543843023] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794612988.821112309] [communication_node]: [mic] transcrito: 'Alfonso, Alfonso Werther.'
+[orchestrator_node-4] [INFO] [1794612988.841757952] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.86, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794612988.861682653] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.10, 4 cuadros en 2.8 s)
+[orchestrator_node-4] [INFO] [1794612988.877222815] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.76)
+[orchestrator_node-4] [INFO] [1794612988.886676909] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.03 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794612988.896642185] [orchestrator_node]: [afecto] v +0.33->+0.21  a +0.25->+0.16  d +0.17->+0.11
+[orchestrator_node-4] [INFO] [1794612988.912948604] [orchestrator_node]: [aeb] v=+0.21 a=+0.16 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794612988.927376956] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794612990.122501254] [orchestrator_node]: Asistente: ¡Uy, qué buena respuesta! Pero Alfonso Werther era un poeta, ¡no el presidente! La respuesta correcta es Pedro Sánchez, y parece que necesitas repasar un poco de política. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794612990.970894773] [expression_faces_node]: [cámara] FER: 44 cuadros en 10.4 s (4.2 fps reales)
+[orchestrator_node-4] [INFO] [1794613004.420100145] [orchestrator_node]: [aeb] v=+0.21 a=+0.16 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613004.423182430] [orchestrator_node]: Asistente [Feliz]: Marcelo almacenó 3 cajas que contienen 8 tubos de pegamento cada una. ¿Cuántos tubos almacenó Marcelo?
+[expression_faces_node-2] [WARN] [1794613004.432138914] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613004.438844722] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613005.454953522] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.9 s (3.6 fps reales)
+[orchestrator_node-4] [INFO] [1794613013.673191674] [orchestrator_node]: [aeb] v=+0.21 a=+0.16 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613013.682972600] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613016.148940831] [communication_node]: [mic] transcrito: 'veintiocho.'
+[orchestrator_node-4] [INFO] [1794613016.162239354] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.67, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613016.176239652] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.1 s)
+[orchestrator_node-4] [INFO] [1794613016.177994349] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.61)
+[orchestrator_node-4] [INFO] [1794613016.181480243] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=-0.01 a=+0.01 d=-0.00
+[orchestrator_node-4] [INFO] [1794613016.185223413] [orchestrator_node]: [afecto] v +0.31->+0.18  a +0.23->+0.15  d +0.16->+0.09
+[orchestrator_node-4] [INFO] [1794613016.190959743] [orchestrator_node]: [aeb] v=+0.18 a=+0.15 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613016.192482015] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613017.530399339] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Casi lo tienes! La respuesta correcta es 24, Marcelo, y tenías un pequeño fallo de cálculo. ¡Vamos a intentar que la próxima vez te salga más fácil! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613018.411274381] [expression_faces_node]: [cámara] FER: 28 cuadros en 5.7 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613032.326029261] [orchestrator_node]: [aeb] v=+0.18 a=+0.15 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613032.328918954] [orchestrator_node]: Asistente [Neutral]: ¿Qué día celebran los cristianos la festividad de la Epifanía de Jesús?
+[expression_faces_node-2] [WARN] [1794613032.336629758] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613032.345207447] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613033.653181978] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.2 s (4.1 fps reales)
+[orchestrator_node-4] [INFO] [1794613038.745614064] [orchestrator_node]: [aeb] v=+0.18 a=+0.15 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613038.762058371] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613043.711459284] [communication_node]: [mic] transcrito: 'Diciembre uno, Diciembre uno.'
+[orchestrator_node-4] [INFO] [1794613043.717616687] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.89, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613043.729332827] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.5 s)
+[orchestrator_node-4] [INFO] [1794613043.731868484] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.95)
+[orchestrator_node-4] [INFO] [1794613043.734534362] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.01 a=+0.01 d=+0.00
+[orchestrator_node-4] [INFO] [1794613043.736987242] [orchestrator_node]: [afecto] v +0.29->+0.18  a +0.22->+0.14  d +0.15->+0.09
+[orchestrator_node-4] [INFO] [1794613043.742023778] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613043.743549513] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613045.037666227] [orchestrator_node]: Asistente: ¡Uy, qué bueno intentarlo! ¡Pero no, no es el uno de diciembre! La fecha correcta para la Epifanía es el seis de enero, ¡y seguro que puedes acertarla la próxima! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613045.987606726] [expression_faces_node]: [cámara] FER: 37 cuadros en 8.2 s (4.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613058.669954730] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613058.676562167] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613058.677476516] [orchestrator_node]: Asistente [Neutral]: ¿Quién es el protagonista de la película Rocky?
+[expression_faces_node-2] [WARN] [1794613058.688239567] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613059.549419092] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.7 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613063.475826824] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613063.477672169] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613072.757905760] [communication_node]: [mic] transcrito: 'Roque Balboa es Roque Balboa.'
+[orchestrator_node-4] [INFO] [1794613072.764420309] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.93, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613072.776118468] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.9 s)
+[orchestrator_node-4] [INFO] [1794613072.777516796] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.91)
+[orchestrator_node-4] [INFO] [1794613072.781037264] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.00 a=+0.01 d=+0.01
+[orchestrator_node-4] [INFO] [1794613072.783796623] [orchestrator_node]: [afecto] v +0.29->+0.18  a +0.22->+0.14  d +0.15->+0.09
+[orchestrator_node-4] [INFO] [1794613072.789555231] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613072.794959006] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613073.732240776] [orchestrator_node]: Asistente: ¡Esa respuesta estuvo genial! ¡Exacto, Sylvester Stallone es el protagonista de Rocky! ¡Qué buen ojo tienes! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613074.756649563] [expression_faces_node]: [cámara] FER: 59 cuadros en 12.1 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613083.500196624] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613083.518021018] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613083.535476988] [orchestrator_node]: Asistente [Neutral]: ¿De qué colores es la bandera de México?
+[expression_faces_node-2] [WARN] [1794613083.656039803] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613085.042072719] [expression_faces_node]: [cámara] FER: 5 cuadros en 2.4 s (2.1 fps reales)
+[orchestrator_node-4] [INFO] [1794613088.486955245] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613088.488598276] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613095.999089203] [communication_node]: [mic] transcrito: 'Los colores son la nega, rojo, blanco y verde.'
+[orchestrator_node-4] [INFO] [1794613096.003199002] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.92, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613096.014969419] [orchestrator_node]: [afecto] la camara no vio cara en la frase (4.9 s)
+[orchestrator_node-4] [INFO] [1794613096.016378321] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.72)
+[orchestrator_node-4] [INFO] [1794613096.020252140] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.05 a=+0.03 d=+0.02
+[orchestrator_node-4] [INFO] [1794613096.022326447] [orchestrator_node]: [afecto] v +0.29->+0.19  a +0.22->+0.14  d +0.15->+0.10
+[orchestrator_node-4] [INFO] [1794613096.026043858] [orchestrator_node]: [aeb] v=+0.19 a=+0.14 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613096.033945421] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613096.934418073] [orchestrator_node]: Asistente: ¡Qué bien! ¡Esa es la respuesta correcta! ¡Me alegro mucho de haber acertado contigo! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613098.006416399] [expression_faces_node]: [cámara] FER: 52 cuadros en 10.4 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613106.103181629] [orchestrator_node]: [aeb] v=+0.19 a=+0.14 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613106.106099544] [orchestrator_node]: Asistente [Neutral]: ¿Cuáles son los dos países con mayor cantidad de musulmanes?
+[expression_faces_node-2] [WARN] [1794613106.108731552] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613106.122532407] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613107.083857158] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794613112.189340786] [orchestrator_node]: [aeb] v=+0.19 a=+0.14 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613112.214799837] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613121.945131699] [communication_node]: [mic] transcrito: '¿la India?'
+[orchestrator_node-4] [INFO] [1794613121.950582549] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.45, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613121.962484188] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.0 s)
+[orchestrator_node-4] [INFO] [1794613121.963957238] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.68)
+[orchestrator_node-4] [INFO] [1794613121.967548872] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.18 a=+0.12 d=+0.09
+[orchestrator_node-4] [INFO] [1794613121.973722719] [orchestrator_node]: [afecto] v +0.30->+0.25  a +0.22->+0.18  d +0.15->+0.12
+[orchestrator_node-4] [INFO] [1794613121.980429008] [orchestrator_node]: [aeb] v=+0.25 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613121.984677343] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613122.820582355] [orchestrator_node]: Asistente: ¡Qué bien! ¡Justo lo que quería escuchar! ¡Vaya, has acertado! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613124.002512740] [expression_faces_node]: [cámara] FER: 55 cuadros en 12.7 s (4.3 fps reales)
+[orchestrator_node-4] [INFO] [1794613130.817178747] [orchestrator_node]: [aeb] v=+0.25 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613130.820404642] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el idioma más antiguo de los que sobreviven en Europa?
+[expression_faces_node-2] [WARN] [1794613130.821189936] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613130.831079398] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613131.641392655] [expression_faces_node]: [cámara] FER: 8 cuadros en 1.7 s (4.8 fps reales)
+[orchestrator_node-4] [INFO] [1794613135.809932253] [orchestrator_node]: [aeb] v=+0.25 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613135.811499080] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613160.995371894] [communication_node]: [mic] transcrito: 'y ah'
+[orchestrator_node-4] [INFO] [1794613161.010745261] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.44, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613161.025053706] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.15, 2 cuadros en 1.2 s)
+[orchestrator_node-4] [INFO] [1794613161.029750706] [orchestrator_node]: [afecto] la voz suena a tristeza (confianza 0.47)
+[orchestrator_node-4] [INFO] [1794613161.039325095] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.14 a=+0.03 d=-0.04
+[orchestrator_node-4] [INFO] [1794613161.045229258] [orchestrator_node]: [afecto] v +0.33->+0.14  a +0.24->+0.16  d +0.16->+0.08
+[orchestrator_node-4] [INFO] [1794613161.055136294] [orchestrator_node]: [aeb] v=+0.14 a=+0.16 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613161.058395874] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613162.010633716] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué bien has acertado, genial! Me alegra mucho que hayas respondido correctamente. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613162.986157932] [expression_faces_node]: [cámara] FER: 132 cuadros en 28.1 s (4.7 fps reales)
+[orchestrator_node-4] [INFO] [1794613172.263874033] [orchestrator_node]: [aeb] v=+0.14 a=+0.16 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613172.269863602] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la moneda oficial de Estados Unidos?
+[expression_faces_node-2] [WARN] [1794613172.271201116] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613172.303257529] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613173.197272169] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794613177.174637576] [orchestrator_node]: [aeb] v=+0.14 a=+0.16 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613177.176126292] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613203.756873406] [communication_node]: [mic] transcrito: 'El dólar es la moneda oficial de Estados Unidos.'
+[orchestrator_node-4] [INFO] [1794613203.765713650] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.97, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613203.778900581] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.12, 4 cuadros en 5.0 s)
+[orchestrator_node-4] [INFO] [1794613203.781108109] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.92)
+[orchestrator_node-4] [INFO] [1794613203.783742988] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.01 a=+0.01 d=+0.00
+[orchestrator_node-4] [INFO] [1794613203.787890491] [orchestrator_node]: [afecto] v +0.27->+0.16  a +0.23->+0.14  d +0.14->+0.09
+[orchestrator_node-4] [INFO] [1794613203.791643476] [orchestrator_node]: [aeb] v=+0.16 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613203.797374751] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613204.892651636] [orchestrator_node]: Asistente: ¡Perfecto! ¡Esa es la respuesta correcta, genial! Me alegro mucho de que lo hayas acertado, ¡estás brillando! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613205.911376463] [expression_faces_node]: [cámara] FER: 126 cuadros en 29.7 s (4.2 fps reales)
+[orchestrator_node-4] [INFO] [1794613215.904585760] [orchestrator_node]: [aeb] v=+0.16 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613215.907748692] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613215.914851795] [orchestrator_node]: Asistente [Neutral]: Un jugador compró 6 blusas que cuestan 4 reales cada una. ¿Cuánto gastó en blusas?
+[expression_faces_node-2] [WARN] [1794613215.920489810] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613216.835998590] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613223.924293842] [orchestrator_node]: [aeb] v=+0.16 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613223.926236501] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613232.900718637] [communication_node]: [mic] transcrito: 'veinticuatro, veinticuatro.'
+[orchestrator_node-4] [INFO] [1794613232.909189216] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.83, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613232.921024818] [orchestrator_node]: [afecto] la camara no vio cara en la frase (3.2 s)
+[orchestrator_node-4] [INFO] [1794613232.922504905] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.63)
+[orchestrator_node-4] [INFO] [1794613232.924732415] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.01 a=+0.05 d=+0.03
+[orchestrator_node-4] [INFO] [1794613232.926977555] [orchestrator_node]: [afecto] v +0.28->+0.17  a +0.22->+0.15  d +0.14->+0.10
+[orchestrator_node-4] [INFO] [1794613232.931605352] [orchestrator_node]: [aeb] v=+0.17 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613232.933496122] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613233.737190461] [orchestrator_node]: Asistente: ¡Eso es! ¡Exacto! ¡Qué bien has resuelto el problema! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613235.125483443] [expression_faces_node]: [cámara] FER: 57 cuadros en 12.1 s (4.7 fps reales)
+[orchestrator_node-4] [INFO] [1794613241.214530515] [orchestrator_node]: [aeb] v=+0.17 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613241.226285933] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613241.228074278] [orchestrator_node]: Asistente [Feliz]: ¿Cuál es el resultado de tres por seis?
+[expression_faces_node-2] [WARN] [1794613241.262842070] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613242.741639853] [expression_faces_node]: [cámara] FER: 7 cuadros en 2.5 s (2.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613245.940274880] [orchestrator_node]: [aeb] v=+0.17 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613245.941396857] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613264.111747575] [communication_node]: [mic] transcrito: 'dieciocho, dieciocho.'
+[orchestrator_node-4] [INFO] [1794613264.117378683] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.55, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613264.129136694] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.8 s)
+[orchestrator_node-4] [INFO] [1794613264.130582818] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.53)
+[orchestrator_node-4] [INFO] [1794613264.134371414] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=-0.05 a=+0.00 d=-0.02
+[orchestrator_node-4] [INFO] [1794613264.137733661] [orchestrator_node]: [afecto] v +0.29->+0.15  a +0.23->+0.14  d +0.15->+0.08
+[orchestrator_node-4] [INFO] [1794613264.141373147] [orchestrator_node]: [aeb] v=+0.15 a=+0.14 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613264.147579623] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613265.136583620] [orchestrator_node]: Asistente: ¡Perfecto! ¡Dieciocho, eso es genial! Me alegra muchísimo que hayas acertado, ¡estamos en marcha! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613266.463679615] [expression_faces_node]: [cámara] FER: 96 cuadros en 21.4 s (4.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613275.299108878] [orchestrator_node]: [aeb] v=+0.15 a=+0.14 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613275.304727226] [orchestrator_node]: Asistente [Neutral]: ¿En qué país se encuentra el famoso monumento Taj Mahal?
+[expression_faces_node-2] [WARN] [1794613275.304938948] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613275.316190516] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613276.165046922] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613280.487115671] [orchestrator_node]: [aeb] v=+0.15 a=+0.14 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613280.488350999] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613283.454633123] [communication_node]: [mic] transcrito: 'la India'
+[orchestrator_node-4] [INFO] [1794613283.464029179] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.40, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613283.476308725] [orchestrator_node]: [afecto] la camara no vio cara en la frase (0.9 s)
+[orchestrator_node-4] [INFO] [1794613283.479879156] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.83)
+[orchestrator_node-4] [INFO] [1794613283.483363012] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.09 a=+0.07 d=+0.05
+[orchestrator_node-4] [INFO] [1794613283.488597918] [orchestrator_node]: [afecto] v +0.23->+0.17  a +0.19->+0.14  d +0.12->+0.09
+[orchestrator_node-4] [INFO] [1794613283.498467529] [orchestrator_node]: [aeb] v=+0.17 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613283.505685353] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613284.266810503] [orchestrator_node]: Asistente: ¡Qué bien! ¡Exacto! ¡Lo has acertado, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613285.039500294] [expression_faces_node]: [cámara] FER: 27 cuadros en 5.4 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613291.155065820] [orchestrator_node]: [aeb] v=+0.17 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613291.158360511] [orchestrator_node]: Asistente [Neutral]: ¿Quién es Justin Timberlake?
+[expression_faces_node-2] [WARN] [1794613291.166160759] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613291.173682674] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613292.437204673] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.2 s (4.1 fps reales)
+[orchestrator_node-4] [INFO] [1794613294.991417824] [orchestrator_node]: [aeb] v=+0.17 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613295.012619835] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613300.590522074] [communication_node]: [mic] transcrito: '¿Un músico? un cantante.'
+[orchestrator_node-4] [INFO] [1794613300.605478313] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.96, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613300.626408085] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.26, 3 cuadros en 2.7 s)
+[orchestrator_node-4] [INFO] [1794613300.634147351] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.93)
+[orchestrator_node-4] [INFO] [1794613300.640694715] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.01 a=+0.02 d=+0.01
+[orchestrator_node-4] [INFO] [1794613300.649586088] [orchestrator_node]: [afecto] v +0.24->+0.14  a +0.19->+0.12  d +0.12->+0.08
+[orchestrator_node-4] [INFO] [1794613300.662106114] [orchestrator_node]: [aeb] v=+0.14 a=+0.12 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613300.672467130] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613301.554836592] [orchestrator_node]: Asistente: ¡Genial! ¡Eso estuvo perfecto! Me alegra muchísimo que hayas acertado, ¡eso es fantástico! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613302.542030559] [expression_faces_node]: [cámara] FER: 30 cuadros en 8.4 s (3.6 fps reales)
+[orchestrator_node-4] [INFO] [1794613310.755674988] [orchestrator_node]: [aeb] v=+0.14 a=+0.12 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613310.763563273] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la ciudad de los rascacielos?
+[expression_faces_node-2] [WARN] [1794613310.776094521] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613310.796318036] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613311.704747565] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.9 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794613315.434559533] [orchestrator_node]: [aeb] v=+0.14 a=+0.12 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613315.457241502] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613346.102335799] [communication_node]: [mic] transcrito: 'Sahara.'
+[orchestrator_node-4] [INFO] [1794613346.108447887] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.70, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613346.120212860] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.1 s)
+[orchestrator_node-4] [INFO] [1794613346.121662003] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.71)
+[orchestrator_node-4] [INFO] [1794613346.125544266] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=-0.01 a=+0.01 d=-0.00
+[orchestrator_node-4] [INFO] [1794613346.128795327] [orchestrator_node]: [afecto] v +0.31->+0.18  a +0.24->+0.15  d +0.16->+0.09
+[orchestrator_node-4] [INFO] [1794613346.132381258] [orchestrator_node]: [aeb] v=+0.18 a=+0.15 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613346.141049280] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613347.402897303] [orchestrator_node]: Asistente: ¡Uy, Sahara! ¡Qué desorientador! Nueva York es la ciudad de los rascacielos, y creo que deberías enfocar un poco más la atención, ¿no crees? Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613348.250178974] [expression_faces_node]: [cámara] FER: 147 cuadros en 33.7 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794613360.142659901] [orchestrator_node]: [aeb] v=+0.18 a=+0.15 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613360.148087343] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613360.154302134] [orchestrator_node]: Asistente [Neutral]: ¿Qué era el Concorde?
+[expression_faces_node-2] [WARN] [1794613360.160897368] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613361.411973303] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.2 s (4.1 fps reales)
+[orchestrator_node-4] [INFO] [1794613363.391228311] [orchestrator_node]: [aeb] v=+0.18 a=+0.15 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613363.395318425] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613380.751254698] [communication_node]: [mic] transcrito: '¿Un protagonista? ¿Una persona?'
+[orchestrator_node-4] [INFO] [1794613380.757721895] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.89, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613380.769748256] [orchestrator_node]: [afecto] la camara no vio cara en la frase (3.1 s)
+[orchestrator_node-4] [INFO] [1794613380.774173276] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.83)
+[orchestrator_node-4] [INFO] [1794613380.777020673] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.03 a=+0.02 d=+0.02
+[orchestrator_node-4] [INFO] [1794613380.780598159] [orchestrator_node]: [afecto] v +0.29->+0.19  a +0.22->+0.14  d +0.15->+0.09
+[orchestrator_node-4] [INFO] [1794613380.785732639] [orchestrator_node]: [aeb] v=+0.19 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613380.787584688] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613381.951668846] [orchestrator_node]: Asistente: ¡Uy, qué despiste! El Concorde no era una persona, ¡ni un protagonista! Era un avión supersónico, y seguro que te acuerdas de la siguiente. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613383.238590328] [expression_faces_node]: [cámara] FER: 92 cuadros en 20.7 s (4.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613394.236838245] [orchestrator_node]: [aeb] v=+0.19 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613394.244905733] [orchestrator_node]: Asistente [Neutral]: ¿Cuánto es 3 por 5?
+[expression_faces_node-2] [WARN] [1794613394.259735565] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613394.277568237] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613395.004640629] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.7 s (4.2 fps reales)
+[orchestrator_node-4] [INFO] [1794613397.781366148] [orchestrator_node]: [aeb] v=+0.19 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613397.782875994] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613400.709625732] [communication_node]: [mic] transcrito: 'Quince.'
+[orchestrator_node-4] [INFO] [1794613400.722648386] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.48, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613400.739197489] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.2 s)
+[orchestrator_node-4] [INFO] [1794613400.746648146] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.82)
+[orchestrator_node-4] [INFO] [1794613400.753759970] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.08 a=+0.07 d=+0.04
+[orchestrator_node-4] [INFO] [1794613400.763706451] [orchestrator_node]: [afecto] v +0.25->+0.18  a +0.19->+0.14  d +0.13->+0.09
+[orchestrator_node-4] [INFO] [1794613400.772647638] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613400.775994718] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613401.598915798] [orchestrator_node]: Asistente: ¡Genial! Exacto, esa era la respuesta. ¡Qué bien has acertado! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613402.659995074] [expression_faces_node]: [cámara] FER: 29 cuadros en 5.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613409.319425788] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613409.327983163] [orchestrator_node]: Asistente [Neutral]: ¿Cuánto vale el número pi?
+[expression_faces_node-2] [WARN] [1794613409.344855339] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613409.364127913] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613410.054169243] [expression_faces_node]: [cámara] FER: 8 cuadros en 1.6 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613413.275746868] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613413.278605616] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613419.659912881] [communication_node]: [mic] transcrito: 'tres punto catorce, quince y dieciséis.'
+[orchestrator_node-4] [INFO] [1794613419.675157544] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.94, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613419.690068135] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.26, 5 cuadros en 3.8 s)
+[orchestrator_node-4] [INFO] [1794613419.695232652] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.97)
+[orchestrator_node-4] [INFO] [1794613419.705492946] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.00 a=+0.02 d=+0.01
+[orchestrator_node-4] [INFO] [1794613419.712422346] [orchestrator_node]: [afecto] v +0.25->+0.15  a +0.19->+0.12  d +0.13->+0.08
+[orchestrator_node-4] [INFO] [1794613419.720495685] [orchestrator_node]: [aeb] v=+0.15 a=+0.12 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613419.725326407] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613420.648988377] [orchestrator_node]: Asistente: ¡Qué guay! ¡Lo has clavado, qué precisión! ¡Perfecto, una respuesta excelente! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613421.699943803] [expression_faces_node]: [cámara] FER: 36 cuadros en 9.3 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613429.683487931] [orchestrator_node]: [aeb] v=+0.15 a=+0.12 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613429.686889640] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se llama el proceso por el cual las plantas obtienen alimento?
+[expression_faces_node-2] [WARN] [1794613429.687958655] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613429.707493561] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613431.046200085] [expression_faces_node]: [cámara] FER: 10 cuadros en 2.3 s (4.3 fps reales)
+[orchestrator_node-4] [INFO] [1794613435.940329322] [orchestrator_node]: [aeb] v=+0.15 a=+0.12 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613435.941679983] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613450.296402544] [communication_node]: [mic] transcrito: 'Protosíntesis.'
+[orchestrator_node-4] [INFO] [1794613450.301903486] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.86, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613450.313754293] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.5 s)
+[orchestrator_node-4] [INFO] [1794613450.315570582] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.74)
+[orchestrator_node-4] [INFO] [1794613450.318911791] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.04 a=+0.03 d=+0.02
+[orchestrator_node-4] [INFO] [1794613450.321935946] [orchestrator_node]: [afecto] v +0.28->+0.18  a +0.21->+0.14  d +0.14->+0.09
+[orchestrator_node-4] [INFO] [1794613450.326333318] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613450.330384136] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613451.309181839] [orchestrator_node]: Asistente: ¡Eso es! ¡Exacto! ¡Qué buen acierto, genial! ¡Me alegro muchísimo de que hayas acertado! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613452.338603218] [expression_faces_node]: [cámara] FER: 79 cuadros en 17.3 s (4.6 fps reales)
+[orchestrator_node-4] [INFO] [1794613460.448312602] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613460.457839732] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se llama la capital de Mongolia?
+[expression_faces_node-2] [WARN] [1794613460.477121214] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613460.508951314] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613461.581070473] [expression_faces_node]: [cámara] FER: 4 cuadros en 2.1 s (1.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613465.093299759] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613465.095310529] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613469.496217808] [communication_node]: [mic] transcrito: 'Mongolia, Mongolia.'
+[orchestrator_node-4] [INFO] [1794613469.502611061] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.27, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613469.514636793] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.11, 1 cuadros en 1.7 s)
+[orchestrator_node-4] [INFO] [1794613469.516703896] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.96)
+[orchestrator_node-4] [INFO] [1794613469.522653484] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.04 a=+0.05 d=+0.02
+[orchestrator_node-4] [INFO] [1794613469.526149415] [orchestrator_node]: [afecto] v +0.25->+0.13  a +0.19->+0.13  d +0.13->+0.08
+[orchestrator_node-4] [INFO] [1794613469.531336673] [orchestrator_node]: [aeb] v=+0.13 a=+0.13 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613469.531523006] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613470.310862253] [orchestrator_node]: Asistente: ¡Eso es! ¡Bien hecho! ¡Qué respuesta más acertada, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613470.989707719] [expression_faces_node]: [cámara] FER: 34 cuadros en 6.9 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613478.013817774] [orchestrator_node]: [aeb] v=+0.13 a=+0.13 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613478.022487425] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se llama la estación espacial rusa?
+[expression_faces_node-2] [WARN] [1794613478.022698425] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613478.041499315] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613479.296173292] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.2 s (4.1 fps reales)
+[orchestrator_node-4] [INFO] [1794613482.635058114] [orchestrator_node]: [aeb] v=+0.13 a=+0.13 d=+0.08 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613482.638619749] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613491.800262129] [communication_node]: [mic] transcrito: 'el mier. el mier.'
+[orchestrator_node-4] [INFO] [1794613491.807853470] [orchestrator_node]: [afecto] el texto expresa enojo (confianza 0.40, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613491.819695832] [orchestrator_node]: [afecto] la camara no vio cara en la frase (3.1 s)
+[orchestrator_node-4] [INFO] [1794613491.821505325] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.65)
+[orchestrator_node-4] [INFO] [1794613491.824034741] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=-0.06 a=+0.16 d=+0.08
+[orchestrator_node-4] [INFO] [1794613491.826798212] [orchestrator_node]: [afecto] v +0.21->+0.11  a +0.18->+0.17  d +0.12->+0.10
+[orchestrator_node-4] [INFO] [1794613491.830976714] [orchestrator_node]: [aeb] v=+0.11 a=+0.17 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613491.837793503] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613493.043266428] [orchestrator_node]: Asistente: ¡Uy, qué despiste! No, no era eso, la estación espacial rusa se llama Mir. ¡Vamos a ver si la próxima te sale más fácil, eh! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613494.054098637] [expression_faces_node]: [cámara] FER: 61 cuadros en 12.3 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613504.943902509] [orchestrator_node]: [aeb] v=+0.11 a=+0.17 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613504.964426208] [orchestrator_node]: Asistente [Neutral]: Marcelo almacenó 2 cajas que contienen 5 tubos de pegamento cada una. ¿Cuántos tubos almacenó Marcelo?
+[expression_faces_node-2] [WARN] [1794613505.067001962] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613505.105227982] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613506.231859339] [expression_faces_node]: [cámara] FER: 4 cuadros en 2.2 s (1.8 fps reales)
+[orchestrator_node-4] [INFO] [1794613514.260784644] [orchestrator_node]: [aeb] v=+0.11 a=+0.17 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613514.262090250] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613528.100486758] [communication_node]: [mic] transcrito: 'diez, diez.'
+[orchestrator_node-4] [INFO] [1794613528.104981870] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.45, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613528.116888750] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.7 s)
+[orchestrator_node-4] [INFO] [1794613528.118964724] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.82)
+[orchestrator_node-4] [INFO] [1794613528.122499044] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.14 a=+0.10 d=+0.07
+[orchestrator_node-4] [INFO] [1794613528.124731887] [orchestrator_node]: [afecto] v +0.26->+0.21  a +0.24->+0.18  d +0.15->+0.12
+[orchestrator_node-4] [INFO] [1794613528.129282369] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613528.137531708] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613529.132421831] [orchestrator_node]: Asistente: ¡Genial! ¡Esa respuesta es perfecta, te has hecho con la victoria! ¡Qué bien que lo has resuelto! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613530.082440348] [expression_faces_node]: [cámara] FER: 82 cuadros en 16.8 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613538.673249106] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613538.681658889] [orchestrator_node]: Asistente [Neutral]: ¿Cuánto es 1 por 8?
+[expression_faces_node-2] [WARN] [1794613538.683307864] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613538.712079161] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613539.625364560] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613542.074840187] [orchestrator_node]: [aeb] v=+0.21 a=+0.18 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613542.077502862] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613545.767147226] [communication_node]: [mic] transcrito: 'Ocho.'
+[orchestrator_node-4] [INFO] [1794613545.773539868] [orchestrator_node]: [afecto] el texto expresa felicidad (confianza 0.34, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613545.785469155] [orchestrator_node]: [afecto] la camara no vio cara en la frase (0.9 s)
+[orchestrator_node-4] [INFO] [1794613545.791404836] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.72)
+[orchestrator_node-4] [INFO] [1794613545.794545139] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.11 a=+0.10 d=+0.07
+[orchestrator_node-4] [INFO] [1794613545.798369198] [orchestrator_node]: [afecto] v +0.27->+0.21  a +0.22->+0.17  d +0.14->+0.11
+[orchestrator_node-4] [INFO] [1794613545.803358624] [orchestrator_node]: [aeb] v=+0.21 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613545.807207202] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613546.628430880] [orchestrator_node]: Asistente: ¡Eso es! ¡Justo lo que buscaba! ¡Qué bien has respondido! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613547.402898294] [expression_faces_node]: [cámara] FER: 31 cuadros en 6.2 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613554.092043894] [orchestrator_node]: [aeb] v=+0.21 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613554.095327086] [orchestrator_node]: Asistente [Neutral]: Un cajón tiene 4 manzanas. ¿Cuántas manzanas habrá en 3 cajones?
+[expression_faces_node-2] [WARN] [1794613554.096986505] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613554.114132291] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613554.991489124] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613560.674312572] [orchestrator_node]: [aeb] v=+0.21 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613560.676715896] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613564.276595160] [communication_node]: [mic] transcrito: 'doce, doce, doce.'
+[orchestrator_node-4] [INFO] [1794613564.282309860] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.81, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613564.294056704] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.2 s)
+[orchestrator_node-4] [INFO] [1794613564.296882878] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.54)
+[orchestrator_node-4] [INFO] [1794613564.299927552] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.10 a=+0.07 d=+0.05
+[orchestrator_node-4] [INFO] [1794613564.303276909] [orchestrator_node]: [afecto] v +0.26->+0.20  a +0.21->+0.15  d +0.14->+0.10
+[orchestrator_node-4] [INFO] [1794613564.309339460] [orchestrator_node]: [aeb] v=+0.20 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613564.314200145] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613565.260219715] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué acierto, me encanta cuando todo sale bien! ¡Dos de tres, ya estamos en marcha! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613566.381815351] [expression_faces_node]: [cámara] FER: 33 cuadros en 6.6 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613574.984188435] [orchestrator_node]: [aeb] v=+0.20 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613574.987299627] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la capital de Dinamarca?
+[expression_faces_node-2] [WARN] [1794613574.995449503] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613575.007632456] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613575.900225286] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613578.840633843] [orchestrator_node]: [aeb] v=+0.20 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613578.844252199] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613598.434069113] [communication_node]: [mic] transcrito: 'Dinamarca.'
+[orchestrator_node-4] [INFO] [1794613598.437691673] [orchestrator_node]: [afecto] el texto expresa felicidad (confianza 0.41, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613598.449604924] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.2 s)
+[orchestrator_node-4] [INFO] [1794613598.451036233] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.86)
+[orchestrator_node-4] [INFO] [1794613598.453744815] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.14 a=+0.09 d=+0.06
+[orchestrator_node-4] [INFO] [1794613598.457630671] [orchestrator_node]: [afecto] v +0.30->+0.24  a +0.23->+0.17  d +0.15->+0.12
+[orchestrator_node-4] [INFO] [1794613598.462498744] [orchestrator_node]: [aeb] v=+0.24 a=+0.17 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613598.465988398] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613599.320802818] [orchestrator_node]: Asistente: ¡Eso es! ¡Me has dado en el blanco! ¡Qué bien has acertado, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613600.143580990] [expression_faces_node]: [cámara] FER: 109 cuadros en 22.2 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794613607.448612577] [orchestrator_node]: [aeb] v=+0.24 a=+0.17 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613607.452623413] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613607.462736300] [orchestrator_node]: Asistente [Neutral]: ¿Qué enfermedad padecía Stephen Hawking?
+[expression_faces_node-2] [WARN] [1794613607.463117299] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613608.277239597] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613611.993430951] [orchestrator_node]: [aeb] v=+0.24 a=+0.17 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613611.994994612] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613620.516404452] [communication_node]: [mic] transcrito: 'Scleoriosis.'
+[orchestrator_node-4] [INFO] [1794613620.523759905] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.65, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613620.535676748] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.3 s)
+[orchestrator_node-4] [INFO] [1794613620.537952165] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.96)
+[orchestrator_node-4] [INFO] [1794613620.542129520] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.00 a=+0.01 d=+0.00
+[orchestrator_node-4] [INFO] [1794613620.545434377] [orchestrator_node]: [afecto] v +0.29->+0.17  a +0.21->+0.13  d +0.14->+0.09
+[orchestrator_node-4] [INFO] [1794613620.548840957] [orchestrator_node]: [aeb] v=+0.17 a=+0.13 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613620.554167399] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613621.883680940] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Casi lo tienes! La respuesta correcta es Esclerosis Lateral Amiotrófica, no Sclerosís. ¡Vamos a ver si prestas más atención a los detalles, eh! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613623.499397882] [expression_faces_node]: [cámara] FER: 51 cuadros en 12.3 s (4.1 fps reales)
+[orchestrator_node-4] [INFO] [1794613636.356702324] [orchestrator_node]: [aeb] v=+0.17 a=+0.13 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613636.370294272] [orchestrator_node]: Asistente [Neutral]: ¿Qué es un ovíparo?
+[expression_faces_node-2] [WARN] [1794613636.419513250] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613636.464919501] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613637.685539127] [expression_faces_node]: [cámara] FER: 4 cuadros en 2.2 s (1.8 fps reales)
+[orchestrator_node-4] [INFO] [1794613640.102497991] [orchestrator_node]: [aeb] v=+0.17 a=+0.13 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613640.104884796] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613649.240170574] [communication_node]: [mic] transcrito: 'un animal.'
+[orchestrator_node-4] [INFO] [1794613649.248017062] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.42, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613649.259872758] [orchestrator_node]: [afecto] la camara no vio cara en la frase (0.8 s)
+[orchestrator_node-4] [INFO] [1794613649.262628766] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.50)
+[orchestrator_node-4] [INFO] [1794613649.267477303] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.08 a=+0.10 d=+0.05
+[orchestrator_node-4] [INFO] [1794613649.269889330] [orchestrator_node]: [afecto] v +0.29->+0.20  a +0.22->+0.17  d +0.14->+0.11
+[orchestrator_node-4] [INFO] [1794613649.274039333] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613649.278021318] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613650.673940844] [orchestrator_node]: Asistente: ¡Uy, qué pasa! ¡Casi! Un ovíparo es un animal que nace de un huevo, ¿sabes? ¡Pero un animal es muy general, como decir "verde"! Vamos a intentar otra vez, vale? Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613651.609883564] [expression_faces_node]: [cámara] FER: 59 cuadros en 12.4 s (4.8 fps reales)
+[orchestrator_node-4] [INFO] [1794613664.613417167] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613664.631704930] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613664.635641063] [orchestrator_node]: Asistente [Neutral]: ¿Qué significa FIFA?
+[expression_faces_node-2] [WARN] [1794613664.659928766] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613665.420242031] [expression_faces_node]: [cámara] FER: 6 cuadros en 1.7 s (3.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613668.412956682] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613668.413265903] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613683.372498087] [communication_node]: [mic] transcrito: 'internacional eh peruano'
+[orchestrator_node-4] [INFO] [1794613683.384803188] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.56, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613683.411001883] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.15, 4 cuadros en 3.5 s)
+[orchestrator_node-4] [INFO] [1794613683.418667261] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.97)
+[orchestrator_node-4] [INFO] [1794613683.425193736] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.01 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794613683.434298090] [orchestrator_node]: [afecto] v +0.30->+0.19  a +0.24->+0.16  d +0.15->+0.10
+[orchestrator_node-4] [INFO] [1794613683.444715328] [orchestrator_node]: [aeb] v=+0.19 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613683.452278262] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613684.741938974] [orchestrator_node]: Asistente: ¡Uy, qué interesante pista! FIFA no tiene nada que ver con Perú, ¡aunque el fútbol es genial en todos lados! La respuesta correcta es la Federación Internacional de Fútbol Asociación, ¿lo pillaste? ¡Vamos con la siguiente!
+[expression_faces_node-2] [WARN] [1794613685.821113958] [expression_faces_node]: [cámara] FER: 85 cuadros en 18.4 s (4.6 fps reales)
+[orchestrator_node-4] [INFO] [1794613701.128738025] [orchestrator_node]: [aeb] v=+0.19 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613701.132440900] [orchestrator_node]: Asistente [Neutral]: ¿Qué grasas hacen tan saludable el aceite de oliva?
+[expression_faces_node-2] [WARN] [1794613701.139736242] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613701.149111688] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613702.011193376] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613706.499675412] [orchestrator_node]: [aeb] v=+0.19 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613706.500327187] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613715.144302241] [communication_node]: [mic] transcrito: 'las aceitunas.'
+[orchestrator_node-4] [INFO] [1794613715.158561890] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.54, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613715.174375422] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.13, 1 cuadros en 3.0 s)
+[orchestrator_node-4] [INFO] [1794613715.184298958] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.63)
+[orchestrator_node-4] [INFO] [1794613715.191365412] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.06 a=+0.09 d=+0.05
+[orchestrator_node-4] [INFO] [1794613715.198710514] [orchestrator_node]: [afecto] v +0.30->+0.20  a +0.23->+0.18  d +0.15->+0.11
+[orchestrator_node-4] [INFO] [1794613715.209696842] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613715.225148893] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613716.896051938] [orchestrator_node]: Asistente: ¡Uy, qué buen intento! Las aceitunas son deliciosas, pero no exactamente la respuesta que buscábamos. La clave son las grasas monoinsaturadas, ¡son las que le dan ese toque saludable al aceite de oliva! ¡Sigue intentándolo y verás cómo te conviertes en un experto! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613718.160394877] [expression_faces_node]: [cámara] FER: 57 cuadros en 12.6 s (4.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613737.151961663] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613737.164568189] [orchestrator_node]: Asistente [Feliz]: En el escritorio de la profesora hay 5 estantes con 4 libros cada uno. ¿Cuántos libros hay en la estantería?
+[expression_faces_node-2] [WARN] [1794613737.178338914] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613737.223607777] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613738.252724472] [expression_faces_node]: [cámara] FER: 5 cuadros en 2.0 s (2.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613746.586180330] [orchestrator_node]: [aeb] v=+0.20 a=+0.18 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613746.615838716] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613750.571119781] [communication_node]: [mic] transcrito: 'veinte libros.'
+[orchestrator_node-4] [INFO] [1794613750.584097361] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.52, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613750.601694608] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.46, 4 cuadros en 1.9 s)
+[orchestrator_node-4] [INFO] [1794613750.607385808] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.79)
+[orchestrator_node-4] [INFO] [1794613750.615451833] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.09 a=+0.19 d=+0.11
+[orchestrator_node-4] [INFO] [1794613750.623430395] [orchestrator_node]: [afecto] v +0.30->+0.22  a +0.24->+0.22  d +0.16->+0.14
+[orchestrator_node-4] [INFO] [1794613750.637968302] [orchestrator_node]: [aeb] v=+0.22 a=+0.22 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613750.639872813] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613751.537106367] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué buena respuesta! Me alegro mucho de haber acertado, es fantástico. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613752.431411931] [expression_faces_node]: [cámara] FER: 22 cuadros en 6.7 s (3.3 fps reales)
+[orchestrator_node-4] [INFO] [1794613760.426134831] [orchestrator_node]: [aeb] v=+0.22 a=+0.22 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613760.435842090] [orchestrator_node]: Asistente [Feliz]: Joana necesita llenar 7 vasos de 9 ml con gaseosa. ¿Qué cantidad de gaseosa necesitará?
+[expression_faces_node-2] [WARN] [1794613760.438271451] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613760.450336608] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613761.206952239] [expression_faces_node]: [cámara] FER: 8 cuadros en 1.6 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613768.896244053] [orchestrator_node]: [aeb] v=+0.22 a=+0.22 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613768.897377234] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613773.955105064] [communication_node]: [mic] transcrito: 'sesenta y tres.'
+[orchestrator_node-4] [INFO] [1794613773.961234670] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.78, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613773.973053828] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.6 s)
+[orchestrator_node-4] [INFO] [1794613773.974677822] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.77)
+[orchestrator_node-4] [INFO] [1794613773.978617529] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=-0.00 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794613773.982962309] [orchestrator_node]: [afecto] v +0.31->+0.19  a +0.26->+0.17  d +0.17->+0.11
+[orchestrator_node-4] [INFO] [1794613773.990070319] [orchestrator_node]: [aeb] v=+0.19 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613773.991166203] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613774.832441898] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué bien has respondido! ¡Esa es la solución correcta, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613775.602979512] [expression_faces_node]: [cámara] FER: 34 cuadros en 7.7 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794613783.812394124] [orchestrator_node]: [aeb] v=+0.19 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613783.815928647] [orchestrator_node]: Asistente [Feliz]: En un frasco caben 5 bolígrafos. ¿Cuántos bolígrafos se necesitarán para llenar 3 frascos?
+[expression_faces_node-2] [WARN] [1794613783.819315431] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613783.830952516] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613784.657729728] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613792.136042149] [orchestrator_node]: [aeb] v=+0.19 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613792.145187170] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613796.635928345] [communication_node]: [mic] transcrito: 'quince.'
+[orchestrator_node-4] [INFO] [1794613796.669959862] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.48, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613796.699644248] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.48, 4 cuadros en 1.2 s)
+[orchestrator_node-4] [INFO] [1794613796.706228075] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.81)
+[orchestrator_node-4] [INFO] [1794613796.716676868] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.14 a=+0.19 d=+0.12
+[orchestrator_node-4] [INFO] [1794613796.725617463] [orchestrator_node]: [afecto] v +0.25->+0.21  a +0.21->+0.20  d +0.14->+0.13
+[orchestrator_node-4] [INFO] [1794613796.748588727] [orchestrator_node]: [aeb] v=+0.21 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613796.768363299] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613797.685207258] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué bien que acertaste, genial! ¡Eso demuestra que tienes una mente brillante! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613798.664431256] [expression_faces_node]: [cámara] FER: 27 cuadros en 7.4 s (3.6 fps reales)
+[orchestrator_node-4] [INFO] [1794613807.433915754] [orchestrator_node]: [aeb] v=+0.21 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613807.437384981] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la capital de Francia?
+[expression_faces_node-2] [WARN] [1794613807.446302873] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613807.454915136] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613808.363861922] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.9 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794613811.642691030] [orchestrator_node]: [aeb] v=+0.21 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613811.663644357] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613818.493199511] [communication_node]: [mic] transcrito: 'Indonesia'
+[orchestrator_node-4] [INFO] [1794613818.498988581] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.58, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613818.510947387] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.20, 2 cuadros en 3.7 s)
+[orchestrator_node-4] [INFO] [1794613818.513355545] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.87)
+[orchestrator_node-4] [INFO] [1794613818.517872787] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.01 a=+0.04 d=+0.01
+[orchestrator_node-4] [INFO] [1794613818.520626572] [orchestrator_node]: [afecto] v +0.26->+0.15  a +0.23->+0.15  d +0.15->+0.10
+[orchestrator_node-4] [INFO] [1794613818.524923352] [orchestrator_node]: [aeb] v=+0.15 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613818.530715867] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613819.780525695] [orchestrator_node]: Asistente: ¡Uy, Indonesia! ¡Eso es un auténtico desastre, vaya confusión! La capital de Francia es París, ¿lo recuerdas? ¡Vamos a intentar que la próxima aciertes, por favor! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613820.413145173] [expression_faces_node]: [cámara] FER: 43 cuadros en 9.7 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794613833.950380041] [orchestrator_node]: [aeb] v=+0.15 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613833.954141674] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613833.954223693] [orchestrator_node]: Asistente [Neutral]: ¿Quién ganó el mundial de 2014?
+[expression_faces_node-2] [WARN] [1794613833.968499045] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613834.857021039] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613838.678411804] [orchestrator_node]: [aeb] v=+0.15 a=+0.15 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613838.680537352] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613935.092111252] [communication_node]: [mic] transcrito: 'Alemania. Alemania, Alemania.'
+[orchestrator_node-4] [INFO] [1794613935.114951442] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.43, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613935.149142125] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.46, 7 cuadros en 2.3 s)
+[orchestrator_node-4] [INFO] [1794613935.157213928] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.67)
+[orchestrator_node-4] [INFO] [1794613935.165746191] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.42 a=+0.38 d=+0.25
+[orchestrator_node-4] [INFO] [1794613935.175937411] [orchestrator_node]: [afecto] v +0.37->+0.39  a +0.28->+0.32  d +0.19->+0.21
+[expression_faces_node-2] [WARN] [1794613935.201418925] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613935.202475735] [orchestrator_node]: [aeb] v=+0.39 a=+0.32 d=+0.21 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613936.279403969] [orchestrator_node]: Asistente: ¡Magnífico! ¡Esa respuesta es perfecta, genial! ¡Qué acierto, me alegro muchísimo de que lo acertaras! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613937.418042076] [expression_faces_node]: [cámara] FER: 419 cuadros en 99.7 s (4.2 fps reales)
+[orchestrator_node-4] [INFO] [1794613946.782587066] [orchestrator_node]: [aeb] v=+0.39 a=+0.32 d=+0.21 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613946.793971541] [orchestrator_node]: Asistente [Neutral]: ¿Quién escribió La Odisea?
+[expression_faces_node-2] [WARN] [1794613946.813441707] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613946.898528343] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613947.908026706] [expression_faces_node]: [cámara] FER: 5 cuadros en 2.0 s (2.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613950.639727990] [orchestrator_node]: [aeb] v=+0.39 a=+0.32 d=+0.21 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613950.642996940] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613955.527034345] [communication_node]: [mic] transcrito: 'Mero. Homero, mero.'
+[orchestrator_node-4] [INFO] [1794613955.543688115] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.87, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613955.569239331] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.26, 7 cuadros en 2.7 s)
+[orchestrator_node-4] [INFO] [1794613955.580686861] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.63)
+[orchestrator_node-4] [INFO] [1794613955.592733982] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.24 a=+0.22 d=+0.14
+[orchestrator_node-4] [INFO] [1794613955.605652099] [orchestrator_node]: [afecto] v +0.39->+0.33  a +0.31->+0.28  d +0.21->+0.18
+[orchestrator_node-4] [INFO] [1794613955.620907707] [orchestrator_node]: [aeb] v=+0.33 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613955.723334276] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613956.406515559] [orchestrator_node]: Asistente: ¡Qué pasada! ¡Lo acierto! ¡Brillante respuesta, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613957.233456790] [expression_faces_node]: [cámara] FER: 30 cuadros en 7.6 s (4.0 fps reales)
+[orchestrator_node-4] [INFO] [1794613964.104189674] [orchestrator_node]: [aeb] v=+0.33 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613964.122866862] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613964.144912907] [orchestrator_node]: Asistente [Neutral]: ¿Quién es el autor de el Quijote?
+[expression_faces_node-2] [WARN] [1794613964.172915040] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613965.214469557] [expression_faces_node]: [cámara] FER: 7 cuadros en 2.0 s (3.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613968.151469534] [orchestrator_node]: [aeb] v=+0.33 a=+0.28 d=+0.18 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613968.152506456] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794613973.057245374] [communication_node]: [mic] transcrito: 'Mm.'
+[orchestrator_node-4] [INFO] [1794613973.074185457] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.40, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794613973.091546595] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.03, 2 cuadros en 0.6 s)
+[orchestrator_node-4] [INFO] [1794613973.099512916] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.90)
+[orchestrator_node-4] [INFO] [1794613973.104955043] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.03 a=+0.04 d=+0.02
+[orchestrator_node-4] [INFO] [1794613973.112438848] [orchestrator_node]: [afecto] v +0.35->+0.22  a +0.28->+0.19  d +0.19->+0.12
+[orchestrator_node-4] [INFO] [1794613973.123851026] [orchestrator_node]: [aeb] v=+0.22 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613973.222639628] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794613974.063292417] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué acierto, genial! Me alegro mucho de que acertaras, estás teniendo un ritmo increíble. Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794613975.122588718] [expression_faces_node]: [cámara] FER: 35 cuadros en 8.0 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794613984.091082618] [orchestrator_node]: [aeb] v=+0.22 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794613984.108180719] [orchestrator_node]: Asistente [Neutral]: Si 50 es el 100%, ¿cuánto es el 90%?
+[expression_faces_node-2] [WARN] [1794613984.126660111] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613984.176568716] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794613984.990874903] [expression_faces_node]: [cámara] FER: 6 cuadros en 1.7 s (3.5 fps reales)
+[orchestrator_node-4] [INFO] [1794613990.128629888] [orchestrator_node]: [aeb] v=+0.22 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794613990.158639514] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614011.631420935] [communication_node]: [mic] transcrito: 'cuarenta y cinco, cuarenta y cinco.'
+[orchestrator_node-4] [INFO] [1794614011.650495547] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.81, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614011.664518475] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.0 s)
+[orchestrator_node-4] [INFO] [1794614011.670079064] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.63)
+[orchestrator_node-4] [INFO] [1794614011.680507746] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=-0.01 a=+0.05 d=+0.03
+[orchestrator_node-4] [INFO] [1794614011.685416024] [orchestrator_node]: [afecto] v +0.31->+0.18  a +0.24->+0.17  d +0.16->+0.11
+[orchestrator_node-4] [INFO] [1794614011.696715184] [orchestrator_node]: [aeb] v=+0.18 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614011.708329251] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614012.555410163] [orchestrator_node]: Asistente: ¡Perfecto! ¡Esa es la respuesta correcta! ¡Qué bien has acertado, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614013.541319858] [expression_faces_node]: [cámara] FER: 92 cuadros en 24.3 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794614021.603927015] [orchestrator_node]: [aeb] v=+0.18 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614021.607102725] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el río más largo del mundo?
+[expression_faces_node-2] [WARN] [1794614021.611867948] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614021.623240645] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614022.842185240] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.1 s (4.3 fps reales)
+[orchestrator_node-4] [INFO] [1794614026.022509856] [orchestrator_node]: [aeb] v=+0.18 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614026.028540907] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614034.055191814] [communication_node]: [mic] transcrito: 'en la Amazonas, el Amazonas,'
+[orchestrator_node-4] [INFO] [1794614034.060585701] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.88, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614034.072444433] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.5 s)
+[orchestrator_node-4] [INFO] [1794614034.074326592] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.59)
+[orchestrator_node-4] [INFO] [1794614034.076686269] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.07 a=+0.05 d=+0.03
+[orchestrator_node-4] [INFO] [1794614034.078957389] [orchestrator_node]: [afecto] v +0.25->+0.18  a +0.21->+0.14  d +0.14->+0.09
+[orchestrator_node-4] [INFO] [1794614034.082449746] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614034.090802733] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614035.060808044] [orchestrator_node]: Asistente: ¡Genial! ¡Exacto! ¡Qué acierto! Me alegra muchísimo que hayas acertado, ¡estás brillando! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614036.056840773] [expression_faces_node]: [cámara] FER: 54 cuadros en 10.9 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794614044.259554948] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614044.278497542] [orchestrator_node]: Asistente [Neutral]: En la escuela de Alice hay 3 aulas, y en cada una hay 8 sillas. ¿Cuántas sillas hay en la escuela de Alice?
+[expression_faces_node-2] [WARN] [1794614044.290577644] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614044.312094172] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614045.068653081] [expression_faces_node]: [cámara] FER: 5 cuadros en 1.7 s (2.9 fps reales)
+[orchestrator_node-4] [INFO] [1794614053.358760216] [orchestrator_node]: [aeb] v=+0.18 a=+0.14 d=+0.09 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614053.393320917] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614094.594979680] [communication_node]: [mic] transcrito: 'veinticuatro, veinticuatro.'
+[orchestrator_node-4] [INFO] [1794614094.600031161] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.83, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614094.611789764] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.9 s)
+[orchestrator_node-4] [INFO] [1794614094.613350647] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.86)
+[orchestrator_node-4] [INFO] [1794614094.617221132] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.01 a=+0.02 d=+0.01
+[orchestrator_node-4] [INFO] [1794614094.619435623] [orchestrator_node]: [afecto] v +0.32->+0.20  a +0.25->+0.16  d +0.16->+0.10
+[orchestrator_node-4] [INFO] [1794614094.624942176] [orchestrator_node]: [aeb] v=+0.20 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614094.627552426] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614095.577830664] [orchestrator_node]: Asistente: ¡Excelente! ¡Qué bien has resuelto la pregunta! ¡Me alegro mucho de tu acierto, es fantástico! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614096.645031935] [expression_faces_node]: [cámara] FER: 200 cuadros en 44.2 s (4.5 fps reales)
+[orchestrator_node-4] [INFO] [1794614105.175527332] [orchestrator_node]: [aeb] v=+0.20 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614105.179523261] [orchestrator_node]: Asistente [Neutral]: ¿En qué lugar del cuerpo se produce la insulina?
+[expression_faces_node-2] [WARN] [1794614105.181597938] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614105.198083894] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614106.245705592] [expression_faces_node]: [cámara] FER: 7 cuadros en 2.0 s (3.5 fps reales)
+[orchestrator_node-4] [INFO] [1794614110.422318121] [orchestrator_node]: [aeb] v=+0.20 a=+0.16 d=+0.10 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614110.423811245] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614127.001504563] [communication_node]: [mic] transcrito: 'el pan creas, el pan creas.'
+[orchestrator_node-4] [INFO] [1794614127.006594507] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.84, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614127.018532239] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.59, 3 cuadros en 3.0 s)
+[orchestrator_node-4] [INFO] [1794614127.020309454] [orchestrator_node]: [afecto] la voz suena a felicidad (confianza 0.21)
+[orchestrator_node-4] [INFO] [1794614127.023493997] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.22 a=+0.23 d=+0.15
+[orchestrator_node-4] [INFO] [1794614127.026386227] [orchestrator_node]: [afecto] v +0.30->+0.27  a +0.23->+0.23  d +0.15->+0.15
+[orchestrator_node-4] [INFO] [1794614127.030399952] [orchestrator_node]: [aeb] v=+0.27 a=+0.23 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614127.035602543] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614128.424920632] [orchestrator_node]: Asistente: ¡Uy, qué despiste! ¡No, no se produce en el pan, eh? La respuesta correcta es el páncreas, ¡es donde realmente trabaja la insulina! Sigue atento y no dejes escapar otra pregunta, vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614129.320220286] [expression_faces_node]: [cámara] FER: 78 cuadros en 19.9 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794614143.675647066] [orchestrator_node]: [aeb] v=+0.27 a=+0.23 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614143.682547151] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la capital de Canadá?
+[expression_faces_node-2] [WARN] [1794614143.683152593] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614143.691696653] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614144.912099353] [expression_faces_node]: [cámara] FER: 9 cuadros en 2.1 s (4.2 fps reales)
+[orchestrator_node-4] [INFO] [1794614147.531890549] [orchestrator_node]: [aeb] v=+0.27 a=+0.23 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614147.533952134] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614153.366401154] [communication_node]: [mic] transcrito: 'Canadá'
+[orchestrator_node-4] [INFO] [1794614153.373027888] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.26, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614153.384824121] [orchestrator_node]: [afecto] la camara no vio cara en la frase (1.7 s)
+[orchestrator_node-4] [INFO] [1794614153.386430818] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.66)
+[orchestrator_node-4] [INFO] [1794614153.389226993] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=+0.15 a=+0.11 d=+0.08
+[orchestrator_node-4] [INFO] [1794614153.392819646] [orchestrator_node]: [afecto] v +0.34->+0.26  a +0.27->+0.21  d +0.18->+0.14
+[orchestrator_node-4] [INFO] [1794614153.398381291] [orchestrator_node]: [aeb] v=+0.26 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614153.400210136] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614154.528808615] [orchestrator_node]: Asistente: ¡Uy, qué pasa! Canadá es un país enorme, ¡pero la capital no es Canadá! La respuesta correcta es Ottawa, ¡y seguro que puedes acertarla la próxima! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614155.369451830] [expression_faces_node]: [cámara] FER: 44 cuadros en 8.8 s (5.0 fps reales)
+[orchestrator_node-4] [INFO] [1794614166.900956625] [orchestrator_node]: [aeb] v=+0.26 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614166.905035110] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es el nombre de la lengua oficial en china?
+[expression_faces_node-2] [WARN] [1794614166.919094593] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614166.931537860] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614167.903400367] [expression_faces_node]: [cámara] FER: 8 cuadros en 1.8 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794614171.655429732] [orchestrator_node]: [aeb] v=+0.26 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614171.657005559] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614181.494431750] [communication_node]: [mic] transcrito: 'el chino mandarín, chino mandarín.'
+[orchestrator_node-4] [INFO] [1794614181.499575897] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.89, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614181.511438426] [orchestrator_node]: [afecto] la camara no vio cara en la frase (2.2 s)
+[orchestrator_node-4] [INFO] [1794614181.512869531] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.59)
+[orchestrator_node-4] [INFO] [1794614181.517199330] [orchestrator_node]: [afecto] usuario (fusion de TER+SER): v=-0.01 a=+0.05 d=+0.02
+[orchestrator_node-4] [INFO] [1794614181.522030700] [orchestrator_node]: [afecto] v +0.33->+0.20  a +0.25->+0.17  d +0.17->+0.11
+[orchestrator_node-4] [INFO] [1794614181.528634860] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614181.531757274] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614182.253429427] [orchestrator_node]: Asistente: ¡Bien hecho! ¡Esa es la respuesta correcta, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614183.125356948] [expression_faces_node]: [cámara] FER: 57 cuadros en 12.4 s (4.6 fps reales)
+[orchestrator_node-4] [INFO] [1794614189.253388204] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614189.257504762] [orchestrator_node]: Asistente [Feliz]: Un cajón tiene 8 manzanas. ¿Cuántas manzanas habrá en 2 cajones?
+[expression_faces_node-2] [WARN] [1794614189.261547802] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614189.273924144] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614190.264101988] [expression_faces_node]: [cámara] FER: 9 cuadros en 1.9 s (4.9 fps reales)
+[orchestrator_node-4] [INFO] [1794614195.857727982] [orchestrator_node]: [aeb] v=+0.20 a=+0.17 d=+0.11 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614195.866275357] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614221.616814679] [communication_node]: [mic] transcrito: 'dieciséis, dieciséis.'
+[orchestrator_node-4] [INFO] [1794614221.661686636] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.73, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614221.692109815] [orchestrator_node]: [afecto] la camara vio neutral (confianza 0.11, 8 cuadros en 3.1 s)
+[orchestrator_node-4] [INFO] [1794614221.703897140] [orchestrator_node]: [afecto] la voz suena a enojo (confianza 0.74)
+[orchestrator_node-4] [INFO] [1794614221.715259837] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.19 a=+0.28 d=+0.13
+[orchestrator_node-4] [INFO] [1794614221.725212410] [orchestrator_node]: [afecto] v +0.30->+0.11  a +0.24->+0.26  d +0.16->+0.14
+[orchestrator_node-4] [INFO] [1794614221.742062253] [orchestrator_node]: [aeb] v=+0.11 a=+0.26 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614221.746821438] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614222.678337286] [orchestrator_node]: Asistente: ¡Excelente! ¡Esa es la respuesta correcta! Me alegra mucho haber acertado, ¡qué bien! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614223.729483730] [expression_faces_node]: [cámara] FER: 128 cuadros en 28.8 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794614232.023008259] [orchestrator_node]: [aeb] v=+0.11 a=+0.26 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614232.026838263] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la moneda del Reino Unido?
+[expression_faces_node-2] [WARN] [1794614232.029916103] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614232.039200030] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614232.826482765] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794614236.205110601] [orchestrator_node]: [aeb] v=+0.11 a=+0.26 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614236.211001431] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614239.848050181] [communication_node]: [mic] transcrito: 'la libra. la libra.'
+[orchestrator_node-4] [INFO] [1794614239.858966788] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.85, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614239.890928739] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.88, 6 cuadros en 2.0 s)
+[orchestrator_node-4] [INFO] [1794614239.899404169] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.40)
+[orchestrator_node-4] [INFO] [1794614239.908653819] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.31 a=+0.24 d=+0.16
+[orchestrator_node-4] [INFO] [1794614239.928962963] [orchestrator_node]: [afecto] v +0.19->+0.24  a +0.27->+0.26  d +0.16->+0.16
+[orchestrator_node-4] [INFO] [1794614239.939028943] [orchestrator_node]: [aeb] v=+0.24 a=+0.26 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614239.965511971] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614240.756372563] [orchestrator_node]: Asistente: ¡Eso es! ¡Exacto! ¡Qué bien has acertado, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614242.021319129] [expression_faces_node]: [cámara] FER: 22 cuadros en 6.7 s (3.3 fps reales)
+[orchestrator_node-4] [INFO] [1794614248.283496814] [orchestrator_node]: [aeb] v=+0.24 a=+0.26 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614248.294120329] [orchestrator_node]: Asistente [Neutral]: ¿En qué isla está situado el Teide?
+[expression_faces_node-2] [WARN] [1794614248.300245343] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614248.342939901] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614249.495552399] [expression_faces_node]: [cámara] FER: 7 cuadros en 2.1 s (3.3 fps reales)
+[orchestrator_node-4] [INFO] [1794614252.652593790] [orchestrator_node]: [aeb] v=+0.24 a=+0.26 d=+0.16 -> felicidad_L2 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614252.659386523] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614265.036332774] [communication_node]: [mic] transcrito: 'en el océano Atlántico. No sé, no sé.'
+[orchestrator_node-4] [INFO] [1794614265.051338087] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.79, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614265.109470753] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.17, 12 cuadros en 6.0 s)
+[orchestrator_node-4] [INFO] [1794614265.116124208] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.47)
+[orchestrator_node-4] [INFO] [1794614265.127339776] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.04 a=+0.09 d=+0.05
+[orchestrator_node-4] [INFO] [1794614265.138948454] [orchestrator_node]: [afecto] v +0.32->+0.21  a +0.28->+0.20  d +0.18->+0.13
+[orchestrator_node-4] [INFO] [1794614265.164312134] [orchestrator_node]: [aeb] v=+0.21 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614265.182409232] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614266.406147308] [orchestrator_node]: Asistente: ¡Uy, qué pasada! ¡Eso no era! El Teide está en Tenerife, ¿sabes? ¡Es un poco más específico que el océano Atlántico, eh? Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614267.661224450] [expression_faces_node]: [cámara] FER: 61 cuadros en 15.9 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794614278.613859839] [orchestrator_node]: [aeb] v=+0.21 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614278.620047815] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614278.620369999] [orchestrator_node]: Asistente [Neutral]: ¿Qué es un animal carnívoro?
+[expression_faces_node-2] [WARN] [1794614278.633156561] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614279.528877584] [expression_faces_node]: [cámara] FER: 8 cuadros en 1.8 s (4.4 fps reales)
+[orchestrator_node-4] [INFO] [1794614282.322197316] [orchestrator_node]: [aeb] v=+0.21 a=+0.20 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614282.326028394] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614289.140508402] [communication_node]: [mic] transcrito: 'animal carnívoro es aquel que come carne, carne.'
+[orchestrator_node-4] [INFO] [1794614289.159588643] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.67, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614289.179097661] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.20, 7 cuadros en 4.4 s)
+[orchestrator_node-4] [INFO] [1794614289.188821679] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.45)
+[orchestrator_node-4] [INFO] [1794614289.194316621] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.09 a=+0.14 d=+0.08
+[orchestrator_node-4] [INFO] [1794614289.204627341] [orchestrator_node]: [afecto] v +0.31->+0.22  a +0.25->+0.21  d +0.17->+0.13
+[orchestrator_node-4] [INFO] [1794614289.218243640] [orchestrator_node]: [aeb] v=+0.22 a=+0.21 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614289.222955307] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614290.307199939] [orchestrator_node]: Asistente: ¡Genial! ¡Esa respuesta era perfecta, me alegro muchísimo de que lo acertaras! ¡Qué bien que tienes un buen conocimiento sobre los animales! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614291.191881151] [expression_faces_node]: [cámara] FER: 34 cuadros en 9.7 s (3.5 fps reales)
+[orchestrator_node-4] [INFO] [1794614302.523958453] [orchestrator_node]: [aeb] v=+0.22 a=+0.21 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614302.530927871] [orchestrator_node]: Asistente [Neutral]: ¿En que fecha ocurrió la masacre de Tlatelolco?
+[expression_faces_node-2] [WARN] [1794614302.541073554] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614302.577898079] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614303.343234343] [expression_faces_node]: [cámara] FER: 5 cuadros en 1.7 s (2.9 fps reales)
+[orchestrator_node-4] [INFO] [1794614307.532924471] [orchestrator_node]: [aeb] v=+0.22 a=+0.21 d=+0.13 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614307.540830403] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614321.874480805] [communication_node]: [mic] transcrito: 'Estoy seguro, no, no'
+[orchestrator_node-4] [INFO] [1794614321.892365940] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.52, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614321.918746968] [orchestrator_node]: [afecto] la camara vio enojo (confianza 0.19, 10 cuadros en 5.2 s)
+[orchestrator_node-4] [INFO] [1794614321.922970915] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.38)
+[orchestrator_node-4] [INFO] [1794614321.928182006] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=-0.02 a=+0.12 d=+0.05
+[orchestrator_node-4] [INFO] [1794614321.934349241] [orchestrator_node]: [afecto] v +0.31->+0.18  a +0.26->+0.20  d +0.17->+0.12
+[orchestrator_node-4] [INFO] [1794614321.942650154] [orchestrator_node]: [aeb] v=+0.18 a=+0.20 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614321.961945913] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614322.725846682] [orchestrator_node]: Asistente: ¡Eso es! ¡Justo! ¡Qué bien has acertado, genial! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614323.523387285] [expression_faces_node]: [cámara] FER: 66 cuadros en 16.9 s (3.9 fps reales)
+[orchestrator_node-4] [INFO] [1794614330.139531888] [orchestrator_node]: [aeb] v=+0.18 a=+0.20 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614330.145950252] [orchestrator_node]: Asistente [Neutral]: ¿Cuál es la capital de Argentina?
+[expression_faces_node-2] [WARN] [1794614330.147161970] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614330.166172323] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614331.641943913] [expression_faces_node]: [cámara] FER: 7 cuadros en 2.3 s (3.0 fps reales)
+[expression_faces_node-2] [WARN] [1794614334.724046648] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614334.724046685] [orchestrator_node]: [aeb] v=+0.18 a=+0.20 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[communication_node-1] [INFO] [1794614342.227579490] [communication_node]: [mic] transcrito: 'mitad de Argentina es el Buenos Aires, Buenos Aires.'
+[orchestrator_node-4] [INFO] [1794614342.244035723] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.96, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614342.261571526] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.42, 9 cuadros en 4.6 s)
+[orchestrator_node-4] [INFO] [1794614342.269155293] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.48)
+[orchestrator_node-4] [INFO] [1794614342.276568968] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.08 a=+0.14 d=+0.09
+[orchestrator_node-4] [INFO] [1794614342.283683311] [orchestrator_node]: [afecto] v +0.24->+0.18  a +0.23->+0.19  d +0.14->+0.12
+[orchestrator_node-4] [INFO] [1794614342.291340226] [orchestrator_node]: [aeb] v=+0.18 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614342.302862738] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614343.061674138] [orchestrator_node]: Asistente: ¡Eso es! ¡Has acertado! ¡Qué bien, qué bien! Vamos con la siguiente.
+[expression_faces_node-2] [WARN] [1794614343.827737510] [expression_faces_node]: [cámara] FER: 36 cuadros en 10.0 s (3.6 fps reales)
+[orchestrator_node-4] [INFO] [1794614349.194982095] [orchestrator_node]: [aeb] v=+0.18 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614349.197694826] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614349.197723900] [orchestrator_node]: Asistente [Neutral]: En la granja de José hay 8 vacas lecheras. Cada vaca produce 3 litros de leche. ¿Cuántos litros de leche se producen en total?
+[expression_faces_node-2] [WARN] [1794614349.206546699] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614350.158821171] [expression_faces_node]: [cámara] FER: 7 cuadros en 1.8 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794614360.187612035] [orchestrator_node]: [aeb] v=+0.18 a=+0.19 d=+0.12 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614360.199119194] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614368.803093846] [communication_node]: [mic] transcrito: 'veinticuatro, veinticuatro.'
+[orchestrator_node-4] [INFO] [1794614368.828042547] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.83, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614368.858996187] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.46, 4 cuadros en 2.0 s)
+[orchestrator_node-4] [INFO] [1794614368.868663428] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.43)
+[orchestrator_node-4] [INFO] [1794614368.874356498] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.22 a=+0.19 d=+0.13
+[orchestrator_node-4] [INFO] [1794614368.884597440] [orchestrator_node]: [afecto] v +0.29->+0.26  a +0.25->+0.23  d +0.16->+0.15
+[orchestrator_node-4] [INFO] [1794614368.896480062] [orchestrator_node]: [aeb] v=+0.26 a=+0.23 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614368.913304441] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614369.742243276] [orchestrator_node]: Asistente: ¡Qué guay! ¡Acabamos de acertar, genial! ¡Vamos a seguir jugando!
+[expression_faces_node-2] [WARN] [1794614370.869595278] [expression_faces_node]: [cámara] FER: 43 cuadros en 11.6 s (3.7 fps reales)
+[orchestrator_node-4] [INFO] [1794614376.408498853] [orchestrator_node]: [aeb] v=+0.26 a=+0.23 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614376.414915624] [orchestrator_node]: Asistente [Neutral]: ¿Cómo se llama el himno nacional de Francia?
+[expression_faces_node-2] [WARN] [1794614376.434170180] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614376.475960057] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614377.372338095] [expression_faces_node]: [cámara] FER: 6 cuadros en 1.9 s (3.1 fps reales)
+[orchestrator_node-4] [INFO] [1794614381.410212343] [orchestrator_node]: [aeb] v=+0.26 a=+0.23 d=+0.15 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614381.424315381] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[communication_node-1] [INFO] [1794614389.080077176] [communication_node]: [mic] transcrito: 'el himno. el himno.'
+[orchestrator_node-4] [INFO] [1794614389.086687280] [orchestrator_node]: [afecto] el texto expresa neutral (confianza 0.91, RoBERTuito, frase directa)
+[orchestrator_node-4] [INFO] [1794614389.098530049] [orchestrator_node]: [afecto] la camara vio felicidad (confianza 0.34, 5 cuadros en 2.2 s)
+[orchestrator_node-4] [INFO] [1794614389.101887944] [orchestrator_node]: [afecto] la voz suena a neutral (confianza 0.48)
+[orchestrator_node-4] [INFO] [1794614389.105081876] [orchestrator_node]: [afecto] usuario (fusion de TER+FER+SER): v=+0.15 a=+0.14 d=+0.10
+[orchestrator_node-4] [INFO] [1794614389.108828195] [orchestrator_node]: [afecto] v +0.30->+0.24  a +0.25->+0.21  d +0.16->+0.14
+[orchestrator_node-4] [INFO] [1794614389.115273744] [orchestrator_node]: [aeb] v=+0.24 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614389.119192933] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [INFO] [1794614389.882267650] [orchestrator_node]: Asistente: ¡Perfecto! ¡Qué acierto, esto es genial! Vamos a seguir, ¿vale?
+[expression_faces_node-2] [WARN] [1794614390.609017376] [expression_faces_node]: [cámara] FER: 38 cuadros en 10.1 s (3.8 fps reales)
+[orchestrator_node-4] [INFO] [1794614396.522831881] [orchestrator_node]: [aeb] v=+0.24 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[orchestrator_node-4] [INFO] [1794614396.534091875] [orchestrator_node]: Asistente [Neutral]: ¿Qué año llegó Cristóbal Colón a América?
+[expression_faces_node-2] [WARN] [1794614396.563524947] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614396.575291772] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[expression_faces_node-2] [WARN] [1794614397.543549997] [expression_faces_node]: [cámara] FER: 6 cuadros en 1.9 s (3.2 fps reales)
+[orchestrator_node-4] [INFO] [1794614401.408741297] [orchestrator_node]: [aeb] v=+0.24 a=+0.21 d=+0.14 -> felicidad_L1 (cara happy, movimiento None)
+[expression_faces_node-2] [WARN] [1794614401.414516275] [expression_faces_node]: [display] mpv huérfano de otra corrida sigue vivo -- lo reuso
+[orchestrator_node-4] [frases.py] 148 frases cargadas de data/frases/.
+[orchestrator_node-4] [preguntas.py] 211 preguntas cargadas en memoria.
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Rusia' usuario='Brasil. Brasil es el país más grande del mundo.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Washington DC' usuario='Casa Blanca está en Washington D. C.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Camp Nou' usuario='no, eh, no' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Piel de animales' usuario='Piel de animales, piel de animales.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='81' usuario='ochenta y uno, ochenta y uno.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Tierra' usuario='Venos, Venus, Venus, es Venus.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Judas' usuario='Pedro, Pedro, Pedro.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='42' usuario='cuarenta y dos.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Pinocho' usuario='pinocho.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='mentiroso' usuario='una persona que tiene la capacidad de ser alguien.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='21' usuario='veintiuno, veintiuno. es veintiuno.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='15' usuario='quince sillas. quince sillas. quince sillas. U' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Pedro Sánchez' usuario='Alfonso, Alfonso Werther.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='24' usuario='veintiocho.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='6 de enero' usuario='Diciembre uno, Diciembre uno.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Sylvester Stallone' usuario='Roque Balboa es Roque Balboa.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Verde blanco rojo' usuario='Los colores son la nega, rojo, blanco y verde.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Indonesia India' usuario='¿la India?' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Vasco' usuario='y ah' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Dólar' usuario='El dólar es la moneda oficial de Estados Unidos.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='24' usuario='veinticuatro, veinticuatro.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='18' usuario='dieciocho, dieciocho.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='India' usuario='la India' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='cantante' usuario='¿Un músico? un cantante.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Nueva York' usuario='Sahara.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Avión supersónico' usuario='¿Un protagonista? ¿Una persona?' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='15' usuario='Quince.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='3,1416' usuario='tres punto catorce, quince y dieciséis.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Fotosíntesis' usuario='Protosíntesis.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Ulan Bator' usuario='Mongolia, Mongolia.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Mir' usuario='el mier. el mier.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='10' usuario='diez, diez.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='8' usuario='Ocho.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='12' usuario='doce, doce, doce.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Copenhague' usuario='Dinamarca.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Esclerosis Lateral Amiotrófica' usuario='Scleoriosis.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Un animal que nace de un huevo' usuario='un animal.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Federación Internacional de Fútbol Asociación' usuario='internacional eh peruano' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='monoinsaturadas' usuario='las aceitunas.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='20' usuario='veinte libros.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='63' usuario='sesenta y tres.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='15' usuario='quince.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='París' usuario='Indonesia' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Alemania' usuario='Alemania. Alemania, Alemania.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Homero' usuario='Mero. Homero, mero.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Miguel de Cervantes' usuario='Mm.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='45' usuario='cuarenta y cinco, cuarenta y cinco.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Amazonas' usuario='en la Amazonas, el Amazonas,' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='24' usuario='veinticuatro, veinticuatro.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Páncreas' usuario='el pan creas, el pan creas.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Ottawa' usuario='Canadá' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Mandarín' usuario='el chino mandarín, chino mandarín.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='16' usuario='dieciséis, dieciséis.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='libra' usuario='la libra. la libra.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Tenerife' usuario='en el océano Atlántico. No sé, no sé.' -> fallo
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Que come carne' usuario='animal carnívoro es aquel que come carne, carne.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='2 de octubre de 1968' usuario='Estoy seguro, no, no' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='Buenos Aires' usuario='mitad de Argentina es el Buenos Aires, Buenos Aires.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='24' usuario='veinticuatro, veinticuatro.' -> acierto
+[orchestrator_node-4] [trivia] gemma3:4b: esperada='La Marsellesa' usuario='el himno. el himno.' -> acierto
+[communication_node-1] [STT] escuchando...
+[moving_control_node-3] Traceback (most recent call last):
+[moving_control_node-3]   File "/home/pi/ARFORD/ros2_ws/install/romeo_drivers/lib/romeo_drivers/moving_control_node", line 33, in <module>
+[moving_control_node-3]     sys.exit(load_entry_point('romeo-drivers', 'console_scripts', 'moving_control_node')())
+[moving_control_node-3]              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+[moving_control_node-3]   File "/home/pi/ARFORD/ros2_ws/build/romeo_drivers/romeo_drivers/moving_control_node.py", line 100, in main
+[moving_control_node-3]     executor.spin()
+[moving_control_node-3]     ~~~~~~~~~~~~~^^
+[moving_control_node-3]   File "/opt/ros/lyrical/lib/python3.14/site-packages/rclpy/executors.py", line 400, in spin
+[moving_control_node-3]     self._spin_once_impl()
+[moving_control_node-3]     ~~~~~~~~~~~~~~~~~~~~^^
+[moving_control_node-3]   File "/opt/ros/lyrical/lib/python3.14/site-packages/rclpy/executors.py", line 1000, in _spin_once_impl
+[moving_control_node-3]     handler, entity, node = self.wait_for_ready_callbacks(
+[moving_control_node-3]                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+[moving_control_node-3]         timeout_sec, None, wait_condition)
+[moving_control_node-3]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[moving_control_node-3]   File "/opt/ros/lyrical/lib/python3.14/site-packages/rclpy/executors.py", line 970, in wait_for_ready_callbacks
+[moving_control_node-3]     return next(self._cb_iter)
+[moving_control_node-3]   File "/opt/ros/lyrical/lib/python3.14/site-packages/rclpy/executors.py", line 876, in _wait_for_ready_callbacks
+[moving_control_node-3]     raise ExternalShutdownException()
+[moving_control_node-3] rclpy.executors.ExternalShutdownException
+[INFO] [orchestrator_node-4]: process has finished cleanly [pid 853991]
+[ERROR] [moving_control_node-3]: process has died [pid 853990, exit code 1, cmd '/home/pi/ARFORD/ros2_ws/install/romeo_drivers/lib/romeo_drivers/moving_control_node --ros-args -r __node:=moving_control_node -r __ns:=/ --params-file /home/pi/ARFORD/ros2_ws/install/romeo_bringup/share/romeo_bringup/config/romeo_params.yaml --params-file /tmp/launch_params_mb_1icq1'].
+[INFO] [expression_faces_node-2]: process has finished cleanly [pid 853989]
+[ERROR] [communication_node-1]: process has died [pid 853988, exit code -11, cmd '/home/pi/ARFORD/ros2_ws/install/romeo_drivers/lib/romeo_drivers/communication_node --ros-args -r __node:=communication_node -r __ns:=/ --params-file /home/pi/ARFORD/ros2_ws/install/romeo_bringup/share/romeo_bringup/config/romeo_params.yaml --params-file /tmp/launch_params_fjhhe0ua'].

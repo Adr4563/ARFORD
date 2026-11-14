@@ -229,7 +229,7 @@ PERFILES = {
     "EMPATHETIC":  {"empatia": 1.0, "animo_base": (0.20, 0.10, 0.00),
                     "decaimiento": 0.3, "latencia": 3.0},
 }
-PERFIL_POR_DEFECTO = "OPTIMISTIC"
+PERFIL_POR_DEFECTO = "EMPATHETIC"
 
 
 def parametros_de_perfil(nombre=None):
