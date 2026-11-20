@@ -29,3 +29,10 @@ finetuning/data/*.log
 # grabaciones de prueba del microfono
 finetuning/*.wav
 *.bak
+
+# pruebas de detectores de cara: rostros del equipo y modelos de terceros
+pruebas/caras/datos/
+pruebas/caras/resultados/*
+!pruebas/caras/resultados/vivo/
+pruebas/caras/modelos/
+pruebas/caras/datos_vivo/

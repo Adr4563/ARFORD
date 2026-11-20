@@ -1,0 +1,21 @@
+grupo,detector,k,n,tasa,ic95_lo,ic95_hi
+"uso real (0,5-2 m de frente + 30 grados)",yunet_cpu,1475,1475,1.0,0.997,1.0
+"uso real (0,5-2 m de frente + 30 grados)",yunet_sensor,1205,1505,0.8007,0.78,0.82
+"uso real (0,5-2 m de frente + 30 grados)",scrfd_2g5,140,172,0.814,0.749,0.865
+"uso real (0,5-2 m de frente + 30 grados)",yolov8n_face,125,125,1.0,0.97,1
+"uso real (0,5-2 m de frente + 30 grados)",yolo11n_face,152,152,1.0,0.975,1
+dificiles (3 m + 60 grados),yunet_cpu,564,596,0.9463,0.925,0.962
+dificiles (3 m + 60 grados),yunet_sensor,355,602,0.5897,0.55,0.628
+dificiles (3 m + 60 grados),scrfd_2g5,60,70,0.8571,0.757,0.921
+dificiles (3 m + 60 grados),yolov8n_face,50,50,1.0,0.929,1
+dificiles (3 m + 60 grados),yolo11n_face,61,61,1.0,0.941,1
+todos con cara (8 escenarios),yunet_cpu,2337,2369,0.9865,0.981,0.99
+todos con cara (8 escenarios),yunet_sensor,1825,2408,0.7579,0.74,0.775
+todos con cara (8 escenarios),scrfd_2g5,235,277,0.8484,0.801,0.886
+todos con cara (8 escenarios),yolov8n_face,200,200,1.0,0.981,1
+todos con cara (8 escenarios),yolo11n_face,243,243,1.0,0.984,1
+falsas alarmas (sin_cara),yunet_cpu,0,448,0.0,0,0.009
+falsas alarmas (sin_cara),yunet_sensor,0,451,0.0,0,0.008
+falsas alarmas (sin_cara),scrfd_2g5,0,52,0.0,0,0.069
+falsas alarmas (sin_cara),yolov8n_face,0,37,0.0,0,0.094
+falsas alarmas (sin_cara),yolo11n_face,0,45,0.0,0,0.079
