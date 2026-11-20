@@ -9,32 +9,30 @@ sec. 3.4.1): entrega la emoción como CATEGORÍAS con probabilidades, igual
 que FER y TER, y PULSE aplica la confianza por entropía (ec. 4.1-4.2), la
 conversión CAT -> VAD (ec. 4.3) y la fusión (ec. 4.4).
 
-EL MODELO ES INTERCAMBIABLE (variable ROMEO_SER_MODELO). Cualquier modelo de
-`audio-classification` de HuggingFace sirve, siempre que sus etiquetas
-estén en _ETIQUETAS (inglés o español, se traducen solas). Por defecto:
-
-    xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned
-        HuBERT large afinado con Dusha, habla natural en RUSO. Emociones:
-        neutral, angry, positive, sad, other ("other" cuenta como neutral).
-        Se eligió comparándolo con MESD, SpeechBrain y ehcalabres.
-        Limitación: no está entrenado en español, y por eso la confianza
-        que calcula PULSE importa.
+MODELO: emotion2vec+ (emotion2vec/emotion2vec_plus_base), cargado con FunASR.
+Se eligió tras comparar candidatos sobre los mismos audios (ver
+pruebas/voz_ser/INFORME_SER.md): acertó 13/24 frente a 7/24 del HuBERT-Dusha
+anterior, con menor latencia. Devuelve etiquetas en la forma "开心/happy"
+(chino/inglés); traducir_etiqueta() toma la parte en inglés, que ya está en
+_ETIQUETAS. Emociones del modelo: angry, happy, sad, neutral, disgusted,
+fearful, surprised, other, unknown.
 
 Variables de entorno:
     ROMEO_SER          0 lo desactiva (default 1)
-    ROMEO_SER_MODELO   id del modelo en HuggingFace (default: el de arriba)
+    ROMEO_SER_MODELO   id del modelo emotion2vec (default: el de arriba)
+    ROMEO_SER_HILOS    hilos de CPU para FunASR (default 2)
 
-Necesita `pip install transformers torch` en la PC. Si falta o el modelo no
-carga, el SER queda desactivado y el STT sigue funcionando igual.
+Necesita `pip install funasr torch soundfile` en la PC. Si falta o el modelo
+no carga, el SER queda desactivado y el STT sigue funcionando igual.
 """
 import os
+import tempfile
 
 import numpy as np
 
-MODELO = os.environ.get(
-    "ROMEO_SER_MODELO",
-    "xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned")
+MODELO = os.environ.get("ROMEO_SER_MODELO", "emotion2vec/emotion2vec_plus_base")
 ACTIVO = os.environ.get("ROMEO_SER", "1") not in ("0", "false", "False")
+HILOS = int(os.environ.get("ROMEO_SER_HILOS", "2"))
 SAMPLE_RATE = 16000
 
 # Por debajo de esto no hay voz suficiente para juzgar el tono ("sí", "no").
@@ -81,7 +79,7 @@ def traducir_etiqueta(etiqueta):
 
 
 def agrupar(salida):
-    """De la salida del pipeline ([{label, score}, ...]) a (etiquetas,
+    """De la salida del modelo ([{label, score}, ...]) a (etiquetas,
     probabilidades) en claves de ANCLAJES, sumando las que caen en la misma
     clave y renormalizando. None si no queda ninguna emoción conocida."""
     acumulado = {}
@@ -97,40 +95,49 @@ def agrupar(salida):
 
 
 class ClasificadorVoz:
-    """Envuelve el modelo. Se carga una vez, al arrancar el servidor."""
+    """Envuelve emotion2vec+ (FunASR). Se carga una vez, al arrancar el
+    servidor. Misma interfaz que antes: .modelo, .listo, .error, .cargar(),
+    .clasificar()."""
 
-    def __init__(self, modelo=None):
+    def __init__(self, modelo=None, hilos=None):
         self.modelo = modelo or MODELO
-        self._pipe = None
+        self.hilos = hilos if hilos is not None else HILOS
+        self._m = None
         self.error = None
 
     @property
     def listo(self):
-        return self._pipe is not None
+        return self._m is not None
 
     def cargar(self):
         """Devuelve True si quedó listo. Nunca lanza."""
         if not ACTIVO:
             self.error = "desactivado (ROMEO_SER=0)"
             return False
-        if self._pipe is not None:
+        if self._m is not None:
             return True
         try:
-            import torch
-            from transformers import pipeline
-            dispositivo = 0 if torch.cuda.is_available() else -1
-            self._pipe = pipeline("audio-classification", model=self.modelo,
-                                  device=dispositivo)
+            import torch  # noqa: F401  (FunASR lo necesita; aviso claro si falta)
+            from funasr import AutoModel
+            dispositivo = "cuda" if _hay_cuda() else "cpu"
+            kw = dict(disable_update=True, ncpu=self.hilos, device=dispositivo)
+            # emotion2vec vive en HuggingFace ("emotion2vec/...") y, de respaldo,
+            # en ModelScope ("iic/..."), por si HF no responde.
+            try:
+                self._m = AutoModel(model=self.modelo, hub="hf", **kw)
+            except Exception:
+                self._m = AutoModel(model=self.modelo.replace("emotion2vec/", "iic/"),
+                                    hub="ms", **kw)
             return True
         except Exception as e:  # noqa: BLE001 - sin SER, el STT sigue
             self.error = str(e)[:200]
-            self._pipe = None
+            self._m = None
             return False
 
     def clasificar(self, samples, sample_rate=SAMPLE_RATE):
         """(etiquetas, probabilidades) de la frase, o None si no hay modelo,
         la frase es muy corta o falla. Nunca lanza."""
-        if self._pipe is None:
+        if self._m is None:
             return None
         arr = np.asarray(samples, dtype=np.float32).reshape(-1)
         if arr.size < DURACION_MINIMA * sample_rate:
@@ -140,8 +147,26 @@ class ClasificadorVoz:
             arr = np.interp(np.linspace(0, arr.size - 1, n),
                             np.arange(arr.size), arr).astype(np.float32)
         try:
-            salida = self._pipe({"raw": arr, "sampling_rate": SAMPLE_RATE}, top_k=None)
+            import soundfile as sf
+            # FunASR lee desde archivo; se escribe un WAV temporal de 16 kHz.
+            with tempfile.TemporaryDirectory() as d:
+                ruta = os.path.join(d, "a.wav")
+                sf.write(ruta, arr, SAMPLE_RATE)
+                res = self._m.generate(ruta, granularity="utterance",
+                                       extract_embedding=False)
         except Exception as e:  # noqa: BLE001
             print(f"[SER] falló al clasificar: {e}")
             return None
-        return agrupar(salida)
+        if not res:
+            return None
+        r = res[0]
+        return agrupar([{"label": l, "score": float(s)}
+                        for l, s in zip(r.get("labels", []), r.get("scores", []))])
+
+
+def _hay_cuda():
+    try:
+        import torch
+        return torch.cuda.is_available()
+    except Exception:  # noqa: BLE001
+        return False

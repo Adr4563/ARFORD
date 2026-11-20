@@ -102,13 +102,12 @@ app = Flask(__name__)
 reconocedor = ReconocedorVoz()
 # SER: la emocion de la voz, sobre el mismo audio (ver _ser_engine.py).
 #
-# DOS MOTORES. El de serie es HuBERT (Dusha, ver _ser_engine.py). El de
-# WavLM (_ser_wavlm.py) sale del baseline del Odyssey Challenge, entrenado
-# con habla espontanea.
+# DOS MOTORES. El de serie es emotion2vec+ (ver _ser_engine.py), cargado con
+# FunASR. El de WavLM (_ser_wavlm.py) sale del baseline del Odyssey Challenge,
+# entrenado con habla espontanea.
 #
 # Se elige con ROMEO_SER_MODELO. Como el de WavLM trae una arquitectura
-# propia, necesita su modulo; el resto de modelos de HuggingFace siguen
-# por el pipeline de siempre.
+# propia, necesita su modulo; emotion2vec+ y los demas van por _ser_engine.py.
 if "wavlm" in os.environ.get("ROMEO_SER_MODELO", "").lower():
     from romeo_drivers._ser_wavlm import ClasificadorWavLM  # noqa: E402
     clasificador_voz = ClasificadorWavLM(os.environ["ROMEO_SER_MODELO"])
@@ -271,7 +270,7 @@ def main():
         print("[SER] listo: la emocion de la voz viaja con cada texto")
     else:
         print(f"[SER] desactivado ({clasificador_voz.error}); "
-              f"el STT sigue sin SER. ¿pip install transformers torch?")
+              f"el STT sigue sin SER. ¿pip install funasr torch soundfile?")
 
     print(f"[STT] escuchando en http://{HOST}:{PUERTO}")
     print(f"[STT]   GET  /salud")
