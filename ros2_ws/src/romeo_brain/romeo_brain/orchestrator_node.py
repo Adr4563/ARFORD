@@ -1197,6 +1197,13 @@ class OrchestratorNode(Node):
         # decaer() no hace nada hasta que pasa la latencia, asi que dos
         # turnos seguidos y rapidos no borran lo que se acaba de percibir.
         antes_decaer = self._afecto.vector
+        # Snapshot del estado afectivo ANTES de tocarlo, por si hay que
+        # revertirlo: si el turno se descarta (falto una fuente) el animo
+        # tiene que quedar EXACTAMENTE como estaba, incluidos los contadores
+        # de decaimiento, no solo el vector. Ver el bloque "turno DESCARTADO".
+        _afecto_antes = (self._afecto.vector,
+                         self._afecto._ultimo_estimulo,
+                         self._afecto._decaido_hasta)
         self._afecto.decaer()
         self._traza = traza_afectiva.nueva(entrada, self._afecto, antes_decaer)
 
@@ -1246,6 +1253,42 @@ class OrchestratorNode(Node):
             self._percibir_cara(t_inicio, t_fin)
         if "SER" in self._fuentes:
             self._percibir_voz(ser)
+
+        # REGLA ESTRICTA (pedido del usuario): Romeo SOLO responde si en este
+        # turno se procesaron las TRES fuentes de percepcion activas
+        # (TER + FER + SER). Si falta una -- tipicamente el FER cuando la
+        # camara no vio la cara, pero tambien SER/TER si la PC no respondio --
+        # el turno se DESCARTA entero: no se fusiona (PULSE), no se mueve el
+        # animo (ROSE), no se responde, y en trivia la pregunta NO cuenta.
+        # Solo queda la constancia en el log y Romeo vuelve a escuchar.
+        #
+        # Se compara por fuente: cada lectura de _lecturas_turno lleva su
+        # nombre ("TER"/"FER"/"SER") y _fuentes dice cuales estan activas.
+        fuentes_vistas = {f for f, *_ in self._lecturas_turno}
+        if fuentes_vistas != self._fuentes:
+            faltan = self._fuentes - fuentes_vistas
+            self.get_logger().info(
+                f"[afecto] turno DESCARTADO: faltaron {'+'.join(sorted(faltan))} "
+                f"(solo llego {'+'.join(sorted(fuentes_vistas)) or 'nada'}). "
+                f"Romeo no responde ni cambia su animo.")
+            # No se aplica afecto: se vacian las lecturas para que no se
+            # arrastren al turno siguiente, y se descarta la traza sin ROSE.
+            self._lecturas_turno = []
+            self._emocion_pendiente = False
+            # Se deshace el decaimiento que decaer() aplico al empezar el
+            # turno: vector Y contadores vuelven al snapshot, asi el estado
+            # emocional queda intacto (el turno descartado es como si no
+            # hubiera pasado para ROSE).
+            (self._afecto.vector,
+             self._afecto._ultimo_estimulo,
+             self._afecto._decaido_hasta) = _afecto_antes
+            if self._traza is not None:
+                self._traza["descartado"] = sorted(faltan)
+                traza_afectiva.escribir(self._traza)
+                self._traza = None
+            self._mostrar_cara_reposo()
+            return
+
         # PULSE (fusion de las fuentes) + ROSE (animo del robot). El AEB
         # se mide aparte, en _comportamiento(): son dos etapas distintas
         # de la capa afectiva y conviene saber cual pesa.
