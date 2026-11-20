@@ -1,0 +1,767 @@
+[
+  {
+    "modelo": "dusha",
+    "id": "xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned",
+    "carga_s": 31.1,
+    "ram_base_mb": 222,
+    "ram_carga_mb": 1720,
+    "ram_pico_mb": 1740,
+    "filas": [
+      {
+        "audio": "enojado_1.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "neutral",
+        "prob": 0.956,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.04,
+          "neutral": 0.956,
+          "tristeza": 0.004
+        },
+        "lat_s": 0.406,
+        "rtf": 0.081
+      },
+      {
+        "audio": "enojado_2.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "neutral",
+        "prob": 0.996,
+        "dist": {
+          "enojo": 0.002,
+          "felicidad": 0.002,
+          "neutral": 0.996,
+          "tristeza": 0.0
+        },
+        "lat_s": 0.404,
+        "rtf": 0.081
+      },
+      {
+        "audio": "enojado_3.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "neutral",
+        "prob": 0.996,
+        "dist": {
+          "enojo": 0.001,
+          "felicidad": 0.001,
+          "neutral": 0.996,
+          "tristeza": 0.002
+        },
+        "lat_s": 0.406,
+        "rtf": 0.081
+      },
+      {
+        "audio": "feliz_1.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "neutral",
+        "prob": 0.855,
+        "dist": {
+          "enojo": 0.052,
+          "felicidad": 0.092,
+          "neutral": 0.855,
+          "tristeza": 0.001
+        },
+        "lat_s": 0.431,
+        "rtf": 0.086
+      },
+      {
+        "audio": "feliz_2.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "neutral",
+        "prob": 0.822,
+        "dist": {
+          "enojo": 0.003,
+          "felicidad": 0.175,
+          "neutral": 0.822,
+          "tristeza": 0.0
+        },
+        "lat_s": 1.082,
+        "rtf": 0.216
+      },
+      {
+        "audio": "feliz_3.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "neutral",
+        "prob": 0.958,
+        "dist": {
+          "enojo": 0.004,
+          "felicidad": 0.039,
+          "neutral": 0.958,
+          "tristeza": 0.0
+        },
+        "lat_s": 0.705,
+        "rtf": 0.141
+      },
+      {
+        "audio": "neutral_1.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "neutral",
+        "prob": 0.625,
+        "dist": {
+          "enojo": 0.001,
+          "felicidad": 0.373,
+          "neutral": 0.625,
+          "tristeza": 0.001
+        },
+        "lat_s": 0.409,
+        "rtf": 0.082
+      },
+      {
+        "audio": "neutral_2.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "neutral",
+        "prob": 0.974,
+        "dist": {
+          "enojo": 0.001,
+          "felicidad": 0.02,
+          "neutral": 0.974,
+          "tristeza": 0.005
+        },
+        "lat_s": 0.398,
+        "rtf": 0.08
+      },
+      {
+        "audio": "neutral_3.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "neutral",
+        "prob": 0.766,
+        "dist": {
+          "enojo": 0.001,
+          "felicidad": 0.232,
+          "neutral": 0.766,
+          "tristeza": 0.002
+        },
+        "lat_s": 0.395,
+        "rtf": 0.079
+      },
+      {
+        "audio": "triste_1.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "neutral",
+        "prob": 0.632,
+        "dist": {
+          "enojo": 0.001,
+          "felicidad": 0.347,
+          "neutral": 0.632,
+          "tristeza": 0.02
+        },
+        "lat_s": 0.397,
+        "rtf": 0.079
+      },
+      {
+        "audio": "triste_2.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "neutral",
+        "prob": 0.979,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.02,
+          "neutral": 0.979,
+          "tristeza": 0.001
+        },
+        "lat_s": 0.395,
+        "rtf": 0.079
+      },
+      {
+        "audio": "triste_3.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "neutral",
+        "prob": 0.995,
+        "dist": {
+          "enojo": 0.001,
+          "felicidad": 0.002,
+          "neutral": 0.995,
+          "tristeza": 0.002
+        },
+        "lat_s": 0.395,
+        "rtf": 0.079
+      }
+    ]
+  },
+  {
+    "modelo": "umuteam",
+    "id": "UMUTeam/w2v-bert-emotion-es",
+    "carga_s": 38.9,
+    "ram_base_mb": 222,
+    "ram_carga_mb": 2754,
+    "ram_pico_mb": 2836,
+    "filas": [
+      {
+        "audio": "enojado_1.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "enojo",
+        "prob": 0.354,
+        "dist": {
+          "enojo": 0.354,
+          "felicidad": 0.146,
+          "neutral": 0.186,
+          "tristeza": 0.314
+        },
+        "lat_s": 0.624,
+        "rtf": 0.125
+      },
+      {
+        "audio": "enojado_2.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "enojo",
+        "prob": 0.354,
+        "dist": {
+          "enojo": 0.354,
+          "felicidad": 0.146,
+          "neutral": 0.185,
+          "tristeza": 0.315
+        },
+        "lat_s": 0.623,
+        "rtf": 0.125
+      },
+      {
+        "audio": "enojado_3.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "enojo",
+        "prob": 0.355,
+        "dist": {
+          "enojo": 0.355,
+          "felicidad": 0.147,
+          "neutral": 0.185,
+          "tristeza": 0.313
+        },
+        "lat_s": 0.618,
+        "rtf": 0.124
+      },
+      {
+        "audio": "feliz_1.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "enojo",
+        "prob": 0.354,
+        "dist": {
+          "enojo": 0.354,
+          "felicidad": 0.146,
+          "neutral": 0.186,
+          "tristeza": 0.314
+        },
+        "lat_s": 0.615,
+        "rtf": 0.123
+      },
+      {
+        "audio": "feliz_2.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "enojo",
+        "prob": 0.355,
+        "dist": {
+          "enojo": 0.355,
+          "felicidad": 0.147,
+          "neutral": 0.186,
+          "tristeza": 0.311
+        },
+        "lat_s": 0.637,
+        "rtf": 0.127
+      },
+      {
+        "audio": "feliz_3.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "enojo",
+        "prob": 0.356,
+        "dist": {
+          "enojo": 0.356,
+          "felicidad": 0.148,
+          "neutral": 0.186,
+          "tristeza": 0.311
+        },
+        "lat_s": 0.613,
+        "rtf": 0.123
+      },
+      {
+        "audio": "neutral_1.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "enojo",
+        "prob": 0.352,
+        "dist": {
+          "enojo": 0.352,
+          "felicidad": 0.148,
+          "neutral": 0.187,
+          "tristeza": 0.313
+        },
+        "lat_s": 0.61,
+        "rtf": 0.122
+      },
+      {
+        "audio": "neutral_2.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "enojo",
+        "prob": 0.351,
+        "dist": {
+          "enojo": 0.351,
+          "felicidad": 0.154,
+          "neutral": 0.196,
+          "tristeza": 0.3
+        },
+        "lat_s": 0.634,
+        "rtf": 0.127
+      },
+      {
+        "audio": "neutral_3.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "enojo",
+        "prob": 0.346,
+        "dist": {
+          "enojo": 0.346,
+          "felicidad": 0.148,
+          "neutral": 0.194,
+          "tristeza": 0.313
+        },
+        "lat_s": 0.627,
+        "rtf": 0.125
+      },
+      {
+        "audio": "triste_1.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "enojo",
+        "prob": 0.354,
+        "dist": {
+          "enojo": 0.354,
+          "felicidad": 0.146,
+          "neutral": 0.185,
+          "tristeza": 0.315
+        },
+        "lat_s": 0.612,
+        "rtf": 0.122
+      },
+      {
+        "audio": "triste_2.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "enojo",
+        "prob": 0.353,
+        "dist": {
+          "enojo": 0.353,
+          "felicidad": 0.145,
+          "neutral": 0.186,
+          "tristeza": 0.316
+        },
+        "lat_s": 0.61,
+        "rtf": 0.122
+      },
+      {
+        "audio": "triste_3.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "enojo",
+        "prob": 0.348,
+        "dist": {
+          "enojo": 0.348,
+          "felicidad": 0.182,
+          "neutral": 0.159,
+          "tristeza": 0.312
+        },
+        "lat_s": 0.61,
+        "rtf": 0.122
+      }
+    ]
+  },
+  {
+    "modelo": "e2v_base",
+    "id": "emotion2vec/emotion2vec_plus_base",
+    "carga_s": 26.4,
+    "ram_base_mb": 222,
+    "ram_carga_mb": 2024,
+    "ram_pico_mb": 2024,
+    "filas": [
+      {
+        "audio": "enojado_1.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.19,
+        "rtf": 0.038
+      },
+      {
+        "audio": "enojado_2.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.191,
+        "rtf": 0.038
+      },
+      {
+        "audio": "enojado_3.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.186,
+        "rtf": 0.037
+      },
+      {
+        "audio": "feliz_1.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.187,
+        "rtf": 0.037
+      },
+      {
+        "audio": "feliz_2.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.185,
+        "rtf": 0.037
+      },
+      {
+        "audio": "feliz_3.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.186,
+        "rtf": 0.037
+      },
+      {
+        "audio": "neutral_1.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "neutral",
+        "prob": 0.998,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.998,
+          "tristeza": 0.002
+        },
+        "lat_s": 0.187,
+        "rtf": 0.037
+      },
+      {
+        "audio": "neutral_2.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "neutral",
+        "prob": 0.96,
+        "dist": {
+          "enojo": 0.001,
+          "felicidad": 0.003,
+          "neutral": 0.96,
+          "tristeza": 0.036
+        },
+        "lat_s": 0.187,
+        "rtf": 0.037
+      },
+      {
+        "audio": "neutral_3.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.188,
+        "rtf": 0.038
+      },
+      {
+        "audio": "triste_1.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.185,
+        "rtf": 0.037
+      },
+      {
+        "audio": "triste_2.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "tristeza",
+        "prob": 0.998,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.001,
+          "tristeza": 0.998
+        },
+        "lat_s": 0.185,
+        "rtf": 0.037
+      },
+      {
+        "audio": "triste_3.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "tristeza",
+        "prob": 0.999,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.001,
+          "tristeza": 0.999
+        },
+        "lat_s": 0.185,
+        "rtf": 0.037
+      }
+    ]
+  },
+  {
+    "modelo": "e2v_large",
+    "id": "emotion2vec/emotion2vec_plus_large",
+    "carga_s": 31.9,
+    "ram_base_mb": 222,
+    "ram_carga_mb": 3135,
+    "ram_pico_mb": 3135,
+    "filas": [
+      {
+        "audio": "enojado_1.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "tristeza",
+        "prob": 0.975,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.025,
+          "neutral": 0.0,
+          "tristeza": 0.975
+        },
+        "lat_s": 0.266,
+        "rtf": 0.053
+      },
+      {
+        "audio": "enojado_2.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "tristeza",
+        "prob": 0.981,
+        "dist": {
+          "enojo": 0.002,
+          "felicidad": 0.005,
+          "neutral": 0.012,
+          "tristeza": 0.981
+        },
+        "lat_s": 0.271,
+        "rtf": 0.054
+      },
+      {
+        "audio": "enojado_3.wav",
+        "dur_s": 5.0,
+        "esperado": "enojo",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.27,
+        "rtf": 0.054
+      },
+      {
+        "audio": "feliz_1.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "tristeza",
+        "prob": 0.919,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.081,
+          "neutral": 0.0,
+          "tristeza": 0.919
+        },
+        "lat_s": 0.263,
+        "rtf": 0.053
+      },
+      {
+        "audio": "feliz_2.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.261,
+        "rtf": 0.052
+      },
+      {
+        "audio": "feliz_3.wav",
+        "dur_s": 5.0,
+        "esperado": "felicidad",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.259,
+        "rtf": 0.052
+      },
+      {
+        "audio": "neutral_1.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "tristeza",
+        "prob": 0.903,
+        "dist": {
+          "enojo": 0.002,
+          "felicidad": 0.047,
+          "neutral": 0.048,
+          "tristeza": 0.903
+        },
+        "lat_s": 0.26,
+        "rtf": 0.052
+      },
+      {
+        "audio": "neutral_2.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "neutral",
+        "prob": 0.804,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.008,
+          "neutral": 0.804,
+          "tristeza": 0.188
+        },
+        "lat_s": 0.256,
+        "rtf": 0.051
+      },
+      {
+        "audio": "neutral_3.wav",
+        "dur_s": 5.0,
+        "esperado": "neutral",
+        "pred": "tristeza",
+        "prob": 0.997,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.003,
+          "neutral": 0.0,
+          "tristeza": 0.997
+        },
+        "lat_s": 0.256,
+        "rtf": 0.051
+      },
+      {
+        "audio": "triste_1.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.258,
+        "rtf": 0.052
+      },
+      {
+        "audio": "triste_2.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.257,
+        "rtf": 0.051
+      },
+      {
+        "audio": "triste_3.wav",
+        "dur_s": 5.0,
+        "esperado": "tristeza",
+        "pred": "tristeza",
+        "prob": 1.0,
+        "dist": {
+          "enojo": 0.0,
+          "felicidad": 0.0,
+          "neutral": 0.0,
+          "tristeza": 1.0
+        },
+        "lat_s": 0.258,
+        "rtf": 0.052
+      }
+    ]
+  },
+  {
+    "modelo": "wavlm",
+    "id": "3loi/SER-Odyssey-Baseline-WavLM-Categorical",
+    "error": "el proceso termino sin resultado"
+  }
+]

@@ -1,0 +1,5172 @@
+{
+  "config": {
+    "modelos": [
+      "dusha",
+      "e2v_base",
+      "umuteam",
+      "wavlm",
+      "pollito_v5"
+    ],
+    "variantes": [
+      "ninguna",
+      "rms"
+    ],
+    "hilos": 4,
+    "repeticiones": 3,
+    "audios": "audios_r2",
+    "n_audios": 24
+  },
+  "resultados": [
+    {
+      "modelo": "dusha",
+      "id": "xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned",
+      "hilos": 4,
+      "carga_s": 8.8,
+      "ram_base_mb": 223,
+      "ram_carga_mb": 1701,
+      "ram_pico_mb": 1723,
+      "filas": [
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.956,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.04,
+            "neutral": 0.956,
+            "tristeza": 0.004
+          },
+          "lat_s": 0.418,
+          "rtf": 0.084
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.996,
+          "dist": {
+            "enojo": 0.002,
+            "felicidad": 0.002,
+            "neutral": 0.996,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.416,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.996,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.996,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.412,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.855,
+          "dist": {
+            "enojo": 0.052,
+            "felicidad": 0.092,
+            "neutral": 0.855,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.409,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.822,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.175,
+            "neutral": 0.822,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.412,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.958,
+          "dist": {
+            "enojo": 0.004,
+            "felicidad": 0.039,
+            "neutral": 0.958,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.432,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.625,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.373,
+            "neutral": 0.625,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.42,
+          "rtf": 0.084
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.974,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.02,
+            "neutral": 0.974,
+            "tristeza": 0.005
+          },
+          "lat_s": 0.429,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.766,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.232,
+            "neutral": 0.766,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.412,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.632,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.347,
+            "neutral": 0.632,
+            "tristeza": 0.02
+          },
+          "lat_s": 0.412,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.979,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.02,
+            "neutral": 0.979,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.411,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.995,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.002,
+            "neutral": 0.995,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.413,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.995,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.995,
+            "neutral": 0.004,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.415,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.972,
+          "dist": {
+            "enojo": 0.007,
+            "felicidad": 0.972,
+            "neutral": 0.021,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.42,
+          "rtf": 0.084
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.842,
+          "dist": {
+            "enojo": 0.008,
+            "felicidad": 0.842,
+            "neutral": 0.149,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.413,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.963,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.963,
+            "neutral": 0.036,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.416,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.917,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.917,
+            "neutral": 0.081,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.429,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.966,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.966,
+            "neutral": 0.033,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.418,
+          "rtf": 0.084
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "felicidad",
+          "prob": 0.841,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.841,
+            "neutral": 0.158,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.409,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.841,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.156,
+            "neutral": 0.841,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.413,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.434,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.158,
+            "neutral": 0.404,
+            "tristeza": 0.434
+          },
+          "lat_s": 0.415,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.728,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.269,
+            "neutral": 0.728,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.418,
+          "rtf": 0.084
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.989,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.009,
+            "neutral": 0.989,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.415,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.758,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.758,
+            "tristeza": 0.24
+          },
+          "lat_s": 0.416,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.955,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.04,
+            "neutral": 0.955,
+            "tristeza": 0.004
+          },
+          "lat_s": 0.415,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.996,
+          "dist": {
+            "enojo": 0.002,
+            "felicidad": 0.002,
+            "neutral": 0.996,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.419,
+          "rtf": 0.084
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.996,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.996,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.415,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.855,
+          "dist": {
+            "enojo": 0.052,
+            "felicidad": 0.092,
+            "neutral": 0.855,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.414,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.821,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.176,
+            "neutral": 0.821,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.416,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.958,
+          "dist": {
+            "enojo": 0.004,
+            "felicidad": 0.039,
+            "neutral": 0.958,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.417,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.625,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.372,
+            "neutral": 0.625,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.416,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.974,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.02,
+            "neutral": 0.974,
+            "tristeza": 0.005
+          },
+          "lat_s": 0.406,
+          "rtf": 0.081
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.766,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.232,
+            "neutral": 0.766,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.403,
+          "rtf": 0.081
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.632,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.347,
+            "neutral": 0.632,
+            "tristeza": 0.02
+          },
+          "lat_s": 0.417,
+          "rtf": 0.083
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.979,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.02,
+            "neutral": 0.979,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.405,
+          "rtf": 0.081
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.995,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.002,
+            "neutral": 0.995,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.408,
+          "rtf": 0.082
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.995,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.995,
+            "neutral": 0.004,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.419,
+          "rtf": 0.084
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.972,
+          "dist": {
+            "enojo": 0.007,
+            "felicidad": 0.972,
+            "neutral": 0.021,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.422,
+          "rtf": 0.084
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.826,
+          "dist": {
+            "enojo": 0.008,
+            "felicidad": 0.826,
+            "neutral": 0.165,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.41,
+          "rtf": 0.082
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.963,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.963,
+            "neutral": 0.036,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.411,
+          "rtf": 0.082
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.917,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.917,
+            "neutral": 0.081,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.411,
+          "rtf": 0.082
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.966,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.966,
+            "neutral": 0.033,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.399,
+          "rtf": 0.08
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "felicidad",
+          "prob": 0.841,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.841,
+            "neutral": 0.158,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.404,
+          "rtf": 0.081
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.841,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.156,
+            "neutral": 0.841,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.404,
+          "rtf": 0.081
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.444,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.154,
+            "neutral": 0.4,
+            "tristeza": 0.444
+          },
+          "lat_s": 0.402,
+          "rtf": 0.08
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.729,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.269,
+            "neutral": 0.729,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.402,
+          "rtf": 0.08
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.989,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.009,
+            "neutral": 0.989,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.403,
+          "rtf": 0.081
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.758,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.758,
+            "tristeza": 0.24
+          },
+          "lat_s": 0.408,
+          "rtf": 0.082
+        }
+      ]
+    },
+    {
+      "modelo": "e2v_base",
+      "id": "emotion2vec/emotion2vec_plus_base",
+      "hilos": 4,
+      "carga_s": 6.9,
+      "ram_base_mb": 223,
+      "ram_carga_mb": 2003,
+      "ram_pico_mb": 2003,
+      "filas": [
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.195,
+          "rtf": 0.039
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.188,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.189,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.998,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.197,
+          "rtf": 0.039
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.96,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.003,
+            "neutral": 0.96,
+            "tristeza": 0.036
+          },
+          "lat_s": 0.189,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.19,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.001,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.185,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.001,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 1.0,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.183,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.947,
+          "dist": {
+            "enojo": 0.005,
+            "felicidad": 0.947,
+            "neutral": 0.046,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 1.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.188,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.999,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.188,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 1.0,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.189,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 1.0,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 1.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.192,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 1.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.191,
+          "rtf": 0.038
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "enojo",
+          "prob": 0.961,
+          "dist": {
+            "enojo": 0.961,
+            "felicidad": 0.019,
+            "neutral": 0.019,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.184,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.952,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.0,
+            "neutral": 0.047,
+            "tristeza": 0.952
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.996,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.003,
+            "tristeza": 0.996
+          },
+          "lat_s": 0.184,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.185,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.995,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.0,
+            "neutral": 0.995,
+            "tristeza": 0.004
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.917,
+          "dist": {
+            "enojo": 0.002,
+            "felicidad": 0.002,
+            "neutral": 0.917,
+            "tristeza": 0.079
+          },
+          "lat_s": 0.189,
+          "rtf": 0.038
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.993,
+          "dist": {
+            "enojo": 0.002,
+            "felicidad": 0.001,
+            "neutral": 0.005,
+            "tristeza": 0.993
+          },
+          "lat_s": 0.186,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 1.0,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.96,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.96,
+            "neutral": 0.035,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 1.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.19,
+          "rtf": 0.038
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.999,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 1.0,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.187,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 1.0,
+            "neutral": 0.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.188,
+          "rtf": 0.038
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 1.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.19,
+          "rtf": 0.038
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 1.0,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.192,
+          "rtf": 0.038
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "enojo",
+          "prob": 0.975,
+          "dist": {
+            "enojo": 0.975,
+            "felicidad": 0.012,
+            "neutral": 0.013,
+            "tristeza": 0.001
+          },
+          "lat_s": 0.185,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.185,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 1.0,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 1.0
+          },
+          "lat_s": 0.185,
+          "rtf": 0.037
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.958,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.001,
+            "neutral": 0.042,
+            "tristeza": 0.958
+          },
+          "lat_s": 0.185,
+          "rtf": 0.037
+        }
+      ]
+    },
+    {
+      "modelo": "umuteam",
+      "id": "UMUTeam/w2v-bert-emotion-es",
+      "hilos": 4,
+      "carga_s": 6.2,
+      "ram_base_mb": 223,
+      "ram_carga_mb": 2738,
+      "ram_pico_mb": 2811,
+      "filas": [
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.604,
+          "rtf": 0.121
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.604,
+          "rtf": 0.121
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.607,
+          "rtf": 0.121
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.607,
+          "rtf": 0.121
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.613,
+          "rtf": 0.123
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.616,
+          "rtf": 0.123
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.993,
+          "dist": {
+            "enojo": 0.005,
+            "felicidad": 0.002,
+            "neutral": 0.001,
+            "tristeza": 0.993
+          },
+          "lat_s": 0.61,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.999,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.611,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.964,
+          "dist": {
+            "enojo": 0.004,
+            "felicidad": 0.006,
+            "neutral": 0.964,
+            "tristeza": 0.025
+          },
+          "lat_s": 0.609,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.612,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.612,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "enojo",
+          "prob": 0.997,
+          "dist": {
+            "enojo": 0.997,
+            "felicidad": 0.0,
+            "neutral": 0.001,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.608,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.609,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.613,
+          "rtf": 0.123
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.993,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.003,
+            "neutral": 0.001,
+            "tristeza": 0.993
+          },
+          "lat_s": 0.622,
+          "rtf": 0.124
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.997,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.997,
+            "neutral": 0.0,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.62,
+          "rtf": 0.124
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.616,
+          "rtf": 0.123
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.609,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "enojo",
+          "prob": 0.614,
+          "dist": {
+            "enojo": 0.614,
+            "felicidad": 0.003,
+            "neutral": 0.004,
+            "tristeza": 0.38
+          },
+          "lat_s": 0.607,
+          "rtf": 0.121
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "enojo",
+          "prob": 0.965,
+          "dist": {
+            "enojo": 0.965,
+            "felicidad": 0.002,
+            "neutral": 0.004,
+            "tristeza": 0.029
+          },
+          "lat_s": 0.606,
+          "rtf": 0.121
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.997,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.0,
+            "neutral": 0.002,
+            "tristeza": 0.997
+          },
+          "lat_s": 0.612,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.608,
+          "rtf": 0.122
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.622,
+          "rtf": 0.124
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.622,
+          "rtf": 0.124
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.624,
+          "rtf": 0.125
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.649,
+          "rtf": 0.13
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.641,
+          "rtf": 0.128
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.61,
+          "rtf": 0.122
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.609,
+          "rtf": 0.122
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.609,
+          "rtf": 0.122
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.993,
+          "dist": {
+            "enojo": 0.005,
+            "felicidad": 0.002,
+            "neutral": 0.001,
+            "tristeza": 0.993
+          },
+          "lat_s": 0.606,
+          "rtf": 0.121
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.0,
+            "felicidad": 0.0,
+            "neutral": 0.999,
+            "tristeza": 0.0
+          },
+          "lat_s": 0.614,
+          "rtf": 0.123
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.964,
+          "dist": {
+            "enojo": 0.004,
+            "felicidad": 0.006,
+            "neutral": 0.964,
+            "tristeza": 0.025
+          },
+          "lat_s": 0.62,
+          "rtf": 0.124
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.62,
+          "rtf": 0.124
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.643,
+          "rtf": 0.129
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "enojo",
+          "prob": 0.997,
+          "dist": {
+            "enojo": 0.997,
+            "felicidad": 0.0,
+            "neutral": 0.001,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.618,
+          "rtf": 0.124
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.614,
+          "rtf": 0.123
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.608,
+          "rtf": 0.122
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.989,
+          "dist": {
+            "enojo": 0.005,
+            "felicidad": 0.004,
+            "neutral": 0.002,
+            "tristeza": 0.989
+          },
+          "lat_s": 0.606,
+          "rtf": 0.121
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "felicidad",
+          "prob": 0.997,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.997,
+            "neutral": 0.0,
+            "tristeza": 0.002
+          },
+          "lat_s": 0.621,
+          "rtf": 0.124
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.0,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.62,
+          "rtf": 0.124
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.61,
+          "rtf": 0.122
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "enojo",
+          "prob": 0.614,
+          "dist": {
+            "enojo": 0.614,
+            "felicidad": 0.003,
+            "neutral": 0.004,
+            "tristeza": 0.38
+          },
+          "lat_s": 0.608,
+          "rtf": 0.122
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "enojo",
+          "prob": 0.965,
+          "dist": {
+            "enojo": 0.965,
+            "felicidad": 0.002,
+            "neutral": 0.004,
+            "tristeza": 0.029
+          },
+          "lat_s": 0.605,
+          "rtf": 0.121
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.997,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.0,
+            "neutral": 0.002,
+            "tristeza": 0.997
+          },
+          "lat_s": 0.606,
+          "rtf": 0.121
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.609,
+          "rtf": 0.122
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.999,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.999
+          },
+          "lat_s": 0.619,
+          "rtf": 0.124
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.998,
+          "dist": {
+            "enojo": 0.001,
+            "felicidad": 0.001,
+            "neutral": 0.0,
+            "tristeza": 0.998
+          },
+          "lat_s": 0.619,
+          "rtf": 0.124
+        }
+      ]
+    },
+    {
+      "modelo": "wavlm",
+      "id": "3loi/SER-Odyssey-Baseline-WavLM-Categorical",
+      "hilos": 4,
+      "carga_s": 5.4,
+      "ram_base_mb": 223,
+      "ram_carga_mb": 1715,
+      "ram_pico_mb": 1724,
+      "filas": [
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.444,
+          "dist": {
+            "enojo": 0.17,
+            "felicidad": 0.033,
+            "neutral": 0.353,
+            "tristeza": 0.444
+          },
+          "lat_s": 0.416,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.81,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.003,
+            "neutral": 0.184,
+            "tristeza": 0.81
+          },
+          "lat_s": 0.412,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.655,
+          "dist": {
+            "enojo": 0.02,
+            "felicidad": 0.008,
+            "neutral": 0.316,
+            "tristeza": 0.655
+          },
+          "lat_s": 0.413,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.62,
+          "dist": {
+            "enojo": 0.018,
+            "felicidad": 0.019,
+            "neutral": 0.62,
+            "tristeza": 0.342
+          },
+          "lat_s": 0.412,
+          "rtf": 0.082
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.749,
+          "dist": {
+            "enojo": 0.015,
+            "felicidad": 0.013,
+            "neutral": 0.223,
+            "tristeza": 0.749
+          },
+          "lat_s": 0.415,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.507,
+          "dist": {
+            "enojo": 0.01,
+            "felicidad": 0.014,
+            "neutral": 0.507,
+            "tristeza": 0.469
+          },
+          "lat_s": 0.416,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.673,
+          "dist": {
+            "enojo": 0.014,
+            "felicidad": 0.018,
+            "neutral": 0.673,
+            "tristeza": 0.295
+          },
+          "lat_s": 0.418,
+          "rtf": 0.084
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.835,
+          "dist": {
+            "enojo": 0.036,
+            "felicidad": 0.037,
+            "neutral": 0.835,
+            "tristeza": 0.092
+          },
+          "lat_s": 0.415,
+          "rtf": 0.083
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.639,
+          "dist": {
+            "enojo": 0.034,
+            "felicidad": 0.033,
+            "neutral": 0.639,
+            "tristeza": 0.295
+          },
+          "lat_s": 0.428,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.723,
+          "dist": {
+            "enojo": 0.014,
+            "felicidad": 0.015,
+            "neutral": 0.248,
+            "tristeza": 0.723
+          },
+          "lat_s": 0.436,
+          "rtf": 0.087
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.9,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.002,
+            "neutral": 0.095,
+            "tristeza": 0.9
+          },
+          "lat_s": 0.43,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.671,
+          "dist": {
+            "enojo": 0.02,
+            "felicidad": 0.018,
+            "neutral": 0.292,
+            "tristeza": 0.671
+          },
+          "lat_s": 0.429,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.913,
+          "dist": {
+            "enojo": 0.03,
+            "felicidad": 0.913,
+            "neutral": 0.023,
+            "tristeza": 0.035
+          },
+          "lat_s": 0.434,
+          "rtf": 0.087
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.621,
+          "dist": {
+            "enojo": 0.101,
+            "felicidad": 0.158,
+            "neutral": 0.621,
+            "tristeza": 0.12
+          },
+          "lat_s": 0.43,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.697,
+          "dist": {
+            "enojo": 0.038,
+            "felicidad": 0.057,
+            "neutral": 0.697,
+            "tristeza": 0.208
+          },
+          "lat_s": 0.433,
+          "rtf": 0.087
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.396,
+          "dist": {
+            "enojo": 0.091,
+            "felicidad": 0.328,
+            "neutral": 0.396,
+            "tristeza": 0.185
+          },
+          "lat_s": 0.44,
+          "rtf": 0.088
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.594,
+          "dist": {
+            "enojo": 0.063,
+            "felicidad": 0.1,
+            "neutral": 0.244,
+            "tristeza": 0.594
+          },
+          "lat_s": 0.436,
+          "rtf": 0.087
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.72,
+          "dist": {
+            "enojo": 0.027,
+            "felicidad": 0.129,
+            "neutral": 0.72,
+            "tristeza": 0.124
+          },
+          "lat_s": 0.432,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.76,
+          "dist": {
+            "enojo": 0.051,
+            "felicidad": 0.105,
+            "neutral": 0.76,
+            "tristeza": 0.085
+          },
+          "lat_s": 0.433,
+          "rtf": 0.087
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.678,
+          "dist": {
+            "enojo": 0.037,
+            "felicidad": 0.23,
+            "neutral": 0.678,
+            "tristeza": 0.055
+          },
+          "lat_s": 0.428,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "felicidad",
+          "prob": 0.82,
+          "dist": {
+            "enojo": 0.028,
+            "felicidad": 0.82,
+            "neutral": 0.056,
+            "tristeza": 0.096
+          },
+          "lat_s": 0.431,
+          "rtf": 0.086
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.92,
+          "dist": {
+            "enojo": 0.004,
+            "felicidad": 0.005,
+            "neutral": 0.071,
+            "tristeza": 0.92
+          },
+          "lat_s": 0.426,
+          "rtf": 0.085
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.783,
+          "dist": {
+            "enojo": 0.008,
+            "felicidad": 0.011,
+            "neutral": 0.198,
+            "tristeza": 0.783
+          },
+          "lat_s": 0.422,
+          "rtf": 0.084
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.945,
+          "dist": {
+            "enojo": 0.003,
+            "felicidad": 0.006,
+            "neutral": 0.045,
+            "tristeza": 0.945
+          },
+          "lat_s": 0.423,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.509,
+          "dist": {
+            "enojo": 0.014,
+            "felicidad": 0.011,
+            "neutral": 0.466,
+            "tristeza": 0.509
+          },
+          "lat_s": 0.424,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.708,
+          "dist": {
+            "enojo": 0.009,
+            "felicidad": 0.005,
+            "neutral": 0.278,
+            "tristeza": 0.708
+          },
+          "lat_s": 0.427,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.632,
+          "dist": {
+            "enojo": 0.033,
+            "felicidad": 0.013,
+            "neutral": 0.322,
+            "tristeza": 0.632
+          },
+          "lat_s": 0.425,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.701,
+          "dist": {
+            "enojo": 0.005,
+            "felicidad": 0.006,
+            "neutral": 0.288,
+            "tristeza": 0.701
+          },
+          "lat_s": 0.424,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.693,
+          "dist": {
+            "enojo": 0.007,
+            "felicidad": 0.008,
+            "neutral": 0.293,
+            "tristeza": 0.693
+          },
+          "lat_s": 0.426,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.755,
+          "dist": {
+            "enojo": 0.024,
+            "felicidad": 0.008,
+            "neutral": 0.213,
+            "tristeza": 0.755
+          },
+          "lat_s": 0.439,
+          "rtf": 0.088
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.741,
+          "dist": {
+            "enojo": 0.024,
+            "felicidad": 0.039,
+            "neutral": 0.741,
+            "tristeza": 0.196
+          },
+          "lat_s": 0.437,
+          "rtf": 0.087
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.774,
+          "dist": {
+            "enojo": 0.041,
+            "felicidad": 0.038,
+            "neutral": 0.774,
+            "tristeza": 0.147
+          },
+          "lat_s": 0.425,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.576,
+          "dist": {
+            "enojo": 0.014,
+            "felicidad": 0.012,
+            "neutral": 0.397,
+            "tristeza": 0.576
+          },
+          "lat_s": 0.425,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.528,
+          "dist": {
+            "enojo": 0.051,
+            "felicidad": 0.12,
+            "neutral": 0.301,
+            "tristeza": 0.528
+          },
+          "lat_s": 0.423,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.542,
+          "dist": {
+            "enojo": 0.055,
+            "felicidad": 0.029,
+            "neutral": 0.375,
+            "tristeza": 0.542
+          },
+          "lat_s": 0.426,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "neutral",
+          "prob": 0.761,
+          "dist": {
+            "enojo": 0.031,
+            "felicidad": 0.036,
+            "neutral": 0.761,
+            "tristeza": 0.173
+          },
+          "lat_s": 0.425,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "felicidad",
+          "prob": 0.92,
+          "dist": {
+            "enojo": 0.036,
+            "felicidad": 0.92,
+            "neutral": 0.019,
+            "tristeza": 0.025
+          },
+          "lat_s": 0.428,
+          "rtf": 0.086
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.685,
+          "dist": {
+            "enojo": 0.091,
+            "felicidad": 0.139,
+            "neutral": 0.685,
+            "tristeza": 0.085
+          },
+          "lat_s": 0.43,
+          "rtf": 0.086
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "neutral",
+          "prob": 0.688,
+          "dist": {
+            "enojo": 0.034,
+            "felicidad": 0.036,
+            "neutral": 0.688,
+            "tristeza": 0.242
+          },
+          "lat_s": 0.427,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.369,
+          "dist": {
+            "enojo": 0.178,
+            "felicidad": 0.185,
+            "neutral": 0.268,
+            "tristeza": 0.369
+          },
+          "lat_s": 0.421,
+          "rtf": 0.084
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.691,
+          "dist": {
+            "enojo": 0.063,
+            "felicidad": 0.084,
+            "neutral": 0.162,
+            "tristeza": 0.691
+          },
+          "lat_s": 0.429,
+          "rtf": 0.086
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "neutral",
+          "prob": 0.611,
+          "dist": {
+            "enojo": 0.078,
+            "felicidad": 0.144,
+            "neutral": 0.611,
+            "tristeza": 0.166
+          },
+          "lat_s": 0.429,
+          "rtf": 0.086
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.743,
+          "dist": {
+            "enojo": 0.059,
+            "felicidad": 0.072,
+            "neutral": 0.743,
+            "tristeza": 0.126
+          },
+          "lat_s": 0.427,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "neutral",
+          "prob": 0.766,
+          "dist": {
+            "enojo": 0.056,
+            "felicidad": 0.127,
+            "neutral": 0.766,
+            "tristeza": 0.052
+          },
+          "lat_s": 0.429,
+          "rtf": 0.086
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "felicidad",
+          "prob": 0.822,
+          "dist": {
+            "enojo": 0.029,
+            "felicidad": 0.822,
+            "neutral": 0.059,
+            "tristeza": 0.09
+          },
+          "lat_s": 0.427,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.815,
+          "dist": {
+            "enojo": 0.008,
+            "felicidad": 0.008,
+            "neutral": 0.169,
+            "tristeza": 0.815
+          },
+          "lat_s": 0.428,
+          "rtf": 0.086
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.593,
+          "dist": {
+            "enojo": 0.006,
+            "felicidad": 0.009,
+            "neutral": 0.392,
+            "tristeza": 0.593
+          },
+          "lat_s": 0.426,
+          "rtf": 0.085
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.903,
+          "dist": {
+            "enojo": 0.008,
+            "felicidad": 0.006,
+            "neutral": 0.083,
+            "tristeza": 0.903
+          },
+          "lat_s": 0.427,
+          "rtf": 0.085
+        }
+      ]
+    },
+    {
+      "modelo": "pollito_v5",
+      "id": "pollitoconpapass/superb-ser-finetuned-spanish-v5",
+      "hilos": 4,
+      "carga_s": 4.8,
+      "ram_base_mb": 223,
+      "ram_carga_mb": 801,
+      "ram_pico_mb": 924,
+      "filas": [
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.723,
+          "dist": {
+            "enojo": 0.229,
+            "felicidad": 0.045,
+            "neutral": 0.003,
+            "tristeza": 0.723
+          },
+          "lat_s": 0.157,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.732,
+          "dist": {
+            "enojo": 0.207,
+            "felicidad": 0.057,
+            "neutral": 0.004,
+            "tristeza": 0.732
+          },
+          "lat_s": 0.158,
+          "rtf": 0.032
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.851,
+          "dist": {
+            "enojo": 0.112,
+            "felicidad": 0.034,
+            "neutral": 0.002,
+            "tristeza": 0.851
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.947,
+          "dist": {
+            "enojo": 0.025,
+            "felicidad": 0.024,
+            "neutral": 0.004,
+            "tristeza": 0.947
+          },
+          "lat_s": 0.157,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.946,
+          "dist": {
+            "enojo": 0.026,
+            "felicidad": 0.025,
+            "neutral": 0.004,
+            "tristeza": 0.946
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.921,
+          "dist": {
+            "enojo": 0.048,
+            "felicidad": 0.028,
+            "neutral": 0.003,
+            "tristeza": 0.921
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.951,
+          "dist": {
+            "enojo": 0.023,
+            "felicidad": 0.022,
+            "neutral": 0.004,
+            "tristeza": 0.951
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.954,
+          "dist": {
+            "enojo": 0.022,
+            "felicidad": 0.02,
+            "neutral": 0.004,
+            "tristeza": 0.954
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.954,
+          "dist": {
+            "enojo": 0.022,
+            "felicidad": 0.02,
+            "neutral": 0.004,
+            "tristeza": 0.954
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.934,
+          "dist": {
+            "enojo": 0.037,
+            "felicidad": 0.026,
+            "neutral": 0.002,
+            "tristeza": 0.934
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.947,
+          "dist": {
+            "enojo": 0.026,
+            "felicidad": 0.024,
+            "neutral": 0.003,
+            "tristeza": 0.947
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "enojo",
+          "prob": 0.716,
+          "dist": {
+            "enojo": 0.716,
+            "felicidad": 0.068,
+            "neutral": 0.007,
+            "tristeza": 0.21
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "enojo",
+          "prob": 0.865,
+          "dist": {
+            "enojo": 0.865,
+            "felicidad": 0.065,
+            "neutral": 0.012,
+            "tristeza": 0.058
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.92,
+          "dist": {
+            "enojo": 0.036,
+            "felicidad": 0.039,
+            "neutral": 0.005,
+            "tristeza": 0.92
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.56,
+          "dist": {
+            "enojo": 0.194,
+            "felicidad": 0.222,
+            "neutral": 0.025,
+            "tristeza": 0.56
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.953,
+          "dist": {
+            "enojo": 0.02,
+            "felicidad": 0.023,
+            "neutral": 0.004,
+            "tristeza": 0.953
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.949,
+          "dist": {
+            "enojo": 0.023,
+            "felicidad": 0.024,
+            "neutral": 0.004,
+            "tristeza": 0.949
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.949,
+          "dist": {
+            "enojo": 0.024,
+            "felicidad": 0.023,
+            "neutral": 0.004,
+            "tristeza": 0.949
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "enojo",
+          "prob": 0.621,
+          "dist": {
+            "enojo": 0.621,
+            "felicidad": 0.053,
+            "neutral": 0.004,
+            "tristeza": 0.322
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.944,
+          "dist": {
+            "enojo": 0.025,
+            "felicidad": 0.027,
+            "neutral": 0.003,
+            "tristeza": 0.944
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.939,
+          "dist": {
+            "enojo": 0.03,
+            "felicidad": 0.028,
+            "neutral": 0.003,
+            "tristeza": 0.939
+          },
+          "lat_s": 0.154,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.94,
+          "dist": {
+            "enojo": 0.028,
+            "felicidad": 0.027,
+            "neutral": 0.005,
+            "tristeza": 0.94
+          },
+          "lat_s": 0.152,
+          "rtf": 0.03
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.951,
+          "dist": {
+            "enojo": 0.023,
+            "felicidad": 0.021,
+            "neutral": 0.004,
+            "tristeza": 0.951
+          },
+          "lat_s": 0.154,
+          "rtf": 0.031
+        },
+        {
+          "variante": "ninguna",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.951,
+          "dist": {
+            "enojo": 0.024,
+            "felicidad": 0.021,
+            "neutral": 0.004,
+            "tristeza": 0.951
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_1.wav",
+          "audio": "p1_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.929,
+          "dist": {
+            "enojo": 0.029,
+            "felicidad": 0.033,
+            "neutral": 0.008,
+            "tristeza": 0.929
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_2.wav",
+          "audio": "p1_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.845,
+          "dist": {
+            "enojo": 0.048,
+            "felicidad": 0.077,
+            "neutral": 0.03,
+            "tristeza": 0.845
+          },
+          "lat_s": 0.157,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_enojado_3.wav",
+          "audio": "p1_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.822,
+          "dist": {
+            "enojo": 0.049,
+            "felicidad": 0.092,
+            "neutral": 0.037,
+            "tristeza": 0.822
+          },
+          "lat_s": 0.156,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_1.wav",
+          "audio": "p1_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.937,
+          "dist": {
+            "enojo": 0.029,
+            "felicidad": 0.028,
+            "neutral": 0.006,
+            "tristeza": 0.937
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_2.wav",
+          "audio": "p1_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.933,
+          "dist": {
+            "enojo": 0.031,
+            "felicidad": 0.029,
+            "neutral": 0.007,
+            "tristeza": 0.933
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_feliz_3.wav",
+          "audio": "p1_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.938,
+          "dist": {
+            "enojo": 0.029,
+            "felicidad": 0.026,
+            "neutral": 0.006,
+            "tristeza": 0.938
+          },
+          "lat_s": 0.155,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_1.wav",
+          "audio": "p1_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.945,
+          "dist": {
+            "enojo": 0.028,
+            "felicidad": 0.022,
+            "neutral": 0.005,
+            "tristeza": 0.945
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_2.wav",
+          "audio": "p1_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.943,
+          "dist": {
+            "enojo": 0.027,
+            "felicidad": 0.024,
+            "neutral": 0.006,
+            "tristeza": 0.943
+          },
+          "lat_s": 0.154,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_neutral_3.wav",
+          "audio": "p1_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.951,
+          "dist": {
+            "enojo": 0.024,
+            "felicidad": 0.021,
+            "neutral": 0.005,
+            "tristeza": 0.951
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_1.wav",
+          "audio": "p1_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.853,
+          "dist": {
+            "enojo": 0.039,
+            "felicidad": 0.08,
+            "neutral": 0.029,
+            "tristeza": 0.853
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_2.wav",
+          "audio": "p1_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.898,
+          "dist": {
+            "enojo": 0.038,
+            "felicidad": 0.049,
+            "neutral": 0.015,
+            "tristeza": 0.898
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p1_triste_3.wav",
+          "audio": "p1_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "felicidad",
+          "prob": 0.52,
+          "dist": {
+            "enojo": 0.04,
+            "felicidad": 0.52,
+            "neutral": 0.177,
+            "tristeza": 0.263
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_1.wav",
+          "audio": "p2_enojado_1.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.402,
+          "dist": {
+            "enojo": 0.098,
+            "felicidad": 0.207,
+            "neutral": 0.292,
+            "tristeza": 0.402
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_2.wav",
+          "audio": "p2_enojado_2.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.92,
+          "dist": {
+            "enojo": 0.032,
+            "felicidad": 0.037,
+            "neutral": 0.01,
+            "tristeza": 0.92
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_enojado_3.wav",
+          "audio": "p2_enojado_3.wav",
+          "dur_s": 5.0,
+          "esperado": "enojo",
+          "pred": "tristeza",
+          "prob": 0.851,
+          "dist": {
+            "enojo": 0.069,
+            "felicidad": 0.055,
+            "neutral": 0.024,
+            "tristeza": 0.851
+          },
+          "lat_s": 0.152,
+          "rtf": 0.03
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_1.wav",
+          "audio": "p2_feliz_1.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.921,
+          "dist": {
+            "enojo": 0.032,
+            "felicidad": 0.037,
+            "neutral": 0.01,
+            "tristeza": 0.921
+          },
+          "lat_s": 0.157,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_2.wav",
+          "audio": "p2_feliz_2.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.942,
+          "dist": {
+            "enojo": 0.028,
+            "felicidad": 0.024,
+            "neutral": 0.006,
+            "tristeza": 0.942
+          },
+          "lat_s": 0.152,
+          "rtf": 0.03
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_feliz_3.wav",
+          "audio": "p2_feliz_3.wav",
+          "dur_s": 5.0,
+          "esperado": "felicidad",
+          "pred": "tristeza",
+          "prob": 0.921,
+          "dist": {
+            "enojo": 0.035,
+            "felicidad": 0.034,
+            "neutral": 0.01,
+            "tristeza": 0.921
+          },
+          "lat_s": 0.152,
+          "rtf": 0.03
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_1.wav",
+          "audio": "p2_neutral_1.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.892,
+          "dist": {
+            "enojo": 0.033,
+            "felicidad": 0.053,
+            "neutral": 0.022,
+            "tristeza": 0.892
+          },
+          "lat_s": 0.153,
+          "rtf": 0.031
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_2.wav",
+          "audio": "p2_neutral_2.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.8,
+          "dist": {
+            "enojo": 0.062,
+            "felicidad": 0.095,
+            "neutral": 0.042,
+            "tristeza": 0.8
+          },
+          "lat_s": 0.152,
+          "rtf": 0.03
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_neutral_3.wav",
+          "audio": "p2_neutral_3.wav",
+          "dur_s": 5.0,
+          "esperado": "neutral",
+          "pred": "tristeza",
+          "prob": 0.888,
+          "dist": {
+            "enojo": 0.035,
+            "felicidad": 0.06,
+            "neutral": 0.017,
+            "tristeza": 0.888
+          },
+          "lat_s": 0.151,
+          "rtf": 0.03
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_1.wav",
+          "audio": "p2_triste_1.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.803,
+          "dist": {
+            "enojo": 0.07,
+            "felicidad": 0.085,
+            "neutral": 0.042,
+            "tristeza": 0.803
+          },
+          "lat_s": 0.152,
+          "rtf": 0.03
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_2.wav",
+          "audio": "p2_triste_2.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.899,
+          "dist": {
+            "enojo": 0.051,
+            "felicidad": 0.037,
+            "neutral": 0.014,
+            "tristeza": 0.899
+          },
+          "lat_s": 0.151,
+          "rtf": 0.03
+        },
+        {
+          "variante": "rms",
+          "subconjunto": "actuados",
+          "ruta": "actuados/p2_triste_3.wav",
+          "audio": "p2_triste_3.wav",
+          "dur_s": 5.0,
+          "esperado": "tristeza",
+          "pred": "tristeza",
+          "prob": 0.919,
+          "dist": {
+            "enojo": 0.042,
+            "felicidad": 0.029,
+            "neutral": 0.01,
+            "tristeza": 0.919
+          },
+          "lat_s": 0.152,
+          "rtf": 0.03
+        }
+      ]
+    }
+  ],
+  "metricas": {
+    "ninguna": {
+      "dusha": {
+        "n": 24,
+        "aciertos": 7,
+        "exactitud": 0.2916666666666667,
+        "ic95": [
+          0.14914460334164278,
+          0.49168063658709704
+        ],
+        "uar": 0.29166666666666663,
+        "f1_macro": 0.2062937062937063,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.6666666666666666,
+            "precision": 0.25,
+            "f1": 0.36363636363636365
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.5,
+            "precision": 0.42857142857142855,
+            "f1": 0.4615384615384615
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 4,
+            "tristeza": 1,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 6,
+            "tristeza": 0,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 3,
+            "tristeza": 0,
+            "enojo": 0,
+            "felicidad": 3,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 3,
+            "tristeza": 0,
+            "enojo": 0,
+            "felicidad": 3,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 1,
+            "solo_b": 7,
+            "p": 0.0703125
+          }
+        }
+      },
+      "e2v_base": {
+        "n": 24,
+        "aciertos": 13,
+        "exactitud": 0.5416666666666666,
+        "ic95": [
+          0.35074553553106635,
+          0.7210894164831857
+        ],
+        "uar": 0.5416666666666666,
+        "f1_macro": 0.47607655502392343,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.6666666666666666,
+            "precision": 0.8,
+            "f1": 0.7272727272727272
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 1.0,
+            "precision": 0.46153846153846156,
+            "f1": 0.631578947368421
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.5,
+            "precision": 0.6,
+            "f1": 0.5454545454545454
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 4,
+            "tristeza": 1,
+            "enojo": 1,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 1,
+            "tristeza": 3,
+            "enojo": 0,
+            "felicidad": 2,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 0,
+            "tristeza": 3,
+            "enojo": 0,
+            "felicidad": 3,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "dusha": {
+            "solo_a": 7,
+            "solo_b": 1,
+            "p": 0.0703125
+          }
+        }
+      },
+      "umuteam": {
+        "n": 24,
+        "aciertos": 8,
+        "exactitud": 0.3333333333333333,
+        "ic95": [
+          0.17971978688379642,
+          0.5329404050591954
+        ],
+        "uar": 0.3333333333333333,
+        "f1_macro": 0.3005952380952381,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.3333333333333333,
+            "precision": 1.0,
+            "f1": 0.5
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 0.8333333333333334,
+            "precision": 0.2777777777777778,
+            "f1": 0.4166666666666667
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.16666666666666666,
+            "precision": 1.0,
+            "f1": 0.2857142857142857
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 2,
+            "tristeza": 2,
+            "enojo": 2,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 1,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 1,
+            "solo_b": 6,
+            "p": 0.125
+          },
+          "dusha": {
+            "solo_a": 5,
+            "solo_b": 4,
+            "p": 1.0
+          }
+        }
+      },
+      "wavlm": {
+        "n": 24,
+        "aciertos": 11,
+        "exactitud": 0.4583333333333333,
+        "ic95": [
+          0.2789105835168143,
+          0.6492544644689336
+        ],
+        "uar": 0.45833333333333337,
+        "f1_macro": 0.32352941176470584,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.8333333333333334,
+            "precision": 0.45454545454545453,
+            "f1": 0.5882352941176471
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 1.0,
+            "precision": 0.5454545454545454,
+            "f1": 0.7058823529411764
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 5,
+            "tristeza": 0,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 2,
+            "tristeza": 3,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 4,
+            "tristeza": 2,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 1,
+            "solo_b": 3,
+            "p": 0.625
+          },
+          "dusha": {
+            "solo_a": 7,
+            "solo_b": 3,
+            "p": 0.34375
+          }
+        }
+      },
+      "pollito_v5": {
+        "n": 24,
+        "aciertos": 6,
+        "exactitud": 0.25,
+        "ic95": [
+          0.1199920347934233,
+          0.4489982531210644
+        ],
+        "uar": 0.25,
+        "f1_macro": 0.14814814814814814,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 0.8333333333333334,
+            "precision": 0.23809523809523808,
+            "f1": 0.37037037037037035
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.16666666666666666,
+            "precision": 0.3333333333333333,
+            "f1": 0.2222222222222222
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 1,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 1,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 1,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 1,
+            "solo_b": 8,
+            "p": 0.0390625
+          },
+          "dusha": {
+            "solo_a": 6,
+            "solo_b": 7,
+            "p": 1.0
+          }
+        }
+      }
+    },
+    "rms": {
+      "dusha": {
+        "n": 24,
+        "aciertos": 7,
+        "exactitud": 0.2916666666666667,
+        "ic95": [
+          0.14914460334164278,
+          0.49168063658709704
+        ],
+        "uar": 0.29166666666666663,
+        "f1_macro": 0.2062937062937063,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.6666666666666666,
+            "precision": 0.25,
+            "f1": 0.36363636363636365
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.5,
+            "precision": 0.42857142857142855,
+            "f1": 0.4615384615384615
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 4,
+            "tristeza": 1,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 6,
+            "tristeza": 0,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 3,
+            "tristeza": 0,
+            "enojo": 0,
+            "felicidad": 3,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 3,
+            "tristeza": 0,
+            "enojo": 0,
+            "felicidad": 3,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 1,
+            "solo_b": 7,
+            "p": 0.0703125
+          }
+        }
+      },
+      "e2v_base": {
+        "n": 24,
+        "aciertos": 13,
+        "exactitud": 0.5416666666666666,
+        "ic95": [
+          0.35074553553106635,
+          0.7210894164831857
+        ],
+        "uar": 0.5416666666666666,
+        "f1_macro": 0.47607655502392343,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.6666666666666666,
+            "precision": 0.8,
+            "f1": 0.7272727272727272
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 1.0,
+            "precision": 0.46153846153846156,
+            "f1": 0.631578947368421
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.5,
+            "precision": 0.6,
+            "f1": 0.5454545454545454
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 4,
+            "tristeza": 1,
+            "enojo": 1,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 1,
+            "tristeza": 3,
+            "enojo": 0,
+            "felicidad": 2,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 0,
+            "tristeza": 3,
+            "enojo": 0,
+            "felicidad": 3,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "dusha": {
+            "solo_a": 7,
+            "solo_b": 1,
+            "p": 0.0703125
+          }
+        }
+      },
+      "umuteam": {
+        "n": 24,
+        "aciertos": 8,
+        "exactitud": 0.3333333333333333,
+        "ic95": [
+          0.17971978688379642,
+          0.5329404050591954
+        ],
+        "uar": 0.3333333333333333,
+        "f1_macro": 0.3005952380952381,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.3333333333333333,
+            "precision": 1.0,
+            "f1": 0.5
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 0.8333333333333334,
+            "precision": 0.2777777777777778,
+            "f1": 0.4166666666666667
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.16666666666666666,
+            "precision": 1.0,
+            "f1": 0.2857142857142857
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 2,
+            "tristeza": 2,
+            "enojo": 2,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 1,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 1,
+            "solo_b": 6,
+            "p": 0.125
+          },
+          "dusha": {
+            "solo_a": 5,
+            "solo_b": 4,
+            "p": 1.0
+          }
+        }
+      },
+      "wavlm": {
+        "n": 24,
+        "aciertos": 9,
+        "exactitud": 0.375,
+        "ic95": [
+          0.21159133433631458,
+          0.5729038096209293
+        ],
+        "uar": 0.375,
+        "f1_macro": 0.2678571428571429,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.6666666666666666,
+            "precision": 0.5,
+            "f1": 0.5714285714285715
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 0.8333333333333334,
+            "precision": 0.35714285714285715,
+            "f1": 0.5
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 4,
+            "tristeza": 1,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 1,
+            "tristeza": 5,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 2,
+            "tristeza": 3,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 1,
+            "tristeza": 5,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 0,
+            "solo_b": 4,
+            "p": 0.125
+          },
+          "dusha": {
+            "solo_a": 6,
+            "solo_b": 4,
+            "p": 0.75390625
+          }
+        }
+      },
+      "pollito_v5": {
+        "n": 24,
+        "aciertos": 5,
+        "exactitud": 0.20833333333333334,
+        "ic95": [
+          0.0924468910478809,
+          0.40470844485235474
+        ],
+        "uar": 0.20833333333333334,
+        "f1_macro": 0.08620689655172414,
+        "por_clase": {
+          "neutral": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "tristeza": {
+            "soporte": 6,
+            "recall": 0.8333333333333334,
+            "precision": 0.21739130434782608,
+            "f1": 0.3448275862068966
+          },
+          "enojo": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          },
+          "felicidad": {
+            "soporte": 6,
+            "recall": 0.0,
+            "precision": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion": {
+          "neutral": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "tristeza": {
+            "neutral": 0,
+            "tristeza": 5,
+            "enojo": 0,
+            "felicidad": 1,
+            "(ninguna)": 0
+          },
+          "enojo": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          },
+          "felicidad": {
+            "neutral": 0,
+            "tristeza": 6,
+            "enojo": 0,
+            "felicidad": 0,
+            "(ninguna)": 0
+          }
+        },
+        "mcnemar": {
+          "e2v_base": {
+            "solo_a": 0,
+            "solo_b": 8,
+            "p": 0.0078125
+          },
+          "dusha": {
+            "solo_a": 5,
+            "solo_b": 7,
+            "p": 0.7744140625
+          }
+        }
+      }
+    }
+  }
+}

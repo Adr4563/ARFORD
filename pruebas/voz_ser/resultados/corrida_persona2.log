@@ -1,0 +1,1337 @@
+﻿
+=== dusha: xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned ===
+python : 
+At line:1 char:451
++ ... NG='utf-8'; python -u comparar_ser.py --repo C:\Users\I13306\Desktop\ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Loading weights:   0%|          | 0/426 [00:00<?, ?it/s]
+Loading weights:   4%|▎         | 15/426 [00:00<00:02, 138.48it/s]
+Loading weights:   7%|▋         | 29/426 [00:00<00:03, 116.71it/s]
+Loading weights:  10%|▉         | 41/426 [00:00<00:03, 112.10it/s]
+Loading weights:  13%|█▎        | 55/426 [00:00<00:03, 111.80it/s]
+Loading weights:  17%|█▋        | 72/426 [00:00<00:02, 129.04it/s]
+Loading weights:  20%|██        | 86/426 [00:00<00:02, 121.66it/s]
+Loading weights: 100%|██████████| 426/426 [00:00<00:00, 591.31it/s]
+  carga 5.4 s | RAM tras cargar 1701 MB | RAM pico 1722 MB
+  enojado_1.wav                      esperado=enojo      pred=felicidad  p=0.995  0.41 s (RTF 0.082)
+  enojado_2.wav                      esperado=enojo      pred=felicidad  p=0.972  0.392 s (RTF 0.078)
+  enojado_3.wav                      esperado=enojo      pred=felicidad  p=0.842  0.397 s (RTF 0.079)
+  feliz_1.wav                        esperado=felicidad  pred=felicidad  p=0.963  0.392 s (RTF 0.078)
+  feliz_2.wav                        esperado=felicidad  pred=felicidad  p=0.917  0.394 s (RTF 0.079)
+  feliz_3.wav                        esperado=felicidad  pred=felicidad  p=0.966  0.394 s (RTF 0.079)
+  neutral_1.wav                      esperado=neutral    pred=felicidad  p=0.841  0.394 s (RTF 0.079)
+  neutral_2.wav                      esperado=neutral    pred=neutral    p=0.841  0.393 s (RTF 0.079)
+  neutral_3.wav                      esperado=neutral    pred=tristeza   p=0.434  0.397 s (RTF 0.079)
+  triste_1.wav                       esperado=tristeza   pred=neutral    p=0.728  0.395 s (RTF 0.079)
+  triste_2.wav                       esperado=tristeza   pred=neutral    p=0.989  0.398 s (RTF 0.08)
+  triste_3.wav                       esperado=tristeza   pred=neutral    p=0.758  0.394 s (RTF 0.079)
+
+=== umuteam: UMUTeam/w2v-bert-emotion-es ===
+
+Loading weights:   0%|          | 0/775 [00:00<?, ?it/s]
+Loading weights:   1%|▏         | 11/775 [00:00<00:07, 98.59it/s]
+Loading weights:   5%|▍         | 35/775 [00:00<00:04, 157.09it/s]
+Loading weights:   8%|▊         | 62/775 [00:00<00:03, 200.91it/s]
+Loading weights:  11%|█         | 86/775 [00:00<00:03, 212.58it/s]
+Loading weights:  14%|█▍        | 108/775 [00:00<00:03, 191.05it/s]
+Loading weights:  17%|█▋        | 133/775 [00:00<00:03, 201.38it/s]
+Loading weights:  20%|██        | 158/775 [00:00<00:02, 211.16it/s]
+Loading weights:  23%|██▎       | 182/775 [00:00<00:02, 214.57it/s]
+Loading weights:  27%|██▋       | 211/775 [00:01<00:02, 217.63it/s]
+Loading weights:  30%|███       | 235/775 [00:01<00:02, 207.18it/s]
+Loading weights:  33%|███▎      | 257/775 [00:01<00:02, 206.32it/s]
+Loading weights:  37%|███▋      | 284/775 [00:01<00:02, 223.64it/s]
+Loading weights: 100%|██████████| 775/775 [00:01<00:00, 560.85it/s]
+[transformers] [1mWav2Vec2BertForSequenceClassification LOAD REPORT[0m from: UMUTeam/w2v-bert-emotion-es
+Key                         | Status     | 
+----------------------------+------------+-
+classifier.out_proj.weight  | UNEXPECTED | 
+classifier.dense.bias       | UNEXPECTED | 
+classifier.dense.weight     | UNEXPECTED | 
+classifier.layernorm.bias   | UNEXPECTED | 
+classifier.out_proj.bias    | UNEXPECTED | 
+classifier.layernorm.weight | UNEXPECTED | 
+classifier.bias             | MISSING    | 
+classifier.weight           | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your 
+downstream task.
+  carga 5.9 s | RAM tras cargar 2734 MB | RAM pico 2816 MB
+  enojado_1.wav                      esperado=enojo      pred=tristeza   p=0.358  0.628 s (RTF 0.126)
+  enojado_2.wav                      esperado=enojo      pred=tristeza   p=0.358  0.621 s (RTF 0.124)
+  enojado_3.wav                      esperado=enojo      pred=tristeza   p=0.345  0.614 s (RTF 0.123)
+  feliz_1.wav                        esperado=felicidad  pred=enojo      p=0.383  0.615 s (RTF 0.123)
+  feliz_2.wav                        esperado=felicidad  pred=tristeza   p=0.356  0.63 s (RTF 0.126)
+  feliz_3.wav                        esperado=felicidad  pred=tristeza   p=0.358  0.629 s (RTF 0.126)
+  neutral_1.wav                      esperado=neutral    pred=tristeza   p=0.333  0.619 s (RTF 0.124)
+  neutral_2.wav                      esperado=neutral    pred=enojo      p=0.328  0.648 s (RTF 0.13)
+  neutral_3.wav                      esperado=neutral    pred=tristeza   p=0.341  0.631 s (RTF 0.126)
+  triste_1.wav                       esperado=tristeza   pred=tristeza   p=0.358  0.618 s (RTF 0.124)
+  triste_2.wav                       esperado=tristeza   pred=tristeza   p=0.358  0.615 s (RTF 0.123)
+  triste_3.wav                       esperado=tristeza   pred=tristeza   p=0.358  0.61 s (RTF 0.122)
+
+=== e2v_base: emotion2vec/emotion2vec_plus_base ===
+2026-11-18 15:28:26,674 [INFO] download models from model hub: hf
+2026-11-18 15:28:26,807 [INFO] HTTP Request: GET 
+https://huggingface.co/api/models/emotion2vec/emotion2vec_plus_base/revision/main "HTTP/1.1 200 OK"
+
+Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]
+Fetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 1968.85it/s]
+2026-11-18 15:28:26,824 [WARNING] trust_remote_code: False
+2026-11-18 15:28:26,828 [WARNING] AutoModel: requested device 'cuda' is unavailable for model 'Emotion2vec'; falling 
+back to CPU. Check your PyTorch build and accelerator availability, or set device='cpu' to use CPU explicitly.
+2026-11-18 15:28:27,130 [INFO] Loading pretrained params from C:\Users\I13306\.cache\huggingface\hub\models--emotion2ve
+c--emotion2vec_plus_base\snapshots\b318240bfe67db81a8c572ecb37ce9c3759b81c9\model.pt
+2026-11-18 15:28:27,131 [INFO] ckpt: C:\Users\I13306\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_base\
+snapshots\b318240bfe67db81a8c572ecb37ce9c3759b81c9\model.pt
+2026-11-18 15:28:27,505 [INFO] scope_map: ['d2v_model.', 'none', 'module.', 'None']
+2026-11-18 15:28:27,505 [INFO] excludes: None
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.extra_tokens from 
+d2v_model.modality_encoders.AUDIO.extra_tokens in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.alibi_scale from 
+d2v_model.modality_encoders.AUDIO.alibi_scale in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight in ckpt
+2026-11-18 15:28:27,505 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.project_features.1.weight from 
+d2v_model.modality_encoders.AUDIO.project_features.1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.project_features.1.bias from 
+d2v_model.modality_encoders.AUDIO.project_features.1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.project_features.2.weight from 
+d2v_model.modality_encoders.AUDIO.project_features.2.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.project_features.2.bias from 
+d2v_model.modality_encoders.AUDIO.project_features.2.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,506 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.norm.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.norm.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.norm.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.norm.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.norm1.weight from d2v_model.blocks.0.norm1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.norm1.bias from d2v_model.blocks.0.norm1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.attn.qkv.weight from d2v_model.blocks.0.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.attn.qkv.bias from d2v_model.blocks.0.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.attn.proj.weight from d2v_model.blocks.0.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.attn.proj.bias from d2v_model.blocks.0.attn.proj.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.norm2.weight from d2v_model.blocks.0.norm2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.norm2.bias from d2v_model.blocks.0.norm2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.mlp.fc1.weight from d2v_model.blocks.0.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.mlp.fc1.bias from d2v_model.blocks.0.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.mlp.fc2.weight from d2v_model.blocks.0.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.0.mlp.fc2.bias from d2v_model.blocks.0.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.norm1.weight from d2v_model.blocks.1.norm1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.norm1.bias from d2v_model.blocks.1.norm1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.attn.qkv.weight from d2v_model.blocks.1.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.attn.qkv.bias from d2v_model.blocks.1.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.attn.proj.weight from d2v_model.blocks.1.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.attn.proj.bias from d2v_model.blocks.1.attn.proj.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.norm2.weight from d2v_model.blocks.1.norm2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.norm2.bias from d2v_model.blocks.1.norm2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.mlp.fc1.weight from d2v_model.blocks.1.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.mlp.fc1.bias from d2v_model.blocks.1.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.mlp.fc2.weight from d2v_model.blocks.1.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.1.mlp.fc2.bias from d2v_model.blocks.1.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.norm1.weight from d2v_model.blocks.2.norm1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.norm1.bias from d2v_model.blocks.2.norm1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.attn.qkv.weight from d2v_model.blocks.2.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.attn.qkv.bias from d2v_model.blocks.2.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.attn.proj.weight from d2v_model.blocks.2.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.attn.proj.bias from d2v_model.blocks.2.attn.proj.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.norm2.weight from d2v_model.blocks.2.norm2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.norm2.bias from d2v_model.blocks.2.norm2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.mlp.fc1.weight from d2v_model.blocks.2.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.mlp.fc1.bias from d2v_model.blocks.2.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.mlp.fc2.weight from d2v_model.blocks.2.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.2.mlp.fc2.bias from d2v_model.blocks.2.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.3.norm1.weight from d2v_model.blocks.3.norm1.weight in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.3.norm1.bias from d2v_model.blocks.3.norm1.bias in ckpt
+2026-11-18 15:28:27,507 [INFO] init param, map: blocks.3.attn.qkv.weight from d2v_model.blocks.3.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.attn.qkv.bias from d2v_model.blocks.3.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.attn.proj.weight from d2v_model.blocks.3.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.attn.proj.bias from d2v_model.blocks.3.attn.proj.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.norm2.weight from d2v_model.blocks.3.norm2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.norm2.bias from d2v_model.blocks.3.norm2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.mlp.fc1.weight from d2v_model.blocks.3.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.mlp.fc1.bias from d2v_model.blocks.3.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.mlp.fc2.weight from d2v_model.blocks.3.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.3.mlp.fc2.bias from d2v_model.blocks.3.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.norm1.weight from d2v_model.blocks.4.norm1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.norm1.bias from d2v_model.blocks.4.norm1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.attn.qkv.weight from d2v_model.blocks.4.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.attn.qkv.bias from d2v_model.blocks.4.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.attn.proj.weight from d2v_model.blocks.4.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.attn.proj.bias from d2v_model.blocks.4.attn.proj.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.norm2.weight from d2v_model.blocks.4.norm2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.norm2.bias from d2v_model.blocks.4.norm2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.mlp.fc1.weight from d2v_model.blocks.4.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.mlp.fc1.bias from d2v_model.blocks.4.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.mlp.fc2.weight from d2v_model.blocks.4.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.4.mlp.fc2.bias from d2v_model.blocks.4.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.norm1.weight from d2v_model.blocks.5.norm1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.norm1.bias from d2v_model.blocks.5.norm1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.attn.qkv.weight from d2v_model.blocks.5.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.attn.qkv.bias from d2v_model.blocks.5.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.attn.proj.weight from d2v_model.blocks.5.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.attn.proj.bias from d2v_model.blocks.5.attn.proj.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.norm2.weight from d2v_model.blocks.5.norm2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.norm2.bias from d2v_model.blocks.5.norm2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.mlp.fc1.weight from d2v_model.blocks.5.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.mlp.fc1.bias from d2v_model.blocks.5.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.mlp.fc2.weight from d2v_model.blocks.5.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.5.mlp.fc2.bias from d2v_model.blocks.5.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.norm1.weight from d2v_model.blocks.6.norm1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.norm1.bias from d2v_model.blocks.6.norm1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.attn.qkv.weight from d2v_model.blocks.6.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.attn.qkv.bias from d2v_model.blocks.6.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.attn.proj.weight from d2v_model.blocks.6.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.attn.proj.bias from d2v_model.blocks.6.attn.proj.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.norm2.weight from d2v_model.blocks.6.norm2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.norm2.bias from d2v_model.blocks.6.norm2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.mlp.fc1.weight from d2v_model.blocks.6.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.mlp.fc1.bias from d2v_model.blocks.6.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.mlp.fc2.weight from d2v_model.blocks.6.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.6.mlp.fc2.bias from d2v_model.blocks.6.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.7.norm1.weight from d2v_model.blocks.7.norm1.weight in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.7.norm1.bias from d2v_model.blocks.7.norm1.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.7.attn.qkv.weight from d2v_model.blocks.7.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.7.attn.qkv.bias from d2v_model.blocks.7.attn.qkv.bias in ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.7.attn.proj.weight from d2v_model.blocks.7.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:27,508 [INFO] init param, map: blocks.7.attn.proj.bias from d2v_model.blocks.7.attn.proj.bias in ckpt
+2026-11-18 15:28:27,509 [INFO] init param, map: blocks.7.norm2.weight from d2v_model.blocks.7.norm2.weight in ckpt
+2026-11-18 15:28:27,509 [INFO] init param, map: blocks.7.norm2.bias from d2v_model.blocks.7.norm2.bias in ckpt
+2026-11-18 15:28:27,509 [INFO] init param, map: blocks.7.mlp.fc1.weight from d2v_model.blocks.7.mlp.fc1.weight in ckpt
+2026-11-18 15:28:27,509 [INFO] init param, map: blocks.7.mlp.fc1.bias from d2v_model.blocks.7.mlp.fc1.bias in ckpt
+2026-11-18 15:28:27,509 [INFO] init param, map: blocks.7.mlp.fc2.weight from d2v_model.blocks.7.mlp.fc2.weight in ckpt
+2026-11-18 15:28:27,509 [INFO] init param, map: blocks.7.mlp.fc2.bias from d2v_model.blocks.7.mlp.fc2.bias in ckpt
+2026-11-18 15:28:27,528 [INFO] Loading ckpt: C:\Users\I13306\.cache\huggingface\hub\models--emotion2vec--emotion2vec_pl
+us_base\snapshots\b318240bfe67db81a8c572ecb37ce9c3759b81c9\model.pt, status: <All keys matched successfully>
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.13it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.195', 'batch_size': '1', 'rtf': '0.039'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.13it/s]
+rtf_avg: 0.039: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.13it/s]                                                 
+                                     
+rtf_avg: 0.039: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.12it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.14it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.241', 'batch_size': '1', 'rtf': '0.048'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.14it/s]
+rtf_avg: 0.048: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.14it/s]                                                 
+                                     
+rtf_avg: 0.048: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.14it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.189', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.28it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.189', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.189', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.27it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.190', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.27it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.27it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.26it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.22it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.191', 'batch_size': '1', 'rtf': '0.038'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.22it/s]
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.22it/s]                                                 
+                                     
+rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]
+rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                 
+                                     
+rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.01it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.200', 'batch_size': '1', 'rtf': '0.040'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.01it/s]
+rtf_avg: 0.040: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.01it/s]                                                 
+                                     
+rtf_avg: 0.040: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.00it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                 
+                                     
+rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]                                                 
+                                     
+rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]
+  carga 6.9 s | RAM tras cargar 2003 MB | RAM pico 2003 MB
+  enojado_1.wav                      esperado=enojo      pred=felicidad  p=1.0  0.194 s (RTF 0.039)
+  enojado_2.wav                      esperado=enojo      pred=felicidad  p=0.947  0.191 s (RTF 0.038)
+  enojado_3.wav                      esperado=enojo      pred=neutral    p=1.0  0.192 s (RTF 0.038)
+  feliz_1.wav                        esperado=felicidad  pred=felicidad  p=0.999  0.192 s (RTF 0.038)
+  feliz_2.wav                        esperado=felicidad  pred=felicidad  p=1.0  0.191 s (RTF 0.038)
+  feliz_3.wav                        esperado=felicidad  pred=felicidad  p=1.0  0.189 s (RTF 0.038)
+  neutral_1.wav                      esperado=neutral    pred=neutral    p=1.0  0.191 s (RTF 0.038)
+  neutral_2.wav                      esperado=neutral    pred=neutral    p=1.0  0.194 s (RTF 0.039)
+  neutral_3.wav                      esperado=neutral    pred=enojo      p=0.961  0.188 s (RTF 0.038)
+  triste_1.wav                       esperado=tristeza   pred=tristeza   p=1.0  0.188 s (RTF 0.038)
+  triste_2.wav                       esperado=tristeza   pred=tristeza   p=0.952  0.192 s (RTF 0.038)
+  triste_3.wav                       esperado=tristeza   pred=tristeza   p=0.996  0.188 s (RTF 0.038)
+
+=== e2v_large: emotion2vec/emotion2vec_plus_large ===
+2026-11-18 15:28:42,790 [INFO] download models from model hub: hf
+2026-11-18 15:28:42,930 [INFO] HTTP Request: GET 
+https://huggingface.co/api/models/emotion2vec/emotion2vec_plus_large/revision/main "HTTP/1.1 200 OK"
+
+Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]
+Fetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 1720.78it/s]
+2026-11-18 15:28:42,960 [WARNING] trust_remote_code: False
+2026-11-18 15:28:42,977 [WARNING] AutoModel: requested device 'cuda' is unavailable for model 'Emotion2vec'; falling 
+back to CPU. Check your PyTorch build and accelerator availability, or set device='cpu' to use CPU explicitly.
+2026-11-18 15:28:43,459 [INFO] Loading pretrained params from C:\Users\I13306\.cache\huggingface\hub\models--emotion2ve
+c--emotion2vec_plus_large\snapshots\6c303ba987b86b93193de93e34bb2b077a6bedc4\model.pt
+2026-11-18 15:28:43,460 [INFO] ckpt: C:\Users\I13306\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_large
+\snapshots\6c303ba987b86b93193de93e34bb2b077a6bedc4\model.pt
+2026-11-18 15:28:44,252 [INFO] scope_map: ['d2v_model.', 'none', 'module.', 'None']
+2026-11-18 15:28:44,252 [INFO] excludes: None
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.extra_tokens from 
+d2v_model.modality_encoders.AUDIO.extra_tokens in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.alibi_scale from 
+d2v_model.modality_encoders.AUDIO.alibi_scale in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias from 
+d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.project_features.1.weight from 
+d2v_model.modality_encoders.AUDIO.project_features.1.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.project_features.1.bias from 
+d2v_model.modality_encoders.AUDIO.project_features.1.bias in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.project_features.2.weight from 
+d2v_model.modality_encoders.AUDIO.project_features.2.weight in ckpt
+2026-11-18 15:28:44,252 [INFO] init param, map: modality_encoders.AUDIO.project_features.2.bias from 
+d2v_model.modality_encoders.AUDIO.project_features.2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.weight from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.bias from 
+d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias in ckpt
+2026-11-18 15:28:44,253 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.norm.weight from 
+d2v_model.modality_encoders.AUDIO.context_encoder.norm.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.norm.bias from 
+d2v_model.modality_encoders.AUDIO.context_encoder.norm.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.norm1.weight from d2v_model.blocks.0.norm1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.norm1.bias from d2v_model.blocks.0.norm1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.attn.qkv.weight from d2v_model.blocks.0.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.attn.qkv.bias from d2v_model.blocks.0.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.attn.proj.weight from d2v_model.blocks.0.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.attn.proj.bias from d2v_model.blocks.0.attn.proj.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.norm2.weight from d2v_model.blocks.0.norm2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.norm2.bias from d2v_model.blocks.0.norm2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.mlp.fc1.weight from d2v_model.blocks.0.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.mlp.fc1.bias from d2v_model.blocks.0.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.mlp.fc2.weight from d2v_model.blocks.0.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.0.mlp.fc2.bias from d2v_model.blocks.0.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.norm1.weight from d2v_model.blocks.1.norm1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.norm1.bias from d2v_model.blocks.1.norm1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.attn.qkv.weight from d2v_model.blocks.1.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.attn.qkv.bias from d2v_model.blocks.1.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.attn.proj.weight from d2v_model.blocks.1.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.attn.proj.bias from d2v_model.blocks.1.attn.proj.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.norm2.weight from d2v_model.blocks.1.norm2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.norm2.bias from d2v_model.blocks.1.norm2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.mlp.fc1.weight from d2v_model.blocks.1.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.mlp.fc1.bias from d2v_model.blocks.1.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.mlp.fc2.weight from d2v_model.blocks.1.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.1.mlp.fc2.bias from d2v_model.blocks.1.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.norm1.weight from d2v_model.blocks.2.norm1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.norm1.bias from d2v_model.blocks.2.norm1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.attn.qkv.weight from d2v_model.blocks.2.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.attn.qkv.bias from d2v_model.blocks.2.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.attn.proj.weight from d2v_model.blocks.2.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.attn.proj.bias from d2v_model.blocks.2.attn.proj.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.norm2.weight from d2v_model.blocks.2.norm2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.norm2.bias from d2v_model.blocks.2.norm2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.mlp.fc1.weight from d2v_model.blocks.2.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.mlp.fc1.bias from d2v_model.blocks.2.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.mlp.fc2.weight from d2v_model.blocks.2.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.2.mlp.fc2.bias from d2v_model.blocks.2.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.norm1.weight from d2v_model.blocks.3.norm1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.norm1.bias from d2v_model.blocks.3.norm1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.attn.qkv.weight from d2v_model.blocks.3.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.attn.qkv.bias from d2v_model.blocks.3.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.attn.proj.weight from d2v_model.blocks.3.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.attn.proj.bias from d2v_model.blocks.3.attn.proj.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.norm2.weight from d2v_model.blocks.3.norm2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.norm2.bias from d2v_model.blocks.3.norm2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.mlp.fc1.weight from d2v_model.blocks.3.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.mlp.fc1.bias from d2v_model.blocks.3.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.mlp.fc2.weight from d2v_model.blocks.3.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.3.mlp.fc2.bias from d2v_model.blocks.3.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,254 [INFO] init param, map: blocks.4.norm1.weight from d2v_model.blocks.4.norm1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.norm1.bias from d2v_model.blocks.4.norm1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.attn.qkv.weight from d2v_model.blocks.4.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.attn.qkv.bias from d2v_model.blocks.4.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.attn.proj.weight from d2v_model.blocks.4.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.attn.proj.bias from d2v_model.blocks.4.attn.proj.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.norm2.weight from d2v_model.blocks.4.norm2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.norm2.bias from d2v_model.blocks.4.norm2.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.mlp.fc1.weight from d2v_model.blocks.4.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.mlp.fc1.bias from d2v_model.blocks.4.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.mlp.fc2.weight from d2v_model.blocks.4.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.4.mlp.fc2.bias from d2v_model.blocks.4.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.norm1.weight from d2v_model.blocks.5.norm1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.norm1.bias from d2v_model.blocks.5.norm1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.attn.qkv.weight from d2v_model.blocks.5.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.attn.qkv.bias from d2v_model.blocks.5.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.attn.proj.weight from d2v_model.blocks.5.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.attn.proj.bias from d2v_model.blocks.5.attn.proj.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.norm2.weight from d2v_model.blocks.5.norm2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.norm2.bias from d2v_model.blocks.5.norm2.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.mlp.fc1.weight from d2v_model.blocks.5.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.mlp.fc1.bias from d2v_model.blocks.5.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.mlp.fc2.weight from d2v_model.blocks.5.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.5.mlp.fc2.bias from d2v_model.blocks.5.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.norm1.weight from d2v_model.blocks.6.norm1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.norm1.bias from d2v_model.blocks.6.norm1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.attn.qkv.weight from d2v_model.blocks.6.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.attn.qkv.bias from d2v_model.blocks.6.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.attn.proj.weight from d2v_model.blocks.6.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.attn.proj.bias from d2v_model.blocks.6.attn.proj.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.norm2.weight from d2v_model.blocks.6.norm2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.norm2.bias from d2v_model.blocks.6.norm2.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.mlp.fc1.weight from d2v_model.blocks.6.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.mlp.fc1.bias from d2v_model.blocks.6.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.mlp.fc2.weight from d2v_model.blocks.6.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.6.mlp.fc2.bias from d2v_model.blocks.6.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.norm1.weight from d2v_model.blocks.7.norm1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.norm1.bias from d2v_model.blocks.7.norm1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.attn.qkv.weight from d2v_model.blocks.7.attn.qkv.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.attn.qkv.bias from d2v_model.blocks.7.attn.qkv.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.attn.proj.weight from d2v_model.blocks.7.attn.proj.weight in 
+ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.attn.proj.bias from d2v_model.blocks.7.attn.proj.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.norm2.weight from d2v_model.blocks.7.norm2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.norm2.bias from d2v_model.blocks.7.norm2.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.mlp.fc1.weight from d2v_model.blocks.7.mlp.fc1.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.mlp.fc1.bias from d2v_model.blocks.7.mlp.fc1.bias in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.mlp.fc2.weight from d2v_model.blocks.7.mlp.fc2.weight in ckpt
+2026-11-18 15:28:44,255 [INFO] init param, map: blocks.7.mlp.fc2.bias from d2v_model.blocks.7.mlp.fc2.bias in ckpt
+2026-11-18 15:28:44,285 [INFO] Loading ckpt: C:\Users\I13306\.cache\huggingface\hub\models--emotion2vec--emotion2vec_pl
+us_large\snapshots\6c303ba987b86b93193de93e34bb2b077a6bedc4\model.pt, status: <All keys matched successfully>
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.95it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.339', 'batch_size': '1', 'rtf': '0.068'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.95it/s]
+rtf_avg: 0.068: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.95it/s]                                                 
+                                     
+rtf_avg: 0.068: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.94it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.40it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.294', 'batch_size': '1', 'rtf': '0.059'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.40it/s]
+rtf_avg: 0.059: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.40it/s]                                                 
+                                     
+rtf_avg: 0.059: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.40it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.266', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.262', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.264', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.262', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.262', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.81it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.265', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.35it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.299', 'batch_size': '1', 'rtf': '0.060'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.35it/s]
+rtf_avg: 0.060: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.35it/s]                                                 
+                                     
+rtf_avg: 0.060: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.35it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]
+{'load_data': '0.004', 'extract_feat': 0.0, 'forward': '0.268', 'batch_size': '1', 'rtf': '0.054'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]                                                 
+                                     
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.72it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.265', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.86it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.259', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.86it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.86it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.84it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.84it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.84it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.260', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.260', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.85it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.84it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.265', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.81it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.262', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.81it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.81it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.81it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.82it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.266', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.76it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.74it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.268', 'batch_size': '1', 'rtf': '0.054'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.74it/s]
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.74it/s]                                                 
+                                     
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.51it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.285', 'batch_size': '1', 'rtf': '0.057'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.51it/s]
+rtf_avg: 0.057: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.51it/s]                                                 
+                                     
+rtf_avg: 0.057: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.51it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.261', 'batch_size': '1', 'rtf': '0.052'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]                                                 
+                                     
+rtf_avg: 0.052: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.83it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.265', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.77it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.41it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.294', 'batch_size': '1', 'rtf': '0.059'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.41it/s]
+rtf_avg: 0.059: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.41it/s]                                                 
+                                     
+rtf_avg: 0.059: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.40it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.264', 'batch_size': '1', 'rtf': '0.053'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]                                                 
+                                     
+rtf_avg: 0.053: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.78it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.66it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.273', 'batch_size': '1', 'rtf': '0.055'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.66it/s]
+rtf_avg: 0.055: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.66it/s]                                                 
+                                     
+rtf_avg: 0.055: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.65it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.62it/s]
+{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.276', 'batch_size': '1', 'rtf': '0.055'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.62it/s]
+rtf_avg: 0.055: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.62it/s]                                                 
+                                     
+rtf_avg: 0.055: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.62it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.74it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.268', 'batch_size': '1', 'rtf': '0.054'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.74it/s]
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.74it/s]                                                 
+                                     
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.70it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.271', 'batch_size': '1', 'rtf': '0.054'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.70it/s]
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.70it/s]                                                 
+                                     
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.69it/s]
+
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]
+{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.268', 'batch_size': '1', 'rtf': '0.054'}, : 
+100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.73it/s]                                                 
+                                     
+rtf_avg: 0.054: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  3.72it/s]
+  carga 7.4 s | RAM tras cargar 3112 MB | RAM pico 3112 MB
+  enojado_1.wav                      esperado=enojo      pred=felicidad  p=1.0  0.269 s (RTF 0.054)
+  enojado_2.wav                      esperado=enojo      pred=felicidad  p=1.0  0.266 s (RTF 0.053)
+  enojado_3.wav                      esperado=enojo      pred=enojo      p=0.886  0.266 s (RTF 0.053)
+  feliz_1.wav                        esperado=felicidad  pred=felicidad  p=1.0  0.269 s (RTF 0.054)
+  feliz_2.wav                        esperado=felicidad  pred=felicidad  p=1.0  0.269 s (RTF 0.054)
+  feliz_3.wav                        esperado=felicidad  pred=felicidad  p=0.998  0.265 s (RTF 0.053)
+  neutral_1.wav                      esperado=neutral    pred=neutral    p=0.989  0.264 s (RTF 0.053)
+  neutral_2.wav                      esperado=neutral    pred=neutral    p=0.971  0.266 s (RTF 0.053)
+  neutral_3.wav                      esperado=neutral    pred=felicidad  p=0.629  0.272 s (RTF 0.054)
+  triste_1.wav                       esperado=tristeza   pred=neutral    p=0.848  0.269 s (RTF 0.054)
+  triste_2.wav                       esperado=tristeza   pred=tristeza   p=0.999  0.278 s (RTF 0.056)
+  triste_3.wav                       esperado=tristeza   pred=tristeza   p=1.0  0.273 s (RTF 0.055)
+
+=== wavlm: 3loi/SER-Odyssey-Baseline-WavLM-Categorical ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits 
+and faster downloads.
+
+Loading weights:   0%|          | 0/488 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 488/488 [00:00<00:00, 74676.94it/s]
+Traceback (most recent call last):
+  File "C:\Users\I13306\Documents\ROMEO\comparar_ser.py", line 279, in <module>
+    principal()
+    ~~~~~~~~~^^
+  File "C:\Users\I13306\Documents\ROMEO\comparar_ser.py", line 213, in principal
+    trabajador(a.worker, a.audios, a.repo, a.hilos, a.repeticiones)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\I13306\Documents\ROMEO\comparar_ser.py", line 169, in trabajador
+    clf.clasificar(x, SR)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\I13306\Desktop\ARFORD\ros2_ws\src\romeo_drivers\romeo_drivers\_ser_wavlm.py", line 157, in clasificar
+    from ._ser_engine import agrupar
+ImportError: attempted relative import with no known parent package
+  (fallo el proceso; revisa el error de arriba)
+
+
+================ RESUMEN ================
+modelo      carga s   RAM MB  pico MB  lat med s    RTF  aciertos
+dusha           5.4     1701     1722      0.394   0.08    4/12  
+umuteam         5.9     2734     2816      0.620   0.12    3/12  
+e2v_base        6.9     2003     2003      0.191   0.04    8/12  
+e2v_large       7.4     3112     3112      0.269   0.05    8/12  
+wavlm      ERROR: el proceso termino sin resultado
+
+Guardado: resultados_ser.csv y resultados_ser.json
+EXIT=0

@@ -1,0 +1,719 @@
+Audios: 24 (actuados: 24) | variantes: ['ninguna', 'rms'] | hilos: 4 | repeticiones: 3
+
+=== dusha: xbgoose/hubert-large-speech-emotion-recognition-russian-dusha-finetuned ===
+  carga 8.8 s | RAM tras cargar 1701 MB | RAM pico 1723 MB | hilos 4
+  [ninguna] actuados/p1_enojado_1.wav                esperado=enojo      pred=neutral    p=0.956  0.418 s
+  [ninguna] actuados/p1_enojado_2.wav                esperado=enojo      pred=neutral    p=0.996  0.416 s
+  [ninguna] actuados/p1_enojado_3.wav                esperado=enojo      pred=neutral    p=0.996  0.412 s
+  [ninguna] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=neutral    p=0.855  0.409 s
+  [ninguna] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=neutral    p=0.822  0.412 s
+  [ninguna] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=neutral    p=0.958  0.432 s
+  [ninguna] actuados/p1_neutral_1.wav                esperado=neutral    pred=neutral    p=0.625  0.42 s
+  [ninguna] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.974  0.429 s
+  [ninguna] actuados/p1_neutral_3.wav                esperado=neutral    pred=neutral    p=0.766  0.412 s
+  [ninguna] actuados/p1_triste_1.wav                 esperado=tristeza   pred=neutral    p=0.632  0.412 s
+  [ninguna] actuados/p1_triste_2.wav                 esperado=tristeza   pred=neutral    p=0.979  0.411 s
+  [ninguna] actuados/p1_triste_3.wav                 esperado=tristeza   pred=neutral    p=0.995  0.413 s
+  [ninguna] actuados/p2_enojado_1.wav                esperado=enojo      pred=felicidad  p=0.995  0.415 s
+  [ninguna] actuados/p2_enojado_2.wav                esperado=enojo      pred=felicidad  p=0.972  0.42 s
+  [ninguna] actuados/p2_enojado_3.wav                esperado=enojo      pred=felicidad  p=0.842  0.413 s
+  [ninguna] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=felicidad  p=0.963  0.416 s
+  [ninguna] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=felicidad  p=0.917  0.429 s
+  [ninguna] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=felicidad  p=0.966  0.418 s
+  [ninguna] actuados/p2_neutral_1.wav                esperado=neutral    pred=felicidad  p=0.841  0.409 s
+  [ninguna] actuados/p2_neutral_2.wav                esperado=neutral    pred=neutral    p=0.841  0.413 s
+  [ninguna] actuados/p2_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.434  0.415 s
+  [ninguna] actuados/p2_triste_1.wav                 esperado=tristeza   pred=neutral    p=0.728  0.418 s
+  [ninguna] actuados/p2_triste_2.wav                 esperado=tristeza   pred=neutral    p=0.989  0.415 s
+  [ninguna] actuados/p2_triste_3.wav                 esperado=tristeza   pred=neutral    p=0.758  0.416 s
+  [rms    ] actuados/p1_enojado_1.wav                esperado=enojo      pred=neutral    p=0.955  0.415 s
+  [rms    ] actuados/p1_enojado_2.wav                esperado=enojo      pred=neutral    p=0.996  0.419 s
+  [rms    ] actuados/p1_enojado_3.wav                esperado=enojo      pred=neutral    p=0.996  0.415 s
+  [rms    ] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=neutral    p=0.855  0.414 s
+  [rms    ] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=neutral    p=0.821  0.416 s
+  [rms    ] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=neutral    p=0.958  0.417 s
+  [rms    ] actuados/p1_neutral_1.wav                esperado=neutral    pred=neutral    p=0.625  0.416 s
+  [rms    ] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.974  0.406 s
+  [rms    ] actuados/p1_neutral_3.wav                esperado=neutral    pred=neutral    p=0.766  0.403 s
+  [rms    ] actuados/p1_triste_1.wav                 esperado=tristeza   pred=neutral    p=0.632  0.417 s
+  [rms    ] actuados/p1_triste_2.wav                 esperado=tristeza   pred=neutral    p=0.979  0.405 s
+  [rms    ] actuados/p1_triste_3.wav                 esperado=tristeza   pred=neutral    p=0.995  0.408 s
+  [rms    ] actuados/p2_enojado_1.wav                esperado=enojo      pred=felicidad  p=0.995  0.419 s
+  [rms    ] actuados/p2_enojado_2.wav                esperado=enojo      pred=felicidad  p=0.972  0.422 s
+  [rms    ] actuados/p2_enojado_3.wav                esperado=enojo      pred=felicidad  p=0.826  0.41 s
+  [rms    ] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=felicidad  p=0.963  0.411 s
+  [rms    ] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=felicidad  p=0.917  0.411 s
+  [rms    ] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=felicidad  p=0.966  0.399 s
+  [rms    ] actuados/p2_neutral_1.wav                esperado=neutral    pred=felicidad  p=0.841  0.404 s
+  [rms    ] actuados/p2_neutral_2.wav                esperado=neutral    pred=neutral    p=0.841  0.404 s
+  [rms    ] actuados/p2_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.444  0.402 s
+  [rms    ] actuados/p2_triste_1.wav                 esperado=tristeza   pred=neutral    p=0.729  0.402 s
+  [rms    ] actuados/p2_triste_2.wav                 esperado=tristeza   pred=neutral    p=0.989  0.403 s
+  [rms    ] actuados/p2_triste_3.wav                 esperado=tristeza   pred=neutral    p=0.758  0.408 s
+
+=== e2v_base: emotion2vec/emotion2vec_plus_base ===
+2026-11-19 12:19:10,430 [INFO] download models from model hub: hf
+2026-11-19 12:19:10,636 [INFO] HTTP Request: GET https://huggingface.co/api/models/emotion2vec/emotion2vec_plus_base/revision/main "HTTP/1.1 200 OK"
+2026-11-19 12:19:10,651 [WARNING] trust_remote_code: False
+2026-11-19 12:19:10,957 [INFO] Loading pretrained params from C:\Users\I13306\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_base\snapshots\b318240bfe67db81a8c572ecb37ce9c3759b81c9\model.pt
+2026-11-19 12:19:10,958 [INFO] ckpt: C:\Users\I13306\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_base\snapshots\b318240bfe67db81a8c572ecb37ce9c3759b81c9\model.pt
+2026-11-19 12:19:11,242 [INFO] scope_map: ['d2v_model.', 'none', 'module.', 'None']
+2026-11-19 12:19:11,242 [INFO] excludes: None
+2026-11-19 12:19:11,242 [INFO] init param, map: modality_encoders.AUDIO.extra_tokens from d2v_model.modality_encoders.AUDIO.extra_tokens in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.alibi_scale from d2v_model.modality_encoders.AUDIO.alibi_scale in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.0.2.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.1.2.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.2.2.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.3.2.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.4.2.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.5.2.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias from d2v_model.modality_encoders.AUDIO.local_encoder.conv_layers.6.2.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.project_features.1.weight from d2v_model.modality_encoders.AUDIO.project_features.1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.project_features.1.bias from d2v_model.modality_encoders.AUDIO.project_features.1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.project_features.2.weight from d2v_model.modality_encoders.AUDIO.project_features.2.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.project_features.2.bias from d2v_model.modality_encoders.AUDIO.project_features.2.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.1.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.1.0.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.2.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.2.0.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.3.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.3.0.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.4.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.4.0.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.weight from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.relative_positional_encoder.5.0.bias from d2v_model.modality_encoders.AUDIO.relative_positional_encoder.5.0.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.attn.proj.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.norm2.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.0.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm1.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.attn.proj.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.weight in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.norm2.bias in ckpt
+2026-11-19 12:19:11,243 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.1.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.attn.proj.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.norm2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.2.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.attn.proj.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.norm2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias from d2v_model.modality_encoders.AUDIO.context_encoder.blocks.3.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.norm.weight from d2v_model.modality_encoders.AUDIO.context_encoder.norm.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: modality_encoders.AUDIO.context_encoder.norm.bias from d2v_model.modality_encoders.AUDIO.context_encoder.norm.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.norm1.weight from d2v_model.blocks.0.norm1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.norm1.bias from d2v_model.blocks.0.norm1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.attn.qkv.weight from d2v_model.blocks.0.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.attn.qkv.bias from d2v_model.blocks.0.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.attn.proj.weight from d2v_model.blocks.0.attn.proj.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.attn.proj.bias from d2v_model.blocks.0.attn.proj.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.norm2.weight from d2v_model.blocks.0.norm2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.norm2.bias from d2v_model.blocks.0.norm2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.mlp.fc1.weight from d2v_model.blocks.0.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.mlp.fc1.bias from d2v_model.blocks.0.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.mlp.fc2.weight from d2v_model.blocks.0.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.0.mlp.fc2.bias from d2v_model.blocks.0.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.norm1.weight from d2v_model.blocks.1.norm1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.norm1.bias from d2v_model.blocks.1.norm1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.attn.qkv.weight from d2v_model.blocks.1.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.attn.qkv.bias from d2v_model.blocks.1.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.attn.proj.weight from d2v_model.blocks.1.attn.proj.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.attn.proj.bias from d2v_model.blocks.1.attn.proj.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.norm2.weight from d2v_model.blocks.1.norm2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.norm2.bias from d2v_model.blocks.1.norm2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.mlp.fc1.weight from d2v_model.blocks.1.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.mlp.fc1.bias from d2v_model.blocks.1.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.mlp.fc2.weight from d2v_model.blocks.1.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.1.mlp.fc2.bias from d2v_model.blocks.1.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.norm1.weight from d2v_model.blocks.2.norm1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.norm1.bias from d2v_model.blocks.2.norm1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.attn.qkv.weight from d2v_model.blocks.2.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.attn.qkv.bias from d2v_model.blocks.2.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.attn.proj.weight from d2v_model.blocks.2.attn.proj.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.attn.proj.bias from d2v_model.blocks.2.attn.proj.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.norm2.weight from d2v_model.blocks.2.norm2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.norm2.bias from d2v_model.blocks.2.norm2.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.mlp.fc1.weight from d2v_model.blocks.2.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.mlp.fc1.bias from d2v_model.blocks.2.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.mlp.fc2.weight from d2v_model.blocks.2.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,244 [INFO] init param, map: blocks.2.mlp.fc2.bias from d2v_model.blocks.2.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.norm1.weight from d2v_model.blocks.3.norm1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.norm1.bias from d2v_model.blocks.3.norm1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.attn.qkv.weight from d2v_model.blocks.3.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.attn.qkv.bias from d2v_model.blocks.3.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.attn.proj.weight from d2v_model.blocks.3.attn.proj.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.attn.proj.bias from d2v_model.blocks.3.attn.proj.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.norm2.weight from d2v_model.blocks.3.norm2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.norm2.bias from d2v_model.blocks.3.norm2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.mlp.fc1.weight from d2v_model.blocks.3.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.mlp.fc1.bias from d2v_model.blocks.3.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.mlp.fc2.weight from d2v_model.blocks.3.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.3.mlp.fc2.bias from d2v_model.blocks.3.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.norm1.weight from d2v_model.blocks.4.norm1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.norm1.bias from d2v_model.blocks.4.norm1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.attn.qkv.weight from d2v_model.blocks.4.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.attn.qkv.bias from d2v_model.blocks.4.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.attn.proj.weight from d2v_model.blocks.4.attn.proj.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.attn.proj.bias from d2v_model.blocks.4.attn.proj.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.norm2.weight from d2v_model.blocks.4.norm2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.norm2.bias from d2v_model.blocks.4.norm2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.mlp.fc1.weight from d2v_model.blocks.4.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.mlp.fc1.bias from d2v_model.blocks.4.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.mlp.fc2.weight from d2v_model.blocks.4.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.4.mlp.fc2.bias from d2v_model.blocks.4.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.norm1.weight from d2v_model.blocks.5.norm1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.norm1.bias from d2v_model.blocks.5.norm1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.attn.qkv.weight from d2v_model.blocks.5.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.attn.qkv.bias from d2v_model.blocks.5.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.attn.proj.weight from d2v_model.blocks.5.attn.proj.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.attn.proj.bias from d2v_model.blocks.5.attn.proj.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.norm2.weight from d2v_model.blocks.5.norm2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.norm2.bias from d2v_model.blocks.5.norm2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.mlp.fc1.weight from d2v_model.blocks.5.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.mlp.fc1.bias from d2v_model.blocks.5.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.mlp.fc2.weight from d2v_model.blocks.5.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.5.mlp.fc2.bias from d2v_model.blocks.5.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.norm1.weight from d2v_model.blocks.6.norm1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.norm1.bias from d2v_model.blocks.6.norm1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.attn.qkv.weight from d2v_model.blocks.6.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.attn.qkv.bias from d2v_model.blocks.6.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.attn.proj.weight from d2v_model.blocks.6.attn.proj.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.attn.proj.bias from d2v_model.blocks.6.attn.proj.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.norm2.weight from d2v_model.blocks.6.norm2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.norm2.bias from d2v_model.blocks.6.norm2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.mlp.fc1.weight from d2v_model.blocks.6.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.mlp.fc1.bias from d2v_model.blocks.6.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.mlp.fc2.weight from d2v_model.blocks.6.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.6.mlp.fc2.bias from d2v_model.blocks.6.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.norm1.weight from d2v_model.blocks.7.norm1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.norm1.bias from d2v_model.blocks.7.norm1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.attn.qkv.weight from d2v_model.blocks.7.attn.qkv.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.attn.qkv.bias from d2v_model.blocks.7.attn.qkv.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.attn.proj.weight from d2v_model.blocks.7.attn.proj.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.attn.proj.bias from d2v_model.blocks.7.attn.proj.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.norm2.weight from d2v_model.blocks.7.norm2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.norm2.bias from d2v_model.blocks.7.norm2.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.mlp.fc1.weight from d2v_model.blocks.7.mlp.fc1.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.mlp.fc1.bias from d2v_model.blocks.7.mlp.fc1.bias in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.mlp.fc2.weight from d2v_model.blocks.7.mlp.fc2.weight in ckpt
+2026-11-19 12:19:11,245 [INFO] init param, map: blocks.7.mlp.fc2.bias from d2v_model.blocks.7.mlp.fc2.bias in ckpt
+2026-11-19 12:19:11,266 [INFO] Loading ckpt: C:\Users\I13306\.cache\huggingface\hub\models--emotion2vec--emotion2vec_plus_base\snapshots\b318240bfe67db81a8c572ecb37ce9c3759b81c9\model.pt, status: <All keys matched successfully>
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.07it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.197', 'batch_size': '1', 'rtf': '0.039'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.07it/s]rtf_avg: 0.039: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.07it/s]                                                                                      rtf_avg: 0.039: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.06it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.26it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.235', 'batch_size': '1', 'rtf': '0.047'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.26it/s]rtf_avg: 0.047: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.26it/s]                                                                                      rtf_avg: 0.047: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  4.25it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]{'load_data': '0.006', 'extract_feat': 0.0, 'forward': '0.189', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.28it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.61it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.178', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.61it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.61it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.60it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]{'load_data': '0.004', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.192', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.20it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.192', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.20it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.20it/s]{'load_data': '0.005', 'extract_feat': 0.0, 'forward': '0.192', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.20it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.20it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.20it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.23it/s]{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.191', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.23it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.23it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.22it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.189', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.29it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.192', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.21it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.20it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.58it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.179', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.58it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.58it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.60it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.179', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.60it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.60it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.59it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.38it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.32it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.27it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.190', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.27it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.27it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.26it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.179', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.003', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.58it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.179', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.58it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.58it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.41it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.186', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.37it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.36it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.05it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.198', 'batch_size': '1', 'rtf': '0.040'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.05it/s]rtf_avg: 0.040: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.05it/s]                                                                                      rtf_avg: 0.040: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.04it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.188', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.31it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.30it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.42it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.47it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.183', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.46it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.45it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.184', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.44it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.43it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.185', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.40it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.39it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.33it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.187', 'batch_size': '1', 'rtf': '0.037'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.35it/s]                                                                                      rtf_avg: 0.037: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.34it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.28it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.189', 'batch_size': '1', 'rtf': '0.038'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.28it/s]rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.28it/s]                                                                                      rtf_avg: 0.038: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.27it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.50it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.54it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.55it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.182', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.49it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.48it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.180', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.57it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.56it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.51it/s]
+  0%|[34m          [0m| 0/1 [00:00<?, ?it/s]100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]{'load_data': '0.002', 'extract_feat': 0.0, 'forward': '0.181', 'batch_size': '1', 'rtf': '0.036'}, : 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.53it/s]                                                                                      rtf_avg: 0.036: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  5.52it/s]
+  carga 6.9 s | RAM tras cargar 2003 MB | RAM pico 2003 MB | hilos 4
+  [ninguna] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=1.0  0.195 s
+  [ninguna] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=1.0  0.187 s
+  [ninguna] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=1.0  0.188 s
+  [ninguna] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=1.0  0.186 s
+  [ninguna] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=1.0  0.186 s
+  [ninguna] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=1.0  0.189 s
+  [ninguna] actuados/p1_neutral_1.wav                esperado=neutral    pred=neutral    p=0.998  0.197 s
+  [ninguna] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.96  0.189 s
+  [ninguna] actuados/p1_neutral_3.wav                esperado=neutral    pred=tristeza   p=1.0  0.19 s
+  [ninguna] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=1.0  0.186 s
+  [ninguna] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.185 s
+  [ninguna] actuados/p1_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.999  0.186 s
+  [ninguna] actuados/p2_enojado_1.wav                esperado=enojo      pred=felicidad  p=1.0  0.183 s
+  [ninguna] actuados/p2_enojado_2.wav                esperado=enojo      pred=felicidad  p=0.947  0.187 s
+  [ninguna] actuados/p2_enojado_3.wav                esperado=enojo      pred=neutral    p=1.0  0.188 s
+  [ninguna] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=felicidad  p=0.999  0.188 s
+  [ninguna] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=felicidad  p=1.0  0.189 s
+  [ninguna] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=felicidad  p=1.0  0.187 s
+  [ninguna] actuados/p2_neutral_1.wav                esperado=neutral    pred=neutral    p=1.0  0.192 s
+  [ninguna] actuados/p2_neutral_2.wav                esperado=neutral    pred=neutral    p=1.0  0.191 s
+  [ninguna] actuados/p2_neutral_3.wav                esperado=neutral    pred=enojo      p=0.961  0.184 s
+  [ninguna] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=1.0  0.186 s
+  [ninguna] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.952  0.187 s
+  [ninguna] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.996  0.184 s
+  [rms    ] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=1.0  0.186 s
+  [rms    ] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=1.0  0.186 s
+  [rms    ] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=1.0  0.187 s
+  [rms    ] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=1.0  0.187 s
+  [rms    ] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=1.0  0.185 s
+  [rms    ] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=1.0  0.186 s
+  [rms    ] actuados/p1_neutral_1.wav                esperado=neutral    pred=neutral    p=0.995  0.187 s
+  [rms    ] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.917  0.189 s
+  [rms    ] actuados/p1_neutral_3.wav                esperado=neutral    pred=tristeza   p=1.0  0.186 s
+  [rms    ] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.999  0.186 s
+  [rms    ] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.993  0.186 s
+  [rms    ] actuados/p1_triste_3.wav                 esperado=tristeza   pred=tristeza   p=1.0  0.187 s
+  [rms    ] actuados/p2_enojado_1.wav                esperado=enojo      pred=felicidad  p=1.0  0.187 s
+  [rms    ] actuados/p2_enojado_2.wav                esperado=enojo      pred=felicidad  p=0.96  0.187 s
+  [rms    ] actuados/p2_enojado_3.wav                esperado=enojo      pred=neutral    p=1.0  0.19 s
+  [rms    ] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=felicidad  p=0.999  0.187 s
+  [rms    ] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=felicidad  p=1.0  0.187 s
+  [rms    ] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=felicidad  p=1.0  0.188 s
+  [rms    ] actuados/p2_neutral_1.wav                esperado=neutral    pred=neutral    p=1.0  0.19 s
+  [rms    ] actuados/p2_neutral_2.wav                esperado=neutral    pred=neutral    p=1.0  0.192 s
+  [rms    ] actuados/p2_neutral_3.wav                esperado=neutral    pred=enojo      p=0.975  0.185 s
+  [rms    ] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=1.0  0.185 s
+  [rms    ] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=1.0  0.185 s
+  [rms    ] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.958  0.185 s
+
+=== umuteam: UMUTeam/w2v-bert-emotion-es ===
+[transformers] [1mWav2Vec2BertModel LOAD REPORT[0m from: UMUTeam/w2v-bert-emotion-es
+Key                         | Status     |  | 
+----------------------------+------------+--+-
+classifier.dense.weight     | UNEXPECTED |  | 
+classifier.layernorm.weight | UNEXPECTED |  | 
+classifier.dense.bias       | UNEXPECTED |  | 
+projector.bias              | UNEXPECTED |  | 
+classifier.layernorm.bias   | UNEXPECTED |  | 
+classifier.out_proj.bias    | UNEXPECTED |  | 
+projector.weight            | UNEXPECTED |  | 
+classifier.out_proj.weight  | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  carga 6.2 s | RAM tras cargar 2738 MB | RAM pico 2811 MB | hilos 4
+  [ninguna] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.998  0.604 s
+  [ninguna] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.998  0.604 s
+  [ninguna] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.998  0.607 s
+  [ninguna] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.607 s
+  [ninguna] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.613 s
+  [ninguna] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.616 s
+  [ninguna] actuados/p1_neutral_1.wav                esperado=neutral    pred=tristeza   p=0.993  0.61 s
+  [ninguna] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.999  0.611 s
+  [ninguna] actuados/p1_neutral_3.wav                esperado=neutral    pred=neutral    p=0.964  0.609 s
+  [ninguna] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.612 s
+  [ninguna] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.612 s
+  [ninguna] actuados/p1_triste_3.wav                 esperado=tristeza   pred=enojo      p=0.997  0.608 s
+  [ninguna] actuados/p2_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.999  0.609 s
+  [ninguna] actuados/p2_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.999  0.613 s
+  [ninguna] actuados/p2_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.993  0.622 s
+  [ninguna] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=felicidad  p=0.997  0.62 s
+  [ninguna] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.616 s
+  [ninguna] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.999  0.609 s
+  [ninguna] actuados/p2_neutral_1.wav                esperado=neutral    pred=enojo      p=0.614  0.607 s
+  [ninguna] actuados/p2_neutral_2.wav                esperado=neutral    pred=enojo      p=0.965  0.606 s
+  [ninguna] actuados/p2_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.997  0.612 s
+  [ninguna] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.608 s
+  [ninguna] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.999  0.622 s
+  [ninguna] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.622 s
+  [rms    ] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.998  0.624 s
+  [rms    ] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.998  0.649 s
+  [rms    ] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.998  0.641 s
+  [rms    ] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.61 s
+  [rms    ] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.609 s
+  [rms    ] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.609 s
+  [rms    ] actuados/p1_neutral_1.wav                esperado=neutral    pred=tristeza   p=0.993  0.606 s
+  [rms    ] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.999  0.614 s
+  [rms    ] actuados/p1_neutral_3.wav                esperado=neutral    pred=neutral    p=0.964  0.62 s
+  [rms    ] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.62 s
+  [rms    ] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.643 s
+  [rms    ] actuados/p1_triste_3.wav                 esperado=tristeza   pred=enojo      p=0.997  0.618 s
+  [rms    ] actuados/p2_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.999  0.614 s
+  [rms    ] actuados/p2_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.999  0.608 s
+  [rms    ] actuados/p2_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.989  0.606 s
+  [rms    ] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=felicidad  p=0.997  0.621 s
+  [rms    ] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.998  0.62 s
+  [rms    ] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.999  0.61 s
+  [rms    ] actuados/p2_neutral_1.wav                esperado=neutral    pred=enojo      p=0.614  0.608 s
+  [rms    ] actuados/p2_neutral_2.wav                esperado=neutral    pred=enojo      p=0.965  0.605 s
+  [rms    ] actuados/p2_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.997  0.606 s
+  [rms    ] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.609 s
+  [rms    ] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.999  0.619 s
+  [rms    ] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.998  0.619 s
+
+=== wavlm: 3loi/SER-Odyssey-Baseline-WavLM-Categorical ===
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  carga 5.4 s | RAM tras cargar 1715 MB | RAM pico 1724 MB | hilos 4
+  [ninguna] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.444  0.416 s
+  [ninguna] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.81  0.412 s
+  [ninguna] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.655  0.413 s
+  [ninguna] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=neutral    p=0.62  0.412 s
+  [ninguna] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.749  0.415 s
+  [ninguna] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=neutral    p=0.507  0.416 s
+  [ninguna] actuados/p1_neutral_1.wav                esperado=neutral    pred=neutral    p=0.673  0.418 s
+  [ninguna] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.835  0.415 s
+  [ninguna] actuados/p1_neutral_3.wav                esperado=neutral    pred=neutral    p=0.639  0.428 s
+  [ninguna] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.723  0.436 s
+  [ninguna] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.9  0.43 s
+  [ninguna] actuados/p1_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.671  0.429 s
+  [ninguna] actuados/p2_enojado_1.wav                esperado=enojo      pred=felicidad  p=0.913  0.434 s
+  [ninguna] actuados/p2_enojado_2.wav                esperado=enojo      pred=neutral    p=0.621  0.43 s
+  [ninguna] actuados/p2_enojado_3.wav                esperado=enojo      pred=neutral    p=0.697  0.433 s
+  [ninguna] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=neutral    p=0.396  0.44 s
+  [ninguna] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.594  0.436 s
+  [ninguna] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=neutral    p=0.72  0.432 s
+  [ninguna] actuados/p2_neutral_1.wav                esperado=neutral    pred=neutral    p=0.76  0.433 s
+  [ninguna] actuados/p2_neutral_2.wav                esperado=neutral    pred=neutral    p=0.678  0.428 s
+  [ninguna] actuados/p2_neutral_3.wav                esperado=neutral    pred=felicidad  p=0.82  0.431 s
+  [ninguna] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.92  0.426 s
+  [ninguna] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.783  0.422 s
+  [ninguna] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.945  0.423 s
+  [rms    ] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.509  0.424 s
+  [rms    ] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.708  0.427 s
+  [rms    ] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.632  0.425 s
+  [rms    ] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.701  0.424 s
+  [rms    ] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.693  0.426 s
+  [rms    ] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.755  0.439 s
+  [rms    ] actuados/p1_neutral_1.wav                esperado=neutral    pred=neutral    p=0.741  0.437 s
+  [rms    ] actuados/p1_neutral_2.wav                esperado=neutral    pred=neutral    p=0.774  0.425 s
+  [rms    ] actuados/p1_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.576  0.425 s
+  [rms    ] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.528  0.423 s
+  [rms    ] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.542  0.426 s
+  [rms    ] actuados/p1_triste_3.wav                 esperado=tristeza   pred=neutral    p=0.761  0.425 s
+  [rms    ] actuados/p2_enojado_1.wav                esperado=enojo      pred=felicidad  p=0.92  0.428 s
+  [rms    ] actuados/p2_enojado_2.wav                esperado=enojo      pred=neutral    p=0.685  0.43 s
+  [rms    ] actuados/p2_enojado_3.wav                esperado=enojo      pred=neutral    p=0.688  0.427 s
+  [rms    ] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.369  0.421 s
+  [rms    ] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.691  0.429 s
+  [rms    ] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=neutral    p=0.611  0.429 s
+  [rms    ] actuados/p2_neutral_1.wav                esperado=neutral    pred=neutral    p=0.743  0.427 s
+  [rms    ] actuados/p2_neutral_2.wav                esperado=neutral    pred=neutral    p=0.766  0.429 s
+  [rms    ] actuados/p2_neutral_3.wav                esperado=neutral    pred=felicidad  p=0.822  0.427 s
+  [rms    ] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.815  0.428 s
+  [rms    ] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.593  0.426 s
+  [rms    ] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.903  0.427 s
+
+=== pollito_v5: pollitoconpapass/superb-ser-finetuned-spanish-v5 ===
+  carga 4.8 s | RAM tras cargar 801 MB | RAM pico 924 MB | hilos 4
+  [ninguna] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.723  0.157 s
+  [ninguna] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.732  0.158 s
+  [ninguna] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.851  0.156 s
+  [ninguna] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.947  0.157 s
+  [ninguna] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.946  0.156 s
+  [ninguna] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.921  0.155 s
+  [ninguna] actuados/p1_neutral_1.wav                esperado=neutral    pred=tristeza   p=0.951  0.155 s
+  [ninguna] actuados/p1_neutral_2.wav                esperado=neutral    pred=tristeza   p=0.954  0.156 s
+  [ninguna] actuados/p1_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.954  0.155 s
+  [ninguna] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.934  0.155 s
+  [ninguna] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.947  0.156 s
+  [ninguna] actuados/p1_triste_3.wav                 esperado=tristeza   pred=enojo      p=0.716  0.156 s
+  [ninguna] actuados/p2_enojado_1.wav                esperado=enojo      pred=enojo      p=0.865  0.156 s
+  [ninguna] actuados/p2_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.92  0.153 s
+  [ninguna] actuados/p2_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.56  0.153 s
+  [ninguna] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.953  0.153 s
+  [ninguna] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.949  0.156 s
+  [ninguna] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.949  0.155 s
+  [ninguna] actuados/p2_neutral_1.wav                esperado=neutral    pred=enojo      p=0.621  0.156 s
+  [ninguna] actuados/p2_neutral_2.wav                esperado=neutral    pred=tristeza   p=0.944  0.155 s
+  [ninguna] actuados/p2_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.939  0.154 s
+  [ninguna] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.94  0.152 s
+  [ninguna] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.951  0.154 s
+  [ninguna] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.951  0.156 s
+  [rms    ] actuados/p1_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.929  0.153 s
+  [rms    ] actuados/p1_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.845  0.157 s
+  [rms    ] actuados/p1_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.822  0.156 s
+  [rms    ] actuados/p1_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.937  0.155 s
+  [rms    ] actuados/p1_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.933  0.153 s
+  [rms    ] actuados/p1_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.938  0.155 s
+  [rms    ] actuados/p1_neutral_1.wav                esperado=neutral    pred=tristeza   p=0.945  0.153 s
+  [rms    ] actuados/p1_neutral_2.wav                esperado=neutral    pred=tristeza   p=0.943  0.154 s
+  [rms    ] actuados/p1_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.951  0.153 s
+  [rms    ] actuados/p1_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.853  0.153 s
+  [rms    ] actuados/p1_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.898  0.153 s
+  [rms    ] actuados/p1_triste_3.wav                 esperado=tristeza   pred=felicidad  p=0.52  0.153 s
+  [rms    ] actuados/p2_enojado_1.wav                esperado=enojo      pred=tristeza   p=0.402  0.153 s
+  [rms    ] actuados/p2_enojado_2.wav                esperado=enojo      pred=tristeza   p=0.92  0.153 s
+  [rms    ] actuados/p2_enojado_3.wav                esperado=enojo      pred=tristeza   p=0.851  0.152 s
+  [rms    ] actuados/p2_feliz_1.wav                  esperado=felicidad  pred=tristeza   p=0.921  0.157 s
+  [rms    ] actuados/p2_feliz_2.wav                  esperado=felicidad  pred=tristeza   p=0.942  0.152 s
+  [rms    ] actuados/p2_feliz_3.wav                  esperado=felicidad  pred=tristeza   p=0.921  0.152 s
+  [rms    ] actuados/p2_neutral_1.wav                esperado=neutral    pred=tristeza   p=0.892  0.153 s
+  [rms    ] actuados/p2_neutral_2.wav                esperado=neutral    pred=tristeza   p=0.8  0.152 s
+  [rms    ] actuados/p2_neutral_3.wav                esperado=neutral    pred=tristeza   p=0.888  0.151 s
+  [rms    ] actuados/p2_triste_1.wav                 esperado=tristeza   pred=tristeza   p=0.803  0.152 s
+  [rms    ] actuados/p2_triste_2.wav                 esperado=tristeza   pred=tristeza   p=0.899  0.151 s
+  [rms    ] actuados/p2_triste_3.wav                 esperado=tristeza   pred=tristeza   p=0.919  0.152 s
+
+
+======================= RESUMEN =======================
+
+-- Recursos (una carga por modelo) --
+modelo      carga s   RAM MB  pico MB  hilos
+dusha           8.8     1701     1723      4
+e2v_base        6.9     2003     2003      4
+umuteam         6.2     2738     2811      4
+wavlm           5.4     1715     1724      4
+pollito_v5      4.8      801      924      4
+
+-- Latencia mediana (s) y RTF por duracion del audio (variante 'ninguna') --
+modelo            todas          2 s          5 s         10 s
+dusha       0.415/0.08             -  0.415/0.08             -
+e2v_base    0.187/0.04             -  0.187/0.04             -
+umuteam     0.611/0.12             -  0.611/0.12             -
+wavlm       0.428/0.09             -  0.428/0.09             -
+pollito_v5  0.155/0.03             -  0.155/0.03             -
+
+================ VARIANTE: normalizar=ninguna ================
+  AVISO: solo 24 audios con etiqueta (< 60). Resultado ORIENTATIVO; los IC son anchos.
+modelo      aciertos  exact %        IC95 %  UAR %  F1m % | R neut R tris R enoj R feli |       vs dusha |    vs e2v_base
+dusha         7/24       29.2       15-49     29.2   20.6 |   66.7    0.0    0.0   50.0 |          (ref) |  1/7  p=0.070
+e2v_base     13/24       54.2       35-72     54.2   47.6 |   66.7  100.0    0.0   50.0 |  7/1  p=0.070 |          (ref)
+umuteam       8/24       33.3       18-53     33.3   30.1 |   33.3   83.3    0.0   16.7 |  5/4  p=1.000 |  1/6  p=0.125
+wavlm        11/24       45.8       28-65     45.8   32.4 |   83.3  100.0    0.0    0.0 |  7/3  p=0.344 |  1/3  p=0.625
+pollito_v5    6/24       25.0       12-45     25.0   14.8 |    0.0   83.3   16.7    0.0 |  6/7  p=1.000 |  1/8  p=0.039
+  R xxxx = recall por clase. 'vs X: a/b p' = audios que SOLO acierta este modelo / que SOLO acierta X, y p de McNemar exacta (p<0,05 = diferencia significativa).
+
+  dusha - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 36.4, tristeza 0.0, enojo 0.0, felicidad 46.2
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            4         1         0         1         0
+    tristeza           6         0         0         0         0
+    enojo              3         0         0         3         0
+    felicidad          3         0         0         3         0
+
+  e2v_base - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 72.7, tristeza 63.2, enojo 0.0, felicidad 54.5
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            4         1         1         0         0
+    tristeza           0         6         0         0         0
+    enojo              1         3         0         2         0
+    felicidad          0         3         0         3         0
+
+  umuteam - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 50.0, tristeza 41.7, enojo 0.0, felicidad 28.6
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            2         2         2         0         0
+    tristeza           0         5         1         0         0
+    enojo              0         6         0         0         0
+    felicidad          0         5         0         1         0
+
+  wavlm - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 58.8, tristeza 70.6, enojo 0.0, felicidad 0.0
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            5         0         0         1         0
+    tristeza           0         6         0         0         0
+    enojo              2         3         0         1         0
+    felicidad          4         2         0         0         0
+
+  pollito_v5 - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 0.0, tristeza 37.0, enojo 22.2, felicidad 0.0
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            0         5         1         0         0
+    tristeza           0         5         1         0         0
+    enojo              0         5         1         0         0
+    felicidad          0         6         0         0         0
+
+================ VARIANTE: normalizar=rms ================
+  AVISO: solo 24 audios con etiqueta (< 60). Resultado ORIENTATIVO; los IC son anchos.
+modelo      aciertos  exact %        IC95 %  UAR %  F1m % | R neut R tris R enoj R feli |       vs dusha |    vs e2v_base
+dusha         7/24       29.2       15-49     29.2   20.6 |   66.7    0.0    0.0   50.0 |          (ref) |  1/7  p=0.070
+e2v_base     13/24       54.2       35-72     54.2   47.6 |   66.7  100.0    0.0   50.0 |  7/1  p=0.070 |          (ref)
+umuteam       8/24       33.3       18-53     33.3   30.1 |   33.3   83.3    0.0   16.7 |  5/4  p=1.000 |  1/6  p=0.125
+wavlm         9/24       37.5       21-57     37.5   26.8 |   66.7   83.3    0.0    0.0 |  6/4  p=0.754 |  0/4  p=0.125
+pollito_v5    5/24       20.8        9-40     20.8    8.6 |    0.0   83.3    0.0    0.0 |  5/7  p=0.774 |  0/8  p=0.008
+  R xxxx = recall por clase. 'vs X: a/b p' = audios que SOLO acierta este modelo / que SOLO acierta X, y p de McNemar exacta (p<0,05 = diferencia significativa).
+
+  dusha - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 36.4, tristeza 0.0, enojo 0.0, felicidad 46.2
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            4         1         0         1         0
+    tristeza           6         0         0         0         0
+    enojo              3         0         0         3         0
+    felicidad          3         0         0         3         0
+
+  e2v_base - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 72.7, tristeza 63.2, enojo 0.0, felicidad 54.5
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            4         1         1         0         0
+    tristeza           0         6         0         0         0
+    enojo              1         3         0         2         0
+    felicidad          0         3         0         3         0
+
+  umuteam - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 50.0, tristeza 41.7, enojo 0.0, felicidad 28.6
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            2         2         2         0         0
+    tristeza           0         5         1         0         0
+    enojo              0         6         0         0         0
+    felicidad          0         5         0         1         0
+
+  wavlm - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 57.1, tristeza 50.0, enojo 0.0, felicidad 0.0
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            4         1         0         1         0
+    tristeza           1         5         0         0         0
+    enojo              2         3         0         1         0
+    felicidad          1         5         0         0         0
+
+  pollito_v5 - matriz de confusion (filas = actuado, columnas = predicho)  F1: neutral 0.0, tristeza 34.5, enojo 0.0, felicidad 0.0
+                 neutral  tristeza     enojo felicidad (ninguna)
+    neutral            0         6         0         0         0
+    tristeza           0         5         0         1         0
+    enojo              0         6         0         0         0
+    felicidad          0         6         0         0         0
+
+Guardado: resultados_ser_r2b.csv y resultados_ser_r2b.json

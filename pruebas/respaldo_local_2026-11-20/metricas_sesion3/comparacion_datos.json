@@ -1,0 +1,233 @@
+[
+ {
+  "n": 1,
+  "q": "En la tabla periódica CA representa a:",
+  "u": "El h dos hormigón.",
+  "v": "No, eso no es correcto. La respuesta correcta es Calcio. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 2,
+  "q": "¿En qué país se encuentra el famoso monumento Taj Mahal?",
+  "u": "En la India, Romeo, la respuesta es India.",
+  "v": "¡Qué bien! ¡Lo acertaste, genial! Me alegro mucho de que hayas respondido correctamente. ¡Vamos con la siguiente!",
+  "auto": "si"
+ },
+ {
+  "n": 3,
+  "q": "¿Dónde se encuentra la famosa Torre Eiffel?",
+  "u": "La respuesta es Italia, Romeo.",
+  "v": "¡Uy, qué error! La Torre Eiffel está en París, Francia. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 4,
+  "q": "¿Quién es el autor de el Quijote?",
+  "u": "La respuesta es don Miguel de Cervantes Saavedra.",
+  "v": "¡Perfecto! ¡Qué bien acertaste, eso es genial! Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 5,
+  "q": "¿Cómo se llama el fundador de Facebook?",
+  "u": "La respuesta es Mark Schuckenberg.",
+  "v": "¡Uy, qué pasa! La respuesta correcta es Mark Zuckerberg, no Schuckenberg. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 6,
+  "q": "¿Cuál es la capital de Croacia?",
+  "u": "La capital de Croacia es Luxemburgo.",
+  "v": "¡Uy, qué despiste! Luxemburgo es un país precioso, pero no es la capital de Croacia. La respuesta correcta es Zagreb, ¡y seguro que puedes acertarla la próxima! Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 7,
+  "q": "¿Cuánto es dos por cinco?",
+  "u": "la respuesta es diez.",
+  "v": "¡Excelente! Eso es correcto. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 8,
+  "q": "¿Quién traicionó a Jesús?",
+  "u": "La respuesta es Hooder.",
+  "v": "¡Uy, qué error! La respuesta correcta era Judas, no Horder. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 9,
+  "q": "Multiplica cinco por ocho, ¿qué resultado te da?",
+  "u": "la respuesta es cuarenta, Romeo.",
+  "v": "¡Excelente! Justo lo que necesitaba escuchar. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 10,
+  "q": "¿Qué rama de la Biología estudia los animales?",
+  "u": "La respuesta es la zoología.",
+  "v": "¡Perfecto! ¡Qué bien has acertado. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 11,
+  "q": "Un jugador compró 3 camisetas de equipo que cuestan 7 reales cada una. ¿Cuánto gastó?",
+  "u": "La respuesta es veintiuno.",
+  "v": "¡Perfecto! ¡Me alegro mucho de haber acertado! Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 12,
+  "q": "¿Qué producto cultiva más Guatemala?",
+  "u": "La respuesta es Aguacáte, rumeo.",
+  "v": "Uy, eso no era. La respuesta correcta es café. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 13,
+  "q": "¿Cómo se llama la Reina del Reino Unido?",
+  "u": "La respuesta es Isabella.",
+  "v": "¡Uy, eso no es correcto! La respuesta correcta es Isabel Segunda. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 14,
+  "q": "Quién va a la cárcel: ¿el imputado, el acusado, el condenado?",
+  "u": "la respuesta es el invitado, Romeo,",
+  "v": "¡Vaya, eso no era! La respuesta correcta era el condenado, ¿sabes? Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 15,
+  "q": "Renan tiene 6 bolsas con 8 caramelos cada una. ¿Cuántos caramelos hay en todas las bolsas?",
+  "u": "Esta es cuarenta y ocho, romedo.",
+  "v": "¡Excelente! ¡Lo acertaste! Me alegra mucho que hayas respondido correctamente. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 16,
+  "q": "¿De qué país es el futbolista Zlatan Ibrahimović?",
+  "u": "La respuesta es",
+  "v": "¡Perfecto! ¡Esa era la respuesta correcta! ¡Qué bien lo has hecho! Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 17,
+  "q": "¿Cuánto es 3 por 5?",
+  "u": "La respuesta es quince.",
+  "v": "¡Excelente! ¡Qué bien que acertaste. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 18,
+  "q": "¿Cómo se le llama a una colección de revistas, diarios y publicaciones periódicas?",
+  "u": "La respuesta es",
+  "v": "¡Excelente! Me alegra mucho haber acertado. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 19,
+  "q": "¿Cuánto es ocho por nueve?",
+  "u": "La respuesta es setenta y dos romeo no pone el otro, pone el otro",
+  "v": "¡Excelente! ¡Justo la respuesta que buscaba! Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 20,
+  "q": "¿Cuáles son los cinco tipos de sabores primarios?",
+  "u": "La respuesta es sin arremeto.",
+  "v": "Lo siento, eso no es correcto. Los sabores primarios son dulce, amargo, ácido, salado y umami. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 21,
+  "q": "¿Qué deporte practicaba Michael Jordan?",
+  "u": "La respuesta es más que Boone.",
+  "v": "¡Increíble! ¡Esa respuesta era la correcta, genial! Sigue así y vamos a arrasar con esta trivia. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 22,
+  "q": "¿Cuánto es cuatro por cinco?",
+  "u": "La respuesta es veinte remedio.",
+  "v": "¡Excelente! ¡Esa es la respuesta correcta, genial! Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 23,
+  "q": "¿Quién escribió La Odisea?",
+  "u": "La respuesta es Homero, Romeo.",
+  "v": "¡Perfecto! Eso es exactamente lo que se esperaba. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 24,
+  "q": "Si 50 es el 100%, ¿cuánto es el 90%?",
+  "u": "La respuesta es cuarenta y cinco, romeo.",
+  "v": "¡Perfecto! Excelente respuesta. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 25,
+  "q": "¿Dónde originaron los juegos olímpicos?",
+  "u": "La respuesta es apenas, Romeo",
+  "v": "¡Uy, qué despiste! Grecia es la respuesta correcta, ¡y no \"apenas\"! Tienes que estar más atento, ¡la trivia es un juego serio! Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 26,
+  "q": "Ana tiene 8 cajas de bolígrafos. Cada caja contiene 2 bolígrafos. ¿Cuántos bolígrafos tiene Ana en total?",
+  "u": "La respuesta es dieciséis, romeo.",
+  "v": "¡Excelente! ¡Qué bien has respondido. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 27,
+  "q": "Joana necesita llenar 7 vasos de 9 ml con gaseosa. ¿Qué cantidad de gaseosa necesitará?",
+  "u": "La respuesta es cincuenta y seis romeo.",
+  "v": "¡Uy, no, Joana! La respuesta correcta es 63 ml, debes añadir 7 vasos multiplicados por 9 ml. Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 28,
+  "q": "¿Cuánto es seis por siete?",
+  "u": "La respuesta es cuarenta y dos.",
+  "v": "¡Perfecto! ¡Qué bien has respondido! Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 29,
+  "q": "¿Cuál es el país con más camellos salvajes?",
+  "u": "El sacado. Todo se quiere cercar.",
+  "v": "¡Uy, qué buena te has puesto! ¡Pero no, sacado no es un país! La respuesta correcta es Australia, ¡y allí hay muchísimos camellos salvajes! Vamos con la siguiente.",
+  "auto": "no"
+ },
+ {
+  "n": 30,
+  "q": "¿En qué país se encuentra la torre de Pisa?",
+  "u": "la respuesta es Italia, pues.",
+  "v": "¡Exacto! ¡Qué bien que acertaste, es fantástico! Me alegra muchísimo que hayas respondido correctamente. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 31,
+  "q": "Para hacer un pastel se necesitan 4 huevos. ¿Cuántos huevos se necesitarán para hacer 7 pasteles?",
+  "u": "la respuesta es veintiocho, romeo.",
+  "v": "¡Perfecto! ¡Qué bien has respondido. Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 32,
+  "q": "¿En qué lugar del cuerpo se produce la insulina?",
+  "u": "La respuesta es",
+  "v": "¡Excelente! Qué bien que acertaste, ¡estás brillando! Vamos con la siguiente.",
+  "auto": "si"
+ },
+ {
+  "n": 33,
+  "q": "¿Cuál es el primero de la lista de los números primos?",
+  "u": "el, el uno.",
+  "v": "¡Uy, qué susto! El uno no es primo, ¡es un número compuesto! Los números primos solo pueden dividirse entre uno y ellos mismos, y el dos es el primero en esa lista. Vamos con la siguiente.",
+  "auto": "no"
+ }
+]
