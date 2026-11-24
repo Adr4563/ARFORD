@@ -146,7 +146,7 @@ def generate_launch_description():
     expression_faces_node = LifecycleNode(
         package='romeo_drivers', executable='expression_faces_node',
         name='expression_faces_node', namespace='', output='screen',
-        parameters=[params_file],
+        parameters=[],  # SIN yaml: usa los defaults hardcodeados del codigo
     )
 
     moving_control_node = LifecycleNode(

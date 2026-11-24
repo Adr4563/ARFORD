@@ -24,6 +24,7 @@ Expone:
   - Servicio    /romeo/detect_emotion  (romeo_interfaces/DetectEmotion)
   - Servicio    /romeo/perceive_face   (romeo_interfaces/PerceiveFace)
 """
+import time
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -49,17 +50,17 @@ class VisualizationFacesNode(LifecycleNode):
         self.declare_parameter('fer_fps', 5.0)
         # Margen alrededor de la frase: la cara suele anticipar o prolongar
         # lo que se dice, y el VAD recorta el silencio de los bordes.
-        self.declare_parameter('fer_margen_seg', 0.5)
+        self.declare_parameter("fer_margen_seg", 2.5)  # HARDCODE
         # Bajo demanda: YuNet y FER+ solo corren mientras llega
         # /romeo/voz_detectada (alguien habla), y fer_ventana_seg despues
         # del ultimo aviso. false = clasificar siempre, como antes.
-        self.declare_parameter('fer_bajo_demanda', True)
-        self.declare_parameter('fer_ventana_seg', 1.5)
+        self.declare_parameter("fer_bajo_demanda", True)  # HARDCODE on-demand
+        self.declare_parameter("fer_ventana_seg", 3.0)  # HARDCODE
         # FER DESPUES de la frase: en vez de medir la cara MIENTRAS el usuario
         # habla (cara deformada al articular), se mide su REACCION justo
         # despues de terminar. Si >0, la ventana de resumen pasa a ser
         # [t_fin, t_fin + fer_post_seg] en lugar de [t_inicio, t_fin].
-        self.declare_parameter('fer_post_seg', 2.0)
+        self.declare_parameter("fer_post_seg", 1.0)  # HARDCODE: 1.0s tras hablar = 5 cuadros a 5fps
         self.declare_parameter('fer_resolucion', [320, 240])
         self._activo = False
         self._display = None
@@ -164,13 +165,34 @@ class VisualizationFacesNode(LifecycleNode):
         margen = float(self.get_parameter('fer_margen_seg').value)
         post = float(self.get_parameter('fer_post_seg').value)
         if post > 0.0:
-            # Ventana DESPUES de la frase: la reaccion del usuario al terminar
-            # de hablar, no su cara mientras articula.
+            # SECUENCIAL: primero hablas, DESPUES se captura tu cara (ya
+            # relajada y de frente, no mientras articulas). Se ESPERA a que
+            # la camara (siempre activa) haya clasificado esos cuadros, que
+            # caen en el futuro respecto a t_fin.
+            fin_ventana = request.t_fin + post
+            espera = fin_ventana - time.time()
+            if espera > 0.0:
+                time.sleep(min(espera, post + 0.3))
             probs, n = self._detector.resumen(
                 request.t_fin, request.t_fin + post)
         else:
             probs, n = self._detector.resumen(
                 request.t_inicio - margen, request.t_fin + margen)
+        # Volcar al disco los cuadros con cara del turno, para que el panel
+        # muestre QUE capturo el FER (los N frames que entraron al resumen).
+        try:
+            import os as _os
+            carpeta = _os.path.expanduser(_os.environ.get(
+                "ROMEO_CUADROS_DIR", "~/romeo/cuadros_turno"))
+            _os.makedirs(carpeta, exist_ok=True)
+            if post > 0.0:
+                self._detector.volcar_cuadros_turno(
+                    request.t_fin, request.t_fin + post, carpeta)
+            else:
+                self._detector.volcar_cuadros_turno(
+                    request.t_inicio - margen, request.t_fin + margen, carpeta)
+        except Exception:  # noqa: BLE001
+            pass
         if probs is not None:
             response.probabilidades = [float(p) for p in probs]
             response.cuadros = int(n)

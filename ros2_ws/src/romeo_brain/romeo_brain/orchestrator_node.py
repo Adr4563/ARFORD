@@ -1191,6 +1191,20 @@ class OrchestratorNode(Node):
 
     def _turno_medido(self, entrada, t_inicio, t_fin, ser, ter_nn):
 
+        # BOTON DE TRIVIA (pedido del usuario): entrada de CONTROL que entra
+        # directo a la trivia, SIN pasar por la capa afectiva. No decae, no
+        # fusiona, no empatiza: el animo de Romeo queda EXACTAMENTE igual.
+        # Tampoco exige las 3 fuentes (es un comando, no una frase emocional).
+        if (entrada or "").strip() == "__BOTON_TRIVIA__":
+            self.get_logger().info("[trivia] inicio por BOTON (no afecta el animo)")
+            self.estado["esperando_nombre"] = False  # el boton cancela el saludo pendiente
+            self.estado["en_trivia"] = True
+            if self.estado.get("pregunta_pendiente") is not None or self.estado.get("esperando_tema"):
+                self._reanudar_trivia()
+            else:
+                self._manejar_trivia("")
+            return
+
         # Empieza un turno: ha pasado tiempo desde el anterior, asi que el
         # animo se acerca un paso a su base (ROSE). Sin esta llamada el
         # estado se quedaria clavado en lo ultimo que se percibio.

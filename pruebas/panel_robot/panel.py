@@ -16,10 +16,16 @@ y abrir http://<ip-de-la-pi>:8090/
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.request
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Response
+
+# Imagen de lo que ve la camara (ROMEO_CARA_JPG, la escribe _emotion_detector).
+# Default = donde la pone lanzar_romeo.sh. Si no existe aun, /cara.jpg da 404.
+CARA_JPG = os.path.expanduser(
+    os.environ.get("ROMEO_CARA_JPG", "~/romeo/ultima_cara.jpg"))
 
 LOG = os.path.expanduser(sys.argv[1] if len(sys.argv) > 1 else "~/romeo_run.log")
 PUERTO = int(os.environ.get("ROMEO_PANEL_PUERTO", "8090"))
@@ -102,6 +108,42 @@ def pagina():
     return PAGINA
 
 
+@app.route("/cara.jpg")
+def cara_jpg():
+    """La ultima imagen que vio la camara, con el recuadro y la emocion del
+    FER. Si todavia no hay ninguna, 404 (la pagina muestra un aviso)."""
+    try:
+        with open(CARA_JPG, "rb") as f:
+            datos = f.read()
+        return Response(datos, mimetype="image/jpeg",
+                        headers={"Cache-Control": "no-store"})
+    except OSError:
+        return "sin imagen aun", 404
+
+
+import glob as _glob
+CUADROS_DIR = os.path.expanduser(os.environ.get("ROMEO_CUADROS_DIR", "~/romeo/cuadros_turno"))
+
+@app.route("/cuadros")
+def cuadros():
+    """Lista cuantos cuadros de cara capturo el FER en el ultimo turno."""
+    try:
+        fs = sorted(_glob.glob(os.path.join(CUADROS_DIR, "cara_*.jpg")),
+                    key=lambda x: int("".join(c for c in os.path.basename(x) if c.isdigit()) or 0))
+        ts = max((os.path.getmtime(f) for f in fs), default=0)
+        return jsonify(n=len(fs), ts=round(ts, 2))
+    except Exception:
+        return jsonify(n=0, ts=0)
+
+@app.route("/cuadro/<int:i>.jpg")
+def cuadro(i):
+    """Sirve el cuadro i del turno (cara_i.jpg)."""
+    try:
+        with open(os.path.join(CUADROS_DIR, f"cara_{i}.jpg"), "rb") as f:
+            return Response(f.read(), mimetype="image/jpeg", headers={"Cache-Control": "no-store"})
+    except OSError:
+        return "no hay", 404
+
 @app.route("/estado")
 def estado():
     return jsonify(_leer())
@@ -160,6 +202,28 @@ def cmd(comando):
         return jsonify(ok=False, error=f"el carrito no responde ({e})"), 503
 
 
+
+@app.route("/trivia", methods=["POST"])
+def trivia():
+    """Boton: entra directo a la trivia publicando un comando de control
+    en /romeo/user_input. El orquestador lo reconoce (__BOTON_TRIVIA__),
+    arranca la trivia y NO toca el animo de Romeo."""
+    msg = ("{text: \"__BOTON_TRIVIA__\", source: \"stdin\", "
+           "t_inicio: 0.0, t_fin: 0.0, ser_etiquetas: [], ser_probabilidades: [], "
+           "ter_etiquetas: [], ter_probabilidades: []}")
+    cmd = ["bash", "-lc",
+           "source /opt/ros/lyrical/setup.bash && "
+           "source ~/ARFORD/ros2_ws/install/setup.bash && "
+           "ros2 topic pub --once /romeo/user_input romeo_interfaces/msg/UserInput '" + msg + "'"]
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
+        if r.returncode == 0:
+            return jsonify(ok=True)
+        return jsonify(ok=False, error=(r.stderr or r.stdout)[:200]), 500
+    except Exception as e:  # noqa: BLE001
+        return jsonify(ok=False, error=str(e)[:200]), 500
+
+
 PAGINA = r"""<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -168,6 +232,8 @@ PAGINA = r"""<!doctype html>
 <style>/*TEMA*/</style></head><body>
 <header class="top"><div class="top-in"><p class="marca"><span class="rombo" style="background:var(--romeo)"></span>ROMEO</p><nav class="nav"><a href="./" class="aqui">En vivo</a><a href="calculo">Cálculo VAD</a><a href="carrito">Carrito</a></nav><span class="vivo"><i></i><span id="estado">Leyendo el log…</span></span></div></header>
 <main>
+  <div class="barra-trivia"><button id="btn-trivia" class="btn-trivia" onclick="irTrivia()">▶ Entrar a la trivia</button><span id="trivia-msg" class="trivia-msg"></span></div>
+  <section class="tarjeta"><h2>Cuadros capturados del último turno</h2><div class="cuadros-grid" id="cuadros"><span class="cara-vacio">Aún no hay cuadros. Háblale a Romeo.</span></div></section>
   <div class="dos">
     <section class="tarjeta"><h2>Lo que entendió</h2><p class="frase vacio" id="texto">—</p><div class="medidores" id="lecturas"></div></section>
     <section class="tarjeta"><h2>Lo que respondió Romeo</h2><p class="frase vacio" id="respuesta">—</p><p class="nota" id="animo"></p></section>
@@ -235,7 +301,7 @@ function emocionDe(p, centro) {
   return { clave: mejor, nivel: Math.max(1, Math.min(4, 1 + Math.floor(4 * (mag - radio) / (dist - radio)))) };
 }
 const textoEmo = (e) => e.clave === "neutral" ? "Normal" : (INTENS[e.nivel] + NOMBRE[e.clave].toLowerCase()).replace(/^./, (c) => c.toUpperCase());
-const centroDe = (quien) => quien === "romeo" ? (datos.base ? [datos.base.v, datos.base.a, datos.base.d] : [0.4, 0.3, 0.2]) : [0, 0, 0];
+const centroDe = (quien) => [0, 0, 0];  // Romeo y usuario se miden desde el ORIGEN (ANIMO_DESDE_ORIGEN=1, como el robot real)
 
 function cubo(cont, quien) {
   const cv = cont.querySelector("canvas"), w = cont.clientWidth, h = Math.min(w, 420), dpr = window.devicePixelRatio || 1;
@@ -278,12 +344,11 @@ function cubo(cont, quien) {
     const ce = col(COLOR_EMO[k]);
     ctx.beginPath(); ctx.fillStyle = ce; ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.fill();
   }
-  if (quien === "usuario") {
+  if (true) {  // Normal (origen) en ambos cubos
     const [x, y] = P(0, 0, 0), cn = col("--normal");
     ctx.beginPath(); ctx.fillStyle = cn; ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 7); ctx.lineTo(x - 7, y); ctx.fill();
   }
   const marcas = pts.map((p, i) => { if (!p) return null; const [x, y, z] = P(p.v, p.a, p.d); return { x, y, z, ultimo: i === n - 1, clave: emocionDe(p, centro).clave }; }).filter(Boolean);
-  if (quien === "romeo" && datos.base) { const [x, y, z] = P(datos.base.v, datos.base.a, datos.base.d); marcas.push({ x, y, z, base: true }); }
   marcas.sort((a, b) => b.z - a.z);
   for (const m of marcas) {
     ctx.beginPath();
@@ -358,6 +423,32 @@ async function actualizar() {
 }
 actualizar(); setInterval(actualizar, 2000);
 
+// Refresca la imagen de la camara cada 1.5 s (cache-bust con el timestamp).
+async function irTrivia() {
+  const b = $("btn-trivia"), m = $("trivia-msg");
+  b.disabled = true; m.textContent = "Iniciando…";
+  try {
+    const r = await fetch("trivia", { method: "POST" });
+    const d = await r.json();
+    m.textContent = d.ok ? "¡Trivia iniciada!" : ("Error: " + (d.error||""));
+  } catch (e) { m.textContent = "Sin conexión"; }
+  setTimeout(() => { b.disabled = false; m.textContent = ""; }, 4000);
+}
+// Galeria: muestra los N cuadros de cara del ultimo turno, cada 1.5s.
+let _tsCuadros = -1;
+async function cargarCuadros() {
+  try {
+    const d = await (await fetch("cuadros?t=" + Date.now())).json();
+    if (d.ts === _tsCuadros) return;   // mismo turno: no recargar (evita parpadeo)
+    _tsCuadros = d.ts;
+    const cont = $("cuadros");
+    if (!d.n) { cont.innerHTML = '<span class="cara-vacio">Aún no hay cuadros. Háblale a Romeo.</span>'; return; }
+    let html = "";
+    for (let i = 0; i < d.n; i++) html += `<img class="cuadro" src="cuadro/${i}.jpg?v=${d.ts}" alt="cuadro ${i}">`;
+    cont.innerHTML = html;
+  } catch (e) {}
+}
+cargarCuadros(); setInterval(cargarCuadros, 2000);
 </script></body></html>"""
 
 
@@ -608,6 +699,18 @@ actualizar(); setInterval(actualizar, 2000);
 
 
 TEMA = r"""
+.barra-trivia { display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+.btn-trivia { background:#e8501c; color:#fff; border:0; border-radius:10px; padding:12px 22px; font-size:1rem; font-weight:700; cursor:pointer; font-family:inherit; }
+.btn-trivia:hover { filter:brightness(1.08); }
+.btn-trivia:disabled { opacity:.6; cursor:default; }
+.trivia-msg { color:#555c74; font-size:.9rem; }
+/* Imagen de la camara (tarjeta "Lo que ve la camara"). */
+.cuadros-grid { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.cuadro { width:150px; height:auto; border-radius:8px; border:2px solid var(--borde); }
+.cara-caja { position:relative; width:100%; max-width:420px; margin:0 auto; aspect-ratio:4/3;
+  border-radius:12px; overflow:hidden; background:#0d1020; display:grid; place-items:center; }
+.cara-caja img { width:100%; height:100%; object-fit:contain; display:none; }
+.cara-vacio { color:#8a90a3; font-size:.9rem; padding:1rem; text-align:center; }
 /* Consola del robot: barra de tinta arriba, modulos blancos, numeros en mono. */
 :root { --fondo:#eceff4; --tarjeta:#ffffff; --texto:#12162b; --suave:#555c74; --tenue:#8a90a3;
   --borde:#d9dde7; --eje:#c4c9d6; --barra:#e4e7ef; --tinta:#171b34; --tinta-texto:#f2f3f9; --tinta-suave:#a9afc9;

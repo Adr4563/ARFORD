@@ -35,7 +35,7 @@ STRIDES = (8, 16, 32)
 # Minimo para dar una cara por buena. El de la version CPU es 0.7 sobre
 # la puntuacion ya combinada; aqui se compara contra lo mismo
 # (clasificacion x objectness), asi que se mantiene.
-UMBRAL = float(os.environ.get("ROMEO_YUNET_UMBRAL", "0.7"))
+UMBRAL = float(os.environ.get("ROMEO_YUNET_UMBRAL", "0.3"))  # HARDCODE 0.3
 
 
 def _anclas(stride):
@@ -160,6 +160,17 @@ class YunetCamara:
             self.error = str(e)[:200]
             self._imx = None
             return False
+
+    def esperar_firmware(self):
+        """Bloquea hasta que el firmware YuNet termine de subir al sensor.
+        IMPRESCINDIBLE antes de picam2.start(): sin esto la camara arranca
+        antes de que el acelerador este listo y get_outputs() devuelve 0
+        tensores (CnnOutputTensor vacio) -> nunca detecta cara."""
+        try:
+            if self._imx is not None:
+                self._imx.show_network_fw_progress_bar()
+        except Exception:  # noqa: BLE001
+            pass
 
     def cara(self, metadata, ancho, alto):
         """(x, y, w, h) de la cara en este cuadro, o None."""
