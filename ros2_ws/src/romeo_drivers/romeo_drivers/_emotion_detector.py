@@ -99,10 +99,14 @@ CARA_JPG = os.environ.get("ROMEO_CARA_JPG", "").strip()
 
 # Hilos para onnxruntime y OpenCV. Ver la nota en _asegurar_modelos_cargados.
 HILOS_ONNX = int(os.environ.get("ROMEO_FER_HILOS", "2"))
+# DESACOPLE: correr el FER (HSEmotion, lo mas pesado) solo 1 de cada N
+# cuadros. La deteccion de cara sigue en todos (para la caja y el panel),
+# pero la emocion se reutiliza entre medias (cambia lento). Baja el CPU.
+FER_CADA_N = int(os.environ.get("ROMEO_FER_CADA_N", "1"))  # 1 = emocion en CADA cuadro (sin desacople)
 
 # Buscar la cara dentro del sensor en vez de en la CPU (ver _yunet_camara).
 # ROMEO_YUNET_CAMARA=0 lo desactiva y todo vuelve a la CPU.
-YUNET_EN_CAMARA = os.environ.get("ROMEO_YUNET_CAMARA", "1") != "0"
+YUNET_EN_CAMARA = os.environ.get("ROMEO_YUNET_CAMARA", "0") != "0"  # HARDCODE: CPU por defecto (el sensor .rpk solo daba 5% de cuadros)
 
 # SIN YuNet: no se detecta cara, se manda el FRAME COMPLETO al modelo FER.
 # El FER (HSEmotion) siempre devuelve una emocion, nunca "no vio cara". Menos
@@ -177,6 +181,10 @@ class DetectorEmocion:
         self.fps = max(0.2, float(fps))
         self._observaciones = collections.deque(
             maxlen=int(HISTORIAL_SEG * self.fps) + 1)
+        # Buffer corto de imagenes JPG anotadas (instante, jpg_bytes) de
+        # los ultimos ~3 s, para mostrar en el panel los cuadros de cara
+        # que entraron en el resumen del turno. Poca RAM (~15 JPG).
+        self._cuadros_img = collections.deque(maxlen=int(3.0 * self.fps) + 2)
         self._lock = threading.Lock()
         self._hilo = None
         self._continuo = False
@@ -243,10 +251,20 @@ class DetectorEmocion:
             op = ort.SessionOptions()
             op.intra_op_num_threads = HILOS_ONNX
             op.inter_op_num_threads = 1
+            # DESACTIVAR EL SPINNING de onnxruntime: por defecto los hilos
+            # hacen busy-wait entre inferencias ("faster inference but
+            # consumes more CPU cycles", doc ORT). A 5 fps con modelos
+            # pequenos ese spinning dispara el CPU en reposo sin dar nada.
+            try:
+                op.add_session_config_entry("session.intra_op.allow_spinning", "0")
+                op.add_session_config_entry("session.inter_op.allow_spinning", "0")
+            except Exception:  # noqa: BLE001 - version vieja de ORT
+                pass
             self._sess_emocion = ort.InferenceSession(modelo_emocion, op)
             self._input_name = self._sess_emocion.get_inputs()[0].name
             self._detector_cara = cv2.FaceDetectorYN_create(
-                modelo_cara, "", (320, 320), score_threshold=0.7)
+                modelo_cara, "", (320, 320),
+                score_threshold=float(os.environ.get("ROMEO_YUNET_UMBRAL", "0.3")))
             # OpenCV (YuNet) tiene su propio pool, aparte del de onnx.
             cv2.setNumThreads(HILOS_ONNX)
             self._deps_ok = True
@@ -273,12 +291,15 @@ class DetectorEmocion:
         canales = frame.shape[-1]
         if canales == 4:
             return cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
-        if canales == 3 and FORMATO_CAPTURA != "BGR888":
-            # 3 canales pero no pedimos BGR: el driver dio RGB, hay que girar.
+        if canales == 3:
+            # picamera2 con "BGR888" entrega los bytes en orden RGB (bug
+            # conocido de libcamera: el nombre esta invertido). Hay que
+            # girar RGB->BGR para que YuNet-CPU y FER reciban el color real;
+            # sin esto R y B quedan cruzados (el tinte azul del panel).
             return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        return frame  # ya es BGR888: sin conversion
+        return frame
 
-    def _clasificar(self, frame_bgr, caja=None):
+    def _clasificar(self, frame_bgr, caja=None, solo_detectar=False):
         """Las 8 probabilidades de FER+ (orden ETIQUETAS) para la cara más
         clara del cuadro, o None si no hay cara.
 
@@ -302,6 +323,17 @@ class DetectorEmocion:
                 return None
             cara = max(caras, key=lambda c: c[14])
             x, y, w, h = [max(0, int(v)) for v in cara[:4]]
+        if solo_detectar:
+            # DESACOPLE: hay cara (se guarda para el panel) pero NO se corre
+            # el FER; se reutiliza la ultima emocion (cambia lento). Ahorra
+            # la inferencia pesada (Session.run) en la mayoria de cuadros.
+            if CARA_JPG:
+                probs_prev = self.ultimas_probabilidades
+                if probs_prev is not None:
+                    self._guardar_cara(frame_bgr, (x, y, w, h), probs_prev)
+                else:
+                    self._guardar_sin_cara(frame_bgr)
+            return self.ultimas_probabilidades
         if FER_MODELO in ("hsemotion", "mobilefacenet"):
             # Familia AffectNet (HSEmotion / MobileFaceNet): cara en COLOR,
             # /255, norm ImageNet, RGB, (1,3,N,N). HSEmotion N=224; MobileFaceNet
@@ -361,7 +393,7 @@ class DetectorEmocion:
             x, y, w, h = caja
             idx = max(range(len(probs)), key=probs.__getitem__)
             etiqueta, conf = ETIQUETAS[idx], probs[idx]
-            img = frame_bgr.copy()
+            img = frame_bgr.copy()  # ya es BGR correcto (_a_bgr convirtio RGB->BGR)
             col = (0, 200, 0) if etiqueta in ("felicidad", "neutral") else (0, 120, 255)
             cv2.rectangle(img, (x, y), (x + w, y + h), col, 2)
             cv2.putText(img, f"{etiqueta} {conf*100:.0f}%", (x, max(20, y - 8)),
@@ -374,11 +406,52 @@ class DetectorEmocion:
             ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 70])
             if not ok:
                 return
+            datos = buf.tobytes()
             tmp = CARA_JPG + ".tmp"
             with open(tmp, "wb") as f:
-                f.write(buf.tobytes())
+                f.write(datos)
             os.replace(tmp, CARA_JPG)  # atomico: el panel nunca lee a medias
+            # Guardar tambien en el buffer corto, para mostrar los cuadros
+            # del turno en el panel (instante + jpg anotado).
+            import time as _t
+            with self._lock:
+                self._cuadros_img.append((_t.time(), datos))
         except Exception:  # noqa: BLE001 - visualizar nunca es critico
+            pass
+
+    def volcar_cuadros_turno(self, t0, t1, carpeta):
+        """Escribe en `carpeta` los JPG de los cuadros con cara capturados
+        en [t0, t1] (cara_0.jpg, cara_1.jpg...). Devuelve cuantos escribio.
+        Para que el panel muestre los cuadros que entraron en el resumen."""
+        try:
+            import glob as _g
+            with self._lock:
+                imgs = [d for t, d in self._cuadros_img if t0 <= t <= t1]
+            for viejo in _g.glob(os.path.join(carpeta, "cara_*.jpg")):
+                try:
+                    os.remove(viejo)
+                except OSError:
+                    pass
+            for i, datos in enumerate(imgs):
+                with open(os.path.join(carpeta, f"cara_{i}.jpg"), "wb") as f:
+                    f.write(datos)
+            return len(imgs)
+        except Exception:  # noqa: BLE001
+            return 0
+
+    def _guardar_sin_cara(self, frame_bgr):
+        """Guarda al buffer un cuadro SIN cara detectada, con un sello, para
+        que el panel muestre los 5 frames del turno (se vean cuales fallaron)."""
+        try:
+            import cv2, time as _t
+            img = frame_bgr.copy()  # ya es BGR correcto
+            cv2.putText(img, "sin cara", (8, 22), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.6, (60, 60, 230), 2)
+            ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 70])
+            if ok:
+                with self._lock:
+                    self._cuadros_img.append((_t.time(), buf.tobytes()))
+        except Exception:  # noqa: BLE001
             pass
 
     def _guardar_frame_crudo(self, frame_bgr):
@@ -388,7 +461,7 @@ class DetectorEmocion:
         Nunca lanza."""
         try:
             import cv2
-            img = frame_bgr.copy()
+            img = frame_bgr.copy()  # ya es BGR correcto (_a_bgr convirtio RGB->BGR)
             cv2.putText(img, f"FER: {FER_MODELO} (en reposo)", (8, 22),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 2)
             ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 70])
@@ -464,9 +537,17 @@ class DetectorEmocion:
 
                 picam2 = (Picamera2(sensor.camera_num) if sensor is not None
                           else Picamera2())
+                # CRITICO para el sensor: esperar a que el firmware YuNet
+                # termine de subir ANTES de arrancar. Sin esto el acelerador
+                # no ejecuta la red y get_outputs() devuelve 0 tensores
+                # (CnnOutputTensor vacio) -> nunca detecta cara.
+                if sensor is not None:
+                    sensor.esperar_firmware()
                 picam2.start(picam2.create_preview_configuration(
-                    main={"size": self.resolucion, "format": FORMATO_CAPTURA}),
-                    show_preview=False)
+                    main={"size": self.resolucion, "format": FORMATO_CAPTURA},
+                    controls={"FrameRate": float(self.fps)}),
+                    show_preview=False)  # limitar fps baja el consumo del pipeline
+                camara_activa = True  # el stream esta corriendo
                 time.sleep(2)  # que asiente la exposición
                 donde = "sensor" if sensor is not None else "CPU"
                 modo = "solo con voz" if self.bajo_demanda else "siempre"
@@ -477,6 +558,7 @@ class DetectorEmocion:
                 # cerrarse se loguean los fps REALES, para comparar.
                 ventana_inicio, ventana_cuadros = None, 0
                 ultimo_crudo = 0.0
+                _clasif_n = 0
                 while self._continuo:
                     if not self._toca_clasificar():
                         if ventana_inicio is not None:
@@ -484,26 +566,24 @@ class DetectorEmocion:
                             self._log(f"[cámara] FER: {ventana_cuadros} cuadros en "
                                       f"{dur:.1f} s ({ventana_cuadros / max(dur, 0.1):.1f} fps reales)")
                             ventana_inicio, ventana_cuadros = None, 0
-                        # En reposo NO se clasifica (ahorra CPU), pero si
-                        # CARA_JPG esta activo se guarda el cuadro crudo cada
-                        # ~0.5 s para que el panel muestre al usuario en vivo
-                        # aunque no haya voz.
-                        if CARA_JPG and (time.time() - ultimo_crudo) >= 0.5:
+                        # En reposo se PAUSA el stream de la camara (picam2.stop):
+                        # el pipeline de libcamera deja de capturar y el CPU baja
+                        # mucho. Se reanuda al detectar voz. El panel solo muestra
+                        # los cuadros DESPUES de hablar, no en vivo.
+                        if camara_activa:
                             try:
-                                if sensor is not None:
-                                    pedido = picam2.capture_request()
-                                    try:
-                                        crudo = pedido.make_array("main")
-                                    finally:
-                                        pedido.release()
-                                else:
-                                    crudo = picam2.capture_array("main")
-                                self._guardar_frame_crudo(self._a_bgr(crudo))
-                                ultimo_crudo = time.time()
+                                picam2.stop()
+                                camara_activa = False
                             except Exception:  # noqa: BLE001
                                 pass
-                        time.sleep(PAUSA_REPOSO)
+                        time.sleep(0.2)
                         continue
+                    if not camara_activa:
+                        try:
+                            picam2.start(show_preview=False)
+                            camara_activa = True
+                        except Exception:  # noqa: BLE001
+                            pass
                     inicio = time.time()
                     if ventana_inicio is None:
                         ventana_inicio = inicio
@@ -522,11 +602,22 @@ class DetectorEmocion:
                         # el sensor no haya encontrado cara.
                         if FER_SIN_YUNET:
                             probs = self._clasificar(self._a_bgr(cuadro))
+                        elif caja is not None:
+                            probs = self._clasificar(self._a_bgr(cuadro), caja)
                         else:
-                            probs = (self._clasificar(self._a_bgr(cuadro), caja)
-                                     if caja is not None else None)
+                            probs = None
+                            # Sin cara: guardar igual el cuadro crudo al buffer,
+                            # para que el panel muestre los 5 frames del turno
+                            # (se vea cuales perdieron la cara).
+                            if CARA_JPG:
+                                self._guardar_sin_cara(self._a_bgr(cuadro))
                     else:
-                        probs = self._clasificar(self._a_bgr(picam2.capture_array("main")))
+                        # DESACOPLE: clasificar emocion 1 de cada FER_CADA_N
+                        _clasif_n += 1
+                        _solo_det = (_clasif_n % FER_CADA_N) != 0
+                        probs = self._clasificar(
+                            self._a_bgr(picam2.capture_array("main")),
+                            solo_detectar=_solo_det)
                     if probs is not None:
                         with self._lock:
                             self._observaciones.append((inicio, probs))
@@ -579,10 +670,16 @@ class DetectorEmocion:
             return None
         return [float(p) / total for p in mediana]
 
+    # Ventana FER fija: la tesis usa N=5 cuadros por turno. Se toman los
+    # PRIMEROS 5 de la ventana (la reaccion justo tras hablar), no todos los
+    # que entren, para que el N sea constante turno a turno.
+    FER_N_CUADROS = int(os.environ.get("ROMEO_FER_N_CUADROS", "5"))
+
     def resumen(self, t0, t1):
         """(probabilidades, n_cuadros) de la ventana [t0, t1], en segundos
-        de time.time(). (None, 0) si en esa ventana no se vio ninguna cara."""
-        cuadros = self._cuadros_entre(t0, t1)
+        de time.time(). (None, 0) si en esa ventana no se vio ninguna cara.
+        Usa SOLO los primeros FER_N_CUADROS (N=5) para un N fijo."""
+        cuadros = self._cuadros_entre(t0, t1)[:self.FER_N_CUADROS]
         return self.resumir(cuadros), len(cuadros)
 
     # ─── Juego de caras ──────────────────────────────────────────────
