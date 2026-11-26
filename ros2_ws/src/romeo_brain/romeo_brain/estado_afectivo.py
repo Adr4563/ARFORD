@@ -514,6 +514,9 @@ class EstadoAfectivo:
         self.paso = PASO_DECAIMIENTO if paso is None else paso
         self.vector = self.animo_base
         self._ultimo_estimulo = None
+        # Nivel L1-L4 que calculo el metodo de Rocha en la ultima
+        # desviacion() (None si Rocha esta desactivado). aeb.mapear() lo usa.
+        self._nivel_rocha = None
         # Cuantos pasos de decaimiento ya se aplicaron desde el ultimo
         # estimulo (ver decaer()).
         self._decaido_hasta = None
@@ -693,13 +696,17 @@ class EstadoAfectivo:
         # y una magnitud equivalente para que nivel() saque el mismo L.
         if METODO_ROCHA:
             cara, nivel_r = self._emocion_rocha()
+            # El nivel de Rocha ya esta calculado (punto L mas cercano). Se
+            # guarda para que aeb.mapear() lo use TAL CUAL, en vez de volver
+            # a repartir la magnitud en tramos iguales -- que daba un nivel
+            # distinto (p.ej. base optimista salia L4 en vez del L2 correcto).
+            self._nivel_rocha = nivel_r
             if cara == "content":
                 return "content", 0.0
-            # magnitud tal que aeb.nivel() reproduzca nivel_r: el centro del
-            # tramo L correspondiente. Mas simple: devolver la magnitud real
-            # al origen; nivel() ya reparte en tramos iguales igual que Rocha.
             dv = tuple(self.vector[i] for i in range(3))
             return cara, math.sqrt(sum(x * x for x in dv))
+        # Sin metodo de Rocha, no hay nivel precalculado.
+        self._nivel_rocha = None
 
         ref = (0.0, 0.0, 0.0) if ANIMO_DESDE_ORIGEN else self.animo_base
         dv = tuple(self.vector[i] - ref[i] for i in range(3))

@@ -234,10 +234,16 @@ def mapear(estado):
     comportamiento (ver el docstring del modulo para el formato)."""
     direccion, magnitud = estado.desviacion()
     emocion = _EMOCION_DE_CARA.get(direccion)
-    # La referencia del nivel es la misma que usa desviacion(): base por
-    # defecto, u origen con ROMEO_ANIMO_DESDE_ORIGEN=1 (ver estado_afectivo).
-    ref = (0.0, 0.0, 0.0) if estado_afectivo.ANIMO_DESDE_ORIGEN else estado.animo_base
-    n = nivel(emocion, magnitud, ref) if emocion else 0
+    # Si el metodo de Rocha esta activo, desviacion() ya calculo el nivel
+    # (punto L mas cercano) y lo dejo en _nivel_rocha: se usa TAL CUAL, para
+    # reproducir la tesis (base optimista -> L2, empatica -> L1). Si no, se
+    # calcula aqui por tramos iguales desde la base (u origen).
+    nivel_rocha = getattr(estado, "_nivel_rocha", None)
+    if nivel_rocha is not None:
+        n = nivel_rocha if emocion else 0
+    else:
+        ref = (0.0, 0.0, 0.0) if estado_afectivo.ANIMO_DESDE_ORIGEN else estado.animo_base
+        n = nivel(emocion, magnitud, ref) if emocion else 0
 
     if n == 0:
         return {"estado": "neutral_L0", "emocion": "neutral", "nivel": 0,
