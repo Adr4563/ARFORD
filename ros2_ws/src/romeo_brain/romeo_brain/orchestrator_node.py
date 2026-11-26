@@ -171,6 +171,14 @@ _PIDE_CAPACIDADES = (
 CSV_TURNOS = os.environ.get("ROMEO_CSV_TURNOS",
                             os.path.expanduser("~/romeo_medicion_turnos.csv"))
 
+# Identificadores de la sesion de captura (ver _anotar_turno y la traza
+# afectiva). Permiten separar los resultados por perfil, participante y
+# pregunta para el analisis (Wilcoxon de una muestra). Se fijan por variable
+# de entorno al lanzar; el futuro script de arranque las pone solas. Si no se
+# dan, id_sesion cae a la fecha-hora de arranque para que nunca quede vacio.
+ID_SESION = os.environ.get("ROMEO_ID_SESION", "") or time.strftime("%Y%m%d_%H%M%S")
+ID_PARTICIPANTE = os.environ.get("ROMEO_ID_PARTICIPANTE", "")
+
 # Exactitud del veredicto afectivo: una fila por cada cara pedida en el juego
 # de emociones, con lo que se pidio, lo que vio la camara y si acerto. Con
 # ROMEO_MEDIR=1. Permite sacar aciertos/total sin leer el log a mano.
@@ -233,7 +241,7 @@ class OrchestratorNode(Node):
         # romeo_params.yaml; las variables ROMEO_EMPATIA etc. lo afinan.
         self.declare_parameter('perfil_afectivo', estado_afectivo.PERFIL_POR_DEFECTO)
         # Perfil fijado DIRECTO en el codigo (ignora el yaml y el parametro ROS).
-        perfil = "EMPATHETIC"
+        perfil = "OPTIMISTIC"
         # Que fuentes de la ventana de percepcion entran a PULSE. Quitar una
         # de la lista la desactiva sin tocar codigo (p. ej. ["TER"] para
         # probar solo con texto).
@@ -268,6 +276,14 @@ class OrchestratorNode(Node):
         self._intentos_arranque = 0
         self._turno_lock = threading.Lock()
         self._grupo_turno = ReentrantCallbackGroup()
+        # Contador de turno de la sesion (turn_id). Une la fila del CSV con su
+        # traza afectiva sin depender del reloj. Empieza en 0 y sube 1 por
+        # turno medido. Protegido por _turno_lock (un turno a la vez).
+        self._turn_id = 0
+        if medicion_activa():
+            self.get_logger().info(
+                f"[medicion] sesion={ID_SESION!r} participante={ID_PARTICIPANTE!r} "
+                f"perfil={self._afecto.perfil!r}")
 
         # Que Ollama cargue los dos modelos ANTES del primer turno.
         #
@@ -1122,6 +1138,20 @@ class OrchestratorNode(Node):
                         ter_nn=None):
         if self.estado is None or not entrada:
             return
+        # BOTON DE TRIVIA (panel): entra directo a la trivia SIN pasar por el
+        # afecto. No cuenta como turno medido, no toca el animo de Romeo y
+        # salta la regla de las 3 fuentes. Solo arranca el juego.
+        if (entrada or "").strip() == "__BOTON_TRIVIA__":
+            estado = self.estado
+            estado["esperando_nombre"] = False
+            if estado.get("en_trivia"):
+                # Ya estaba en trivia: retoma donde quedo.
+                self._reanudar_trivia()
+            else:
+                estado["en_trivia"] = True
+                self.get_logger().info("[trivia] entrada directa por boton del panel")
+                self._manejar_trivia("")
+            return
         # Con ROMEO_MEDIR=1, el turno entero se cronometra y al final se
         # escribe una fila. Sin la variable, turno() y _anotar_turno() no
         # hacen nada.
@@ -1141,18 +1171,71 @@ class OrchestratorNode(Node):
         if not medicion_activa():
             return
         try:
-            fila = tiempos()
+            tiempos_turno = tiempos()
+            # Identificadores primero: id_sesion, id_participante, perfil,
+            # turn_id e id_pregunta encabezan la fila para poder separar por
+            # perfil/participante/pregunta y unir con la traza por turn_id.
+            fila = {}
+            fila["id_sesion"] = ID_SESION
+            fila["id_participante"] = ID_PARTICIPANTE
+            fila["perfil"] = self._afecto.perfil
+            fila["turn_id"] = self._turn_id
+            # id_pregunta: solo si el turno es de trivia (hay pregunta pendiente).
+            try:
+                pend = (self.estado or {}).get("pregunta_pendiente")
+                fila["id_pregunta"] = pend["id"] if pend else ""
+            except Exception:  # noqa: BLE001
+                fila["id_pregunta"] = ""
+            fila.update(tiempos_turno)
             fila["t_fin"] = round(t_fin, 6)
-            # Emocion y movimiento de Romeo en este turno (AEB), para la
-            # captura de metricas: que emocion expreso y si se desplazo.
+            # COHERENCIA AFECTIVA (decision del AEB vs lo EJECUTADO).
+            # No es tautologico: se compara lo que el AEB DECIDIO con lo que
+            # el orquestador REALMENTE publico a la pantalla y al carrito.
+            # Detecta, por ejemplo, que otra cara del flujo (speaking) pisara
+            # la cara del AEB, o que el gesto no llegara a enviarse.
             try:
                 comp = self._comportamiento()
-                fila["emocion_romeo"] = comp.get("estado", "")
+                # --- EMOCION y NIVEL (lo que el AEB estimo del animo de Romeo).
+                # Se guardan tambien SEPARADOS para no tener que partir
+                # "felicidad_L2" a mano en el analisis.
+                fila["emocion_romeo"] = comp.get("estado", "")   # p.ej. felicidad_L2
+                fila["emocion"] = comp.get("emocion", "")        # felicidad/tristeza/enojo/neutral
+                fila["nivel"] = comp.get("nivel", "")            # 0..4 (L0..L4)
+                # --- CARA ---
+                cara_aeb = comp.get("cara", "")           # lo que el AEB pidio
+                cara_real = self._bridge._cara_actual or ""  # lo ultimo publicado
+                fila["cara_aeb"] = cara_aeb
+                fila["cara_ejecutada"] = cara_real
+                fila["cara_coincide"] = int(cara_aeb == cara_real)
+                # --- MOVIMIENTO ---
                 mov = comp.get("movimiento")
-                fila["movimiento"] = "-".join(mov) if mov else "ninguno"
+                mov_aeb = "-".join(mov) if mov else "ninguno"
+                # Lo que de verdad se publico este turno (None si no se movio).
+                mov_real = self._bridge._ultimo_movimiento or "ninguno"
+                fila["movimiento"] = mov_aeb            # compat: columna previa
+                fila["mov_aeb"] = mov_aeb
+                fila["mov_ejecutado"] = mov_real
+                # El AEB puede pedir un gesto de varios pasos ("F-B"); basta
+                # con que se haya enviado alguno para contarlo como ejecutado.
+                pidio_mov = mov_aeb != "ninguno"
+                hubo_mov = mov_real != "ninguno"
+                fila["mov_coincide"] = int(pidio_mov == hubo_mov)
+                # --- TONO (tercera salida del AEB: instruccion de estilo al
+                # LLM). No se guarda el parrafo entero, sino si el AEB pidio un
+                # tono afectivo (emocion_Lnivel) o None (neutral: el LLM habla
+                # como siempre). "tono_aplicado" dice si de verdad se paso.
+                tono_aeb = comp.get("tono")
+                fila["tono_aeb"] = comp.get("estado", "") if tono_aeb else "neutral"
+                fila["tono_aplicado"] = int(tono_aeb is not None)
             except Exception:  # noqa: BLE001
                 fila["emocion_romeo"] = ""
+                fila["emocion"] = ""; fila["nivel"] = ""
+                fila["cara_aeb"] = ""; fila["cara_ejecutada"] = ""
+                fila["cara_coincide"] = ""
                 fila["movimiento"] = ""
+                fila["mov_aeb"] = ""; fila["mov_ejecutado"] = ""
+                fila["mov_coincide"] = ""
+                fila["tono_aeb"] = ""; fila["tono_aplicado"] = ""
             fila["texto"] = (entrada or "").replace(",", " ")[:60]
             nuevo = not os.path.exists(CSV_TURNOS)
             with open(CSV_TURNOS, "a", encoding="utf-8") as f:
@@ -1191,6 +1274,14 @@ class OrchestratorNode(Node):
 
     def _turno_medido(self, entrada, t_inicio, t_fin, ser, ter_nn):
 
+        # Nuevo turno: avanza el turn_id (une CSV y traza sin depender del
+        # reloj). Se hace al entrar para que la fila y su traza compartan el
+        # mismo numero aunque el turno se descarte luego.
+        self._turn_id += 1
+        # Olvida el movimiento del turno anterior: la metrica de coherencia
+        # afectiva mira si en ESTE turno se publico el gesto que el AEB pidio.
+        self._bridge._ultimo_movimiento = None
+
         # Empieza un turno: ha pasado tiempo desde el anterior, asi que el
         # animo se acerca un paso a su base (ROSE). Sin esta llamada el
         # estado se quedaria clavado en lo ultimo que se percibio.
@@ -1205,7 +1296,8 @@ class OrchestratorNode(Node):
                          self._afecto._ultimo_estimulo,
                          self._afecto._decaido_hasta)
         self._afecto.decaer()
-        self._traza = traza_afectiva.nueva(entrada, self._afecto, antes_decaer)
+        self._traza = traza_afectiva.nueva(entrada, self._afecto, antes_decaer,
+                                           turn_id=self._turn_id)
 
         # TER: que emocion expresa lo que acaba de decir el usuario.
         #

@@ -94,10 +94,14 @@ def comportamiento(estado):
     }
 
 
-def nueva(texto, estado, antes_decaer):
+def nueva(texto, estado, antes_decaer, turn_id=None):
     """Arranca la traza de un turno, con el decaimiento que se acaba de
-    aplicar (antes_decaer -> estado.vector)."""
+    aplicar (antes_decaer -> estado.vector).
+
+    turn_id une esta traza con la fila del CSV de turnos (mismo numero),
+    para cruzarlas sin depender del reloj."""
     return {
+        "turn_id": turn_id,
         "t": time.time(), "texto": texto,
         "perfil": {"nombre": getattr(estado, "perfil", None), "empatia": estado.empatia,
                    "base": _vad(estado.animo_base), "decaimiento": estado.decaimiento,

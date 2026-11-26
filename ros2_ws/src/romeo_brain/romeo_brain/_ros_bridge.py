@@ -22,6 +22,10 @@ class RosBridge:
 
         # Ultima cara publicada, para no repetirla (ver mostrar_cara).
         self._cara_actual = None
+        # Ultimo comando de movimiento publicado, para la metrica de
+        # "coherencia afectiva" (ver _anotar_turno): se compara lo que el AEB
+        # decidio con lo que de verdad se publico.
+        self._ultimo_movimiento = None
         self.face_pub = node.create_publisher(FaceCommand, '/romeo/face_command', 10)
         self.motion_pub = node.create_publisher(MotionCommand, '/romeo/motion_command', 10)
 
@@ -112,6 +116,7 @@ class RosBridge:
     def mover(self, comando):
         """Fire-and-forget -- igual que Carrito_Client.mover()/mover_360()
         original, que tampoco bloqueaban el turno de trivia."""
+        self._ultimo_movimiento = comando
         msg = MotionCommand()
         msg.command = comando
         self.motion_pub.publish(msg)
