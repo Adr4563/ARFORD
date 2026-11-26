@@ -124,7 +124,7 @@ HILOS = int(os.environ.get("ROMEO_STT_HILOS", "2"))
 NORMALIZAR = os.environ.get("ROMEO_STT_NORMALIZAR", "1") not in ("0", "false", "False")
 PICO_OBJETIVO = 0.9
 GANANCIA_MAX = 20.0
-PICO_MINIMO = 0.002  # por debajo de esto se asume silencio y no se toca
+PICO_MINIMO = float(os.environ.get("ROMEO_PICO_MINIMO", "0.01"))  # subido de 0.002: el ruido ambiente activaba la camara (YuNet) sin parar
 
 # Cuanto silencio tiene que haber para dar la frase por terminada.
 #
@@ -142,6 +142,10 @@ PICO_MINIMO = 0.002  # por debajo de esto se asume silencio y no se toca
 # 0.6 s deja respirar sin que la espera se note: es el tiempo que tarda
 # alguien en darse cuenta de que ya termino de hablar.
 MIN_SILENCIO = float(os.environ.get("ROMEO_MIN_SILENCIO", "0.6"))
+# Umbral del VAD: que tan fuerte/claro debe ser el audio para contarlo como
+# voz. Silero usa 0.5 por defecto; se sube para que el RUIDO AMBIENTE no
+# dispare voz_detectada (que reanudaba la camara y gastaba CPU en reposo).
+VAD_UMBRAL = float(os.environ.get("ROMEO_VAD_UMBRAL", "0.75"))
 IDIOMA = os.environ.get("ROMEO_STT_IDIOMA", "es")
 
 SAMPLE_RATE = 16000
@@ -228,6 +232,7 @@ class ReconocedorVoz:
             cfg = sherpa_onnx.VadModelConfig()
             cfg.silero_vad.model = vad
             cfg.silero_vad.min_silence_duration = MIN_SILENCIO
+            cfg.silero_vad.threshold = VAD_UMBRAL
             cfg.sample_rate = SAMPLE_RATE
             self._vad = sherpa_onnx.VoiceActivityDetector(
                 cfg, buffer_size_in_seconds=30)
@@ -601,8 +606,10 @@ class ReconocedorVoz:
                         else:
                             continue
                     else:
-                        if al_oir_voz is not None:
-                            al_oir_voz()
+                        # Ya NO se avisa aqui por pico de energia: el ruido
+                        # fuerte enganaba al pico y activaba la camara. Ahora
+                        # se avisa solo cuando el VAD (Silero) confirma VOZ
+                        # humana, mas abajo.
                         if silencios:
                             self._vad.accept_waveform(
                                 np.zeros(ventana, dtype="float32"))
@@ -612,6 +619,11 @@ class ReconocedorVoz:
                     while len(buffer) > ventana:
                         self._vad.accept_waveform(buffer[:ventana])
                         buffer = buffer[ventana:]
+
+                    # VAD de Silero: avisa (activa la camara) SOLO si hay VOZ
+                    # humana de verdad, no ruido que supere el pico de energia.
+                    if al_oir_voz is not None and self._vad.is_speech_detected():
+                        al_oir_voz()
 
                     while not self._vad.empty():
                         frase = self._vad.front.samples
