@@ -504,14 +504,21 @@ class OrchestratorNode(Node):
         al FER: margen top-1/top-2 x fiabilidad del SER y CAT -> VAD (4.3)."""
         if not ser or not ser[0]:
             return
+        # Ventana del SER: mediana de las ultimas N lecturas de voz (N=5),
+        # igual que el TER. Suaviza una frase suelta mal leida.
+        estado_afectivo.acumular_ser(ser[1], ser[0])
+        etiquetas_s, probs_s = estado_afectivo.resumir_ser()
+        if probs_s is None:
+            etiquetas_s, probs_s = ser[0], ser[1]
         vector, c, dominante = estado_afectivo.percibir_categorias(
-            ser[1], ser[0])
+            probs_s, etiquetas_s)
         if vector is None:
             return
         self.get_logger().info(
-            f"[afecto] la voz suena a {dominante} (confianza {c:.2f})")
+            f"[afecto] la voz suena a {dominante} (confianza {c:.2f}, "
+            f"ventana de {estado_afectivo.tam_ventana_ser()})")
         self._lecturas_turno.append(("SER", vector, c, dominante))
-        self._trazar_lectura("SER", ser[1], ser[0])
+        self._trazar_lectura("SER", probs_s, etiquetas_s)
 
     def _trazar_lectura(self, fuente, probs, etiquetas, **extra):
         if self._traza is None:
@@ -1053,9 +1060,10 @@ class OrchestratorNode(Node):
         # conversacion del anterior.
         agente_chat.reiniciar()
         self._afecto.reiniciar()
-        # Y la ventana del TER: su mediana es de las frases de ESTA
+        # Y las ventanas del TER y SER: su mediana es de las frases de ESTA
         # conversacion, no de las del usuario anterior.
         estado_afectivo.olvidar_ter()
+        estado_afectivo.olvidar_ser()
         self._bridge.mostrar_cara("content")
         time.sleep(PAUSA_CAMBIO_CARA)
         self._bridge.mostrar_cara("speaking")

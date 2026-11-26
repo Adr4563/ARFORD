@@ -423,6 +423,50 @@ def tam_ventana_ter():
     return len(_ventana_ter)
 
 
+# ── Ventana del SER (voz), igual que la del TER ────────────────────────
+# Mediana de las ultimas N lecturas de voz, para suavizar frases sueltas
+# mal leidas. Mismo criterio que TER/FER (N=5 para consistencia).
+VENTANA_SER = int(os.environ.get("ROMEO_VENTANA_SER", "1"))
+
+_ventana_ser = collections.deque(maxlen=VENTANA_SER)
+
+
+def acumular_ser(probabilidades, etiquetas):
+    """Mete la lectura de voz de esta frase en la ventana del SER.
+    Las distribuciones se guardan agrupadas en las cuatro emociones del AEB."""
+    probs = [float(p) for p in (probabilidades or [])]
+    if not probs or len(probs) != len(etiquetas) or sum(probs) <= 0.0:
+        return
+    claves, valores = agrupar_en_cuatro(probs, etiquetas)
+    total = sum(valores)
+    if total > 0.0:
+        _ventana_ser.append((claves, [v / total for v in valores]))
+
+
+def resumir_ser():
+    """(etiquetas, probabilidades) de la ventana del SER, con mediana por
+    emocion y normalizacion. (None, None) si todavia no hay ninguna lectura."""
+    if not _ventana_ser:
+        return None, None
+    claves = _ventana_ser[0][0]
+    medianas = [statistics.median([o[1][i] for o in _ventana_ser])
+                for i in range(len(claves))]
+    total = sum(medianas)
+    if total <= 0.0:
+        return None, None
+    return claves, [m / total for m in medianas]
+
+
+def tam_ventana_ser():
+    """Cuantas frases hay ahora en la ventana del SER."""
+    return len(_ventana_ser)
+
+
+def olvidar_ser():
+    """Vacia la ventana del SER al empezar una sesion nueva."""
+    _ventana_ser.clear()
+
+
 def olvidar_ter():
     """Vacia la ventana. Al empezar una sesion nueva: el usuario
     siguiente no hereda las frases del anterior."""
