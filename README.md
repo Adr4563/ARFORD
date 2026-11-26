@@ -23,8 +23,7 @@ Este repositorio contiene la versión **ROS 2** del robot: 4 paquetes que reempl
 - [Inicio rápido](#inicio-rápido)
 
 > **Revisión pendiente:** los problemas abiertos están en
-> [`docs/REVISION-PENDIENTE.md`](docs/REVISION-PENDIENTE.md). El principal: la
-> cámara no entrega imagen.
+> [`docs/REVISION-PENDIENTE.md`](docs/REVISION-PENDIENTE.md).
 
 ---
 
@@ -47,7 +46,7 @@ Si falta algún componente (cámara, carrito, pantalla), el robot sigue conversa
 | Componente | Detalle | Conexión |
 |---|---|---|
 | **Computador principal** | Raspberry Pi 4, 8 GB de RAM, sin GPU (ARM Cortex-A72) | — |
-| **PC de inferencia** | PC con Windows 10 Pro, 8 GB de RAM, sin GPU | Red local; ejecuta el LLM, STT, TTS, SER y TER |
+| **PC de inferencia** | HP Z2 Tower G9 Workstation (Windows 11): Intel Core i9-13900K, 128 GB de RAM, GPU NVIDIA RTX A5000 | Red local; ejecuta el LLM, STT, TTS, SER y TER |
 | **Motores** | Carrito mecanum de 4 ruedas, 2 drivers L298N, controlado por un **ESP32-S3 DevKitC-1** | Serial/USB a 115200 baudios (`/dev/ttyACM0` por defecto) |
 | **Cámara** | Raspberry Pi AI Camera (Sony IMX500) | `picamera2` |
 | **Pantalla** | MPI5008, 5 pulgadas, 800 × 480, HDMI, sin sesión gráfica (headless) | `mpv --vo=drm` |
@@ -71,12 +70,12 @@ El firmware tiene un **watchdog**: si no llega otro comando en 500 ms, detiene l
 
 ### Cámara y emociones
 
-La lectura facial (FER) corre con dos modelos ONNX preentrenados:
+La lectura facial (FER) corre con dos modelos preentrenados que colaboran: uno **detecta** la cara y el otro **clasifica** la emoción.
 
-- `face_detection_yunet_2023mar.onnx` (~230 KB): detector de caras YuNet. Corre en la **CPU**. También hay una versión para el acelerador del IMX500 (`imx500_network_yunet.rpk`), que se usa si la Pi tiene permiso de lectura en `/sys/kernel/debug`.
-- `emotion-ferplus-8.onnx` (~35 MB): clasificador FER+. Sus 8 clases se agrupan en las 4 del robot: felicidad, tristeza, enojo y neutral.
+- **Detector — YuNet** (`face_detection_yunet_2023mar.onnx`, ~230 KB): encuentra el rostro en el cuadro. Corre en la **CPU**. También hay una versión para el acelerador del IMX500 (`imx500_network_yunet.rpk`), pero por defecto se usa la de CPU por ser más estable.
+- **Clasificador — HSEmotion** (EfficientNet-B0 entrenado en AffectNet): sobre la cara recortada estima la emoción. Sus clases se agrupan en las 4 del robot: felicidad, tristeza, enojo y neutral.
 
-La cámara queda abierta, pero YuNet y FER+ solo trabajan **mientras alguien habla** (5 cuadros por segundo a 320 × 240): `communication_node` avisa por `/romeo/voz_detectada`. El juego de caras la activa por su cuenta. Con `fer_bajo_demanda: false` clasifica todo el tiempo.
+La cámara queda abierta, pero YuNet y HSEmotion solo trabajan **mientras alguien habla** (5 cuadros por segundo a 320 × 240): `communication_node` avisa por `/romeo/voz_detectada` **solo cuando el VAD de Silero confirma voz humana** (no un pico de ruido), lo que mantiene el consumo de CPU bajo en reposo. El juego de caras la activa por su cuenta. Con `fer_bajo_demanda: false` clasifica todo el tiempo.
 
 En el juego de caras, si el modo continuo no está activo, se hacen hasta 15 intentos de captura y detección, con 0.2 s entre intentos. Es obligatorio llamar a `picam2.stop()` **y** a `picam2.close()`: sin el `close()`, el siguiente `Picamera2()` del mismo proceso no puede adquirir la cámara.
 
@@ -119,7 +118,7 @@ El TTS corre en la PC (`tts_server.py`, puerto 8083): **Piper VITS, voz `es_MX-c
 El micrófono es el de la placa de audio. La Pi detecta el inicio y el fin de cada frase con **Silero VAD** y manda el audio a la PC (`stt_server.py`, puerto 8082), que devuelve:
 
 - el texto, con **NVIDIA FastConformer en español** (`ROMEO_STT_MOTOR=nemo`; `whisper` es la alternativa);
-- la emoción de la voz (**SER**, HuBERT Dusha);
+- la emoción de la voz (**SER**, emotion2vec+ — `emotion2vec_plus_base`, vía FunASR);
 - la emoción del texto (**TER**, RoBERTuito).
 
 Mientras Romeo suena, el audio que entra se descarta para que no se transcriba a sí mismo. Si llega una frase mientras sigue el turno anterior, también se descarta.
